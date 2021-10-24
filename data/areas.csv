@@ -1,0 +1,14 @@
+area_id,name,suffix,in_use,comment
+A,Campus Karlsplatz,,yes,
+B,Campus Getreidemarkt,,yes,
+C,Campus Gußhaus,,yes,
+D,Campus Freihaus,,yes,
+E,Argentinierstraße,Institutsgebäude,yes,
+F,Gußhausstraße,Institutsgebäude,yes,
+H,Favoritenstraße,Institutsgebäude,yes,
+M,Aspanggründe,,yes,
+O,Campus Arsenal,Science Center,yes,
+P,,,no,Seestadt?
+Q,Theresianumgasse,Institutsgebäude,yes,
+W,Alte Wirtschaftsuniversität,,no,
+Z,Atominstitut,,yes,
