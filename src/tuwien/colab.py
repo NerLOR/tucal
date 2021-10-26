@@ -17,7 +17,7 @@ class Room:
 
     def __init__(self, room_id: str, name: str, building: typing.Optional[str]):
         self.id = room_id
-        self.name = name
+        self.name = name.replace('Semianrraum', 'Seminarraum')
         self.building = building
 
     def __repr__(self):
@@ -32,7 +32,10 @@ def get_rooms() -> [Room]:
     rooms = []
     for table in TABLE.finditer(r.text):
         for tr in TR.finditer(table.group(1)):
-            data = [html.unescape(re.sub(r'</?(span|div|p).*?>', '', td.group(1))) for td in TD.finditer(tr.group(1))]
+            data = [
+                html.unescape(re.sub(r'</?(span|div|p).*?>', '', td.group(1)).replace('&nbsp;', ''))
+                for td in TD.finditer(tr.group(1))
+            ]
             if len(data) == 0:
                 continue
             bez = re.sub(r'<.*?>', '', data[0]).split(',', 1)

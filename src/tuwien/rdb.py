@@ -1,4 +1,5 @@
 
+import sys
 import requests
 import re
 import typing
@@ -7,6 +8,18 @@ TUWIEN_URL = 'https://www.tuwien.at'
 GUT_URI = '/tu-wien/organisation/zentrale-bereiche/gebaeude-und-technik'
 RDB_URI = f'{GUT_URI}/veranstaltungsservice/raumdatenbank'
 RDB_URL = f'{TUWIEN_URL}{RDB_URI}'
+
+ROOM_TYPES = {
+    'seminarraum': 'seminar_room',
+    'seminarräume': 'seminar_room',
+    'hörsaal': 'lecture_hall',
+    'zeichensaal': 'drawing_room',
+    'projektraum': 'project_room',
+    'repräsentationsraum': 'event_room',
+    'verkehrsfläche': 'circulation_area',
+    'verkehsfläche': 'circulation_area',
+    'werkraum': 'seminar_room'
+}
 
 
 class Room:
@@ -27,7 +40,14 @@ class Room:
         self.floor_nr = parts[1]
         self.room_nr = parts[2]
         self.name = name
-        self.type = room_type
+        self.type = ROOM_TYPES[room_type.lower()]
+        if self.type in ('project_room', 'seminar_room', 'drawing_room'):
+            if 'projektraum' in self.name.lower():
+                self.type = 'project_room'
+            elif 'seminarraum' in self.name.lower():
+                self.type = 'seminar_room'
+            elif 'zeichensaal' in self.name.lower():
+                self.type = 'drawing_room'
         self.area = int(area) if area else None
 
     @property
@@ -49,7 +69,7 @@ def get_rooms() -> [Room]:
     categories.sort()
     for cat in categories:
         r = s.get(f'{RDB_URL}/{cat}')
-        room_names = [link.group(1) for link in re.finditer(rf'<a href="{RDB_URI}/{cat}/([^/"]+)"', r.text)]
+        room_names = [link.group(1) for link in re.finditer(rf'<a href="{RDB_URI}/{cat}/([^/"]+)">', r.text)]
         for room in room_names:
             r = s.get(f'{RDB_URL}/{cat}/{room}')
             data = {

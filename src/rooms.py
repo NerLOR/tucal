@@ -3,84 +3,121 @@
 import tuwien.tiss
 import tuwien.colab
 import tuwien.rdb
-import psycopg2
 import re
+import typing
+import sys
 
-AREAS = '../data/areas.csv'
-BUILDINGS = '../data/buildings.csv'
+
+NAME_REPLACE = re.compile(r'[^A-Za-z0-9äüößÄÜÖẞ]')
 
 
-def buildings(cur: psycopg2._psycopg.cursor):
-    with open(AREAS) as f:
-        f.readline()
-        for line in f.readlines():
-            data = [d.strip() for d in line.strip().split(',')]
-            a_id = data[0]
-            a_name = data[1] if len(data[1]) > 0 else None
-            a_suffix = data[2] if len(data[2]) > 0 else None
-            in_use = data[3] == 'yes'
-            cur.execute("INSERT INTO area (area_id, area_name, area_suffix, in_use) "
-                        "VALUES (%s, %s, %s, %s) "
-                        "ON CONFLICT (area_id) DO "
-                        "UPDATE SET area_name = %s, area_suffix = %s, in_use = %s",
-                        (a_id, a_name, a_suffix, in_use, a_name, a_suffix, in_use))
-    with open(BUILDINGS) as f:
-        f.readline()
-        for line in f.readlines():
-            data = [d.strip() for d in line.strip().split(',')]
-            a_id = data[0]
-            b_id = data[1]
-            b_name = data[2] if len(data[2]) > 0 else None
-            b_suffix = data[3] if len(data[3]) > 0 else None
-            b_alt_name = data[4] if len(data[4]) > 0 else None
-            b_address = data[5] if len(data[5]) > 0 else None
-            cur.execute("INSERT INTO building "
-                        "(area_id, local_id, building_name, building_suffix, building_alt_name, address) "
-                        "VALUES (%s, %s, %s, %s, %s, %s) "
-                        "ON CONFLICT (area_id, local_id) DO "
-                        "UPDATE SET building_name = %s, building_suffix = %s, building_alt_name = %s, address = %s",
-                        (a_id, b_id, b_name, b_suffix, b_alt_name, b_address, b_name, b_suffix, b_alt_name, b_address))
+class Room:
+    name: str
+    suffix: typing.Optional[str]
+    name_short: typing.Optional[str]
+    alt_name: typing.Optional[str]
+    room_codes: [str]
+    tiss_code: typing.Optional[str]
+    type: typing.Optional[str]
+    parent_name: typing.Optional[str]
+    area: typing.Optional[int]
+    capacity: typing.Optional[int]
+    comment: typing.Optional[str]
+
+    def __init__(self, name: str, room_code: str, tiss_code: str = None, room_type: str = None,
+                 area: int = None, capacity: int = None, comment: str = None):
+        self.name = re.sub(r' *- +[A-Z-]*$', '', name.split(' - Achtung!')[0]).split(' - mündl.')[0].replace(',', '')
+        self.name = self.name.replace('HS', 'Hörsaal')
+        self.name = self.name\
+            .replace('Sem.R.', 'Seminarraum')\
+            .replace('Sem. R.', 'Seminarraum')\
+            .replace('Sem.', 'Seminarraum')\
+            .replace('Sem ', 'Seminarraum ')
+        self.name = self.name.replace('AI', 'Atominstitut')
+        self.suffix = None
+        self.name_short = None
+        self.alt_name = None
+        self.room_codes = [room_code.replace(' ', '')]
+        self.tiss_code = tiss_code
+        self.type = room_type
+        if self.type is None:
+            if 'hörsaal' in self.name.lower() or 'Audi. Max.' in self.name or 'Atrium' in self.name:
+                self.type = 'lecture_hall'
+            elif 'seminarraum' in self.name.lower():
+                self.type = 'seminar_room'
+            elif 'projektraum' in self.name.lower():
+                self.type = 'project_room'
+            elif 'lab' in self.name.lower():
+                self.type = 'lab'
+            elif 'zeichensaal' in self.name.lower():
+                self.type = 'drawing_room'
+            elif 'büro' in self.name.lower():
+                self.type = 'office'
+            elif self.name.startswith('PC') or self.name.startswith('EDV') or self.name.startswith('CAD'):
+                self.type = 'lab'
+        self.parent_name = None
+        self.area = area
+        self.capacity = capacity
+        self.comment = comment
 
 
 if __name__ == '__main__':
-    db: psycopg2._psycopg.connection = psycopg2.connect(
-        "dbname=tucal user=necronda host=data.necronda.net password=..."
-    )
-    cur: psycopg2._psycopg.cursor = db.cursor()
+    print('Fetching coLAB rooms...', file=sys.stderr)
+    colab_rooms = [
+        Room(room.name, room.id, comment='colab')
+        for room in tuwien.colab.get_rooms()
+    ]
+    print('Successfully fetched coLAB rooms', file=sys.stderr)
 
-    buildings(cur)
-    db.commit()
-
-    rdb_rooms = tuwien.rdb.get_rooms()
-    for r in rdb_rooms:
-        print(r)
-        cur.execute("INSERT INTO room (room_name, area) "
-                    "VALUES (%s, %s) "
-                    "ON CONFLICT (room_name) DO "
-                    "UPDATE SET area = %s "
-                    "RETURNING room_nr",
-                    (r.name, r.area, r.area))
-        rnr = cur.fetchall()[0]
-        cur.execute("INSERT INTO room_location (room_nr, area_id, building_id, floor_nr, local_code) "
-                    "VALUES (%s, %s, %s, %s, %s) "
-                    "ON CONFLICT ON CONSTRAINT pk_room_location DO NOTHING",
-                    (rnr, r.building_id[0], r.building_id[1], r.floor_nr, r.room_nr))
-    db.commit()
-
+    print('Fetching TISS rooms...', file=sys.stderr)
     s = tuwien.tiss.Session()
-    for r in s.rooms.values():
-        print(r)
-        a_id = r.global_id[0:1]
-        b_id = r.global_id[1:2]
-        f_nr = r.global_id[2:4]
-        l_nr = r.global_id[4:]
-        name = r.name.split(' - Achtung!')[0]
-        name = re.sub(r' *- +[A-Z-]*$', '', name)
-        name = name.split(' - mündl.')[0]
-        cur.execute("INSERT INTO tiss_room "
-                    "(area_id, building_id, floor_nr, local_code, tiss_code, room_name, tiss_name, capacity) "
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
-                    "ON CONFLICT ON CONSTRAINT pk_tiss_room DO "
-                    "UPDATE SET tiss_code = %s, room_name = %s, tiss_name = %s, capacity = %s",
-                    (a_id, b_id, f_nr, l_nr, r.id, name, r.name, r.capacity, r.id, name, r.name, r.capacity))
-    db.commit()
+    tiss_rooms = [
+        Room(room.name, room.global_id, tiss_code=room.id, capacity=room.capacity, comment='tiss')
+        for room in s.rooms.values()
+    ]
+    print('Successfully fetched TISS rooms', file=sys.stderr)
+
+    print('Fetching RDB rooms...', file=sys.stderr)
+    rdb_rooms = [
+        Room(room.name, room.id, room_type=room.type, area=room.area, comment='rdb')
+        for room in tuwien.rdb.get_rooms()
+    ]
+    print('Successfully fetched RDB rooms', file=sys.stderr)
+
+    print('Processing rooms...', file=sys.stderr)
+    rooms: [Room] = colab_rooms + tiss_rooms + rdb_rooms
+    rooms.sort(key=lambda room: (room.room_codes[0][0] + NAME_REPLACE.sub('', room.name)).lower())
+
+    proc = [rooms[0]]
+    for room in rooms[1:]:
+        last = proc[-1]
+        ln = NAME_REPLACE.sub('', last.name.split('|')[0].lower())
+        rn = NAME_REPLACE.sub('', room.name.lower())
+        if last.room_codes[0] == room.room_codes[0] and (room.tiss_code is None or last.tiss_code is None) and \
+                (ln.startswith(rn) or rn.startswith(ln)):
+            last.area = last.area or room.area
+            last.capacity = last.capacity or room.capacity
+            last.tiss_code = last.tiss_code or room.tiss_code
+            last.comment = last.comment + ' ' + room.comment
+            if last.name != room.name:
+                last.name = last.name + ' | ' + room.name
+            last.type = last.type or room.type
+            if last.type != room.type and (last.type is not None and room.type is not None):
+                if room.name == 'Aufbaulabor':
+                    last.type = 'drawing_room'
+        else:
+            proc.append(room)
+    proc.sort(
+        key=lambda room:
+        ((room.type or "other")[:3] +
+         room.room_codes[0][0] +
+         re.sub(r'[0-9]+', lambda m: ('0000' + m.group(0))[-4:], NAME_REPLACE.sub('', room.name))
+         ).lower()
+    )
+    print('Finished processing rooms', file=sys.stderr)
+
+    print('name,suffix,name_short,alt_name,room_codes,tiss_code,type,parent_name,area,capacity,comment')
+    for room in proc:
+        print(f'{room.name},{room.suffix or ""},{room.name_short or ""},{room.alt_name or ""},'
+              f'{" ".join(room.room_codes)},{room.tiss_code or ""},{room.type or "other"},{room.parent_name or ""},'
+              f'{room.area or ""},{room.capacity or ""},{room.comment or ""}')

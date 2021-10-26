@@ -12,7 +12,7 @@ TISS_DOMAIN = 'tiss.tuwien.ac.at'
 TISS_URL = f'https://{TISS_DOMAIN}'
 
 OPTION_BUILDING = re.compile(r'<option value="([A-Z]+)".*?>([A-Z]+) - (.*?) \(([^()]*?)\)</option>')
-OPTION_ROOM = re.compile(r'<option value="([^"]{3,})"[^>]*>(.*?)( \(([0-9]+)\))?</option>')
+OPTION_ROOM = re.compile(r'<option value="([^"]+)"[^>]*>(.*?)( \(([0-9]+)\))?</option>')
 CDATA = re.compile(r'<!\[CDATA\[(.*?)]]>')
 UPDATE_VIEW_STATE = re.compile(r'<update id="j_id__v_0:javax.faces.ViewState:1"><!\[CDATA\[(.*?)]]></update>')
 TABLE_TR = re.compile(r'<tr.*?>(.*?)</tr>')
@@ -177,7 +177,7 @@ class Session:
     def _get_buildings(self) -> [Building]:
         r = self.get('/events/selectRoom.xhtml')
         return [
-            Building(opt.group(2), opt.group(3), address=opt.group(4))
+            Building(opt.group(2), opt.group(3), address=opt.group(4), global_rooms=self._rooms)
             for opt in OPTION_BUILDING.finditer(r.text)
         ]
 
@@ -199,7 +199,7 @@ class Session:
         r = self.post('/events/selectRoom.xhtml', data)
         rooms = [
             Room(option.group(1), building.id, tiss_name=option.group(2), global_buildings=self._buildings)
-            for option in OPTION_ROOM.finditer(r.text)
+            for option in OPTION_ROOM.finditer(r.text[r.text.find('filterForm:roomFilter:selectRoomLb'):])
         ]
 
         for room in rooms:

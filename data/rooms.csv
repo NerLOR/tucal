@@ -1,0 +1,386 @@
+name,suffix,name_short,alt_name,room_codes,tiss_code,type,parent_name,area,capacity,comment
+Foyer 1.OG,,,,AA0139,,circulation_area,,90,,rdb
+Foyer 3.OG,,,,AA0339,,circulation_area,,94,,rdb
+Karlsplatz - Aula Stiege 1,,,,AAEG39,,circulation_area,,5,,rdb
+Karlsplatz - Aula Stiege 2,,,,AAEG06,,circulation_area,,103,,rdb
+Aula BA Eingangsbereich,,,,BAEGA01,,circulation_area,,116,,rdb
+Aula BA vor Audimax,,,,BAU1C01,,circulation_area,,160,,rdb
+Aula BD,,,,BDEGB33,,circulation_area,,142,,rdb
+Aula vor EI 7 und EI 8,,,,CDEG09,,circulation_area,,420,,rdb
+Aula vor EI 9 und EI 10,,,,CAEG18,,circulation_area,,233,,rdb
+Gußhaus - Aula Eingangsbereich,,,,CAEG01,,circulation_area,,335,,rdb
+Gußhaus - Dachterrasse,,,,CA0601A,,circulation_area,,965,,rdb
+Aula 1.OG gelb,,,,DB01A02,,circulation_area,,345,,rdb
+Aula 1.OG grün,,,,DA01A05,,circulation_area,,276,,rdb
+Aula 1.OG rot,,,,DC01A03,,circulation_area,,292,,rdb
+Aula 2.OG gelb,,,,DB02A02,,circulation_area,,335,,rdb
+Aula 2.OG grün,,,,DA02A05,,circulation_area,,312,,rdb
+Aula 2.OG rot,,,,DC02A03,,circulation_area,,291,,rdb
+Aula EG gelb,,,,DBEGA01,,circulation_area,,378,,rdb
+Aula EG grün,,,,DAEGA07,,circulation_area,,155,,rdb
+Aula EG rot,,,,DCEGA03,,circulation_area,,642,,rdb
+Aufbaulabor,,,,AH0105,ABL,drawing_room,,267,120,tiss rdb
+Zeichensaal 7,,,,AG0306,ZS7,drawing_room,,,90,tiss
+Zeichensaal Ella Briggs,,,,AFEG08,AFEG08,drawing_room,,,30,tiss
+Zeichensaal CF 03 35,,,,CF0335,CF0335,drawing_room,,,20,tiss
+Zeichensaal 1,,,,DA08E10,DA 08 E10,drawing_room,,,40,tiss
+Zeichensaal 3,,,,DA07A05,DA07A05,drawing_room,,122,80,tiss rdb
+Begleitraum Kuppelsaal,,,,AA0428,,event_room,,77,,rdb
+Boecklsaal,,,,AA0162,,event_room,,122,,rdb
+Festsaal,,,,AA0148,,event_room,,190,,rdb
+Kuppelsaal,,,,AA0448,,event_room,,460,,rdb
+TUtheSky,,,,BA11B09,,event_room,,230,,rdb
+Kontaktraum,,,,CD0603,,event_room,,176,,rdb
+Vortragsraum Bibliothek,,,,DD05B04,,event_room,,53,,rdb
+Seminarraum Erzherzog Johann,,,,FB0513,,event_room,,32,,rdb
+PC1,,,,AF0106,AF0106,lab,,,29,tiss
+PC2,,,,AF0105,AF0105,lab,,,9,tiss
+PC3,,,,AF0113,AF0113,lab,,,8,tiss
+PC4,,,,AF0122,AF0122,lab,,,15,tiss
+PC5,,,,AF0116,AF0116,lab,,,15,tiss
+PC6,,,,AF0101,AF0101,lab,,,7,tiss
+PC7,,,,AFEG06,AFEG 06,lab,,,29,tiss
+PC8,,,,AFEG03,AFEG03,lab,,,13,tiss
+Raumlabor,,,,ACU106,ACU 106,lab,,,20,tiss
+Analytische Chemie Hörerlabor links,,,,BB05C01,BB05C01,lab,,,32,tiss
+Analytische Chemie Hörerlabor rechts,,,,BB05C17,BB05C17,lab,,,32,tiss
+Bioreaktorlabor,,,,BHEGE06,BHEGE06,lab,,,3,tiss
+CAD-Labor Saal 1 und 2,,,,BD07B33,BD 07 D32,lab,,,60,tiss
+CAD-Labor Saal 3,,,,BD06B33,BD 06 B33,lab,,,30,tiss
+Chemie Labor Elektrochemie,,,,BCEGH29,BCEGH29,lab,,,1,tiss
+FG Labs CT/Konegger 1,,,,BB02C01,BB02C01,lab,,,3,tiss
+FG Labs CT/Konegger 2,,,,BB02C09,BB02C09,lab,,,3,tiss
+FG Labs CT/Konegger 3,,,,BB02C13,BB02C13,lab,,,3,tiss
+FG Labs CT/Konegger 4,,,,BB03C01,BB03C01,lab,,,3,tiss
+FG Labs CT/Konegger 5,,,,BB03C05,BB03C05,lab,,,3,tiss
+FG Labs Eder/Cherevan/Bayer-Skoff 1,,,,BC02H21,BC02H21,lab,,,3,tiss
+FG Labs Eder/Cherevan/Bayer-Skoff 2,,,,BC02H31,BC02H31,lab,,,3,tiss
+FG Labs Eder/Cherevan/Bayer-Skoff 3,,,,BC02H41,BC02H41,lab,,,3,tiss
+FG Labs Fleig/Opitz/Fafilek 1,,,,BCEGH21,BCEGH21,lab,,,3,tiss
+FG Labs Fleig/Opitz/Fafilek 2,,,,BCEGH25,BCEGH25,lab,,,3,tiss
+FG Labs Fleig/Opitz/Fafilek 3,,,,BCEGH31,BCEGH31,lab,,,3,tiss
+Forschungslabor,,,,BH03A01,BH03A01,lab,,,5,tiss
+Hauptlabor des VT-Instituts,,,,BI04G12,BI04G12,lab,,,9,tiss
+Hörerlabor,,,,BHEGA01,BHEGA01,lab,,,22,tiss
+Hörerlabor BC 1,,,,BC04H01,BC04H01,lab,,,21,tiss
+Hörerlabor BC 2,,,,BC04H11,BC04H11,lab,,,18,tiss
+Hörerlabor BC 3,,,,BC04H21,BC04H21,lab,,,20,tiss
+Hörerlabor BC 4,,,,BC04H31,BC04H31,lab,,,23,tiss
+Hörerlabor BC 5,,,,BC04H41,BC04H41,lab,,,27,tiss
+Hörerlabor BK,,,,BKU1B03,BKU1B03,lab,,,62,tiss
+Isotopenlabor,,,,BZ0305,BZ0305,lab,,,3,tiss
+Labor 2 des FB MVT und Luftreinhaltetechnik,,,,BI03A09,BI03A09,lab,,,3,tiss
+Labor Fördertechnik,,,,BDU1D42,BD U1 D42,lab,,,5,tiss
+Laborraum BB 01 C15,,,,BB01C15,BB01C15,lab,,,3,tiss
+Laborraum BB 01 C19,,,,BB01C19,BB01C19,lab,,,3,tiss
+Laborraum BB 01 C23,,,,BB01C23,BB01C23,lab,,,3,tiss
+Laborraum BB 02 C03,,,,BB02C03,BB02C03,lab,,,3,tiss
+Laborraum BB 02 C17,,,,BB02C17,BB02C17,lab,,,3,tiss
+Laborraum BB 02 C23,,,,BB02C23,BB02C23,lab,,,3,tiss
+Laborraum BB 02 G02,,,,BB02G02,BB02G02,lab,,,3,tiss
+Laborraum BB 02 G06,,,,BB02G06,BB02G06,lab,,,3,tiss
+Laborraum BB 03 C09,,,,BB03C09,BB03C09,lab,,,3,tiss
+Laborraum BB EG C01,,,,BBEGC01,BBEGC01,lab,,,3,tiss
+Laborraum BB U1 C11,,,,BBU1C11,BBU1C11,lab,,,3,tiss
+Laborraum BB U1 G06,,,,BBU1G06,BBU1G06,lab,,,3,tiss
+Laborraum BI U1 A03,,,,BIU1A03,BIU1A03,lab,,,3,tiss
+Nasslabor,,,,BB03C17,BB03C17,lab,,,3,tiss
+PLD Labor,,,,BCU1A06,BCU1A06,lab,,,2,tiss
+Software LAB,,,,BI05G04,BI05G04,lab,,,3,tiss
+Computerlabor CA 05 10,,,,CA0510,CA0510,lab,,,6,tiss
+Computerlabor CA 05 14,,,,CA0514,CA 0514,lab,,,6,tiss
+Computerlabor CA 05 18,,,,CA0518,CA 0518,lab,,,3,tiss
+Computerlabor CH02 17,,,,CH0217,Ch0217,lab,,,18,tiss
+Computerlabor E376 CA 04 26,,,,CA0426,CA0426,lab,,,20,tiss
+Labor CC 01 17,,,,CC0117,CC0117,lab,,,20,tiss
+Labor CF 01 41,,,,CF0141,CF0141,lab,,,10,tiss
+Labor Communication Networks 2,,,,CF0305,CF0305,lab,,,40,tiss
+Labor Hochspannungshalle E370,,,,CFU145,CFU145,lab,,,25,tiss
+Labor Technische Elektronik,,,,CH0213,CH0213,lab,,,18,tiss
+Labor Übungsraum E370,,,,CF0426,CF0426,lab,,,36,tiss
+MEMS-Labor,,,,CA0120,CA0120,lab,,,2,tiss
+Messtechnik Labor,,,,CA0406,CA0406,lab,,,18,tiss
+Microgrid-Labor E370,,,,CFEG17,CFEG17,lab,,,15,tiss
+MNS/MST-Messlabor,,,,CC0225,CC0225,lab,,,6,tiss
+Schutzlabor E370,,,,CFSO42,CFSO42,lab,,,15,tiss
+Sputterlabor,,,,CH0137,CH0137,lab,,,4,tiss
+Werkstoffelabor,,,,CD0108,CD0108,lab,,,12,tiss
+CAD1,,,,DA08G10,DA08G10,lab,,,13,tiss
+CAD2,,,,DA07E10,DA07E10,lab,,,15,tiss
+EDV Praktikum Physik,,,,DB01E09,EDVP,lab,,,32,tiss
+EDV-Raum DA grün 02 D,,,,DA02K20,DA02K20,lab,,,28,colab tiss
+Labor DA 04 A05,,,,DA04A05,DA04A05,lab,,,4,tiss
+TILab Raum 1,,,,DEZE24,DE ZE 24,lab,,,9,tiss
+TILab Raum 2,,,,DEZE32,DE ZE 32,lab,,,9,tiss
+TILab Raum 3,,,,DEZE40,DE ZE 40,lab,,,9,tiss
+TILab Raum 4,,,,DEZE64,DE ZE 64,lab,,,11,tiss
+TILab Raum 5,,,,DEZE72,DE ZE 72,lab,,,3,tiss
+complang-Labor,,,,EAEG19,EAEG 19,lab,,,26,tiss
+DSLab,,,,EAU120B,EA U1 20B,lab,,,24,tiss
+InfLab Frogger,,,,HGEG05,HGEG05,lab,,,25,tiss
+InfLab Pong,,,,HGEG15,HGEG15,lab,,,10,tiss
+InfLab Q*bert,,,,HGEG01A,HGEG05A,lab,,,25,tiss
+Informatiklabor Breakout,,,,HE0232,HEEG07,lab,,,10,tiss
+Informatiklabor Zelda,,,,HE0236,HEEG10,lab,,,10,tiss
+Labor,,,,HCEG13,HCEG13,lab,,,7,tiss
+Labor,,,,HE0250,HE0250,lab,,,7,tiss
+Labor Mechanische Prüfung I,,,,HAEG09,HAEG09,lab,,,6,tiss
+Labor - Ofenraum,,,,HAEG04,HAEG04,lab,,,9,tiss
+Labor WM,,,,HAEG11,HAEG11,lab,,,7,tiss
+Labor WM1,,,,HAEG16,HAEG16,lab,,,8,tiss
+Hörsaal 6,,HS 6,,AEEG40,H6,lecture_hall,,144,167,colab tiss rdb
+Hörsaal 7,Schütte-Lihotzky,HS 7,,AHEG07,H7,lecture_hall,,162,143,colab rdb tiss
+Hörsaal 8,Heinz Parkus,HS 8,,AE0141,H8,lecture_hall,,186,196,colab tiss rdb
+Hörsaal 11,Paul Ludwik,HS 11,,AC0240,,lecture_hall,,175,,colab rdb
+Hörsaal 12,,HS 12,,AF0222,H12,lecture_hall,,165,64,colab tiss rdb
+Hörsaal 13,Ernst Melan,HS 13,,AE0239,H13,lecture_hall,,183,174,rdb colab tiss
+Hörsaal 14,,HS 14,,AB0302,H14,lecture_hall,,41,36,colab tiss
+Hörsaal 14a,Günther Feuerstein,HA 14a,,AB0306,H14A,lecture_hall,,,102,colab tiss rdb rdb
+Hörsaal 15,,HS 15,,AB0314,H15,lecture_hall,,61,52,colab tiss rdb
+Hörsaal 17,Friedrich Hartmann,HS 17,,AE0341,H17,lecture_hall,,185,211,colab tiss rdb
+Hörsaal 18,Czuber,HS 18,,AE0238,H18,lecture_hall,,175,200,colab tiss rdb
+Hörsaal AE U1-1,,,,AEU141,AEU141,lecture_hall,,177,186,tiss rdb colab
+GM Hörsaal 1,Audi. Max.,Audimax,,BAU178A,AUDI,lecture_hall,,462,500,tiss colab rdb
+GM Hörsaal 2,Radinger,GM 2,,BD01B33,RADI,lecture_hall,,241,240,colab tiss rdb
+GM Hörsaal 3,Vortmann,GM 3,,BA02A05,VORT HS,lecture_hall,,89,110,colab tiss rdb
+GM Hörsaal 4,Knoller,GM 4,,BD02D32,KNOL,lecture_hall,,93,104,colab tiss rdb
+GM Hörsaal 5,Praktikum,GM 5,,BAU276A,BA_PRAKT,lecture_hall,,192,240,tiss rdb colab
+GM Hörsaal 7,Kleiner Schiffbau,GM 7,,BD01B41,KSCH,lecture_hall,,49,32,tiss rdb colab
+GM Hörsaal 8/9,des Internationalen Wiener Motorensymposiums,GM 8/9,,BD02B33,BAU1_ZID,lecture_hall,,73,70,tiss rdb colab
+EI Hörsaal 1,Petritsch,EI 1,,CF0242,E1,lecture_hall,,64,63,colab tiss rdb
+EI Hörsaal 2,Pichelmayer,EI 2,,CF0235,E2,lecture_hall,,123,123,colab tiss rdb
+EI Hörsaal 3,Sahulka,EI 3,,CF0205,E3,lecture_hall,,161,184,colab tiss rdb
+EI Hörsaal 3a,,EI 3a,,CF0213,E3A,lecture_hall,,68,59,colab tiss rdb
+EI Hörsaal 4,Reithoffer,EI 4,,CF0245,E4,lecture_hall,,101,90,colab tiss rdb
+EI Hörsaal 5,Hochnegg,EI 5,,CF0229,E5,lecture_hall,,121,114,colab rdb tiss
+EI Hörsaal 6,Eckert,EI 6,,CF0453,E6,lecture_hall,,70,32,colab tiss rdb
+EI Hörsaal 7,,EI 7,,CDEG13,E7,lecture_hall,,405,434,colab tiss rdb
+EI Hörsaal 8,Pötzl,EI 8,,CDEG08,E8,lecture_hall,,136,139,colab tiss rdb
+EI Hörsaal 9,Hlawka,EI 9,,CAEG17,E9,lecture_hall,,175,181,colab tiss rdb
+EI Hörsaal 10,Fritz Paschke,EI 10,,CAEG31,E10,lecture_hall,,146,151,colab tiss rdb
+EI Hörsaal 11,Geodäsie,EI 11,,CD0304,E11,lecture_hall,,119,94,colab tiss rdb
+FH Hörsaal 1,,FH 1,,DC02H03,F1,lecture_hall,,473,383,colab tiss rdb
+FH Hörsaal 2,,FH 2,,DB02O23,F2,lecture_hall,,63,53,colab tiss rdb
+FH Hörsaal 3,,FH 3,,DB02O13,F3,lecture_hall,,90,87,colab tiss rdb
+FH Hörsaal 4,,FH 4,,DB02O05,F4,lecture_hall,,63,54,colab tiss rdb
+FH Hörsaal 5,,FH 5,,DA02G15,F5,lecture_hall,,220,198,colab tiss rdb
+FH Hörsaal 6,,FH 6,,DA02K01,F6,lecture_hall,,216,198,colab tiss rdb
+FH Hörsaal 7,,FH 7,,DB02H04,F7,lecture_hall,,82,70,colab tiss rdb
+FH Hörsaal 8,Nöbauer,FH 8,,DB02H12,F8,lecture_hall,,142,203,colab tiss rdb
+Informatikhörsaal,,,,DEEG16 DEU116,INFH,lecture_hall,,303,392,colab tiss rdb
+FAV Hörsaal 1,,FAV 1,,HEEG02,FAV1,lecture_hall,,,106,colab tiss
+FAV Hörsaal 2,,FAV 2,,HEEG03,FAV2,lecture_hall,,,35,colab tiss
+FAV Hörsaal 3,Zemanek,FAV 3,Seminarraum Zemanek,HHEG01,ZEMS,lecture_hall,,,40,colab tiss
+Hörsaal Atrium 1,,,,OZEG80,OZEG80,lecture_hall,,192,150,colab tiss rdb
+Hörsaal Atrium 2,,,,OZEG76,OZEG76,lecture_hall,,188,86,colab tiss rdb
+Hörsaal O221,,,,OA01E29,OA01E29,lecture_hall,,216,145,colab tiss rdb
+Theresianum Hörsaal 1,,THE 1,Bombardier Hörsaal,QA0101,THE1,lecture_hall,,117,78,colab tiss rdb
+Theresianum Hörsaal 2,,THE 2,,QA0107,THE2,lecture_hall,,51,35,colab tiss rdb
+Hörsaal W3,,,,WB03A24,WB03A24,lecture_hall,,,96,tiss
+Hörsaal W4,,,,WBU1F01,WBUIF01,lecture_hall,,,174,tiss
+Hörsaal W5,,,,WAEGE07,WAEG07,lecture_hall,,,138,tiss
+Hörsaal WEDV,,,,WC03A24,WC03A24,lecture_hall,,,70,tiss
+Hörsaal Atominstitut,,,,ZDEG01,AIHS,lecture_hall,,182,196,tiss rdb
+Büro,,,,BCEGA12,BCEGA12,office,,,3,tiss
+Büro Birner-Grünberger,,,,BZ0101,BZ0101,office,,,3,tiss
+Büro Bösendorfer,,,,BZ0231,BZ0231,office,,,5,tiss
+Büro Eder,,,,BC02A38,BC02A38,office,,,3,tiss
+Büro Enev,,,,BIEGB07,BIEGB07,office,,,3,tiss
+Büro Gärtner,,,,BI02A17,BI02A17,office,,,3,tiss
+Büro Haddadi Sisakht,,,,BI03A03,BI03A03,office,,,5,tiss
+Büro Harasek,,,,BI03A17,BI03A17,office,,,5,tiss
+Büro Jordan,,,,BI03A19,BI03A19,office,,,5,tiss
+Büro Kasper-Giebl,,,,BB03I25,BB03I25,office,,,3,tiss
+Büro Khatibi,,,,BB02O25,BB02O25,office,,,3,tiss
+Büro Marchetti-Deschmann,,,,BB05N25,BB05N25,office,,,3,tiss
+Büro Mauschitz,,,,BI05G24,BI05G24,office,,,5,tiss
+Büro Mikula,,,,BI01H08,BI01H08,office,,,3,tiss
+Büro Rameshan,,,,BC01A34,BC01A34,office,,,3,tiss
+Büro Rudroff,,,,BI02H18,BI02H18,office,,,3,tiss
+Büro Schnürch,,,,BI02A07,BI02A07,office,,,5,tiss
+Büro Stanetty,,,,BI02H08,BI02H08,office,,,3,tiss
+Büro Wukovits,,,,BZ0232,BZ0232,office,,,5,tiss
+Büro Zkiel/Adamcyk,,,,BI03G04,BI03G04,office,,,5,tiss
+Büro,,,,HCEG03,HCEG03,office,,,15,tiss
+BI EDV-Lehrraum,,,,AE0138,AE0138,other,,,30,tiss
+BI Sitzungszimmer,,,,AE0144,AE0144,other,,,20,tiss
+Konferenzraum der Fakultät Architektur und Raumplanung,,,,AFDG30,S1,other,,,40,tiss
+AFM,,,,BB04C01,BB04C01,other,,,3,tiss
+Anorganische Spurenalanlytik,,,,BB04C23,BB04C23,other,,,3,tiss
+Besprechungsraum 01,,,,BC01A04,BC01A04,other,,,5,tiss
+Chromatographie GC-MS,,,,BB04N17,BB04N17,other,,,3,tiss
+Chromotographie,,,,BB03C13,BB03C13,other,,,3,tiss
+Chromotographie LC-MS,,,,BB04P17,BB04P17,other,,,3,tiss
+Dunkelkammer,,,,BBU1H02,BBU1H02,other,,,3,tiss
+Imaging MS,,,,BB04C13,BB04C13,other,,,3,tiss
+Laserspektroskopie,,,,BB03G10,BB03G10,other,,,3,tiss
+Maldi,,,,BB04C19,BB04C19,other,,,3,tiss
+Metabolomics + Bioprozessanalytik,,,,BB05G10,BB05G10,other,,,3,tiss
+Nasschemie,,,,BB01G02,BB01G02,other,,,3,tiss
+Ofenraum CT,,,,BBU1G10,BBU1G10,other,,,4,tiss
+Ofenraum FK,,,,BB01C01,BB01C01,other,,,3,tiss
+Rasterelektronenmikroskop,,,,BB04L17,BB04L17,other,,,2,tiss
+Raum Madsen,,,,BC01A50,BC01A50,other,,,5,tiss
+Röntgenzentrum,,,,BCU1A22,BCU1A22,other,,,3,tiss
+SIMS,,,,BB04C03,BB04C03,other,,,3,tiss
+Sinterraum,,,,BB01C05,BB01C05,other,,,3,tiss
+Sitzungszimmer BI 03A03,,,,BI03A03,166S,other,,,12,tiss
+Verfahrenstechnik Technikum,,,,BBU1L17,BBU1L17,other,,,12,tiss
+Vortragsraum Konstruktionslehre,,,,BD04B33,BD 04 B33,other,,,8,tiss
+Zentralgarderobe BCU1,,,,BCU1F37,BCU1F37,other,,,150,tiss
+Zentralgarderobe BIU1,,,,BIU1G18,BIU1G18,other,,,218,tiss
+Besprechungsraum 362 - 2,,,,CH0205B,CH0205B,other,,,12,tiss
+Bibliothek E 351,,,,CB0115,CB0115,other,,,20,tiss
+Bibliothek E354,,,,CF0117,CF0117,other,,,20,tiss
+Maschinensaal,,,,CFSO05,CFSO05,other,,,40,tiss
+MEMS Reinraum,,,,CA0112,CA0112,other,,,4,tiss
+MEMS-Reinraum Schleuse,,,,CA0118,CA0118,other,,,1,tiss
+MEMS-Reinraum Umkleide,,,,CA0118a,CA0118a,other,,,2,tiss
+Stromversorgungsraum,,,,CFSO16,CFSO16,other,,,8,tiss
+CPS Bibliothek,,,,DE0328,DE0328,other,,,11,tiss
+FAM Bibliothek,,,,DA07H10,DA 07 H10,other,,,10,tiss
+Ersatzraum Prechtlsaal 1,,,,FCEG13A,FCEG13A,other,,,10,tiss
+Ersatzraum Prechtlsaal 2,,,,FBEG13,FBEG13,other,,,25,tiss
+Ersatzraum Prechtlsaal 3,,,,FBEG09,FBEG09,other,,,10,tiss
+TVFA Halle,,,,FCEG14H,FCEG14H,other,,,300,colab tiss
+Werkstatt,,,,HIEG08,HIEG08,other,,,7,tiss
+Besprechung O214-1,,,,OZEG43,OZEG43,other,,,14,tiss
+Besprechung O214-2,,,,OZEG33,OZEG33,other,,,12,tiss
+Bibliothek Atominstitut,,,,ZA0115,ATIB,other,,162,25,tissrdb
+Projektraum 2,,,,AC0324,ZS2,project_room,,54,25,tiss rdb
+Projektraum 8,,,,AC0329,ZS8,project_room,,50,25,tiss rdb
+Projektraum 13,,,,AC0144,ZS13,project_room,,68,35,tiss rdb
+Projektraum 14,,,,AC0138,ZS14,project_room,,52,25,tiss rdb
+Projektraum 15,,,,AA0241,,project_room,,73,,rdb
+Projektraum GBL - 2/253,,,,AFDG26,2532,project_room,,54,20,tiss rdb
+Projektraum HB1 - 6/253,,,,AFDG10,S6,project_room,,54,20,tiss rdb
+Projektraum HB2 - 7/253,,,,AFDG06,2537,project_room,,54,20,tiss rdb
+Projektraum IEMAR 1/259,,,,AG0216,IEM,project_room,,36,18,tiss rdb
+Projektraum RG - 4/253,,,,AFDG18,2534,project_room,,,20,tiss rdb
+Projektraum STB - 5/260,,,,AFDG14,5260,project_room,,,20,tiss
+Projektraum STB - 5/260,,,,AFDG18,,project_room,,54,,rdb
+Projektraum WB - 3/253,,,,AFDG22,2533,project_room,,,20,tiss
+Projektraum WB - 3/253,,,,AFDG26,,project_room,,54,,rdb
+Projektraum Arsenal 1 - Obj. 214,,,,OY0135,OY0114,project_room,,,50,tiss
+Projektraum Arsenal 2 - Obj. 214,,,,OY0149,OY0102,project_room,,,40,tiss
+Prechtlsaal,,,,AAEG18,,seminar_room,,,,
+Prechtlsaal (großer Teil),,,,AAEG18,AAEG18,seminar_room,Prechtlsaal,187,200,colab tiss rdb
+Prechtlsaal (kleiner Teil),,,,AAEG18,AAEG-18,seminar_room,Prechtlsaal,126,100,tiss rdb
+Seminarraum 8,,,,AHEG05,2503,seminar_room,,43,25,colab tiss rdb
+Seminarraum 202,,,,AE0215,202,seminar_room,,54,22,colab tiss rdb
+Seminarraum 213,,,,AE0315,213,seminar_room,,52,18,tiss rdb
+Seminarraum 222,,,,AD0309,,seminar_room,,,,colab
+Seminarraum 234,,,,AEEG25,234,seminar_room,,54,25,tiss rdb
+Seminarraum 251,,,,AC0314,251,seminar_room,,,12,tiss
+Seminarraum 107/1,,,,AP0107,1071,seminar_room,,42,25,colab tiss rdb
+Seminarraum 212-232,,,,AA0318,,seminar_room,,75,,colab rdb
+Seminarraum AA 03-1,,,,AA0352,AA0352,seminar_room,,,30,tiss
+Seminarraum AA 02 41,,,,AA0241,ZS15,seminar_room,,,35,colab tiss
+Seminarraum AC 04 40,,,,AC0440,AC0440,seminar_room,,,50,colab tiss
+Seminarraum AD 03-1,,,,AD0309,222,seminar_room,,,46,tiss
+Seminarraum AD EG-1,,,,ADEG19,,seminar_room,,,,colab
+Seminarraum AE U1-1,,,,AEU103,AEU103,seminar_room,,59,28,colab tiss rdb
+Seminarraum AE U1-2,,,,AEU107,AEU107,seminar_room,,54,28,colab tiss rdb
+Seminarraum AE U1-3,,,,AEU115,AEU115,seminar_room,,44,24,colab tiss rdb
+Seminarraum AE U1-4,,,,AEU119,AEU119,seminar_room,,79,37,colab tiss rdb
+Seminarraum AE U1-5,,,,AEU125,AEU125,seminar_room,,74,37,colab tiss rdb
+Seminarraum AE U1-6,,,,AEU131,AEU131,seminar_room,,48,25,colab tiss rdb
+Seminarraum AE U1-7,,,,AEU140,AEU140,seminar_room,,117,54,colab tiss rdb
+Seminarraum BA 02 A,,,,BA02G02,SEM BA 02A,seminar_room,,42,40,colab tiss rdb
+Seminarraum BA 02 B,,,,BA02A17,SEM BA 02B,seminar_room,,62,70,colab tiss rdb
+Seminarraum BA 02 C,,,,BA02G08,SEM BA 02C,seminar_room,,42,20,colab tiss rdb
+Seminarraum BA 03,,,Prüfungszimmer Dekanat,BA03D13,BA03 D13,seminar_room,,,10,tiss
+Seminarraum BA 05,,,,BA05G02,SEM BA 05,seminar_room,,40,40,colab tiss rdb
+Seminarraum BA 08 A,,,,BA08G02,SEM BA 08A,seminar_room,,75,40,colab tiss rdb
+Seminarraum BA 08 B,,,,BA08G08,SEM BA 08B,seminar_room,,46,30,colab tiss rdb
+Seminarraum BA 10 A,,,,BA10G02,,seminar_room,,74,,rdb
+Seminarraum BA 10 B,,,,BA10G08,SR BA 10B,seminar_room,,43,30,colab tiss rdb
+Seminarraum BD 02 C,,,,BD02G28,SEM BD 02C,seminar_room,,35,20,colab tiss rdb
+Seminarraum BD 03,,,,BD03G28,307A,seminar_room,,35,28,colab tiss rdb
+Seminarraum BE 01,,,,BE0108,SEMBE02,seminar_room,,,25,tiss
+Seminarraum BH 03 Biotechnologie,,,,BH03F06,166S-5,seminar_room,,,10,tiss
+Seminarraum BH Biosciences,,,,BHEGD16,1665,seminar_room,,,25,tiss
+Seminarraum Lehar 01,,,,BC01A46,Lehar 01,seminar_room,,41,20,colab tiss rdb
+Seminarraum Lehar 02,,,,BC02A46,Lehar 02,seminar_room,,41,20,tiss rdb
+Seminarraum Lehar 03,,,,BC03A46,1633,seminar_room,,40,20,tiss rdb
+Seminarraum Lehar EG,,,,BCEGA36,LeharEG,seminar_room,,,18,tiss
+Seminarraum 127,,,,CD0324,123,seminar_room,,82,37,colab tiss rdb
+Seminarraum 351,,,,CA0138,351,seminar_room,,81,36,tiss rdb
+Seminarraum 354,,,,CF0153,,seminar_room,,66,,rdb
+Seminarraum 366,,,,CC0321,122,seminar_room,,82,36,tiss rdb
+Seminarraum 384,,,,CD0404,,seminar_room,,,,colab
+Seminarraum 384,,,,CD0204,CD0204,seminar_room,,60,36,tiss rdb
+Seminarraum 387,,,,CBEG02,387,seminar_room,,82,30,tiss rdb
+Seminarraum 389,,,,CG0118,CG0118,seminar_room,,,30,tiss
+Seminarraum 362-1,,,,CH0236,CH0236,seminar_room,,91,40,colab tiss rdb
+Seminarraum CD 05 20,,,,CD0520,CD0520,seminar_room,,,10,tiss
+Seminarraum CF 01 53,,,,CF0153,CF 01 53,seminar_room,,,20,colab tiss
+Seminarraum CH EG,,,,CHEG34,CHEG34,seminar_room,,91,30,colab tiss rdb
+Seminarraum 3/2,,,,DF0208,SR 3/2,seminar_room,,,,tiss
+Seminarraum 4/2,,,,DF0212,SR 4/2,seminar_room,,,,tiss
+Seminarraum DA grün 02 A,,,,DA02E08,DA02E08,seminar_room,,89,54,colab tiss rdb
+Seminarraum DA grün 02 B,,,,DA02F16,DA02F16,seminar_room,,89,40,colab tiss rdb
+Seminarraum DA grün 02 C,,,,DA02F20,DA02F20,seminar_room,,,20,colab tiss
+Seminarraum DA grün 02 C,,,,DA02AF20,,seminar_room,,89,,rdb
+Seminarraum DA grün 03 A,,,,DA03A15,101A,seminar_room,,,50,colab tiss
+Seminarraum DA grün 03 B,,,,DA03E10,101B,seminar_room,,85,46,colab tiss rdb
+Seminarraum DA grün 04,,,,DA04E10,101C,seminar_room,,59,30,colab tiss rdb
+Seminarraum DA grün 05,,,,DA05E10,104,seminar_room,,137,60,colab tiss rdb
+Seminarraum DA grün 06 A,,,,DA06E10,107,seminar_room,,60,30,colab tiss rdb
+Seminarraum DA grün 06 B,,,,DA06G10,1016,seminar_room,,33,16,tiss rdb
+Seminarraum DB gelb 03,,,,DB03E11,325/2,seminar_room,,73,33,colab tiss rdb
+Seminarraum DB gelb 04,,,,DB04E11,105A,seminar_room,,72,30,colab tiss rdb
+Seminarraum DB gelb 05 A,,,,DB05E11,134,seminar_room,,75,32,colab tiss rdb
+Seminarraum DB gelb 05 B,,,,DB05L03,134A,seminar_room,,65,24,colab tiss rdb
+Seminarraum DB gelb 07,,,,DB07E11,138A,seminar_room,,72,33,colab tiss rdb
+Seminarraum DB gelb 09,,,,DB09E23,138C,seminar_room,,72,24,colab tiss rdb
+Seminarraum DB gelb 10,,,,DB10E11,136,seminar_room,,72,33,colab tiss rdb
+Seminarraum DC rot 07,,,,DC07A15,138B,seminar_room,,66,23,colab tiss rdb
+Seminarraum DE 01-10,,,,DE0110,DE0110,seminar_room,,,30,tiss
+Seminarraum Technische Informatik,,,,DEEG39,SETI,seminar_room,,,30,tiss
+Besprechungsraum Galerie,,,,EAZE04,BRG,seminar_room,,28,14,tiss rdb
+Besprechungsraum Kuppel,,,,EAEG05A,BRK,seminar_room,,20,8,tiss rdb
+Seminarraum Argentinierstraße,,,,EAEG06,ARG,seminar_room,,182,50,colab tiss rdb
+Seminarraum EB EG-1,,,,EBEG03,EBEG03,seminar_room,,40,16,colab tiss rdb
+Seminarraum EB EG-2,,,,EBEG09,EBEG09,seminar_room,,54,32,colab tiss rdb
+Seminarraum EB EG-3,,,,EBEG20,EBEG20,seminar_room,,50,30,colab tiss rdb
+Seminarraum EB U1-1,,,,EBU103,EBU103,seminar_room,,38,16,colab tiss rdb
+Seminarraum EB U1-2,,,,EBU109,EBU109,seminar_room,,53,32,colab tiss rdb
+Seminarraum EB U1-3,,,,EBU120,EBU120,seminar_room,,35,18,colab tiss rdb
+Seminarraum 126,,,,FB0113,126,seminar_room,,,28,tiss
+Seminarraum 233,,,,FA0212,233,seminar_room,,,18,tiss
+Seminarraum 01 A,,,,HE0102,,seminar_room,,,,colab
+Seminarraum FAV 01 A,,,Seminarraum 183/2,HE0102,1832,seminar_room,,47,23,rdb tiss
+Seminarraum FAV 01 B,,,Seminarraum 187/2,HF0109,1872,seminar_room,,55,27,colab rdb tiss
+Seminarraum FAV 01 C,,,Seminarraum 188/2,HE0108,1882,seminar_room,,47,27,colab rdb tiss
+Seminarraum FAV 05,,,Seminarraum 186,HA0503,186,seminar_room,,85,36,colab rdb tiss
+Seminarraum FAV EG B,,,Seminarraum von Neumann,HBEG16,SEMN,seminar_room,,29,25,colab tiss rdb
+Seminarraum FAV EG C,,,Seminarraum Gödel,HBEG10,SEMG,seminar_room,,45,30,colab tiss rdb
+Seminarraum Funke Halle,,,,MBEG28,F311,seminar_room,,,30,tiss
+Seminarraum 1,,,,OC01I27,OC 01 I27,seminar_room,,,54,tiss
+Seminarraum 2,,,,OC01H23,OC 01 H23,seminar_room,,,66,tiss
+Seminarraum 3,,,,OC01E23,OC 01 E23,seminar_room,,,34,tiss
+Seminarraum O214-1,,,,OZEG43,,seminar_room,,40,,colab rdb
+Seminarraum O214-2,,,,OZEG33,,seminar_room,,30,,colab rdb
+Seminarraum O221-1,,,,OAEGC11,OAEGC11,seminar_room,,,25,colab tiss
+Seminarraum O221-1,,,,OAEGC45,,seminar_room,,63,,rdb
+Seminarraum O221-2,,,,OAEGC45,OAEGC45,seminar_room,,,25,colab tiss
+Seminarraum O221-2,,,,OAEGC11,,seminar_room,,75,,rdb
+Seminarraum O236-1,,,,OC01I27,,seminar_room,,,,colab
+Seminarraum O236-2,,,,OC02H23,,seminar_room,,,,colab
+Seminarraum O236-3,,,,OC01E23,,seminar_room,,,,colab
+Seminarraum OD 01 22,,,,OD0122,,seminar_room,,,,colab
+Seminarraum 3/4,,,,WA02A02,WD02A02,seminar_room,,,42,tiss
+Seminarraum 4/2,,,,WC02A23,WC02A23,seminar_room,,,70,tiss
+Seminarraum 280,,,,WD02B21,WD02B21,seminar_room,,,20,tiss
+Seminarraum 268/1,,,,WA02A01,WD02A01,seminar_room,,,40,tiss
+Seminarraum 268/2,,,,WB02E11,WB02E11,seminar_room,,,20,tiss
+Seminarraum 268/3,,,,WA02E07,WA02E07,seminar_room,,,24,tiss
+Seminarraum 280/1,,,,WA02A19,WA02A19,seminar_room,,,60,tiss
+Seminarraum 280/2,,,,WB02A23,WB02A23,seminar_room,,,72,tiss
+Seminarraum W1,,,,WB02A01,WB02A01,seminar_room,,,60,tiss
+Seminarraum W7A,,,,WB02J18,WB02J18,seminar_room,,,20,tiss
+Seminarraum W15,,,,WD02A21,WD02A21,seminar_room,,,60,tiss
+Seminarraum W30,,,,WD02A03,WD02A03,seminar_room,,,24,tiss
+Seminarraum W92,,,,WDEGG09,WDEG09,seminar_room,,,100,tiss
+Seminarraum Atominstitut,,,,ZDEG10,AIS,seminar_room,,37,25,tiss rdb
