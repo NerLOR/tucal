@@ -1,12 +1,12 @@
 #!/bin/env python3
 
-import tuwien.tiss
-import tuwien.colab
-import tuwien.rdb
 import re
 import typing
 import sys
 
+import tuwien.tiss
+import tuwien.colab
+import tuwien.rdb
 
 NAME_REPLACE = re.compile(r'[^A-Za-z0-9äüößÄÜÖẞ]')
 

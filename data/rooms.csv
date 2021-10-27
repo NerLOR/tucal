@@ -122,8 +122,8 @@ InfLab Pong,,,,HGEG15,HGEG15,lab,,,10,tiss
 InfLab Q*bert,,,,HGEG01A,HGEG05A,lab,,,25,tiss
 Informatiklabor Breakout,,,,HE0232,HEEG07,lab,,,10,tiss
 Informatiklabor Zelda,,,,HE0236,HEEG10,lab,,,10,tiss
-Labor,,,,HCEG13,HCEG13,lab,,,7,tiss
-Labor,,,,HE0250,HE0250,lab,,,7,tiss
+Labor HC,,,,HCEG13,HCEG13,lab,,,7,tiss
+Labor HE,,,,HE0250,HE0250,lab,,,7,tiss
 Labor Mechanische Prüfung I,,,,HAEG09,HAEG09,lab,,,6,tiss
 Labor - Ofenraum,,,,HAEG04,HAEG04,lab,,,9,tiss
 Labor WM,,,,HAEG11,HAEG11,lab,,,7,tiss
@@ -181,7 +181,7 @@ Hörsaal W4,,,,WBU1F01,WBUIF01,lecture_hall,,,174,tiss
 Hörsaal W5,,,,WAEGE07,WAEG07,lecture_hall,,,138,tiss
 Hörsaal WEDV,,,,WC03A24,WC03A24,lecture_hall,,,70,tiss
 Hörsaal Atominstitut,,,,ZDEG01,AIHS,lecture_hall,,182,196,tiss rdb
-Büro,,,,BCEGA12,BCEGA12,office,,,3,tiss
+Büro BC EG A12,,,,BCEGA12,BCEGA12,office,,,3,tiss
 Büro Birner-Grünberger,,,,BZ0101,BZ0101,office,,,3,tiss
 Büro Bösendorfer,,,,BZ0231,BZ0231,office,,,5,tiss
 Büro Eder,,,,BC02A38,BC02A38,office,,,3,tiss
@@ -201,7 +201,7 @@ Büro Schnürch,,,,BI02A07,BI02A07,office,,,5,tiss
 Büro Stanetty,,,,BI02H08,BI02H08,office,,,3,tiss
 Büro Wukovits,,,,BZ0232,BZ0232,office,,,5,tiss
 Büro Zkiel/Adamcyk,,,,BI03G04,BI03G04,office,,,5,tiss
-Büro,,,,HCEG03,HCEG03,office,,,15,tiss
+Büro HC EG 03,,,,HCEG03,HCEG03,office,,,15,tiss
 BI EDV-Lehrraum,,,,AE0138,AE0138,other,,,30,tiss
 BI Sitzungszimmer,,,,AE0144,AE0144,other,,,20,tiss
 Konferenzraum der Fakultät Architektur und Raumplanung,,,,AFDG30,S1,other,,,40,tiss
@@ -257,10 +257,8 @@ Projektraum 6-253,HB1,,,AFDG10,S6,project_room,,54,20,tiss rdb
 Projektraum 7-253,HB2,,,AFDG06,2537,project_room,,54,20,tiss rdb
 Projektraum 1-259,IEMAR,,,AG0216,IEM,project_room,,36,18,tiss rdb
 Projektraum 4-253,RG,,,AFDG18,2534,project_room,,,20,tiss rdb
-Projektraum 5-260,STB,,,AFDG14,5260,project_room,,,20,tiss
-Projektraum 5-260,STB,,,AFDG18,,project_room,,54,,rdb
-Projektraum 3-253,WB,,,AFDG22,2533,project_room,,,20,tiss
-Projektraum 3-253,WB,,,AFDG26,,project_room,,54,,rdb
+Projektraum 5-260,STB,,,AFDG14 AFDG18,5260,project_room,,54,20,tiss rdb
+Projektraum 3-253,WB,,,AFDG22 AFDG26 ,2533,project_room,,54,20,tiss
 Projektraum Arsenal 1,,,,OY0135,OY0114,project_room,,,50,tiss
 Projektraum Arsenal 2,,,,OY0149,OY0102,project_room,,,40,tiss
 Prechtlsaal,,,,AAEG18,,seminar_room,,,,
@@ -308,7 +306,6 @@ Seminarraum 127,,,,CD0324,123,seminar_room,,82,37,colab tiss rdb
 Seminarraum 351,,,,CA0138,351,seminar_room,,81,36,tiss rdb
 Seminarraum 354,,,,CF0153,,seminar_room,,66,,rdb
 Seminarraum 366,,,,CC0321,122,seminar_room,,82,36,tiss rdb
-Seminarraum 384,,,,CD0404,,seminar_room,,,,colab
 Seminarraum 384,,,,CD0204,CD0204,seminar_room,,60,36,tiss rdb
 Seminarraum 387,,,,CBEG02,387,seminar_room,,82,30,tiss rdb
 Seminarraum 389,,,,CG0118,CG0118,seminar_room,,,30,tiss
@@ -320,8 +317,7 @@ Seminarraum 3-2,,,,DF0208,SR 3/2,seminar_room,,,,tiss
 Seminarraum 4-2,,,,DF0212,SR 4/2,seminar_room,,,,tiss
 Seminarraum DA grün 02 A,,,,DA02E08,DA02E08,seminar_room,,89,54,colab tiss rdb
 Seminarraum DA grün 02 B,,,,DA02F16,DA02F16,seminar_room,,89,40,colab tiss rdb
-Seminarraum DA grün 02 C,,,,DA02F20,DA02F20,seminar_room,,,20,colab tiss
-Seminarraum DA grün 02 C,,,,DA02AF20,,seminar_room,,89,,rdb
+Seminarraum DA grün 02 C,,,,DA02F20,DA02F20,seminar_room,,89,20,colab tiss rdb
 Seminarraum DA grün 03 A,,,,DA03A15,101A,seminar_room,,,50,colab tiss
 Seminarraum DA grün 03 B,,,,DA03E10,101B,seminar_room,,85,46,colab tiss rdb
 Seminarraum DA grün 04,,,,DA04E10,101C,seminar_room,,59,30,colab tiss rdb
@@ -336,7 +332,7 @@ Seminarraum DB gelb 07,,,,DB07E11,138A,seminar_room,,72,33,colab tiss rdb
 Seminarraum DB gelb 09,,,,DB09E23,138C,seminar_room,,72,24,colab tiss rdb
 Seminarraum DB gelb 10,,,,DB10E11,136,seminar_room,,72,33,colab tiss rdb
 Seminarraum DC rot 07,,,,DC07A15,138B,seminar_room,,66,23,colab tiss rdb
-Seminarraum DE 01-10,,,,DE0110,DE0110,seminar_room,,,30,tiss
+Seminarraum DE 01 10,,,,DE0110,DE0110,seminar_room,,,30,tiss
 Seminarraum Technische Informatik,,,,DEEG39,SETI,seminar_room,,,30,tiss
 Besprechungsraum Galerie,,,,EAZE04,BRG,seminar_room,,28,14,tiss rdb
 Besprechungsraum Kuppel,,,,EAEG05A,BRK,seminar_room,,20,8,tiss rdb
@@ -362,22 +358,20 @@ Seminarraum 2,,,,OC01H23,OC 01 H23,seminar_room,,,66,tiss
 Seminarraum 3,,,,OC01E23,OC 01 E23,seminar_room,,,34,tiss
 Seminarraum O214-1,,,,OZEG43,,seminar_room,,40,,colab rdb
 Seminarraum O214-2,,,,OZEG33,,seminar_room,,30,,colab rdb
-Seminarraum O221-1,,,,OAEGC11,OAEGC11,seminar_room,,,25,colab tiss
-Seminarraum O221-1,,,,OAEGC45,,seminar_room,,63,,rdb
-Seminarraum O221-2,,,,OAEGC45,OAEGC45,seminar_room,,,25,colab tiss
-Seminarraum O221-2,,,,OAEGC11,,seminar_room,,75,,rdb
+Seminarraum O221-1,,,,OAEGC11,OAEGC11,seminar_room,,63,25,colab tiss rdb
+Seminarraum O221-2,,,,OAEGC45,OAEGC45,seminar_room,,75,25,colab tiss rdb
 Seminarraum O236-1,,,,OC01I27,,seminar_room,,,,colab
 Seminarraum O236-2,,,,OC02H23,,seminar_room,,,,colab
 Seminarraum O236-3,,,,OC01E23,,seminar_room,,,,colab
 Seminarraum OD 01 22,,,,OD0122,,seminar_room,,,,colab
-Seminarraum 3-4,,,,WA02A02,WD02A02,seminar_room,,,42,tiss
-Seminarraum 4-2,,,,WC02A23,WC02A23,seminar_room,,,70,tiss
-Seminarraum 280,,,,WD02B21,WD02B21,seminar_room,,,20,tiss
-Seminarraum 268-1,,,,WA02A01,WD02A01,seminar_room,,,40,tiss
-Seminarraum 268-2,,,,WB02E11,WB02E11,seminar_room,,,20,tiss
-Seminarraum 268-3,,,,WA02E07,WA02E07,seminar_room,,,24,tiss
-Seminarraum 280-1,,,,WA02A19,WA02A19,seminar_room,,,60,tiss
-Seminarraum 280-2,,,,WB02A23,WB02A23,seminar_room,,,72,tiss
+Seminarraum W 3-4,,,,WA02A02,WD02A02,seminar_room,,,42,tiss
+Seminarraum W 4-2,,,,WC02A23,WC02A23,seminar_room,,,70,tiss
+Seminarraum W 280,,,,WD02B21,WD02B21,seminar_room,,,20,tiss
+Seminarraum W 268-1,,,,WA02A01,WD02A01,seminar_room,,,40,tiss
+Seminarraum W 268-2,,,,WB02E11,WB02E11,seminar_room,,,20,tiss
+Seminarraum W 268-3,,,,WA02E07,WA02E07,seminar_room,,,24,tiss
+Seminarraum W 280-1,,,,WA02A19,WA02A19,seminar_room,,,60,tiss
+Seminarraum W 280-2,,,,WB02A23,WB02A23,seminar_room,,,72,tiss
 Seminarraum W1,,,,WB02A01,WB02A01,seminar_room,,,60,tiss
 Seminarraum W7A,,,,WB02J18,WB02J18,seminar_room,,,20,tiss
 Seminarraum W15,,,,WD02A21,WD02A21,seminar_room,,,60,tiss

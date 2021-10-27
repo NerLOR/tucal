@@ -69,7 +69,7 @@ class Room:
                  capacity: typing.Optional[int] = None, global_buildings: {str: Building} = None):
         self.id = room_id
         self.tiss_name = tiss_name
-        self.name = name or tiss_name
+        self.name = name or tiss_name.split(' - Achtung!')[0]
         self._building_id = building_id
         self.capacity = capacity
         self._global_buildings = global_buildings
