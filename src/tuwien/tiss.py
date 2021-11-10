@@ -7,14 +7,22 @@ import requests
 import re
 import datetime
 import time
+import html
 
 TISS_DOMAIN = 'tiss.tuwien.ac.at'
 TISS_URL = f'https://{TISS_DOMAIN}'
 
 OPTION_BUILDING = re.compile(r'<option value="([A-Z]+)".*?>([A-Z]+) - (.*?) \(([^()]*?)\)</option>')
 OPTION_ROOM = re.compile(r'<option value="([^"]+)"[^>]*>(.*?)( \(([0-9]+)\))?</option>')
+OPTION_INSTITUTE = re.compile(r'<option value="(E[0-9]{3}[^"]*)">(.*?)</option>')
+
+COURSE_TITLE = re.compile(r'<h1>[^<>]*<span[^>]*>[^<>]*</span>\s*(.*?)\s*<', re.MULTILINE | re.UNICODE)
+COURSE_META = re.compile(r'<div id="subHeader" class="clearfix">'
+                         r'[0-9SW]+, ([A-Z]+), ([0-9]+\.[0-9]+)h, ([0-9]+\.[0-9]+)EC')
+
 CDATA = re.compile(r'<!\[CDATA\[(.*?)]]>')
 UPDATE_VIEW_STATE = re.compile(r'<update id="j_id__v_0:javax.faces.ViewState:1"><!\[CDATA\[(.*?)]]></update>')
+INPUT_VIEW_STATE = re.compile(r'<input.*?name="javax\.faces\.ViewState".*?value="([^"]*)".*?/>')
 TABLE_TR = re.compile(r'<tr.*?>(.*?)</tr>')
 TABLE_TD = re.compile(r'<td.*?>(.*?)</td>')
 TAGS = re.compile(r'<.*?>')
@@ -89,7 +97,26 @@ class Room:
 
 
 class Course:
-    pass
+    nr: str
+    semester: str
+    name_de: str
+    name_en: str
+    type: str
+    ects: float
+
+    def __init__(self, nr: str, semester: str, name_de: str, name_en: str, course_type: str, ects: float):
+        self.nr = nr
+        self.semester = semester
+        self.name_de = name_de
+        self.name_en = name_en
+        self.type = course_type
+        self.ects = ects
+
+    def __str__(self) -> str:
+        return f'<Course#{self.nr[:3]}.{self.nr[-3:]}/{self.semester}{{{self.type},{self.name_de},{self.ects}}}>'
+
+    def __repr__(self) -> str:
+        return f'<Course#{self.nr}/{self.semester}{{{self.type},{self.name_de},{self.name_en},{self.ects}}}>'
 
 
 class Event:
@@ -104,7 +131,7 @@ class Event:
 
     def __init__(self, event_id: str, start: datetime.datetime, end: datetime.datetime, title: str, event_type: str,
                  room: Room, description: typing.Optional[str] = None, all_day: bool = False):
-        self.id = event_id
+        self.id = event_id.replace('.', '')
         self.start = start
         self.end = end
         self.title = title
@@ -154,29 +181,36 @@ class Session:
             endpoint = f'/{endpoint}'
         return endpoint
 
+    def _update_view_state(self, text: str, ajax: bool = False):
+        pattern = UPDATE_VIEW_STATE if ajax else INPUT_VIEW_STATE
+        for update in pattern.finditer(text):
+            self._view_state = update.group(1)
+
     def get(self, endpoint: str, headers: typing.Dict[str, object] = None) -> requests.Response:
         r = self._session.get(f'{TISS_URL}{self.update_endpoint(endpoint)}', headers=headers)
+        self._update_view_state(r.text)
         return r
 
     def post(self, endpoint: str, data: typing.Dict[str, object],
-             headers: typing.Dict[str, object] = None) -> requests.Response:
+             headers: typing.Dict[str, object] = None, ajax: bool = False) -> requests.Response:
         headers = headers or {}
         headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
 
         data['javax.faces.ClientWindow'] = self._win_id
         data['dspwid'] = self._win_id
-        data['X-Requested-With'] = 'XMLHttpRequest'
-        data['Faces-Request'] = 'partial/ajax'
+
+        if ajax:
+            data['javax.faces.partial.ajax'] = 'true'
+            data['X-Requested-With'] = 'XMLHttpRequest'
+            data['Faces-Request'] = 'partial/ajax'
+
         if self._view_state is not None:
             data['javax.faces.ViewState'] = self._view_state
         elif 'javax.faces.ViewState' in data:
             del data['javax.faces.ViewState']
 
-        r = self._session.post(f'{TISS_URL}{endpoint}',
-                               data=data, headers=headers)
-
-        for update in UPDATE_VIEW_STATE.finditer(r.text):
-            self._view_state = update.group(1)
+        r = self._session.post(f'{TISS_URL}{endpoint}', data=data, headers=headers)
+        self._update_view_state(r.text, ajax=ajax)
 
         return r
 
@@ -193,16 +227,15 @@ class Session:
             'javax.faces.behavior.event': 'valueChange',
             'javax.faces.partial.event': 'change',
             'javax.faces.source': 'filterForm:roomFilter:selectBuildingLb',
-            'javax.faces.partial.ajax': 'true',
             'javax.faces.partial.execute': 'filterForm:roomFilter',
             'javax.faces.partial.render': 'filterForm:roomFilter',
         }
 
         # Retrieve view_state
         self._view_state = None
-        self.post('/events/selectRoom.xhtml', data)
+        self.post('/events/selectRoom.xhtml', data, ajax=True)
 
-        r = self.post('/events/selectRoom.xhtml', data)
+        r = self.post('/events/selectRoom.xhtml', data, ajax=True)
         rooms = [
             Room(option.group(1), building.id, tiss_name=option.group(2), global_buildings=self._buildings)
             for option in OPTION_ROOM.finditer(r.text[r.text.find('filterForm:roomFilter:selectRoomLb'):])
@@ -220,16 +253,15 @@ class Session:
             'javax.faces.behavior.event': 'action',
             'javax.faces.partial.event': 'click',
             'javax.faces.source': 'filterForm:roomFilter:searchButton',
-            'javax.faces.partial.ajax': 'true',
             'javax.faces.partial.execute': 'filterForm:roomFilter filterForm:roomFilter:searchButton',
             'javax.faces.partial.render': 'filterForm tableForm',
         }
 
         # Retrieve view_state
         self._view_state = None
-        self.post('/events/selectRoom.xhtml', data)
+        self.post('/events/selectRoom.xhtml', data, ajax=True)
 
-        r = self.post('/events/selectRoom.xhtml', data)
+        r = self.post('/events/selectRoom.xhtml', data, ajax=True)
         for tr in TABLE_TR.finditer(r.text):
             row = [TAGS.sub('', td.group(1)) for td in TABLE_TD.finditer(tr.group(1))]
             if len(row) == 0:
@@ -238,6 +270,68 @@ class Session:
             if room.global_id == '':
                 room.global_id = room.id
             room.capacity = int(row[1].strip())
+
+    def _get_course(self, course_nr: str, semester: str) -> Course:
+        course_nr = course_nr.replace('.', '')
+
+        r = self.get(f'/course/courseDetails.xhtml?courseNr={course_nr}&semester={semester}&locale=de')
+        title_de = html.unescape(COURSE_TITLE.findall(r.text)[0].strip())
+        meta = COURSE_META.findall(r.text)[0]
+
+        r = self.get(f'/course/courseDetails.xhtml?courseNr={course_nr}&semester={semester}&locale=en')
+        title_en = html.unescape(COURSE_TITLE.findall(r.text)[0].strip())
+
+        course_type = meta[0]
+        ects = meta[2]
+
+        return Course(course_nr, semester, title_de, title_en, course_type, ects)
+
+    def course_generator(self, semester: str, semester_to: str = None,
+                         skip: typing.Set[str] = None) -> typing.Generator[Course]:
+        skip = skip or set()
+
+        data1 = {
+            'javax.faces.source': 'courseList:j_id_2g',
+            'javax.faces.partial.execute': 'courseList:searchField',
+            'javax.faces.partial.render': 'courseList globalMessagesPanel',
+            'javax.faces.behavior.event': 'action',
+            'javax.faces.partial.event': 'click',
+        }
+        self.post('/course/courseList.xhtml', data1, ajax=True)
+        r = self.post('/course/courseList.xhtml', data1, ajax=True)
+
+        institutes = [opt.group(1) for opt in OPTION_INSTITUTE.finditer(r.text)]
+        course_nrs = set()
+        for institute in institutes:
+            data = {
+                'courseList:institutes': institute,
+                'courseList_SUBMIT': '1',
+                'courseList:semFrom': semester,
+                'courseList:semTo': semester_to or semester,
+                'courseList:cSearchBtn': 'Suchen',
+            }
+            self._view_state = None
+            self.get('/course/courseList.xhtml')
+            self.post('/course/courseList.xhtml', data1, ajax=True)
+            r = self.post('/course/courseList.xhtml', data)
+            for tr in TABLE_TR.finditer(r.text):
+                row = [td.group(1) for td in TABLE_TD.finditer(tr.group(0))]
+                if len(row) > 0:
+                    course_nrs.add((row[0].replace('.', ''), row[5]))
+
+        for course in course_nrs - skip:
+            yield self._get_course(course[0], course[1])
+
+    def _get_courses(self, semester: str, semester_to: str = None) -> typing.Dict[str, Course]:
+        return {
+            f'{course.nr}/{course.semester}': course
+            for course in self.course_generator(semester, semester_to)
+        }
+
+    @property
+    def current_semester(self) -> str:
+        # FIXME get current semester
+        return '2021W'
 
     @property
     def buildings(self) -> typing.Dict[str, Building]:
@@ -259,7 +353,7 @@ class Session:
     @property
     def courses(self) -> typing.Dict[str, Course]:
         if self._courses is None:
-            self._courses = {}
+            self._courses = self._get_courses(self.current_semester)
         return self._courses
 
     def get_room_schedule(self, room: Room) -> [Event]:
@@ -268,15 +362,15 @@ class Session:
 
         start = datetime.datetime.fromisoformat('2021-10-01T00:00:00')
         end = datetime.datetime.fromisoformat('2022-02-01T00:00:00')
-        r = self.post('/events/roomSchedule.xhtml', {
+        data = {
             'calendarForm:schedule_start': int(time.mktime(start.timetuple())) * 1000,
             'calendarForm:schedule_end': int(time.mktime(end.timetuple())) * 1000,
             'javax.faces.source': 'calendarForm:schedule',
-            'javax.faces.partial.ajax': 'true',
             'javax.faces.partial.execute': 'calendarForm:schedule',
             'javax.faces.partial.render': 'calendarForm:schedule',
             'calendarForm:schedule': 'calendarForm:schedule',
-        })
+        }
+        r = self.post('/events/roomSchedule.xhtml', data, ajax=True)
 
         events = []
         for cdata in CDATA.finditer(r.text):
@@ -287,7 +381,6 @@ class Session:
 
         for event in events[1:]:
             data = {
-                'javax.faces.partial.ajax': 'true',
                 'javax.faces.source': 'calendarForm:schedule',
                 'javax.faces.partial.execute': 'calendarForm:schedule',
                 'javax.faces.partial.render': 'calendarForm:eventDetails',
@@ -296,8 +389,8 @@ class Session:
                 'calendarForm:schedule_selectedEventId': event.id,
             }
             self._view_state = None
-            self.post('/events/roomSchedule.xhtml', data)
-            r = self.post('/events/roomSchedule.xhtml', data)
+            self.post('/events/roomSchedule.xhtml', data, ajax=True)
+            r = self.post('/events/roomSchedule.xhtml', data, ajax=True)
 
             print(r.text)
             print(self._session.cookies)

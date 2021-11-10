@@ -142,14 +142,14 @@ CREATE TABLE tucal.event_type
 CREATE TABLE tiss.course
 (
     semester  TEXT          NOT NULL CHECK (semester ~ '[0-9]{4}[WS]'),
-    course_id TEXT          NOT NULL CHECK (course_id ~ '[0-9]{3}[0-9A-Z]{3}'),
+    course_nr TEXT          NOT NULL CHECK (course_nr ~ '[0-9]{3}[0-9A-Z]{3}'),
 
     name_de   TEXT,
     name_en   TEXT,
     type      TEXT          NOT NULL,
     ects      DECIMAL(4, 1) NOT NULL,
 
-    CONSTRAINT pk_course PRIMARY KEY (semester, course_id),
+    CONSTRAINT pk_course PRIMARY KEY (semester, course_nr),
     CONSTRAINT fk_course_course_type FOREIGN KEY (type) REFERENCES tiss.course_type (type)
         ON UPDATE CASCADE
         ON DELETE RESTRICT

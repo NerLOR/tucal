@@ -1,7 +1,6 @@
 #!/bin/env python3
 
-import psycopg2
-
+import db
 import tuwien.tiss
 
 AREAS = '../data/areas.csv'
@@ -13,10 +12,7 @@ COURSE_TYPES = '../data/tiss/course_types.csv'
 
 
 if __name__ == '__main__':
-    db: psycopg2._psycopg.connection = psycopg2.connect(
-        "dbname=tucal user=necronda host=data.necronda.net password=Password123"
-    )
-    cur: psycopg2._psycopg.cursor = db.cursor()
+    cur = db.cursor()
 
     with open(EVENT_TYPES) as f:
         f.readline()
@@ -128,4 +124,5 @@ if __name__ == '__main__':
     for room in s.rooms.values():
         cur.execute("UPDATE tucal.room SET tiss_name = %s, tiss_name_full = %s WHERE tiss_code = %s",
                     (room.name, room.tiss_name, room.id))
+    cur.close()
     db.commit()
