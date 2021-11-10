@@ -8,12 +8,37 @@ AREAS = '../data/areas.csv'
 BUILDINGS = '../data/buildings.csv'
 ROOMS = '../data/rooms.csv'
 
+EVENT_TYPES = '../data/tiss/event_types.csv'
+COURSE_TYPES = '../data/tiss/course_types.csv'
+
 
 if __name__ == '__main__':
     db: psycopg2._psycopg.connection = psycopg2.connect(
         "dbname=tucal user=necronda host=data.necronda.net password=Password123"
     )
     cur: psycopg2._psycopg.cursor = db.cursor()
+
+    with open(EVENT_TYPES) as f:
+        f.readline()
+        for line in f.readlines():
+            data = [d.strip() for d in line.strip().split(',')]
+            e_id = int(data[0])
+            e_de = data[1]
+            e_en = data[2]
+            cur.execute("INSERT INTO tiss.event_type (type, name_de, name_en) VALUES (%s, %s, %s) "
+                        "ON CONFLICT (type) DO UPDATE SET name_de = %s, name_en = %s",
+                        (e_id, e_de, e_en, e_de, e_en))
+
+    with open(COURSE_TYPES) as f:
+        f.readline()
+        for line in f.readlines():
+            data = [d.strip() for d in line.strip().split(',')]
+            c_id = data[0]
+            c_de = data[1]
+            c_en = data[2]
+            cur.execute("INSERT INTO tiss.course_type (type, name_de, name_en) VALUES (%s, %s, %s) "
+                        "ON CONFLICT (type) DO UPDATE SET name_de = %s, name_en = %s",
+                        (c_id, c_de, c_en, c_de, c_en))
 
     with open(AREAS) as f:
         f.readline()
