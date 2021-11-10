@@ -88,6 +88,10 @@ class Room:
         return f'<Room#{self.id}{{{self._building_id},{self.name},{self.capacity},{self.tiss_name}}}>'
 
 
+class Course:
+    pass
+
+
 class Event:
     id: str
     start: datetime.datetime
@@ -122,12 +126,14 @@ class Session:
     _session: requests.Session
     _buildings: typing.Optional[typing.Dict[str, Building]]
     _rooms: typing.Optional[typing.Dict[str, Room]]
+    _courses: typing.Optional[typing.Dict[str, Course]]
 
     def __init__(self):
         self._win_id = Session.gen_win_id()
         self._req_token = Session.gen_req_token()
         self._buildings = None
         self._rooms = None
+        self._courses = None
         self._view_state = None
         self._session = requests.Session()
         self._session.cookies.set(f'dsrwid-{self._req_token}', f'{self._win_id}', domain=TISS_DOMAIN)
@@ -249,6 +255,12 @@ class Session:
                 for room in self._get_rooms_for_building(building):
                     self._rooms[room.id] = room
         return self._rooms
+
+    @property
+    def courses(self) -> typing.Dict[str, Course]:
+        if self._courses is None:
+            self._courses = {}
+        return self._courses
 
     def get_room_schedule(self, room: Room) -> [Event]:
         self._view_state = None

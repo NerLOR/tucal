@@ -23,7 +23,7 @@ if __name__ == '__main__':
             a_name = data[1] if len(data[1]) > 0 else None
             a_suffix = data[2] if len(data[2]) > 0 else None
             in_use = data[3] == 'yes'
-            cur.execute("INSERT INTO area (area_id, area_name, area_suffix, in_use) "
+            cur.execute("INSERT INTO tucal.area (area_id, area_name, area_suffix, in_use) "
                         "VALUES (%s, %s, %s, %s) "
                         "ON CONFLICT (area_id) DO "
                         "UPDATE SET area_name = %s, area_suffix = %s, in_use = %s",
@@ -40,7 +40,7 @@ if __name__ == '__main__':
             b_alt_name = data[4] if len(data[4]) > 0 else None
             b_obj = data[5] if len(data[5]) > 0 else None
             b_address = data[6] if len(data[6]) > 0 else None
-            cur.execute("INSERT INTO building "
+            cur.execute("INSERT INTO tucal.building "
                         "(area_id, local_id, building_name, building_suffix, building_alt_name, object_nr, address) "
                         "VALUES (%s, %s, %s, %s, %s, %s, %s) "
                         "ON CONFLICT (area_id, local_id) DO "
@@ -90,17 +90,17 @@ if __name__ == '__main__':
             a_id = data[4][0]
             b_id = data[4][1]
 
-            cur.execute("INSERT INTO room (room_nr, area_id, building_id, tiss_code, room_name, room_suffix, "
+            cur.execute("INSERT INTO tucal.room (room_nr, area_id, building_id, tiss_code, room_name, room_suffix, "
                         "room_name_short, room_alt_name, area, capacity) "
                         "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ",
                         (r_nr, a_id, b_id, r_tiss, r_name, r_suffix, r_short, r_alt, r_area, r_cap))
 
             for rc in room_codes:
-                cur.execute("INSERT INTO room_location (room_nr, floor_nr, local_code) VALUES (%s, %s, %s)",
+                cur.execute("INSERT INTO tucal.room_location (room_nr, floor_nr, local_code) VALUES (%s, %s, %s)",
                             (r_nr, rc[2:4], rc[4:]))
 
     s = tuwien.tiss.Session()
     for room in s.rooms.values():
-        cur.execute("UPDATE room SET tiss_name = %s, tiss_name_full = %s WHERE tiss_code = %s",
+        cur.execute("UPDATE tucal.room SET tiss_name = %s, tiss_name_full = %s WHERE tiss_code = %s",
                     (room.name, room.tiss_name, room.id))
     db.commit()
