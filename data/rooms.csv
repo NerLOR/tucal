@@ -135,7 +135,7 @@ Hörsaal 11,Paul Ludwik,HS 11,,AC0240,,lecture_hall,,175,,colab rdb
 Hörsaal 12,,HS 12,,AF0222,H12,lecture_hall,,165,64,colab tiss rdb
 Hörsaal 13,Ernst Melan,HS 13,,AE0239,H13,lecture_hall,,183,174,rdb colab tiss
 Hörsaal 14,,HS 14,,AB0302,H14,lecture_hall,,41,36,colab tiss
-Hörsaal 14a,Günther Feuerstein,HS 14a,,AB0306,H14A,lecture_hall,,,102,colab tiss rdb rdb
+Hörsaal 14A,Günther Feuerstein,HS 14A,,AB0306,H14A,lecture_hall,,,102,colab tiss rdb rdb
 Hörsaal 15,,HS 15,,AB0314,H15,lecture_hall,,61,52,colab tiss rdb
 Hörsaal 17,Friedrich Hartmann,HS 17,,AE0341,H17,lecture_hall,,185,211,colab tiss rdb
 Hörsaal 18,Czuber,HS 18,,AE0238,H18,lecture_hall,,175,200,colab tiss rdb
@@ -150,7 +150,7 @@ GM Hörsaal 8/9,des Internationalen Wiener Motorensymposiums,GM 8/9,,BD02B33,BAU
 EI Hörsaal 1,Petritsch,EI 1,,CF0242,E1,lecture_hall,,64,63,colab tiss rdb
 EI Hörsaal 2,Pichelmayer,EI 2,,CF0235,E2,lecture_hall,,123,123,colab tiss rdb
 EI Hörsaal 3,Sahulka,EI 3,,CF0205,E3,lecture_hall,,161,184,colab tiss rdb
-EI Hörsaal 3a,,EI 3a,,CF0213,E3A,lecture_hall,,68,59,colab tiss rdb
+EI Hörsaal 3A,,EI 3A,,CF0213,E3A,lecture_hall,,68,59,colab tiss rdb
 EI Hörsaal 4,Reithoffer,EI 4,,CF0245,E4,lecture_hall,,101,90,colab tiss rdb
 EI Hörsaal 5,Hochnegg,EI 5,,CF0229,E5,lecture_hall,,121,114,colab rdb tiss
 EI Hörsaal 6,Eckert,EI 6,,CF0453,E6,lecture_hall,,70,32,colab tiss rdb
