@@ -1,6 +1,6 @@
 #!/bin/env python3
 
-import db
+import tucal.db
 import tuwien.tiss
 
 AREAS = '../data/areas.csv'
@@ -12,7 +12,7 @@ COURSE_TYPES = '../data/tiss/course_types.csv'
 
 
 if __name__ == '__main__':
-    cur = db.cursor()
+    cur = tucal.db.cursor()
 
     with open(EVENT_TYPES) as f:
         f.readline()
@@ -122,7 +122,9 @@ if __name__ == '__main__':
 
     s = tuwien.tiss.Session()
     for room in s.rooms.values():
-        cur.execute("UPDATE tucal.room SET tiss_name = %s, tiss_name_full = %s WHERE tiss_code = %s",
-                    (room.name, room.tiss_name, room.id))
+        cur.execute("INSERT INTO tiss.room (code, name, name_full) "
+                    "VALUES (%s, %s, %s) "
+                    "ON CONFLICT ON CONSTRAINT pk_room DO UPDATE SET name = %s, name_full = %s",
+                    (room.id, room.name, room.tiss_name, room.name, room.tiss_name))
     cur.close()
-    db.commit()
+    tucal.db.commit()

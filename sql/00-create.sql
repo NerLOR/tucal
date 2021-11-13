@@ -11,6 +11,15 @@ CREATE SCHEMA tuwel;
 
 CREATE SCHEMA tuwien;
 
+CREATE TABLE tucal.account
+(
+    mnr                 INT NOT NULL,
+    other_email_address TEXT CHECK (other_email_address ~ '[^@]+@([a-z0-9_-]+\.)[a-z]{2,}'),
+
+    CONSTRAINT pk_account PRIMARY KEY (mnr),
+    CONSTRAINT sk_account_email UNIQUE (other_email_address)
+);
+
 CREATE TABLE tucal.area
 (
     area_id     TEXT NOT NULL CHECK (length(area_id) = 1),
@@ -67,9 +76,6 @@ CREATE TABLE tucal.room
     area            INT  DEFAULT NULL,
     capacity        INT  DEFAULT NULL,
 
-    tiss_name       TEXT DEFAULT NULL,
-    tiss_name_full  TEXT DEFAULT NULL,
-
     CONSTRAINT pk_room PRIMARY KEY (room_nr),
     CONSTRAINT sk_room_tiss UNIQUE (tiss_code),
     CONSTRAINT sk_room_name UNIQUE (room_name),
@@ -98,7 +104,6 @@ SELECT r.room_nr,
        string_agg(CONCAT(r.area_id, r.building_id, ' ', rl.floor_nr, ' ', rl.local_code), '/') AS room_code_long,
        string_agg(DISTINCT CONCAT(r.area_id, r.building_id), '/')                              AS building_id,
        string_agg(DISTINCT r.tiss_code, '/')                                                   AS tiss_code,
-       r.tiss_name,
        r.room_name,
        r.room_suffix,
        r.room_name_short,
@@ -110,25 +115,6 @@ FROM tucal.room r
 GROUP BY r.room_nr
 ORDER BY r.room_nr;
 
-CREATE TABLE tiss.course_type
-(
-    type    TEXT NOT NULL CHECK (length(type) = 2),
-    name_de TEXT,
-    name_en TEXT,
-
-    CONSTRAINT pk_course_type PRIMARY KEY (type)
-);
-
-CREATE TABLE tiss.event_type
-(
-    type    INT NOT NULL CHECK (type >= 0),
-
-    name_de TEXT,
-    name_en TEXT,
-
-    CONSTRAINT pk_event_type PRIMARY KEY (type)
-);
-
 CREATE TABLE tucal.event_type
 (
     type    TEXT NOT NULL CHECK (length(type) = 2),
@@ -137,20 +123,4 @@ CREATE TABLE tucal.event_type
     name_en TEXT,
 
     CONSTRAINT pk_event_type PRIMARY KEY (type)
-);
-
-CREATE TABLE tiss.course
-(
-    semester  TEXT          NOT NULL CHECK (semester ~ '[0-9]{4}[WS]'),
-    course_nr TEXT          NOT NULL CHECK (course_nr ~ '[0-9]{3}[0-9A-Z]{3}'),
-
-    name_de   TEXT,
-    name_en   TEXT,
-    type      TEXT          NOT NULL,
-    ects      DECIMAL(4, 1) NOT NULL,
-
-    CONSTRAINT pk_course PRIMARY KEY (semester, course_nr),
-    CONSTRAINT fk_course_course_type FOREIGN KEY (type) REFERENCES tiss.course_type (type)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
 );

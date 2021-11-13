@@ -2,12 +2,14 @@
 from __future__ import annotations
 import random
 import typing
-import json
 import requests
 import re
 import datetime
-import time
 import html
+
+from tucal import Semester
+import tucal.icalendar
+import tuwien.sso
 
 TISS_DOMAIN = 'tiss.tuwien.ac.at'
 TISS_URL = f'https://{TISS_DOMAIN}'
@@ -98,25 +100,25 @@ class Room:
 
 class Course:
     nr: str
-    semester: str
+    semester: Semester
     name_de: str
     name_en: str
     type: str
     ects: float
 
-    def __init__(self, nr: str, semester: str, name_de: str, name_en: str, course_type: str, ects: float):
+    def __init__(self, nr: str, semester: Semester, name_de: str, name_en: str, course_type: str, ects: float):
         self.nr = nr
-        self.semester = semester
+        self.semester = Semester(str(semester))
         self.name_de = name_de
         self.name_en = name_en
         self.type = course_type
         self.ects = ects
 
     def __str__(self) -> str:
-        return f'<Course#{self.nr[:3]}.{self.nr[-3:]}/{self.semester}{{{self.type},{self.name_de},{self.ects}}}>'
+        return f'<Course#{self.nr[:3]}.{self.nr[-3:]}-{self.semester}{{{self.type},{self.name_de},{self.ects}}}>'
 
     def __repr__(self) -> str:
-        return f'<Course#{self.nr}/{self.semester}{{{self.type},{self.name_de},{self.name_en},{self.ects}}}>'
+        return f'<Course#{self.nr}-{self.semester}{{{self.type},{self.name_de},{self.name_en},{self.ects}}}>'
 
 
 class Event:
@@ -151,18 +153,20 @@ class Session:
     _req_token: int
     _view_state: typing.Optional[str]
     _session: requests.Session
+    _sso: tuwien.sso.Session
     _buildings: typing.Optional[typing.Dict[str, Building]]
     _rooms: typing.Optional[typing.Dict[str, Room]]
     _courses: typing.Optional[typing.Dict[str, Course]]
 
-    def __init__(self):
+    def __init__(self, session: tuwien.sso.Session = None):
         self._win_id = Session.gen_win_id()
         self._req_token = Session.gen_req_token()
         self._buildings = None
         self._rooms = None
         self._courses = None
         self._view_state = None
-        self._session = requests.Session()
+        self._session = session and session.session or requests.Session()
+        self._sso = session
         self._session.cookies.set(f'dsrwid-{self._req_token}', f'{self._win_id}', domain=TISS_DOMAIN)
         self._session.cookies.set('TISS_LANG', 'de', domain=TISS_DOMAIN)
 
@@ -186,8 +190,10 @@ class Session:
         for update in pattern.finditer(text):
             self._view_state = update.group(1)
 
-    def get(self, endpoint: str, headers: typing.Dict[str, object] = None) -> requests.Response:
-        r = self._session.get(f'{TISS_URL}{self.update_endpoint(endpoint)}', headers=headers)
+    def get(self, endpoint: str, headers: typing.Dict[str, object] = None,
+            allow_redirects: bool = True) -> requests.Response:
+        r = self._session.get(f'{TISS_URL}{self.update_endpoint(endpoint)}', headers=headers,
+                              allow_redirects=allow_redirects)
         self._update_view_state(r.text)
         return r
 
@@ -213,6 +219,11 @@ class Session:
         self._update_view_state(r.text, ajax=ajax)
 
         return r
+
+    def sso_login(self) -> bool:
+        if self._sso is None:
+            raise RuntimeError('No SSO session provided')
+        return self._sso.login(f'{TISS_URL}/admin/authentifizierung')
 
     def _get_buildings(self) -> [Building]:
         r = self.get('/events/selectRoom.xhtml')
@@ -271,7 +282,7 @@ class Session:
                 room.global_id = room.id
             room.capacity = int(row[1].strip())
 
-    def _get_course(self, course_nr: str, semester: str) -> Course:
+    def _get_course(self, course_nr: str, semester: Semester) -> Course:
         course_nr = course_nr.replace('.', '')
 
         r = self.get(f'/course/courseDetails.xhtml?courseNr={course_nr}&semester={semester}&locale=de')
@@ -286,8 +297,8 @@ class Session:
 
         return Course(course_nr, semester, title_de, title_en, course_type, ects)
 
-    def course_generator(self, semester: str, semester_to: str = None,
-                         skip: typing.Set[str] = None) -> typing.Generator[Course]:
+    def course_generator(self, semester: Semester, semester_to: Semester = None,
+                         skip: typing.Set[(str, Semester)] = None) -> typing.Generator[Course]:
         skip = skip or set()
 
         data1 = {
@@ -317,21 +328,16 @@ class Session:
             for tr in TABLE_TR.finditer(r.text):
                 row = [td.group(1) for td in TABLE_TD.finditer(tr.group(0))]
                 if len(row) > 0:
-                    course_nrs.add((row[0].replace('.', ''), row[5]))
+                    course_nrs.add((row[0].replace('.', ''), Semester(row[5])))
 
         for course in course_nrs - skip:
             yield self._get_course(course[0], course[1])
 
-    def _get_courses(self, semester: str, semester_to: str = None) -> typing.Dict[str, Course]:
+    def _get_courses(self, semester: Semester, semester_to: Semester = None) -> typing.Dict[str, Course]:
         return {
-            f'{course.nr}/{course.semester}': course
+            f'{course.nr}-{course.semester}': course
             for course in self.course_generator(semester, semester_to)
         }
-
-    @property
-    def current_semester(self) -> str:
-        # FIXME get current semester
-        return '2021W'
 
     @property
     def buildings(self) -> typing.Dict[str, Building]:
@@ -353,55 +359,20 @@ class Session:
     @property
     def courses(self) -> typing.Dict[str, Course]:
         if self._courses is None:
-            self._courses = self._get_courses(self.current_semester)
+            self._courses = self._get_courses(Semester.last(), Semester.current())
         return self._courses
 
-    def get_room_schedule(self, room: Room) -> [Event]:
-        self._view_state = None
-        self.get(f'/events/roomSchedule.xhtml?roomCode={room.id}')
+    def get_event_course(self, event_id: int, course_nr: str) -> (typing.Optional[str], typing.Optional[Semester]):
+        r = self.get(f'/education/goToEvent.xhtml?id={course_nr}-{event_id}&type=EXAM',
+                     allow_redirects=False)
+        print(r.status_code, r.request.url)
+        print(r.headers['Location'])
+        'https://tiss.tuwien.ac.at/education/goToEvent.xhtml?id=188999-4503954&type=EXAM'
+        'https://tiss.tuwien.ac.at/education/goToEvent.xhtml?id=188999-393157&type=EXAM'
 
-        start = datetime.datetime.fromisoformat('2021-10-01T00:00:00')
-        end = datetime.datetime.fromisoformat('2022-02-01T00:00:00')
-        data = {
-            'calendarForm:schedule_start': int(time.mktime(start.timetuple())) * 1000,
-            'calendarForm:schedule_end': int(time.mktime(end.timetuple())) * 1000,
-            'javax.faces.source': 'calendarForm:schedule',
-            'javax.faces.partial.execute': 'calendarForm:schedule',
-            'javax.faces.partial.render': 'calendarForm:schedule',
-            'calendarForm:schedule': 'calendarForm:schedule',
-        }
-        r = self.post('/events/roomSchedule.xhtml', data, ajax=True)
+        return None, None
 
-        events = []
-        for cdata in CDATA.finditer(r.text):
-            d = cdata.group(1)
-            if d.startswith('{"events":'):
-                events = [Event.from_json_obj(event, room) for event in json.loads(cdata.group(1))['events']]
-                break
-
-        for event in events[1:]:
-            data = {
-                'javax.faces.source': 'calendarForm:schedule',
-                'javax.faces.partial.execute': 'calendarForm:schedule',
-                'javax.faces.partial.render': 'calendarForm:eventDetails',
-                'javax.faces.behavior.event': 'eventSelect',
-                'javax.faces.partial.event': 'eventSelect',
-                'calendarForm:schedule_selectedEventId': event.id,
-            }
-            self._view_state = None
-            self.post('/events/roomSchedule.xhtml', data, ajax=True)
-            r = self.post('/events/roomSchedule.xhtml', data, ajax=True)
-
-            print(r.text)
-            print(self._session.cookies)
-            print(r.request.url)
-            print(r.request.body)
-
-        return events
-
-
-if __name__ == '__main__':
-    s = Session()
-    for evt in s.get_room_schedule(s.rooms['AUDI']):
-        print(f'{str(evt.all_day):5} {evt.start} {evt.end} {evt.type:16} {evt.id}  {evt.title:32}')
-
+    def get_room_schedule(self, room_code: str) -> tucal.icalendar.Calendar:
+        r = self._session.get(f'{TISS_URL}/events/rest/calendar/room?locale=de&roomCode={room_code}')
+        cal = tucal.icalendar.parse_ical(r.text)
+        return cal
