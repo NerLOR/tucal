@@ -1,74 +1,85 @@
 #!/bin/env python3
 
+import argparse
+
 import tucal.db
 import tuwien.tiss
 
 AREAS = '../data/areas.csv'
 BUILDINGS = '../data/buildings.csv'
 ROOMS = '../data/rooms.csv'
+COURSE_ACRONYMS = '../data/course_acronyms.csv'
 
 EVENT_TYPES = '../data/tiss/event_types.csv'
 COURSE_TYPES = '../data/tiss/course_types.csv'
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    args = parser.parse_args()
+
     cur = tucal.db.cursor()
 
     with open(EVENT_TYPES) as f:
-        f.readline()
+        heading = [d.strip() for d in f.readline().strip().split(',')]
         for line in f.readlines():
-            data = [d.strip() for d in line.strip().split(',')]
-            e_id = int(data[0])
-            e_de = data[1]
-            e_en = data[2]
-            cur.execute("INSERT INTO tiss.event_type (type, name_de, name_en) VALUES (%s, %s, %s) "
-                        "ON CONFLICT (type) DO UPDATE SET name_de = %s, name_en = %s",
-                        (e_id, e_de, e_en, e_de, e_en))
+            row = [d.strip() if len(d.strip()) > 0 else None for d in line.strip().split(',')]
+            data = {heading[n]: row[n] for n in range(len(heading))}
+            cur.execute("""
+                INSERT INTO tiss.event_type (type, name_de, name_en)
+                VALUES (%(nr)s, %(name_de)s, %(name_en)s)
+                ON CONFLICT ON CONSTRAINT pk_event_type DO
+                UPDATE SET name_de = %(name_de)s, name_en = %(name_en)s""", data)
 
     with open(COURSE_TYPES) as f:
-        f.readline()
+        heading = [d.strip() for d in f.readline().strip().split(',')]
         for line in f.readlines():
-            data = [d.strip() for d in line.strip().split(',')]
-            c_id = data[0]
-            c_de = data[1]
-            c_en = data[2]
-            cur.execute("INSERT INTO tiss.course_type (type, name_de, name_en) VALUES (%s, %s, %s) "
-                        "ON CONFLICT (type) DO UPDATE SET name_de = %s, name_en = %s",
-                        (c_id, c_de, c_en, c_de, c_en))
+            row = [d.strip() if len(d.strip()) > 0 else None for d in line.strip().split(',')]
+            data = {heading[n]: row[n] for n in range(len(heading))}
+            cur.execute("""
+                INSERT INTO tiss.course_type (type, name_de, name_en)
+                VALUES (%(code)s, %(name_de)s, %(name_en)s)
+                ON CONFLICT ON CONSTRAINT pk_course_type DO
+                UPDATE SET name_de = %(name_de)s, name_en = %(name_en)s""", data)
+
+    with open(COURSE_ACRONYMS) as f:
+        heading = [d.strip() for d in f.readline().strip().split(',')]
+        for line in f.readlines():
+            row = [d.strip() if len(d.strip()) > 0 else None for d in line.strip().split(',')]
+            data = {heading[n]: row[n] for n in range(len(heading))}
+            cur.execute("""
+                INSERT INTO tucal.course_acronym (course_nr, program, short, acronym_1, acronym_2)
+                VALUES (%(nr)s, %(program)s, %(short)s, %(acronym_1)s, %(acronym_2)s)
+                ON CONFLICT ON CONSTRAINT pk_course_acronym DO
+                UPDATE SET program = %(program)s, short = %(short)s, acronym_1 = %(acronym_1)s,
+                    acronym_2 = %(acronym_2)s""", data)
 
     with open(AREAS) as f:
-        f.readline()
+        heading = [d.strip() for d in f.readline().strip().split(',')]
         for line in f.readlines():
-            data = [d.strip() for d in line.strip().split(',')]
-            a_id = data[0]
-            a_name = data[1] if len(data[1]) > 0 else None
-            a_suffix = data[2] if len(data[2]) > 0 else None
-            in_use = data[3] == 'yes'
-            cur.execute("INSERT INTO tucal.area (area_id, area_name, area_suffix, in_use) "
-                        "VALUES (%s, %s, %s, %s) "
-                        "ON CONFLICT (area_id) DO "
-                        "UPDATE SET area_name = %s, area_suffix = %s, in_use = %s",
-                        (a_id, a_name, a_suffix, in_use, a_name, a_suffix, in_use))
+            row = [d.strip() if len(d.strip()) > 0 else None for d in line.strip().split(',')]
+            data = {heading[n]: row[n] for n in range(len(heading))}
+            data['in_use'] = data['in_use'] == 'yes'
+            cur.execute("""
+                INSERT INTO tucal.area (area_id, area_name, area_suffix, in_use)
+                VALUES (%(area_id)s, %(name)s, %(suffix)s, %(in_use)s)
+                ON CONFLICT ON CONSTRAINT pk_area DO
+                UPDATE SET area_name = %(name)s, area_suffix = %(suffix)s, in_use = %(in_use)s""", data)
 
     with open(BUILDINGS) as f:
-        f.readline()
+        heading = [d.strip() for d in f.readline().strip().split(',')]
         for line in f.readlines():
-            data = [d.strip() for d in line.strip().split(',')]
-            a_id = data[0]
-            b_id = data[1]
-            b_name = data[2] if len(data[2]) > 0 else None
-            b_suffix = data[3] if len(data[3]) > 0 else None
-            b_alt_name = data[4] if len(data[4]) > 0 else None
-            b_obj = data[5] if len(data[5]) > 0 else None
-            b_address = data[6] if len(data[6]) > 0 else None
-            cur.execute("INSERT INTO tucal.building "
-                        "(area_id, local_id, building_name, building_suffix, building_alt_name, object_nr, address) "
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s) "
-                        "ON CONFLICT (area_id, local_id) DO "
-                        "UPDATE SET building_name = %s, building_suffix = %s, building_alt_name = %s, object_nr = %s, "
-                        "address = %s",
-                        (a_id, b_id, b_name, b_suffix, b_alt_name, b_obj, b_address, b_name, b_suffix, b_alt_name,
-                         b_obj, b_address))
+            row = [d.strip() if len(d.strip()) > 0 else None for d in line.strip().split(',')]
+            data = {heading[n]: row[n] for n in range(len(heading))}
+            cur.execute("""
+                INSERT INTO tucal.building (area_id, local_id, building_name, building_suffix, building_alt_name,
+                    object_nr, address)
+                VALUES (%(area_id)s, %(building_id)s, %(name)s, %(suffix)s, %(alt_name)s, %(object_nr)s, %(address)s)
+                ON CONFLICT ON CONSTRAINT pk_building DO
+                UPDATE SET building_name = %(name)s, building_suffix = %(suffix)s, building_alt_name = %(alt_name)s,
+                object_nr = %(object_nr)s, address = %(address)s""", data)
+
+    tucal.db.commit()
 
     with open(ROOMS) as f:
         counters = {

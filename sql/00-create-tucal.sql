@@ -3,13 +3,8 @@
 -- CREATE DATABASE tucal WITH ENCODING 'UTF8';
 -- \c tucal
 
+DROP SCHEMA tucal CASCADE;
 CREATE SCHEMA tucal;
-
-CREATE SCHEMA tiss;
-
-CREATE SCHEMA tuwel;
-
-CREATE SCHEMA tuwien;
 
 CREATE TABLE tucal.account
 (
@@ -123,4 +118,15 @@ CREATE TABLE tucal.event_type
     name_en TEXT,
 
     CONSTRAINT pk_event_type PRIMARY KEY (type)
+);
+
+CREATE TABLE tucal.course_acronym
+(
+    course_nr TEXT NOT NULL CHECK (course_nr ~ '[0-9]{3}[0-9A-Z]{3}'),
+    program   TEXT DEFAULT NULL,
+    short     TEXT,
+    acronym_1 TEXT,
+    acronym_2 TEXT,
+
+    CONSTRAINT pk_course_acronym PRIMARY KEY (course_nr)
 );
