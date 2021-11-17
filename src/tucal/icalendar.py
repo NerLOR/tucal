@@ -36,9 +36,10 @@ class Event:
     description: typing.Optional[str]
     last_modified: typing.Optional[datetime.datetime]
     access: typing.Optional[datetime.datetime]
-    start: typing.Optional[datetime.datetime]
-    end: typing.Optional[datetime.datetime]
+    start: typing.Optional[datetime.datetime or datetime.date]
+    end: typing.Optional[datetime.datetime or datetime.date]
     categories: typing.List[str]
+    location: typing.Optional[str]
 
     def __init__(self):
         self.uid = None
@@ -49,6 +50,7 @@ class Event:
         self.start = None
         self.end = None
         self.categories = []
+        self.location = None
 
     def _parse(self, dir_gen):
         for d, opt, val in dir_gen:
@@ -60,19 +62,24 @@ class Event:
             elif d == 'UID':
                 self.uid = _split(val)[0] if len(val) > 0 else None
             elif d == 'CATEGORIES':
-                self.categories = [html.unescape(part) for part in _split(val, ',')]
+                self.categories = [html.unescape(part).strip() for part in _split(val, ',')]
             elif d == 'SUMMARY':
-                self.summary = html.unescape(_split(val)[0]) if len(val) > 0 else None
+                self.summary = html.unescape(_split(val)[0]).strip() if len(val) > 0 else None
             elif d == 'DESCRIPTION':
-                self.description = html.unescape(_split(val)[0]) if len(val) > 0 else None
+                self.description = html.unescape(_split(val)[0]).strip() if len(val) > 0 else None
+            elif d == 'LOCATION':
+                self.location = html.unescape(_split(val)[0]).strip() if len(val) > 0 else None
             elif d in ('DTSTART', 'DTEND', 'DTSTAMP', 'LAST-MODIFIED'):
-                iso = f'{val[:4]}-{val[4:6]}-{val[6:8]}T{val[9:11]}:{val[11:13]}:{val[13:15]}'
-                if val[-1] == 'Z':
-                    iso += '+00:00'
-                    dat = datetime.datetime.fromisoformat(iso)
+                if len(opt) > 0 and opt[0] == 'VALUE=DATE':
+                    iso = f'{val[:4]}-{val[4:6]}-{val[6:8]}'
+                    dat = datetime.date.fromisoformat(iso)
                 else:
-                    tz = pytz.timezone(opt[0].split('=')[1])
-                    dat = datetime.datetime.fromisoformat(iso).astimezone(tz)
+                    iso = f'{val[:4]}-{val[4:6]}-{val[6:8]}T{val[9:11]}:{val[11:13]}:{val[13:15]}'
+                    if val[-1] == 'Z':
+                        dat = datetime.datetime.fromisoformat(iso).astimezone(pytz.UTC)
+                    elif len(opt) > 0:
+                        tz = pytz.timezone(opt[0].split('=')[1])
+                        dat = datetime.datetime.fromisoformat(iso).astimezone(tz)
                 if d == 'DTSTART':
                     self.start = dat
                 elif d == 'DTEND':
