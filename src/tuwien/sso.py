@@ -32,20 +32,18 @@ class Session:
     def login(self, url: str) -> bool:
         r = self._session.get(url)
 
-        if '<title>TU Wien Login</title>' not in r.text:
-            return True
+        if '<title>TU Wien Login</title>' in r.text:
+            auth_state = INPUT_AUTH_STATE.findall(r.text)[0]
 
-        auth_state = INPUT_AUTH_STATE.findall(r.text)[0]
+            r = self._session.post(f'{SSO_URL}/simplesaml/module.php/core/loginuserpass.php', {
+                'username': self._username or '',
+                'password': self._password or '',
+                'totp': self._totp or '',
+                'AuthState': auth_state,
+            })
 
-        r = self._session.post(f'{SSO_URL}/simplesaml/module.php/core/loginuserpass.php', {
-            'username': self._username or '',
-            'password': self._password or '',
-            'totp': self._totp or '',
-            'AuthState': auth_state,
-        })
-
-        if r.status_code != 200 or '<h3>Benutzername oder Passwort falsch.</h3>' in r.text:
-            raise RuntimeError('Unable to log in')
+            if r.status_code != 200 or '<h3>Benutzername oder Passwort falsch.</h3>' in r.text:
+                raise RuntimeError('Unable to log in')
 
         if '<title>Zustimmung zur Weitergabe persönlicher Daten</title>' in r.text:
             state_id = INPUT_STATE_ID.findall(r.text)[0]
