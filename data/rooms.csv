@@ -139,7 +139,7 @@ Hörsaal 14A,Günther Feuerstein,HS 14A,,AB0306,H14A,lecture_hall,,,102,colab ti
 Hörsaal 15,,HS 15,,AB0314,H15,lecture_hall,,61,52,colab tiss rdb
 Hörsaal 17,Friedrich Hartmann,HS 17,,AE0341,H17,lecture_hall,,185,211,colab tiss rdb
 Hörsaal 18,Czuber,HS 18,,AE0238,H18,lecture_hall,,175,200,colab tiss rdb
-Hörsaal AE U1-1,,HS AE,,AEU141,AEU141,lecture_hall,,177,186,tiss rdb colab
+Hörsaal AE U1-11,,HS AE U1-11,,AEU141,AEU141,lecture_hall,,177,186,tiss rdb colab
 GM Hörsaal 1,Audi. Max.,Audimax,,BAU178A,AUDI,lecture_hall,,462,500,tiss colab rdb
 GM Hörsaal 2,Radinger,GM 2,,BD01B33,RADI,lecture_hall,,241,240,colab tiss rdb
 GM Hörsaal 3,Vortmann,GM 3,,BA02A05,VORT HS,lecture_hall,,89,110,colab tiss rdb
@@ -244,8 +244,6 @@ Ersatzraum Prechtlsaal 2,,,,FBEG13,FBEG13,other,,,25,tiss
 Ersatzraum Prechtlsaal 3,,,,FBEG09,FBEG09,other,,,10,tiss
 TVFA Halle,,,,FCEG14H,FCEG14H,other,,,300,colab tiss
 Werkstatt,,,,HIEG08,HIEG08,other,,,7,tiss
-Besprechung O214-1,,,,OZEG43,OZEG43,other,,,14,tiss
-Besprechung O214-2,,,,OZEG33,OZEG33,other,,,12,tiss
 Bibliothek Atominstitut,,,,ZA0115,ATIB,other,,162,25,tissrdb
 Projektraum 2,,,,AC0324,ZS2,project_room,,54,25,tiss rdb
 Projektraum 8,,,,AC0329,ZS8,project_room,,50,25,tiss rdb
@@ -353,17 +351,14 @@ Seminarraum FAV 05,,,Seminarraum 186,HA0503,186,seminar_room,,85,36,colab rdb ti
 Seminarraum FAV EG B,,,Seminarraum von Neumann,HBEG16,SEMN,seminar_room,,29,25,colab tiss rdb
 Seminarraum FAV EG C,,,Seminarraum Gödel,HBEG10,SEMG,seminar_room,,45,30,colab tiss rdb
 Seminarraum Funke Halle,,,,MBEG28,F311,seminar_room,,,30,tiss
-Seminarraum 1,,,,OC01I27,OC 01 I27,seminar_room,,,54,tiss
-Seminarraum 2,,,,OC01H23,OC 01 H23,seminar_room,,,66,tiss
-Seminarraum 3,,,,OC01E23,OC 01 E23,seminar_room,,,34,tiss
-Seminarraum O214-1,,,,OZEG43,,seminar_room,,40,,colab rdb
-Seminarraum O214-2,,,,OZEG33,,seminar_room,,30,,colab rdb
-Seminarraum O221-1,,,,OAEGC11,OAEGC11,seminar_room,,63,25,colab tiss rdb
-Seminarraum O221-2,,,,OAEGC45,OAEGC45,seminar_room,,75,25,colab tiss rdb
-Seminarraum O236-1,,,,OC01I27,,seminar_room,,,,colab
-Seminarraum O236-2,,,,OC02H23,,seminar_room,,,,colab
-Seminarraum O236-3,,,,OC01E23,,seminar_room,,,,colab
+Seminarraum OA 1,,,,OAEGC11,OAEGC11,seminar_room,,63,25,colab tiss rdb
+Seminarraum OA 2,,,,OAEGC45,OAEGC45,seminar_room,,75,25,colab tiss rdb
+Seminarraum OC 1,,,,OC01I27,OC 01 I27,seminar_room,,,54,tiss colab
+Seminarraum OC 2,,,,OC01H23,OC 01 H23,seminar_room,,,66,tiss colab
+Seminarraum OC 3,,,,OC01E23,OC 01 E23,seminar_room,,,34,tiss colab
 Seminarraum OD 01 22,,,,OD0122,,seminar_room,,,,colab
+Seminarraum OZ 1,,,,OZEG43,OZEG43,seminar_room,,40,14,colab tiss rdb
+Seminarraum OZ 2,,,,OZEG33,OZEG33,seminar_room,,30,12,colab tiss rdb
 Seminarraum W1,,,,WB02A01,WB02A01,seminar_room,,,60,tiss
 Seminarraum W7A,,,,WB02J18,WB02J18,seminar_room,,,20,tiss
 Seminarraum W15,,,,WD02A21,WD02A21,seminar_room,,,60,tiss
