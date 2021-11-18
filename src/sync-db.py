@@ -9,6 +9,7 @@ AREAS = '../data/areas.csv'
 BUILDINGS = '../data/buildings.csv'
 ROOMS = '../data/rooms.csv'
 COURSE_ACRONYMS = '../data/course_acronyms.csv'
+LECTURE_TUBE = '../data/lecture_tube.csv'
 
 EVENT_TYPES = '../data/tiss/event_types.csv'
 COURSE_TYPES = '../data/tiss/course_types.csv'
@@ -77,7 +78,7 @@ if __name__ == '__main__':
                 VALUES (%(area_id)s, %(building_id)s, %(name)s, %(suffix)s, %(alt_name)s, %(object_nr)s, %(address)s)
                 ON CONFLICT ON CONSTRAINT pk_building DO
                 UPDATE SET building_name = %(name)s, building_suffix = %(suffix)s, building_alt_name = %(alt_name)s,
-                object_nr = %(object_nr)s, address = %(address)s""", data)
+                    object_nr = %(object_nr)s, address = %(address)s""", data)
 
     tucal.db.commit()
 
@@ -100,42 +101,56 @@ if __name__ == '__main__':
             'project_room': 'seminar_room',
             'seminar_room': 'seminar_room',
         }
-        f.readline()
+        heading = [d.strip() for d in f.readline().strip().split(',')]
         for line in f.readlines():
-            data = [d.strip() for d in line.strip().split(',')]
-            t = mapping[data[6]]
-            r_nr = counters[t]
-            counters[t] += 1
+            row = [d.strip() if len(d.strip()) > 0 else None for d in line.strip().split(',')]
+            data = {heading[n]: row[n] for n in range(len(heading))}
+            data['type'] = mapping[data['type']]
+            data['nr'] = counters[data['type']]
+            counters[data['type']] += 1
 
-            r_name = data[0] if len(data[0]) > 0 else None
-            r_suffix = data[1] if len(data[1]) > 0 else None
-            r_short = data[2] if len(data[2]) > 0 else None
-            r_alt = data[3] if len(data[3]) > 0 else None
-            r_area = int(data[8]) if len(data[8]) > 0 else None
-            r_cap = int(data[9]) if len(data[9]) > 0 else None
-            r_tiss = data[5] if len(data[5]) > 0 else None
-            room_codes = data[4].split(' ')
+            room_codes = data['room_codes'].split(' ')
             if len(room_codes) > 1:
                 for rc in room_codes:
                     if room_codes[0][:2] != rc[:2]:
-                        raise RuntimeError(f'Invalid room codes for room "{r_name}": {room_codes}')
-            a_id = data[4][0]
-            b_id = data[4][1]
+                        raise RuntimeError(f'Invalid room codes for room "{data["name"]}": {room_codes}')
+            data['area_id'] = room_codes[0][0]
+            data['building'] = room_codes[0][1]
 
-            cur.execute("INSERT INTO tucal.room (room_nr, area_id, building_id, tiss_code, room_name, room_suffix, "
-                        "room_name_short, room_alt_name, area, capacity) "
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ",
-                        (r_nr, a_id, b_id, r_tiss, r_name, r_suffix, r_short, r_alt, r_area, r_cap))
+            cur.execute("""
+                INSERT INTO tucal.room (room_nr, area_id, building_id, tiss_code, room_name, room_suffix,
+                    room_name_short, room_alt_name, area, capacity)
+                VALUES (%(nr)s, %(area_id)s, %(building)s, %(tiss_code)s, %(name)s, %(suffix)s, %(name_short)s,
+                    %(alt_name)s, %(area)s, %(capacity)s)""", data)
 
             for rc in room_codes:
                 cur.execute("INSERT INTO tucal.room_location (room_nr, floor_nr, local_code) VALUES (%s, %s, %s)",
-                            (r_nr, rc[2:4], rc[4:]))
+                            (data['nr'], rc[2:4], rc[4:]))
+
+    with open(LECTURE_TUBE) as f:
+        heading = [d.strip() for d in f.readline().strip().split(',')]
+        for line in f.readlines():
+            row = [d.strip() if len(d.strip()) > 0 else None for d in line.strip().split(',')]
+            data = {heading[n]: row[n] for n in range(len(heading))}
+            data['floor'] = data['room_code'][2:4]
+            data['local'] = data['room_code'][4:]
+            cur.execute("""
+                INSERT INTO tucal.lecture_tube (room_nr, floor_nr, local_code, lt_name)
+                VALUES ((SELECT room_nr FROM tucal.v_room 
+                         WHERE room_code LIKE CONCAT('%%', %(room_code)s, '%%')), 
+                    %(floor)s, %(local)s, %(name)s)""", data)
 
     s = tuwien.tiss.Session()
     for room in s.rooms.values():
-        cur.execute("INSERT INTO tiss.room (code, name, name_full) "
-                    "VALUES (%s, %s, %s) "
-                    "ON CONFLICT ON CONSTRAINT pk_room DO UPDATE SET name = %s, name_full = %s",
-                    (room.id, room.name, room.tiss_name, room.name, room.tiss_name))
+        data = {
+            'id': room.id,
+            'name': room.name,
+            'full': room.tiss_name,
+        }
+        cur.execute("""
+            INSERT INTO tiss.room (code, name, name_full)
+            VALUES (%(id)s, %(name)s, %(full)s)
+            ON CONFLICT ON CONSTRAINT pk_room DO
+            UPDATE SET name = %(name)s, name_full = %(full)s""", data)
     cur.close()
     tucal.db.commit()
