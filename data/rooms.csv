@@ -152,7 +152,7 @@ EI Hörsaal 2,Pichelmayer,EI 2,,CF0235,E2,lecture_hall,,123,123,colab tiss rdb
 EI Hörsaal 3,Sahulka,EI 3,,CF0205,E3,lecture_hall,,161,184,colab tiss rdb
 EI Hörsaal 3A,,EI 3A,,CF0213,E3A,lecture_hall,,68,59,colab tiss rdb
 EI Hörsaal 4,Reithoffer,EI 4,,CF0245,E4,lecture_hall,,101,90,colab tiss rdb
-EI Hörsaal 5,Hochnegg,EI 5,,CF0229,E5,lecture_hall,,121,114,colab rdb tiss
+EI Hörsaal 5,Hochenegg,EI 5,,CF0229,E5,lecture_hall,,121,114,colab rdb tiss
 EI Hörsaal 6,Eckert,EI 6,,CF0453,E6,lecture_hall,,70,32,colab tiss rdb
 EI Hörsaal 7,,EI 7,,CDEG13,E7,lecture_hall,,405,434,colab tiss rdb
 EI Hörsaal 8,Pötzl,EI 8,,CDEG08,E8,lecture_hall,,136,139,colab tiss rdb
@@ -343,8 +343,7 @@ Seminarraum EB U1-2,,,,EBU109,EBU109,seminar_room,,53,32,colab tiss rdb
 Seminarraum EB U1-3,,,,EBU120,EBU120,seminar_room,,35,18,colab tiss rdb
 Seminarraum 126,,,,FB0113,126,seminar_room,,,28,tiss
 Seminarraum 233,,,,FA0212,233,seminar_room,,,18,tiss
-Seminarraum 01 A,,,,HE0102,,seminar_room,,,,colab
-Seminarraum FAV 01 A,,,Seminarraum 183-2,HE0102,1832,seminar_room,,47,23,rdb tiss
+Seminarraum FAV 01 A,,,Seminarraum 183-2,HE0102,1832,seminar_room,,47,23,colab rdb tiss
 Seminarraum FAV 01 B,,,Seminarraum 187-2,HF0109,1872,seminar_room,,55,27,colab rdb tiss
 Seminarraum FAV 01 C,,,Seminarraum 188-2,HE0108,1882,seminar_room,,47,27,colab rdb tiss
 Seminarraum FAV 05,,,Seminarraum 186,HA0503,186,seminar_room,,85,36,colab rdb tiss
