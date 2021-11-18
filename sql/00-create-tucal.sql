@@ -93,6 +93,21 @@ CREATE TABLE tucal.room_location
         ON DELETE CASCADE
 );
 
+CREATE TABLE tucal.lecture_tube
+(
+    room_nr    INT  NOT NULL,
+    floor_nr   TEXT NOT NULL,
+    local_code TEXT NOT NULL,
+
+    lt_name    TEXT NOT NULL CHECK (lt_name ~ '[a-z0-9-]{6,}'),
+
+    CONSTRAINT pk_lecture_tube PRIMARY KEY (room_nr),
+    CONSTRAINT sk_lecture_tube_name UNIQUE (lt_name),
+    CONSTRAINT fk_lecture_tube_room_location FOREIGN KEY (room_nr, floor_nr, local_code) REFERENCES tucal.room_location (room_nr, floor_nr, local_code)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
 CREATE OR REPLACE VIEW tucal.v_room AS
 SELECT r.room_nr,
        string_agg(CONCAT(r.area_id, r.building_id, rl.floor_nr, rl.local_code), '/')           AS room_code,
@@ -109,6 +124,20 @@ FROM tucal.room r
          LEFT JOIN tucal.room_location rl ON r.room_nr = rl.room_nr
 GROUP BY r.room_nr
 ORDER BY r.room_nr;
+
+DROP VIEW tucal.v_lecture_tube;
+CREATE OR REPLACE VIEW tucal.v_lecture_tube AS
+SELECT lt.room_nr,
+       CONCAT(r.area_id, r.building_id, lt.floor_nr, lt.local_code) AS room_code,
+       lower(CONCAT(r.area_id, r.building_id, lt.floor_nr, lt.local_code)) AS room_code_lower,
+       lt.lt_name,
+       r.room_name,
+       r.room_suffix,
+       r.room_name_short,
+       r.room_alt_name
+FROM tucal.lecture_tube lt
+         JOIN tucal.room r ON r.room_nr = lt.room_nr
+ORDER BY lt.room_nr;
 
 CREATE TABLE tucal.event_type
 (
