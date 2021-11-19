@@ -1,9 +1,13 @@
+DROP SCHEMA tuwel CASCADE;
+CREATE SCHEMA tuwel;
+
 CREATE TABLE tuwel.user
 (
     user_id    INT NOT NULL,
     mnr        INT NOT NULL,
 
     auth_token TEXT DEFAULT NULL,
+    last_sync  TIMESTAMP WITH TIME ZONE,
 
     CONSTRAINT pk_user PRIMARY KEY (user_id),
     CONSTRAINT sk_user_mnr UNIQUE (mnr)
@@ -15,6 +19,8 @@ CREATE TABLE tuwel.course
 
     course_nr TEXT NOT NULL CHECK (course_nr ~ '[0-9]{3}[0-9A-Z]{3}'),
     semester  TEXT NOT NULL CHECK (semester ~ '[0-9]{4}[WS]'),
+
+    lti_id    INT,
 
     name      TEXT NOT NULL,
     suffix    TEXT,
@@ -57,6 +63,20 @@ CREATE TABLE tuwel.event_user
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT fk_event_user_user FOREIGN KEY (user_id) REFERENCES tuwel.user (user_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+CREATE TABLE tuwel.course_user
+(
+    course_id INT NOT NULL,
+    user_id   INT NOT NULL,
+
+    CONSTRAINT pk_course_user PRIMARY KEY (course_id, user_id),
+    CONSTRAINT fk_course_user_course FOREIGN KEY (course_id) REFERENCES tuwel.course (course_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT fk_course_user_user FOREIGN KEY (user_id) REFERENCES tuwel.user (user_id)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );

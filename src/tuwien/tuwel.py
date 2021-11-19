@@ -5,6 +5,7 @@ import re
 import json
 
 from tucal import Semester
+import tucal.icalendar
 import tuwien.sso
 
 TUWEL_DOMAIN = 'tuwel.tuwien.ac.at'
@@ -46,17 +47,19 @@ class Session:
     _user_id: typing.Optional[int]
     _sess_key: typing.Optional[str]
     _calendar_token: typing.Optional[str]
+    _timeout: float
 
-    def __init__(self, session: tuwien.sso.Session = None):
+    def __init__(self, session: tuwien.sso.Session = None, timeout: float = 20):
         self._sso = session
-        self._session = session.session or requests.Session()
+        self._session = session and session.session or requests.Session()
         self._courses = None
         self._user_id = None
         self._sess_key = None
         self._calendar_token = None
+        self._timeout = timeout
 
     def get(self, uri: str) -> requests.Response:
-        r = self._session.get(f'{TUWEL_URL}{uri}')
+        r = self._session.get(f'{TUWEL_URL}{uri}', timeout=self._timeout)
 
         for user_id in USER_ID.finditer(r.text):
             self._user_id = int(user_id.group(1))
@@ -66,7 +69,7 @@ class Session:
         return r
 
     def post(self, uri: str, data=None, headers=None) -> requests.Response:
-        return self._session.post(f'{TUWEL_URL}{uri}', data=data, headers=headers)
+        return self._session.post(f'{TUWEL_URL}{uri}', data=data, headers=headers, timeout=self._timeout)
 
     def ajax(self, method: str, **args) -> typing.Dict:
         data = [{
@@ -88,14 +91,13 @@ class Session:
         return self._sso.login(f'{TUWEL_URL}/auth/saml2/login.php')
 
     def _get_calendar_token(self) -> str:
-        r = self.get('/calendar/export.php')
-        sess_key = INPUT_SESS_KEY.findall(r.text)[0]
+        self.get('/calendar/export.php')
 
         r = self.post('/calendar/export.php', {
             '_qf__core_calendar_export_form': '1',
             'events[exportevents]': 'all',
             'period[timeperiod]': 'custom',
-            'sesskey': sess_key,
+            'sesskey': self._sess_key,
             'generateurl': 'Kalender-URL abfragen',
         })
         return AUTH_TOKEN.findall(r.text)[0]
@@ -136,3 +138,12 @@ class Session:
         if self._calendar_token is None:
             self._calendar_token = self._get_calendar_token()
         return self._calendar_token
+
+    def get_personal_calendar(self, token: str, what: str = 'all', time: str = 'custom',
+                              user_id: int = None) -> typing.Optional[tucal.icalendar.Calendar]:
+        r = self.get(f'/calendar/export_execute.php?userid={user_id or self.user_id}&authtoken={token}&'
+                     f'preset_what={what}&preset_time={time}')
+        if r.status_code == 200:
+            return tucal.icalendar.parse_ical(r.text)
+        else:
+            return None

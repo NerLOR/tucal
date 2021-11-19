@@ -5,7 +5,9 @@ import typing
 import requests
 import re
 import datetime
+import time
 import html
+import json
 
 from tucal import Semester
 import tucal.icalendar
@@ -25,9 +27,19 @@ COURSE_META = re.compile(r'<div id="subHeader" class="clearfix">'
 CDATA = re.compile(r'<!\[CDATA\[(.*?)]]>')
 UPDATE_VIEW_STATE = re.compile(r'<update id="j_id__v_0:javax.faces.ViewState:1"><!\[CDATA\[(.*?)]]></update>')
 INPUT_VIEW_STATE = re.compile(r'<input.*?name="javax\.faces\.ViewState".*?value="([^"]*)".*?/>')
-TABLE_TR = re.compile(r'<tr.*?>(.*?)</tr>')
-TABLE_TD = re.compile(r'<td.*?>(.*?)</td>')
-TAGS = re.compile(r'<.*?>')
+LINK_TOKEN = re.compile(rf'<a href="{TISS_URL}/events/rest/calendar/personal\?[^"]*?token=([^"]*)">Download</a>')
+LINK_SUBSCRIPTION = re.compile(r'<a href="/education/subscriptionSettings\.xhtml\?sgId=([^"]*)"')
+INPUT_CHECKBOX = re.compile(r'<input id="([^"]*)" type="checkbox" name="([^"]*)"( checked="([^"]*)")?')
+LINK_COURSE = re.compile(r'<a href="/course/educationDetails\.xhtml\?'
+                         r'semester=([0-9WS]+)&amp;courseNr=([A-Z0-9]+)">([^<]*)</a>')
+SPAN_BOLD = re.compile(r'<span class="bold">\s*(.*?)\s*</span>', re.MULTILINE | re.DOTALL)
+GROUP_OL_LI = re.compile(r'<li>\s*<label[^>]*>\s*(.*?)\s*</label>\s*<span[^>]*>\s*(.*?)\s*</span>\s*</li>')
+
+TABLE_TR = re.compile(r'<tr[^>]*>(.*?)</tr>', re.MULTILINE | re.DOTALL)
+TABLE_TD = re.compile(r'<td[^>]*>(.*?)</td>', re.MULTILINE | re.DOTALL)
+GROUP_DIV = re.compile(r'<div class="groupWrapper">(.*?)</fieldset>', re.MULTILINE | re.DOTALL)
+
+TAGS = re.compile(r'<script[^>]*>.*?</script>|<[^>]*>', re.MULTILINE | re.DOTALL)
 SPACES = re.compile(r'\s+')
 
 
@@ -107,7 +119,7 @@ class Course:
     ects: float
 
     def __init__(self, nr: str, semester: Semester, name_de: str, name_en: str, course_type: str, ects: float):
-        self.nr = nr
+        self.nr = nr.replace('.', '')
         self.semester = Semester(str(semester))
         self.name_de = name_de
         self.name_en = name_en
@@ -157,14 +169,20 @@ class Session:
     _buildings: typing.Optional[typing.Dict[str, Building]]
     _rooms: typing.Optional[typing.Dict[str, Room]]
     _courses: typing.Optional[typing.Dict[str, Course]]
+    _calendar_token: typing.Optional[str]
+    _favorites = typing.Optional[typing.List[Course]]
+    _timeout: float
 
-    def __init__(self, session: tuwien.sso.Session = None):
+    def __init__(self, session: tuwien.sso.Session = None, timeout: float = 20):
         self._win_id = Session.gen_win_id()
         self._req_token = Session.gen_req_token()
+        self._timeout = timeout
         self._buildings = None
         self._rooms = None
         self._courses = None
         self._view_state = None
+        self._calendar_token = None
+        self._favorites = None
         self._session = session and session.session or requests.Session()
         self._sso = session
         self._session.cookies.set(f'dsrwid-{self._req_token}', f'{self._win_id}', domain=TISS_DOMAIN)
@@ -193,12 +211,12 @@ class Session:
     def get(self, endpoint: str, headers: typing.Dict[str, object] = None,
             allow_redirects: bool = True) -> requests.Response:
         r = self._session.get(f'{TISS_URL}{self.update_endpoint(endpoint)}', headers=headers,
-                              allow_redirects=allow_redirects)
+                              allow_redirects=allow_redirects, timeout=self._timeout)
         self._update_view_state(r.text)
         return r
 
-    def post(self, endpoint: str, data: typing.Dict[str, object],
-             headers: typing.Dict[str, object] = None, ajax: bool = False) -> requests.Response:
+    def post(self, endpoint: str, data: typing.Dict[str, object], headers: typing.Dict[str, object] = None,
+             ajax: bool = False, allow_redirects: bool = True) -> requests.Response:
         headers = headers or {}
         headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
 
@@ -206,16 +224,17 @@ class Session:
         data['dspwid'] = self._win_id
 
         if ajax:
+            headers['X-Requested-With'] = 'XMLHttpRequest'
+            headers['Faces-Request'] = 'partial/ajax'
             data['javax.faces.partial.ajax'] = 'true'
-            data['X-Requested-With'] = 'XMLHttpRequest'
-            data['Faces-Request'] = 'partial/ajax'
 
         if self._view_state is not None:
             data['javax.faces.ViewState'] = self._view_state
         elif 'javax.faces.ViewState' in data:
             del data['javax.faces.ViewState']
 
-        r = self._session.post(f'{TISS_URL}{endpoint}', data=data, headers=headers)
+        r = self._session.post(f'{TISS_URL}{endpoint}', data=data, headers=headers,
+                               timeout=self._timeout, allow_redirects=allow_redirects)
         self._update_view_state(r.text, ajax=ajax)
 
         return r
@@ -298,7 +317,7 @@ class Session:
         return Course(course_nr, semester, title_de, title_en, course_type, ects)
 
     def course_generator(self, semester: Semester, semester_to: Semester = None,
-                         skip: typing.Set[(str, Semester)] = None) -> typing.Generator[Course]:
+                         skip: typing.Set[(str, Semester)] = None) -> typing.Generator[Course or int]:
         skip = skip or set()
 
         data1 = {
@@ -326,17 +345,20 @@ class Session:
             self.post('/course/courseList.xhtml', data1, ajax=True)
             r = self.post('/course/courseList.xhtml', data)
             for tr in TABLE_TR.finditer(r.text):
-                row = [td.group(1) for td in TABLE_TD.finditer(tr.group(0))]
+                row = [td.group(1) for td in TABLE_TD.finditer(tr.group(1))]
                 if len(row) > 0:
                     course_nrs.add((row[0].replace('.', ''), Semester(row[5])))
 
+        yield len(course_nrs)
         for course in course_nrs - skip:
             yield self._get_course(course[0], course[1])
 
     def _get_courses(self, semester: Semester, semester_to: Semester = None) -> typing.Dict[str, Course]:
+        gen = self.course_generator(semester, semester_to)
+        next(gen)
         return {
             f'{course.nr}-{course.semester}': course
-            for course in self.course_generator(semester, semester_to)
+            for course in gen
         }
 
     @property
@@ -362,17 +384,108 @@ class Session:
             self._courses = self._get_courses(Semester.last(), Semester.current())
         return self._courses
 
-    def get_event_course(self, event_id: int, course_nr: str) -> (typing.Optional[str], typing.Optional[Semester]):
-        r = self.get(f'/education/goToEvent.xhtml?id={course_nr}-{event_id}&type=EXAM',
-                     allow_redirects=False)
-        print(r.status_code, r.request.url)
-        print(r.headers['Location'])
-        'https://tiss.tuwien.ac.at/education/goToEvent.xhtml?id=188999-4503954&type=EXAM'
-        'https://tiss.tuwien.ac.at/education/goToEvent.xhtml?id=188999-393157&type=EXAM'
+    def get_room_schedule_ical(self, room_code: str) -> typing.Optional[tucal.icalendar.Calendar]:
+        r = self._session.get(f'{TISS_URL}/events/rest/calendar/room?locale=de&roomCode={room_code}',
+                              timeout=self._timeout, allow_redirects=False)
+        if r.status_code == 200:
+            return tucal.icalendar.parse_ical(r.text)
+        else:
+            return None
 
-        return None, None
+    def get_room_schedule(self, room_code: str) -> typing.Dict[str, typing.Any]:
+        data = {
+            'javax.faces.partial.execute': 'calendarForm:schedule',
+            'javax.faces.partial.render': 'calendarForm:schedule',
+            'calendarForm:schedule': 'calendarForm:schedule',
+            'calendarForm:schedule_start': int(time.mktime(tucal.Semester.last().first_day.timetuple()) * 1000),
+            'calendarForm:schedule_end': int(time.mktime(tucal.Semester.next().last_day.timetuple()) * 1000),
+        }
+        self.get(f'/events/roomSchedule.xhtml?roomCode={room_code.replace(" ", "+")}')
+        r = self.post('/events/roomSchedule.xhtml', data, ajax=True)
+        for cdata in CDATA.finditer(r.text):
+            cd = cdata.group(1)
+            if cd.startswith('{') and cd.endswith('}'):
+                return json.loads(cd)
 
-    def get_room_schedule(self, room_code: str) -> tucal.icalendar.Calendar:
-        r = self._session.get(f'{TISS_URL}/events/rest/calendar/room?locale=de&roomCode={room_code}')
-        cal = tucal.icalendar.parse_ical(r.text)
-        return cal
+    def get_personal_schedule_ical(self, token: str) -> typing.Optional[tucal.icalendar.Calendar]:
+        r = self._session.get(f'{TISS_URL}/events/rest/calendar/personal?locale=de&token={token}',
+                              timeout=self._timeout, allow_redirects=False)
+        if r.status_code == 200:
+            return tucal.icalendar.parse_ical(r.text)
+        else:
+            return None
+
+    def get_personal_schedule(self) -> typing.Dict[str, typing.Any]:
+        data = {
+            'javax.faces.partial.execute': 'calendarForm:schedule',
+            'javax.faces.partial.render': 'calendarForm:schedule',
+            'calendarForm:schedule': 'calendarForm:schedule',
+            'calendarForm:schedule_start': int(time.mktime(tucal.Semester.last().first_day.timetuple()) * 1000),
+            'calendarForm:schedule_end': int(time.mktime(tucal.Semester.next().last_day.timetuple()) * 1000),
+        }
+        self.get('/events/personSchedule.xhtml')
+        r = self.post('/events/personSchedule.xhtml', data, ajax=True)
+        for cdata in CDATA.finditer(r.text):
+            cd = cdata.group(1)
+            if cd.startswith('{') and cd.endswith('}'):
+                return json.loads(cd)
+
+    def _get_calendar_token(self) -> str:
+        r = self.get('/events/personSchedule.xhtml')
+        for link in LINK_TOKEN.finditer(r.text):
+            return link.group(1)
+        # FIXME generate tiss calendar token
+        raise RuntimeError('can not find calendar token')
+
+    @property
+    def calendar_token(self) -> str:
+        if self._calendar_token is None:
+            self._calendar_token = self._get_calendar_token()
+        return self._calendar_token
+
+    def update_calendar_settings(self):
+        r = self.get('/education/favorites.xhtml')
+
+        subs = [link.group(1) for link in LINK_SUBSCRIPTION.finditer(r.text)]
+        for sub in subs:
+            r = self.get(f'/education/subscriptionSettings.xhtml?sgId={sub}')
+            data = {
+                'settings:updateBtn': 'Speichern',
+                'settings_SUBMIT': '1',
+            }
+            for box in INPUT_CHECKBOX.finditer(r.text):
+                if box.group(4) == 'checked':
+                    data[box.group(1)] = 'true'
+
+            if data.get('settings:eventOption', None) == 'true':
+                continue
+            else:
+                data['settings:eventOption'] = 'true'
+
+            self.post('/education/subscriptionSettings.xhtml', data)
+
+    @property
+    def favorites(self) -> typing.List[Course]:
+        if self._favorites is None:
+            self._favorites = self._get_favorites()
+        return self._favorites
+
+    def _get_favorites(self) -> typing.List[Course]:
+        r = self.get('/education/favorites.xhtml')
+        courses = []
+        for row in TABLE_TR.finditer(r.text):
+            data = [d.group(1) for d in TABLE_TD.finditer(row.group(1))][1:4]
+            if len(data) != 3 or data[0] == 'Summe':
+                continue
+            course = LINK_COURSE.findall(data[0])[0]
+            courses.append(Course(course[1], course[0], course[2], None, None, float(data[2])))
+        return courses
+
+    def get_groups(self, course: Course):
+        r = self.get(f'/education/course/groupList.xhtml?semester={course.semester}&courseNr={course.nr}')
+        for g_html in GROUP_DIV.finditer(r.text):
+            text = g_html.group(1).strip()
+            name, status = SPAN_BOLD.findall(text)
+            data = GROUP_OL_LI.findall(text)
+            print(name, status, data)
+

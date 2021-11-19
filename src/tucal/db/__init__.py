@@ -3,6 +3,8 @@ from __future__ import annotations
 import typing
 import psycopg2
 
+import tucal.icalendar as ical
+
 DB_CONN: typing.Optional[Connection] = None
 
 DB_HOST = 'data.necronda.net'
@@ -22,7 +24,7 @@ class Connection(psycopg2._psycopg.connection):
 
 def connect() -> Connection:
     global DB_CONN
-    DB_CONN = psycopg2.connect(f'host={DB_HOST} dbname={DB_NAME} user={DB_USER} password={DB_PASS}')
+    DB_CONN = psycopg2.connect(host=DB_HOST, dbname=DB_NAME, user=DB_USER, password=DB_PASS)
     return DB_CONN
 
 
@@ -39,3 +41,17 @@ def commit() -> bool:
         return False
     DB_CONN.commit()
     return True
+
+
+def sync_events():
+    cur = cursor()
+
+    cur.close()
+
+
+def insert_event_ical(evt: ical.Event):
+    pass
+
+
+def insert_event(evt: typing.Dict[str, typing.Any]):
+    pass
