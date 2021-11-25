@@ -1,0 +1,90 @@
+comment_char %
+escape_char /
+
+% Bavarian Language Locale for Austria
+% Source: Lorenz Stechauner
+% Language: bar
+% Territory: AT
+% Date: 2021-11-25
+% Users: general
+
+LC_IDENTIFICATION
+title      "Bavarian locale for Austria"
+source     "Lorenz Stechauner"
+address    ""
+contact    ""
+email      ""
+tel        ""
+fax        ""
+language   "Bavarian"
+territory  "Austria"
+revision   "1.0"
+date       "2021-11-25"
+
+category "i18n:2012";LC_IDENTIFICATION
+category "i18n:2012";LC_CTYPE
+category "i18n:2012";LC_COLLATE
+category "i18n:2012";LC_TIME
+category "i18n:2012";LC_NUMERIC
+category "i18n:2012";LC_MONETARY
+category "i18n:2012";LC_MESSAGES
+category "i18n:2012";LC_PAPER
+category "i18n:2012";LC_NAME
+category "i18n:2012";LC_ADDRESS
+category "i18n:2012";LC_TELEPHONE
+category "i18n:2012";LC_MEASUREMENT
+END LC_IDENTIFICATION
+
+LC_CTYPE
+copy "de_AT"
+END LC_CTYPE
+
+LC_COLLATE
+% Copy the template from ISO/IEC 14651
+copy "iso14651_t1"
+END LC_COLLATE
+
+LC_MESSAGES
+copy "de_AT"
+END LC_MESSAGES
+
+LC_MONETARY
+copy "de_AT"
+END LC_MONETARY
+
+LC_NUMERIC
+copy "de_AT"
+END LC_NUMERIC
+
+LC_TIME
+copy "de_AT"
+END LC_TIME
+
+LC_PAPER
+copy "de_AT"
+END LC_PAPER
+
+LC_TELEPHONE
+copy "de_AT"
+END LC_TELEPHONE
+
+LC_MEASUREMENT
+copy "de_AT"
+END LC_MEASUREMENT
+
+LC_NAME
+copy "de_AT"
+END LC_NAME
+
+LC_ADDRESS
+postal_fmt    "%f%N%a%N%d%N%b%N%s %h %e %r%N%z %T%N%c%N"
+country_name "<U00D6>sterreich"
+country_ab2 "AT"
+country_ab3 "AUT"
+country_num 040
+country_car    "A"
+lang_name     "Bairisch"
+%lang_ab       "bar"
+%lang_term     "bar"
+%lang_lib      "bar"
+END LC_ADDRESS

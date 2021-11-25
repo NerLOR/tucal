@@ -1,0 +1,89 @@
+
+msgid "My Calendar"
+msgstr "Mein Kalender"
+
+msgid "My Friends"
+msgstr "Meine Freund:innen"
+
+msgid "LVAs"
+msgstr "LVAs"
+
+msgid "Search"
+msgstr "Suche"
+
+msgid "Search (for)"
+msgstr "Suchen"
+
+msgid "Home"
+msgstr "Start"
+
+msgid "Home Page"
+msgstr "Startseite"
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Sign up"
+msgstr "Registrieren"
+
+msgid "Matriculation number"
+msgstr "Matrikelnummer"
+
+msgid "Matriculation number or username"
+msgstr "Matrikelnummer oder Benutzername"
+
+msgid "Username"
+msgstr "Benutzername"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Repeat password"
+msgstr "Passwort wiederholen"
+
+msgid "SSO password"
+msgstr "SSO-Passwort"
+
+msgid "Verify account"
+msgstr "Account verifizieren"
+
+msgid "SSO verification"
+msgstr "SSO-Verifizierung"
+
+msgid "Email verification"
+msgstr "E-Mail-Verifizierung"
+
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+msgid "or"
+msgstr "oder"
+
+
+msgctxt "http"
+msgid "Unauthorized"
+msgstr "Unauthorisiert"
+
+msgctxt "http"
+msgid "Forbidden"
+msgstr "Zugriff verboten"
+
+msgctxt "http"
+msgid "Not Found"
+msgstr "Seite nicht gefunden"
+
+msgctxt "http"
+msgid "Conflict"
+msgstr "Konflikt"
+
+msgctxt "http"
+msgid "Gone"
+msgstr "Seite gelöscht"
+
+msgctxt "http"
+msgid "Internal Server Error"
+msgstr "Interner Sever-Fehler"
+
+msgctxt "http"
+msgid "Not Implemented"
+msgstr "Nicht implementiert"

@@ -1,0 +1,89 @@
+
+msgid "My Calendar"
+msgstr "My Calendar"
+
+msgid "My Friends"
+msgstr "My Friends"
+
+msgid "LVAs"
+msgstr "Courses"
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Search (for)"
+msgstr "Search"
+
+msgid "Home"
+msgstr "Home"
+
+msgid "Home Page"
+msgstr "Home Page"
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Sign up"
+msgstr "Sign up"
+
+msgid "Matriculation number"
+msgstr "Matriculation number"
+
+msgid "Matriculation number or username"
+msgstr "Matriculation number or username"
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Repeat password"
+msgstr "Repeat password"
+
+msgid "SSO password"
+msgstr "SSO password"
+
+msgid "Verify account"
+msgstr "Verify account"
+
+msgid "SSO verification"
+msgstr "SSO verification"
+
+msgid "Email verification"
+msgstr "Email verification"
+
+msgid "Email address"
+msgstr "Email address"
+
+msgid "or"
+msgstr "or"
+
+
+msgctxt "http"
+msgid "Unauthorized"
+msgstr "Unauthorized"
+
+msgctxt "http"
+msgid "Forbidden"
+msgstr "Access Forbidden"
+
+msgctxt "http"
+msgid "Not Found"
+msgstr "Page Not Found"
+
+msgctxt "http"
+msgid "Conflict"
+msgstr "Conflict"
+
+msgctxt "http"
+msgid "Gone"
+msgstr "Page Gone"
+
+msgctxt "http"
+msgid "Internal Server Error"
+msgstr "Internal Server Error"
+
+msgctxt "http"
+msgid "Not Implemented"
+msgstr "Not Implemented"

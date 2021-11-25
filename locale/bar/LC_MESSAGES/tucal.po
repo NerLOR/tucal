@@ -1,0 +1,77 @@
+
+msgid "My Calendar"
+msgstr "Mei Kalenda"
+
+msgid "My Friends"
+msgstr "Meine Freind:inna"
+
+msgid "LVAs"
+msgstr "LVAs"
+
+msgid "Search"
+msgstr "Suche"
+
+msgid "Search (for)"
+msgstr "Suachn"
+
+msgid "Home"
+msgstr "Start"
+
+msgid "Home Page"
+msgstr "Startseitn"
+
+msgid "Login"
+msgstr "Eiloggn"
+
+msgid "Sign up"
+msgstr "Registrian"
+
+msgid "Matriculation number"
+msgstr "Matrikelnumma"
+
+msgid "Matriculation number or username"
+msgstr "Matrikelnumma oda Benutzanom"
+
+msgid "Username"
+msgstr "Benutzanom"
+
+msgid "Password"
+msgstr "Passwoat"
+
+msgid "Repeat password"
+msgstr "Passwoat wiedahoin"
+
+msgid "SSO password"
+msgstr "SSO-Passwoat"
+
+msgid "or"
+msgstr "oda"
+
+
+msgctxt "http"
+msgid "Unauthorized"
+msgstr "Unauthorisiat"
+
+msgctxt "http"
+msgid "Forbidden"
+msgstr "Zuagriff vabotn"
+
+msgctxt "http"
+msgid "Not Found"
+msgstr "Seitn ned gfundn"
+
+msgctxt "http"
+msgid "Conflict"
+msgstr "Konflikt"
+
+msgctxt "http"
+msgid "Gone"
+msgstr "Seitn glöscht"
+
+msgctxt "http"
+msgid "Internal Server Error"
+msgstr "Interna Server-Föhla"
+
+msgctxt "http"
+msgid "Not Implemented"
+msgstr "Ned implementiat"
