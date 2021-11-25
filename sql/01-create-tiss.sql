@@ -101,10 +101,10 @@ CREATE TABLE tiss.exam
 
 CREATE TABLE tiss.event
 (
-    event_nr    INT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    event_nr    BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
 
     event_id    INT,
-    type        INT                              NOT NULL,
+    type        INT                                 NOT NULL,
 
     course_nr   TEXT,
     semester    TEXT,
@@ -112,11 +112,11 @@ CREATE TABLE tiss.event
     group_name  TEXT,
     exam_name   TEXT,
 
-    start_ts    TIMESTAMP WITH TIME ZONE         NOT NULL,
-    end_ts      TIMESTAMP WITH TIME ZONE         NOT NULL,
+    start_ts    TIMESTAMP WITH TIME ZONE            NOT NULL,
+    end_ts      TIMESTAMP WITH TIME ZONE            NOT NULL,
     access_ts   TIMESTAMP WITH TIME ZONE,
 
-    name        TEXT                             NOT NULL,
+    name        TEXT                                NOT NULL,
     description TEXT,
 
     livestream  BOOLEAN,
@@ -150,8 +150,8 @@ CREATE INDEX end_ts ON tiss.event (end_ts);
 
 CREATE TABLE tiss.event_user
 (
-    event_nr INT NOT NULL,
-    mnr      INT NOT NULL,
+    event_nr BIGINT NOT NULL,
+    mnr      INT    NOT NULL,
 
     CONSTRAINT pk_event_user PRIMARY KEY (event_nr, mnr),
     CONSTRAINT fk_event_user_event FOREIGN KEY (event_nr) REFERENCES tiss.event (event_nr)

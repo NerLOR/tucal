@@ -8,12 +8,63 @@ CREATE SCHEMA tucal;
 
 CREATE TABLE tucal.account
 (
-    mnr                 INT NOT NULL,
-    other_email_address TEXT CHECK (other_email_address ~ '[^@]+@([a-z0-9_-]+\.)[a-z]{2,}'),
+    mnr           INT                      NOT NULL,
+    username      TEXT                     NOT NULL CHECK (username ~ '\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]'),
+    email_address TEXT CHECK (email_address ~ '[^@]+@([a-z0-9_-]+\.)+[a-z]{2,}'),
+
+    verified      BOOLEAN                  NOT NULL DEFAULT FALSE,
+    avatar_uri    TEXT                              DEFAULT NULL,
+    create_ts     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    options       JSONB                    NOT NULL DEFAULT '{}'::jsonb,
 
     CONSTRAINT pk_account PRIMARY KEY (mnr),
-    CONSTRAINT sk_account_email UNIQUE (other_email_address)
+    CONSTRAINT sk_account_email UNIQUE (email_address),
+    CONSTRAINT sk_account_username UNIQUE (username)
 );
+
+CREATE OR REPLACE VIEW tucal.v_account AS
+SELECT a.mnr,
+       a.username,
+       CONCAT('e', LPAD(a.mnr::text, 8, '0'), '@student.tuwien.ac.at') AS email_address_1,
+       a.email_address                                                 AS email_address_2,
+       a.verified,
+       a.avatar_uri,
+       a.create_ts,
+       a.options
+FROM tucal.account a;
+
+CREATE TABLE tucal.session
+(
+    session_nr BIGINT                   NOT NULL GENERATED ALWAYS AS IDENTITY,
+    token      TEXT                     NOT NULL CHECK (token ~ '[0-9A-Za-z]{64}'),
+
+    mnr        INT                               DEFAULT NULL,
+    options    JSONB                    NOT NULL DEFAULT '{}'::jsonb,
+
+    create_ts  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    last_ts    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+
+    CONSTRAINT pk_sessoin PRIMARY KEY (session_nr),
+    CONSTRAINT sk_session_token UNIQUE (token),
+    CONSTRAINT fk_session_accout FOREIGN KEY (mnr) REFERENCES tucal.account (mnr)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
+);
+
+CREATE OR REPLACE VIEW tucal.v_session AS
+SELECT s.session_nr,
+       s.token,
+       s.options   AS session_opts,
+       a.mnr,
+       a.username,
+       a.email_address_1,
+       a.email_address_2,
+       a.verified,
+       a.avatar_uri,
+       a.create_ts AS account_create_ts,
+       a.options   AS account_opts
+FROM tucal.session s
+         LEFT JOIN tucal.v_account a ON a.mnr = s.mnr;
 
 CREATE TABLE tucal.area
 (
@@ -110,14 +161,20 @@ CREATE TABLE tucal.lecture_tube
 
 CREATE OR REPLACE VIEW tucal.v_room AS
 SELECT r.room_nr,
-       string_agg(CONCAT(r.area_id, r.building_id, rl.floor_nr, rl.local_code), '/')           AS room_code,
-       string_agg(CONCAT(r.area_id, r.building_id, ' ', rl.floor_nr, ' ', rl.local_code), '/') AS room_code_long,
-       string_agg(DISTINCT CONCAT(r.area_id, r.building_id), '/')                              AS building_id,
-       string_agg(DISTINCT r.tiss_code, '/')                                                   AS tiss_code,
+       string_agg(CONCAT(r.area_id, r.building_id, rl.floor_nr, rl.local_code), '/') AS room_code,
+       string_agg(CONCAT(r.area_id, r.building_id, ' ', rl.floor_nr, ' ', rl.local_code),
+                  '/')                                                               AS room_code_long,
+       string_agg(DISTINCT CONCAT(r.area_id, r.building_id), '/')                    AS building_id,
+       string_agg(DISTINCT r.tiss_code, '/')                                         AS tiss_code,
        r.room_name,
        r.room_suffix,
        r.room_name_short,
        r.room_alt_name,
+       REGEXP_REPLACE(
+               REGEXP_REPLACE(
+                       CONCAT(r.room_name, ' ', r.room_suffix),
+                       '[ /.()+-]+', '-', 'g'),
+               '^-+|-+$', '', 'g')                                                   AS room_name_normal,
        r.area,
        r.capacity
 FROM tucal.room r
@@ -128,7 +185,7 @@ ORDER BY r.room_nr;
 DROP VIEW tucal.v_lecture_tube;
 CREATE OR REPLACE VIEW tucal.v_lecture_tube AS
 SELECT lt.room_nr,
-       CONCAT(r.area_id, r.building_id, lt.floor_nr, lt.local_code) AS room_code,
+       CONCAT(r.area_id, r.building_id, lt.floor_nr, lt.local_code)        AS room_code,
        lower(CONCAT(r.area_id, r.building_id, lt.floor_nr, lt.local_code)) AS room_code_lower,
        lt.lt_name,
        r.room_name,
