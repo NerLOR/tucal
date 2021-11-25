@@ -1,0 +1,29 @@
+
+main > section.status {
+    --border-color: var(--status-color);
+}
+
+main > section.status h1,
+main > section.status h2 {
+    text-align: center;
+    color: var(--status-color);
+    font-weight: normal;
+}
+
+main > section.status h1 {
+    font-size: 3em;
+    margin: 0.125rem;
+}
+
+main > section.status h2 {
+    font-size: 1.5em;
+    margin: 0.25em 1rem 1em 1rem;
+}
+
+main > section.status p {
+    text-align: center;
+}
+
+main > section.error {
+    --status-color: var(--color-error);
+}

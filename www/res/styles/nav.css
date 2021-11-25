@@ -1,0 +1,98 @@
+
+html {
+    --nav-height: 3rem;
+}
+
+body > nav {
+    width: 100%;
+    display: flex;
+    height: var(--nav-height);
+    box-sizing: content-box;
+    border-bottom: 1px solid #C0C0C0;
+    background-color: #FFFFFF;
+    position: fixed;
+    top: 0;
+    left: 0;
+    justify-content: center;
+}
+
+body > nav > * {
+    height: 100%;
+}
+
+body > nav a {
+    text-decoration: none;
+    color: #808080;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 1em 2em 0 2em;
+    display: block;
+    white-space: nowrap;
+}
+
+body > nav a.button {
+    border: 1px solid #C0C0C0;
+    border-radius: var(--border-radius);
+    display: inline-block;
+    height: 2em;
+    padding: 0.4375em 1em;
+}
+
+body > nav a:hover,
+body > nav a:focus {
+    color: var(--color);
+    border-color: var(--color);
+}
+
+body > nav a.active {
+    color: var(--color);
+}
+
+#nav-home {
+    width: var(--nav-height);
+    flex-grow: 1;
+}
+
+#nav-home a {
+    width: var(--nav-height);
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#nav-user {
+    flex-grow: 1;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5em;
+    padding: 0.5em;
+    box-sizing: border-box;
+}
+
+#nav-search {
+    width: 300px;
+    flex-shrink: 1;
+}
+
+#nav-search form {
+
+}
+
+#nav-search input {
+    outline: none;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    border: 1px solid #C0C0C0;
+    padding: 0.5em 0.75em;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0.375em 0;
+    height: 2.25em;
+}
+
+@media screen and (max-width: 1000px) {
+    body > nav a {
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+}

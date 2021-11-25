@@ -1,0 +1,82 @@
+
+main form {
+
+}
+
+main section > form {
+    max-width: 400px;
+    margin: auto;
+    padding-bottom: 1em;
+}
+
+main form h1 {
+    text-align: center;
+}
+
+main form p {
+    text-align: center;
+}
+
+main form div.text,
+main form div.container,
+main form button {
+    display: block;
+    width: calc(100% - 1em);
+    margin: 0.5em;
+    box-sizing: border-box;
+    padding: 0.75em 1em;
+    font-size: 1em;
+    border-radius: var(--border-radius);
+    background-color: #FFFFFF;
+    --border-color: var(--color);
+}
+
+main form div.text {
+    position: relative;
+    padding: 0;
+}
+
+main form div.container,
+main form button {
+    border: 1px solid var(--border-color);
+}
+
+main form div.text > label {
+    color: #808080;
+    position: absolute;
+    left: 1rem;
+    top: 0.875rem;
+    transition: left 0.125s, top 0.125s, font-size 0.125s;
+    cursor: text;
+}
+
+main form *.red {
+    --border-color: var(--red) !important;
+}
+
+main form div.text > input:focus ~ label,
+main form div.text > input:not(:placeholder-shown) ~ label {
+    font-size: 0.75em;
+    top: 0.25rem;
+}
+
+main form div.text > input {
+    border: 1px solid var(--border-color);
+    font-size: 1em;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1.25rem 1rem 0.25rem 1rem;
+    border-radius: var(--border-radius);
+}
+
+main form button {
+    color: var(--color)
+}
+
+main form button:hover,
+main form button:focus {
+    background-color: var(--color);
+    border-color: var(--color-dark);
+    cursor: pointer;
+    color: #FFFFFF;
+}

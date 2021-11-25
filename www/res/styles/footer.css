@@ -1,0 +1,11 @@
+
+html {
+    --footer-height: 6rem;
+}
+
+body > footer {
+    height: var(--footer-height);
+    box-sizing: border-box;
+    border-top: 1px solid #C0C0C0;
+    background-color: #FFFFFF;
+}
