@@ -10,6 +10,8 @@ html {
     --border-radius: 4px;
     --color: #4080C0;
     --color-dark: #204060;
+    --color-light: #A0C0E0;
+    --color-very-light: #4080C020;
     --red: #C00000;
     --green: #008000;
     --color-error: var(--red);
@@ -27,7 +29,6 @@ body > div.wrapper {
     width: 100%;
     padding: var(--nav-height) 0 1px 0;
     box-sizing: border-box;
-    overflow: hidden;
 }
 
 h1, h2, h3, h4 {

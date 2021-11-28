@@ -3,10 +3,11 @@ global $TITLE;
 global $USER;
 
 require "../.php/session.php";
-
-$TITLE = [_('Verify account')];
+force_user_login();
 
 require "../.php/main.php";
+
+$TITLE = [_('Verify account')];
 require "../.php/header.php";
 ?>
 <main class="w1">

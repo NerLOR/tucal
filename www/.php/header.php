@@ -56,15 +56,15 @@ if ($STATUS >= 400 && $STATUS < 600) {
             <input name="q" placeholder="<?php echo _('Search (for)');?>"/>
         </form>
     </div>
-    <div><a href="/calendar/" class="<?php echo uri_active($cal_uri)?>"><?php echo _('My Calendar');?></a></div>
+    <div><a href="<?php echo $cal_uri;?>" class="<?php echo uri_active($cal_uri);?>"><?php echo _('My Calendar');?></a></div>
     <div><a href="/friends" class="<?php echo uri_active('/friends', true)?>"><?php echo _('My Friends');?></a></div>
     <div><a href="/course/" class="<?php echo uri_active('/course/')?>"><?php echo _('LVAs');?></a></div>
     <div id="nav-user">
 <?php if (isset($USER)) { ?>
         USER
 <?php } else { ?>
-        <a href="/account/sign-up" class="button <?php echo uri_active('/account/sign-up', true)?>"><?php echo _('Sign up')?></a>
-        <a href="/account/login" class="button <?php echo uri_active('/account/login', true)?>"><?php echo _('Login')?></a>
+        <a href="/account/sign-up" class="button <?php echo uri_active('/account/sign-up', true);?>"><?php echo _('Sign up');?></a>
+        <a href="/account/login" class="button <?php echo uri_active('/account/login', true);?>"><?php echo _('Login');?></a>
 <?php } ?>
     </div>
 </nav>

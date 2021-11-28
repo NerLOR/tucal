@@ -1,6 +1,9 @@
 <?php
 
-require "../.php/database.php";
+require "../.php/session.php";
+
+const FLAGS = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+
 
 $info = $_SERVER['PATH_INFO'] ?? '';
 
@@ -8,23 +11,30 @@ header('Content-Type: application/json; charset=UTF-8');
 header("Cache-Control: private, no-cache");
 
 switch ($info) {
-    case '/rooms': rooms();
+    case '/rooms': rooms(); break;
+    case '/calendar': calendar(); break;
+    default: error(404);
 }
 
-$content = '{"status":"error","message":""}' . "\n";
-header("Status: 404");
-header("Content-Length: " . strlen($content));
-echo $content;
-exit();
-
+function error(int $status, string $message = null) {
+    $content = '{"status":"error","message":' . json_encode($message, FLAGS) .'}' . "\n";
+    header("Status: $status");
+    header("Content-Length: " . strlen($content));
+    echo $content;
+    tucal_exit();
+}
 
 function rooms() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        error(405);
+    }
+
     $res = db_exec("SELECT r.room_nr, r.room_code, r.tiss_code, r.room_name, r.room_suffix, r.room_name_short,
                   r.room_alt_name, r.room_name_normal, lt.room_code AS lt_room_code, lt.lt_name
                   FROM tucal.v_room r LEFT JOIN tucal.v_lecture_tube lt ON lt.room_nr = r.room_nr");
     $arr = $res->fetchAll();
 
-    $content = '{"status":"success","message":null,"data":[' . "\n";
+    $content = '{"status":"success","message":null,"data":{"rooms":[' . "\n";
     for ($i = 0; $i < sizeof($arr); $i++) {
         $row = $arr[$i];
         $data = [
@@ -39,13 +49,53 @@ function rooms() {
             "lt_room_code" => $row["lt_room_code"],
             "lt_name" => $row["lt_name"],
         ];
-        $content .= json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $content .= json_encode($data, FLAGS);
         if ($i !== sizeof($arr) - 1) $content .= ",";
         $content .= "\n";
     }
-    $content .= "]}\n";
+    $content .= "]}}\n";
     header("Content-Length: " . strlen($content));
     echo $content;
-    exit();
+    tucal_exit();
 }
 
+function calendar() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        error(405);
+    }
+
+    $subject = $_GET['subject'];
+    $start = $_GET['start'];
+    $end = $_GET['end'];
+
+    $start = strtotime($start);
+    $end = strtotime($end);
+
+    $stmt = db_exec("SELECT * FROM tiss.event WHERE room_code = 'AUDI' AND start_ts >= :start AND end_ts < :end", [
+        'start' => date('c', $start),
+        'end' => date('c', $end),
+    ]);
+
+    echo '{"status":"success","message":"work in progress","data":{' . "\n";
+    echo '"timestamp":"' . date('c') .
+        '","start":"' . date('c', $start) .
+        '","end":"' . date('c', $end) .
+        '","events":[' . "\n";
+
+    $first = true;
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        if ($first) {
+            $first = false;
+        } else {
+            echo ",\n";
+        }
+        $data = [
+            'start' => $row['start_ts'],
+            'end' => $row['end_ts'],
+        ];
+        echo json_encode($data, FLAGS);
+    }
+
+    echo "\n]}}\n";
+    tucal_exit();
+}

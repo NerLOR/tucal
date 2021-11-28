@@ -1,8 +1,8 @@
 
 div.calendar {
-    display: flex;
-    width: calc(100% - 2em);
-    margin: 1em;
+    position: relative;
+    width: 100%;
+    margin: 0;
     background-color: #FFFFFF;
     box-sizing: border-box;
     --left-size: 50px;
@@ -23,6 +23,7 @@ div.calendar > table th,
 div.calendar > table td {
     padding: 0;
     box-sizing: border-box;
+    font-weight: normal;
 }
 
 div.calendar > table tbody th,
@@ -50,11 +51,6 @@ div.calendar > table thead td {
     background-color: #E8E8E8;
 }
 
-div.calendar > table thead tr:last-child th,
-div.calendar > table thead tr:last-child td {
-    height: var(--header-size);
-}
-
 div.calendar > table tbody th:first-child,
 div.calendar > table thead tr:first-child th:first-child {
     width: var(--left-size);
@@ -72,10 +68,13 @@ div.calendar > table tbody td:nth-child(8) {
     background-color: #F8F8F8;
 }
 
+div.calendar > table td.today {
+    background-color: var(--color-very-light) !important;
+}
+
 div.calendar div.panel {
     display: flex;
     width: 100%;
-    height: 100%;
     flex-direction: column;
 }
 
@@ -83,31 +82,93 @@ div.calendar div.panel span {
     flex-grow: 1;
 }
 
-div.calendar div.panel button {
+div.calendar thead button {
     outline: none;
     border: none;
     font-size: 1rem;
+    width: 100%;
+    height: 100%;
     background-color: #E8E8E8;
     padding: 0;
     box-sizing: border-box;
-    height: var(--row-size);
 }
 
-div.calendar div.panel button:hover {
+div.calendar thead button:hover {
     background-color: #D0D0D0;
 }
 
-div.calendar div.panel button:active {
+div.calendar thead button:active {
     background-color: #B0B0B0;
 }
 
-div.calendar div.panel button {
-    border-top: 1px solid var(--border-color);
+div.calendar thead button {
     cursor: pointer;
 }
 
-div.calendar div.panel button:nth-child(2) {
+div.calendar thead button:nth-of-type(1) {
     font-size: 0.75rem;
     font-weight: bold;
 }
 
+div.calendar div.panel span {
+    box-sizing: border-box;
+}
+
+div.calendar div.panel span.year-header {
+    font-size: 0.875em;
+    padding: 0.625rem 0 0 0;
+    font-weight: normal;
+    flex: 30px 0 0;
+}
+
+div.calendar div.panel span.week-header {
+    font-size: 0.75em;
+    flex: 20px 1 0;
+}
+
+div.calendar div.event-wrapper {
+    position: absolute;
+    width: calc(100% - var(--left-size));
+    height: calc(var(--row-size) * 30 + 1px);
+    bottom: 0;
+    right: 0;
+}
+
+div.calendar div.event-wrapper > * {
+    position: absolute;
+    margin: 0;
+}
+
+div.calendar div.event-wrapper > hr {
+    border: none;
+    width: 100%;
+    height: 2px;
+    margin-top: -1px;
+    background-color: var(--red);
+}
+
+div.calendar div.event-wrapper div.event {
+    --margin: 2px;
+    position: absolute;
+    display: block;
+    border: 1px solid #000000;
+    border-radius: var(--border-radius);
+    background-color: #00000020;
+    width: calc(14.2857% - var(--margin) * 2);
+    margin: var(--margin);
+    box-sizing: border-box;
+    padding: 0.25em;
+}
+
+@media screen and (max-width: 800px) {
+    div.calendar thead th.day-header {
+        font-size: 0.75em;
+        padding: 0 0.5em;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    div.calendar thead th.day-header {
+        font-size: 0.625em;
+    }
+}

@@ -1,24 +1,15 @@
 <?php
 
 global $STATUS;
-global $LOCATION;
+global $USE_PATH_INFO;
 
-if ((!isset($USE_PATH_INFO) || !$USE_PATH_INFO) && (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '')) {
-    $STATUS = 404;
+if ((isset($STATUS) && $STATUS >= 400 && $STATUS < 600) || ((!isset($USE_PATH_INFO) || !$USE_PATH_INFO) && (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== ''))) {
+    $STATUS = $STATUS ?? 404;
+    header("Status: $STATUS");
     require "header.php";
     require "footer.php";
-} elseif (isset($LOCATION)) {
-    header("Location: $LOCATION");
-    $STATUS = (isset($STATUS)) ? $STATUS : 303;
 }
 
 if (isset($STATUS)) {
     header("Status: $STATUS");
-    if ($STATUS >= 300 && $STATUS < 400) {
-        // Use Necronda web server default error documents
-        header("Content-Type: text/html");
-        header("Content-Length: 0");
-        header("Content-Security-Policy: default-src 'unsafe-inline' 'self' data:");
-        tucal_exit();
-    }
 }

@@ -1,11 +1,15 @@
 <?php
+
 global $TITLE;
 
 require "../.php/session.php";
-
-$TITLE = [_('Login')];
+if (isset($USER)) {
+    redirect('/account/');
+}
 
 require "../.php/main.php";
+
+$TITLE = [_('Login')];
 require "../.php/header.php";
 ?>
 <main class="w1">

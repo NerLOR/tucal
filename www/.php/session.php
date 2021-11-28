@@ -10,16 +10,20 @@ $COOKIE_AGE = 15768000;  // 6 months
 
 function tucal_exit() {
     global $USER;
-    try {
-        db_rollback();
-    } catch (Exception $e) {}
-    db_exec("UPDATE tucal.session SET last_ts = now(), mnr = :mnr, options = :opts WHERE session_nr = :nr", [
+    db_exec("UPDATE tucal.session SET last_ts = now(), account_nr = :acc_nr, options = :opts WHERE session_nr = :nr", [
         'nr' => $_SESSION['nr'],
-        'mnr' => isset($USER) ? $USER['mnr'] : null,
+        'acc_nr' => isset($USER) ? $USER['nr'] : null,
         'opts' => json_encode($_SESSION['opts']),
     ]);
+    try {
+        db_commit();
+    } catch (Exception $e) {}
     exit();
 }
+
+db_transaction();
+db_exec("LOCK TABLE tucal.session IN SHARE ROW EXCLUSIVE MODE");
+db_exec("LOCK TABLE tucal.account IN SHARE ROW EXCLUSIVE MODE");
 
 unset($_SESSION);
 unset($USER);
@@ -32,13 +36,19 @@ if (isset($_COOKIE['tucal_session'])) {
         $_SESSION = [
             'nr' => $s['session_nr'],
             'token' => $s['token'],
-            'opts' => json_decode($s['session_opts']),
+            'opts' => json_decode($s['session_opts'], true),
         ];
         if ($s['mnr'] !== null) {
             $USER = [
-                'mnr' => $s['mnr'],
+                'nr' => $s['account_nr'],
+                'mnr' => $s['mnr_normal'],
+                'mnr_int' => $s['mnr'],
                 'username' => $s['username'],
-                'opts' => json_decode($s['account_opts']),
+                'email_addr_1' => $s['email_address_1'],
+                'email_addr_2' => $s['email_address_2'],
+                'verified' => $s['verified'],
+                'avatar_uri' => $s['avatar_uri'],
+                'opts' => json_decode($s['account_opts'], true),
             ];
         }
     }
@@ -51,12 +61,13 @@ if (!isset($_SESSION)) {
     $_SESSION = [
         'nr' => $stmt->fetch()[0],
         'token' => $token,
-        'opts' => json_decode('{}'),
+        'opts' => json_decode('{}', true),
     ];
 }
 
 init_locale();
 
+$timefmt = gmdate('D, d M Y H:i:s', time() + $COOKIE_AGE) . ' GMT';
 header('Set-Cookie: ' . implode('; ', [
         "tucal_session=$_SESSION[token]",
         "Path=/",
@@ -64,4 +75,5 @@ header('Set-Cookie: ' . implode('; ', [
         "Secure",
         "SameSite=Strict",
         "MaxAge=$COOKIE_AGE",
+        "Expires=$timefmt",
     ]), false);

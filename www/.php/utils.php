@@ -42,3 +42,20 @@ function http_message(int $status): string {
         default: return "$status";
     }
 }
+
+function force_user_login(string $location = null) {
+    global $USER;
+    if (isset($USER)) return;
+    $_SESSION['opts']['login_redirect'] = $location ?? $_SERVER['REQUEST_URI'];
+    redirect('/account/login');
+}
+
+function redirect(string $location) {
+    // Use Necronda web server default error documents
+    header("Status: 303");
+    header("Location: $location");
+    header("Content-Type: text/html");
+    header("Content-Length: 0");
+    header("Content-Security-Policy: default-src 'unsafe-inline' 'self' data:");
+    tucal_exit();
+}
