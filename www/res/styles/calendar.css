@@ -169,13 +169,14 @@ div.calendar div.event-wrapper div.event {
     --part2: 0;
     position: absolute;
     display: block;
-    border: 1px solid #000000;
+    font-size: 0.75em;
+    border: 1px solid #C00000;
     border-radius: var(--border-radius);
-    background-color: #00000020;
-    width: calc((100% * (var(--part2) - var(--part1) + 1) / 7 / var(--parts)) - var(--margin) * 2);
+    background-color: #FFC0C0;
     margin: var(--margin);
     box-sizing: border-box;
     padding: 0.25em;
+    width: calc((100% * (var(--part2) - var(--part1) + 1) / 7 / var(--parts)) - var(--margin) * 2);
     left: calc(var(--day) / 7 * 100% + var(--part1) / var(--parts) * 100% / 7);
     top: calc((var(--start) - var(--time-start)) / (var(--time-end) - var(--time-start)) * 100%);
     height: calc((var(--end) - var(--start)) / (var(--time-end) - var(--time-start)) * 100% - var(--margin) * 2);
