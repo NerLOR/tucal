@@ -89,9 +89,11 @@ function calendar() {
         } else {
             echo ",\n";
         }
+        $start = strtotime($row['start_ts']);
+        $end = strtotime($row['end_ts']);
         $data = [
-            'start' => $row['start_ts'],
-            'end' => $row['end_ts'],
+            'start' => date('c', $start),
+            'end' => date('c', $end),
         ];
         echo json_encode($data, FLAGS);
     }

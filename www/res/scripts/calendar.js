@@ -286,6 +286,7 @@ class WeekSchedule {
         const w = this.week.toString();
         let fetchCurrent = false;
         if (!this.weekIsValid(this.week)) {
+            this.clearEvents(true);
             if (!(w in this.weeks) || !this.weeks[w].promise) {
                 fetchCurrent = true;
                 this.fetchWeeks(this.week, this.week);
@@ -293,9 +294,7 @@ class WeekSchedule {
         } else {
             this.clearEvents();
             const week = this.weeks[w];
-            for (const event of week.events) {
-                this.drawEvent(event);
-            }
+            this.drawEvents(week.events);
         }
 
         let upcoming = null;
@@ -376,28 +375,138 @@ class WeekSchedule {
         }
     }
 
-    clearEvents() {
+    clearEvents(loading = false) {
         const wrapper = this.cal.getElementsByClassName("event-wrapper")[0];
-        const events = wrapper.getElementsByTagName("div");
-        while (events.length > 0) {
-            events[0].remove();
+        const events = wrapper.getElementsByClassName("event");
+        while (events.length > 0) events[0].remove();
+
+        const elem = wrapper.getElementsByClassName("loading");
+        if (loading) {
+            if (elem.length === 0) {
+                const loading = document.createElement("div");
+                loading.classList.add("loading");
+                loading.innerText = "Loading...";
+                wrapper.appendChild(loading);
+            }
+        } else {
+            while (elem.length > 0) elem[0].remove();
         }
     }
 
-    drawEvent(event) {
-        const wrapper = this.cal.getElementsByClassName("event-wrapper")[0];
-        const evt = document.createElement("div");
-        evt.classList.add("event");
+    drawEvents(all_events) {
+        all_events.sort((a, b) => {
+            return a.start - b.start;
+        });
 
-        const start = event.start.getHours() * 60 + event.start.getMinutes();
-        const end = event.end.getHours() * 60 + event.end.getMinutes();
-        const day = (event.start.getDay() + 6) % 7;
+        const deadlines = [[], [], [], [], [], [], []];
+        const events = [[], [], [], [], [], [], []];
+        for (const event of all_events) {
+            const weekDay = (event.start.getDay() + 6) % 7;
+            if (event.start === event.end) {
+                deadlines[weekDay].push(event);
+            } else {
+                events[weekDay].push(event);
+            }
+        }
 
-        evt.style.left = `${day / 7 * 100}%`;
-        evt.style.top = `${(start - START_TIME) / (END_TIME - START_TIME) * 100}%`;
-        evt.style.height = `calc(${(end - start) / (END_TIME - START_TIME) * 100}% - var(--margin) * 2)`;
-        evt.innerText = "Hey";
-        wrapper.appendChild(evt);
+        for (const day of events) {
+            const partList = {};
+            for (let i = START_TIME; i <= END_TIME; i++) {
+                let parts = 0;
+                for (const evt of day) {
+                    if (i > evt.getStartMinutes() && i < evt.getEndMinutes()) {
+                        parts++;
+                    }
+                }
+                partList[i] = parts;
+            }
+
+            const parsed = [];
+            for (const evt of day) {
+                let parts = 1;
+                for (let i = evt.getStartMinutes(); i <= evt.getEndMinutes(); i++) {
+                    if (partList[i] > parts) {
+                        parts = partList[i];
+                    }
+                }
+                parsed.push({
+                    event: evt,
+                    partsSelf: parts,
+                    parts: parts,
+                    part1: 0,
+                    part2: 0,
+                    affects: [],
+                })
+            }
+
+            for (const evt1 of parsed) {
+                const s1 = evt1.event.start;
+                const e1 = evt1.event.end;
+                for (const evt2 of parsed) {
+                    const s2 = evt2.event.start;
+                    const e2 = evt2.event.end;
+                    if ((s2 >= s1 && s2 < e1) || (e2 > s1 && e2 <= e1) || (s2 < s1 && e2 > e1)) {
+                        evt1.affects.push(evt2);
+                    }
+                }
+            }
+
+            let changed;
+            do {
+                changed = false;
+                for (const evt1 of parsed) {
+                    for (const evt2 of evt1.affects) {
+                        if (evt2.parts > evt1.parts) {
+                            evt1.parts = evt2.parts
+                        }
+                    }
+                }
+            } while (changed);
+
+            let shift = 0;
+            let p = 0;
+            for (const evt of parsed) {
+                if (p >= evt.parts) {
+                    p = 0;
+                }
+                evt.part1 = p;
+                p += (evt.parts - evt.partsSelf);
+                if (p >= evt.parts) {
+                    shift = evt.parts - p + 1;
+                }
+                evt.part2 = p;
+                p++;
+            }
+
+            for (const evt of parsed) {
+                evt.part1 = (evt.part1 + shift) % evt.parts;
+                evt.part2 = (evt.part2 + shift) % evt.parts;
+            }
+
+            for (const eventData of parsed) {
+                const event = eventData.event;
+                const start = event.start;
+                const end = event.end;
+
+                const wrapper = this.cal.getElementsByClassName("event-wrapper")[0];
+                const evt = document.createElement("div");
+                evt.classList.add("event");
+
+                const startMinute = start.getHours() * 60 + start.getMinutes();
+                const endMinute = end.getHours() * 60 + end.getMinutes();
+                const day = (start.getDay() + 6) % 7;
+
+                evt.style.setProperty("--day", `${day}`);
+                evt.style.setProperty("--start", `${startMinute}`);
+                evt.style.setProperty("--end", `${endMinute}`);
+                evt.style.setProperty("--parts", `${eventData.parts}`);
+                evt.style.setProperty("--part1", `${eventData.part1}`);
+                evt.style.setProperty("--part2", `${eventData.part2}`)
+
+                evt.innerText = "Event";
+                wrapper.appendChild(evt);
+            }
+        }
     }
 }
 
@@ -412,5 +521,13 @@ class Event {
 
     getWeek() {
         return Week.fromDate(this.start);
+    }
+
+    getStartMinutes() {
+        return this.start.getHours() * 60 + this.start.getMinutes();
+    }
+
+    getEndMinutes() {
+        return this.end.getHours() * 60 + this.end.getMinutes();
     }
 }

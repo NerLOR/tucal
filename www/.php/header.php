@@ -2,6 +2,7 @@
 
 global $STATUS;
 global $TITLE;
+global $LOCALE;
 
 if (!isset($STATUS)) {
     require "main.php";
@@ -32,7 +33,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
 
 ?>
 <!DOCTYPE html>
-<html lang="<?php global $LOCALE; echo $LOCALE;?>">
+<html lang="<?php echo $LOCALE;?>">
 <head>
     <title><?php
         $TITLE = $TITLE ?? [];
@@ -43,7 +44,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <meta name="author" content="Lorenz Stechauner"/>
     <meta name="robots" content="notranslate"/>
     <meta name="description" content=""/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <link rel="stylesheet" href="/res/styles/styles.css" type="text/css"/>
     <script src="/res/scripts/calendar.js" type="application/javascript"></script>
     <script src="/res/scripts/main.js" type="application/javascript"></script>
