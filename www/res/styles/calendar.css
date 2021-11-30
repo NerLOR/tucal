@@ -157,11 +157,52 @@ div.calendar div.event-wrapper div.loading {
     font-size: 1.5em;
     padding: calc(33.3333% - 1em);
     box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+div.calendar div.event-wrapper div.day {
+    --n: 0;
+    height: 100%;
+    width: calc((100% - 1px) / 7 - 1px);
+    box-sizing: border-box;
+    border-left: 2px solid #00000000;
+    border-right: 2px solid #00000000;
+    border-bottom: 1px solid #00000000;
+    left: calc((100% - 1px) / 7 * var(--n) + 1px);
+}
+
+div.calendar div.event-wrapper div.day:nth-of-type(1) {
+    --n: 0;
+}
+
+div.calendar div.event-wrapper div.day:nth-of-type(2) {
+    --n: 1;
+}
+
+div.calendar div.event-wrapper div.day:nth-of-type(3) {
+    --n: 2;
+}
+
+div.calendar div.event-wrapper div.day:nth-of-type(4) {
+    --n: 3;
+}
+
+div.calendar div.event-wrapper div.day:nth-of-type(5) {
+    --n: 4;
+}
+
+div.calendar div.event-wrapper div.day:nth-of-type(6) {
+    --n: 5;
+}
+
+div.calendar div.event-wrapper div.day:nth-of-type(7) {
+    --n: 6;
 }
 
 div.calendar div.event-wrapper div.event {
-    --margin: 2px;
-    --day: 0;
+    --margin: 1px;
     --start: 0;
     --end: 0;
     --parts: 1;
@@ -176,10 +217,14 @@ div.calendar div.event-wrapper div.event {
     margin: var(--margin);
     box-sizing: border-box;
     padding: 0.25em;
-    width: calc((100% * (var(--part2) - var(--part1) + 1) / 7 / var(--parts)) - var(--margin) * 2);
-    left: calc(var(--day) / 7 * 100% + var(--part1) / var(--parts) * 100% / 7);
-    top: calc((var(--start) - var(--time-start)) / (var(--time-end) - var(--time-start)) * 100%);
-    height: calc((var(--end) - var(--start)) / (var(--time-end) - var(--time-start)) * 100% - var(--margin) * 2);
+    width: calc((100% * (var(--part2) - var(--part1) + 1) / var(--parts)) - var(--margin) * 2);
+    left: calc(var(--part1) / var(--parts) * 100%);
+    top: calc((var(--start) - var(--time-start)) / (var(--time-end) - var(--time-start)) * 100% + 1px);
+    height: calc((var(--end) - var(--start)) / (var(--time-end) - var(--time-start)) * 100% - 1px - var(--margin) * 2);
+}
+
+div.calendar div.event-wrapper div.event.now {
+    box-shadow: 0 0 4px #000000;
 }
 
 @media screen and (max-width: 800px) {

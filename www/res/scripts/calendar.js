@@ -1,10 +1,10 @@
 "use strict";
 
 const TIMEZONE = "Europe/Vienna";
-const START_TIME = 7 * 60;  // [min]
-const END_TIME = 22 * 60;  // [min]
-const CACHE_EVENTS = 15;  // [min]
-const LOOK_AHEAD = 8;
+const START_TIME = 7 * 60;  // 07:00 [min]
+const END_TIME = 22 * 60;  // 22:00 [min]
+const CACHE_EVENTS = 15;  // 15 [min]
+const LOOK_AHEAD = 8;  // 8 [week]
 
 
 function isoWeekFromDate(date) {
@@ -116,6 +116,7 @@ class WeekSchedule {
     cal;
     subject;
     timer = null;
+    lastReload = null;
     weeks = {};
 
     constructor(subject, element) {
@@ -176,7 +177,7 @@ class WeekSchedule {
             this.now();
         });
         buttons[1].addEventListener("click", (evt) => {
-            this.last();
+            this.previous();
         });
         buttons[2].addEventListener("click", (evt) => {
             this.next();
@@ -189,6 +190,11 @@ class WeekSchedule {
         const hr = document.createElement("hr");
         hr.style.display = "none";
         wrapper.appendChild(hr);
+        for (let i = 0; i < 7; i++) {
+            const day = document.createElement("div");
+            day.classList.add("day");
+            wrapper.appendChild(day);
+        }
         this.cal.appendChild(wrapper);
 
         element.appendChild(this.cal);
@@ -201,6 +207,8 @@ class WeekSchedule {
         }
 
         this.week = week;
+        this.updateTime();
+        this.lastReload = null;
         this.reloadEvents();
 
         this.cal.getElementsByClassName("year-header")[0].innerText = `${this.week.year}`;
@@ -223,9 +231,9 @@ class WeekSchedule {
             }, '', `/calendar/${this.subject}/${this.week.year}/W${this.week.week}`);
         }
 
-        this.updateTime();
         this.timer = setInterval(() => {
             this.updateTime();
+            this.reloadEvents();
         }, 1000);
     }
 
@@ -237,11 +245,26 @@ class WeekSchedule {
             tds[0].classList.remove("today");
         }
 
+        const now = this.cal.getElementsByClassName("now");
+        while (now.length > 0) {
+            now[0].classList.remove("now");
+        }
+
         if (dt >= this.startDate() && dt < this.endDate()) {
             const weekDay = (dt.getDay() + 6) % 7;
             const tbody = this.cal.getElementsByTagName("tbody")[0];
             for (const tr of tbody.getElementsByTagName("tr")) {
                 tr.children[weekDay + 1].classList.add("today");
+            }
+
+            const w = this.week.toString();
+            if (w in this.weeks) {
+                for (const evt of this.weeks[w].events) {
+                    if (dt >= evt.start && dt < evt.end) {
+                        const evtElem = document.getElementById(`event-${evt.id}`);
+                        evtElem.classList.add("now");
+                    }
+                }
             }
         }
 
@@ -263,7 +286,7 @@ class WeekSchedule {
         this.setWeek(this.week.next());
     }
 
-    last() {
+    previous() {
         this.setWeek(this.week.last());
     }
 
@@ -276,24 +299,25 @@ class WeekSchedule {
     }
 
     weekIsValid(week) {
-        const ref = new Date();
-        ref.setMinutes(ref.getMinutes() + CACHE_EVENTS);
+        const ref = asTimezone(new Date());
+        ref.setMinutes(ref.getMinutes() - CACHE_EVENTS);
         const w = week.toString();
-        return w in this.weeks && this.weeks[w].date !== null && this.weeks[w].date < ref;
+        return w in this.weeks && this.weeks[w].date !== null && this.weeks[w].date > ref;
     }
 
     reloadEvents() {
         const w = this.week.toString();
         let fetchCurrent = false;
         if (!this.weekIsValid(this.week)) {
-            this.clearEvents(true);
+            this.clearEvents(this.lastReload === null);
             if (!(w in this.weeks) || !this.weeks[w].promise) {
                 fetchCurrent = true;
                 this.fetchWeeks(this.week, this.week);
             }
-        } else {
+        } else if (this.lastReload === null || this.lastReload !== this.weeks[w].date)  {
             this.clearEvents();
             const week = this.weeks[w];
+            this.lastReload = week.date;
             this.drawEvents(week.events);
         }
 
@@ -489,14 +513,14 @@ class WeekSchedule {
                 const end = event.end;
 
                 const wrapper = this.cal.getElementsByClassName("event-wrapper")[0];
+                const day = wrapper.getElementsByClassName("day")[(start.getDay() + 6) % 7];
                 const evt = document.createElement("div");
                 evt.classList.add("event");
+                evt.id = `event-${event.id}`;
 
                 const startMinute = start.getHours() * 60 + start.getMinutes();
                 const endMinute = end.getHours() * 60 + end.getMinutes();
-                const day = (start.getDay() + 6) % 7;
 
-                evt.style.setProperty("--day", `${day}`);
                 evt.style.setProperty("--start", `${startMinute}`);
                 evt.style.setProperty("--end", `${endMinute}`);
                 evt.style.setProperty("--parts", `${eventData.parts}`);
@@ -504,17 +528,21 @@ class WeekSchedule {
                 evt.style.setProperty("--part2", `${eventData.part2}`)
 
                 evt.innerText = "Event";
-                wrapper.appendChild(evt);
+                day.appendChild(evt);
             }
         }
+
+        this.updateTime();
     }
 }
 
 class Event {
     start;
     end;
+    id;
 
     constructor(json) {
+        this.id = json.id;
         this.start = asTimezone(new Date(Date.parse(json.start)), TIMEZONE);
         this.end = asTimezone(new Date(Date.parse(json.end)), TIMEZONE);
     }

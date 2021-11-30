@@ -92,6 +92,7 @@ function calendar() {
         $start = strtotime($row['start_ts']);
         $end = strtotime($row['end_ts']);
         $data = [
+            'id' => $row['event_id'],
             'start' => date('c', $start),
             'end' => date('c', $end),
         ];
