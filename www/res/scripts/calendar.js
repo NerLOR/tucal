@@ -268,10 +268,10 @@ class WeekSchedule {
             }
         }
 
-        const minutes = dt.getHours() * 60 + dt.getMinutes() - START_TIME;
+        const minutes = dt.getHours() * 60 + dt.getMinutes();
         const hr = this.cal.getElementsByTagName("hr")[0];
-        if (minutes >= 0 && minutes <= END_TIME - START_TIME) {
-            hr.style.top = `${minutes / (END_TIME - START_TIME) * 100}%`;
+        if (minutes >= START_TIME && minutes <= END_TIME) {
+            hr.style.setProperty("--time", `${minutes}`);
             hr.style.display = null;
         } else {
             hr.style.display = "none";
@@ -396,6 +396,8 @@ class WeekSchedule {
             if (weeks.includes(this.week.toString())) {
                 this.reloadEvents();
             }
+        } else if (json.message !== null) {
+            console.error(json.message);
         }
     }
 

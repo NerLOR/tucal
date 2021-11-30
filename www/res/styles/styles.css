@@ -16,6 +16,7 @@ html {
     --green: #008000;
     --color-error: var(--red);
     --border-color: #C0C0C0;
+    --glow: #000000;
 }
 
 body {

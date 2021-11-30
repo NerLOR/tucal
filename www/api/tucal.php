@@ -4,24 +4,27 @@ require "../.php/session.php";
 
 const FLAGS = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
 
+try {
+    $info = $_SERVER['PATH_INFO'] ?? '';
 
-$info = $_SERVER['PATH_INFO'] ?? '';
+    header('Content-Type: application/json; charset=UTF-8');
+    header("Cache-Control: private, no-cache");
 
-header('Content-Type: application/json; charset=UTF-8');
-header("Cache-Control: private, no-cache");
-
-switch ($info) {
-    case '/rooms': rooms(); break;
-    case '/calendar': calendar(); break;
-    default: error(404);
+    switch ($info) {
+        case '/rooms': rooms(); break;
+        case '/calendar': calendar(); break;
+        default: error(404);
+    }
+} catch (Exception $e) {
+    error(500, $e->getMessage(), $e instanceof PDOException);
 }
 
-function error(int $status, string $message = null) {
+function error(int $status, string $message = null, bool $db_error = false) {
     $content = '{"status":"error","message":' . json_encode($message, FLAGS) .'}' . "\n";
     header("Status: $status");
     header("Content-Length: " . strlen($content));
     echo $content;
-    tucal_exit();
+    tucal_exit($db_error);
 }
 
 function rooms() {

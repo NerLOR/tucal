@@ -8,16 +8,18 @@ global $LOCALE;
 
 $COOKIE_AGE = 15768000;  // 6 months
 
-function tucal_exit() {
+function tucal_exit(bool $db_error = false) {
     global $USER;
-    db_exec("UPDATE tucal.session SET last_ts = now(), account_nr = :acc_nr, options = :opts WHERE session_nr = :nr", [
-        'nr' => $_SESSION['nr'],
-        'acc_nr' => isset($USER) ? $USER['nr'] : null,
-        'opts' => json_encode($_SESSION['opts']),
-    ]);
-    try {
-        db_commit();
-    } catch (Exception $e) {}
+    if (!$db_error) {
+        db_exec("UPDATE tucal.session SET last_ts = now(), account_nr = :acc_nr, options = :opts WHERE session_nr = :nr", [
+            'nr' => $_SESSION['nr'],
+            'acc_nr' => isset($USER) ? $USER['nr'] : null,
+            'opts' => json_encode($_SESSION['opts']),
+        ]);
+        try {
+            db_commit();
+        } catch (Exception $e) {}
+    }
     exit();
 }
 
