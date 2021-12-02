@@ -1,6 +1,9 @@
 
 msgid "My Calendar"
-msgstr "Mei Kalenda"
+msgstr "Mẽi Kalenda"
+
+msgid "Calendar"
+msgstr "kalenda"
 
 msgid "My Friends"
 msgstr "Meine Freind:inna"
@@ -21,31 +24,68 @@ msgid "Home Page"
 msgstr "Startseitn"
 
 msgid "Login"
-msgstr "Eiloggn"
+msgstr "Ånmödn"
+
+msgid "Logout"
+msgstr "Obmödn"
 
 msgid "Sign up"
 msgstr "Registrian"
+
+msgid "Settings"
+msgstr "Eistöllungen"
 
 msgid "Matriculation number"
 msgstr "Matrikelnumma"
 
 msgid "Matriculation number or username"
-msgstr "Matrikelnumma oda Benutzanom"
+msgstr "Matrikelnumma oda Benutzanåm"
 
 msgid "Username"
-msgstr "Benutzanom"
+msgstr "Benutzanåm"
 
 msgid "Password"
-msgstr "Passwoat"
+msgstr "Basswoad"
 
 msgid "Repeat password"
-msgstr "Passwoat wiedahoin"
+msgstr "Basswoad wiedahoin"
 
 msgid "SSO password"
-msgstr "SSO-Passwoat"
+msgstr "SSO-Basswoad"
+
+msgid "Verify account"
+msgstr "Account verifizian"
+
+msgid "SSO verification"
+msgstr "SSO-Verifiziarung"
+
+msgid "Email verification"
+msgstr "E-Mail-Verifiziarung"
+
+msgid "Email address"
+msgstr "E-Mail-Adressn"
 
 msgid "or"
 msgstr "oda"
+
+msgid "Already exists"
+msgstr "Gibt's scho"
+
+msgid "Already in use"
+msgstr "Wird scho vawendt"
+
+msgid "Too short"
+msgstr "Zu kuaz"
+
+msgid "Does not match"
+msgstr "Bassd ned zåmm"
+
+msgid "Does not exist"
+msgstr "Gibt's ned"
+
+msgid "Wrong"
+msgstr "Foisch"
+
 
 
 msgctxt "http"

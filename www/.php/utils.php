@@ -43,11 +43,12 @@ function http_message(int $status): string {
     }
 }
 
-function force_user_login(string $location = null) {
+function force_user_login(string $location = null, bool $verified = true) {
     global $USER;
-    if (isset($USER)) return;
-    $_SESSION['opts']['login_redirect'] = $location ?? $_SERVER['REQUEST_URI'];
-    redirect('/account/login');
+    if (!isset($USER) || ($verified && !$USER['verified'])) {
+        $_SESSION['opts']['redirect'] = $location ?? $_SERVER['REQUEST_URI'];
+        redirect(!isset($USER) ? '/account/login' : '/account/verify');
+    }
 }
 
 function redirect(string $location) {

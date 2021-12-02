@@ -7,6 +7,6 @@ build-www:
 	sed -i 's|/res/styles/styles.css|/res/styles/min.css|g' dest/www/.php/header.php
 
 	for locale in de de_AT de_DE en en_US en_GB bar; do \
-		mkdir -p "dest/www/.php/locale/$$locale/LC_MESSAGES" ;\
+		mkdir -p "dest/www/.php/locale/$$locale/LC_MESSAGES/" ;\
 		msgfmt "locale/$$locale/LC_MESSAGES/tucal.po" -o "dest/www/.php/locale/$$locale/LC_MESSAGES/tucal.mo" ;\
 	done

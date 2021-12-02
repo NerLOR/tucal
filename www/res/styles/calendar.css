@@ -107,9 +107,14 @@ div.calendar thead button {
     cursor: pointer;
 }
 
-div.calendar thead button:nth-of-type(1) {
+div.calendar thead button.today-button {
     font-size: 0.75rem;
     font-weight: bold;
+}
+
+div.calendar thead button.arrow-button {
+    font-size: 1.25em;
+    line-height: 1em;
 }
 
 div.calendar div.panel span {
@@ -213,6 +218,7 @@ div.calendar div.event-wrapper div.event {
     position: absolute;
     display: block;
     font-size: 0.75em;
+    cursor: pointer;
     border: 1px solid #C00000;
     border-radius: var(--border-radius);
     background-color: #FFC0C0;
@@ -233,6 +239,10 @@ div.calendar div.event-wrapper div.event.now {
     div.calendar thead th.day-header {
         font-size: 0.75em;
         padding: 0 0.5em;
+    }
+
+    div.calendar div.event-wrapper div.event {
+        font-size: 0.625em;
     }
 }
 

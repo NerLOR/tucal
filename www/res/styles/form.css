@@ -1,25 +1,21 @@
 
-main form {
-
-}
-
-main section > form {
+main section > form.panel {
     max-width: 400px;
     margin: auto;
     padding-bottom: 1em;
 }
 
-main form h1 {
+main form.panel h1 {
     text-align: center;
 }
 
-main form p {
+main form.panel p {
     text-align: center;
 }
 
-main form div.text,
-main form div.container,
-main form button {
+main form.panel div.text,
+main form.panel div.container,
+main form.panel button {
     display: block;
     width: calc(100% - 1em);
     margin: 0.5em;
@@ -31,36 +27,51 @@ main form button {
     --border-color: var(--color);
 }
 
-main form div.text {
+main form.panel div.text {
     position: relative;
     padding: 0;
 }
 
-main form div.container,
-main form button {
+main form.panel div.text.error {
+    --border-color: var(--red);
+}
+
+main form.panel div.container,
+main form.panel button {
     border: 1px solid var(--border-color);
 }
 
-main form div.text > label {
+main form.panel div.text > label {
     color: #808080;
     position: absolute;
     left: 1rem;
     top: 0.875rem;
-    transition: left 0.125s, top 0.125s, font-size 0.125s;
+    transition: top 0.125s, font-size 0.125s;
     cursor: text;
 }
 
-main form *.red {
+main form.panel div.text.error > label {
+    color: var(--red);
+}
+
+main form.panel div.text > label:nth-of-type(2) {
+    left: unset;
+    right: 1rem;
+    display: none;
+}
+
+main form.panel *.red {
     --border-color: var(--red) !important;
 }
 
-main form div.text > input:focus ~ label,
-main form div.text > input:not(:placeholder-shown) ~ label {
+main form.panel div.text > input:focus ~ label,
+main form.panel div.text > input:not(:placeholder-shown) ~ label {
     font-size: 0.75em;
     top: 0.25rem;
+    display: inline;
 }
 
-main form div.text > input {
+main form.panel div.text > input {
     border: 1px solid var(--border-color);
     font-size: 1em;
     box-sizing: border-box;
@@ -69,14 +80,30 @@ main form div.text > input {
     border-radius: var(--border-radius);
 }
 
-main form button {
-    color: var(--color)
+main form.panel button {
+    color: var(--color);
+    outline: none;
 }
 
-main form button:hover,
-main form button:focus {
+main form.panel button:hover,
+main form.panel button:focus {
     background-color: var(--color);
     border-color: var(--color-dark);
     cursor: pointer;
     color: #FFFFFF;
+}
+
+main form.panel ~ div.error {
+    border: 1px solid var(--red);
+    border-radius: var(--border-radius);
+    text-align: center;
+    padding: 1em;
+    margin: 0 0 1em 0;
+    white-space: pre-wrap;
+    color: var(--red);
+}
+
+
+main form.table {
+
 }

@@ -2,6 +2,9 @@
 msgid "My Calendar"
 msgstr "My Calendar"
 
+msgid "Calendar"
+msgstr "Calendar"
+
 msgid "My Friends"
 msgstr "My Friends"
 
@@ -23,8 +26,14 @@ msgstr "Home Page"
 msgid "Login"
 msgstr "Login"
 
+msgid "Logout"
+msgstr "Logout"
+
 msgid "Sign up"
 msgstr "Sign up"
+
+msgid "Settings"
+msgstr "Settings"
 
 msgid "Matriculation number"
 msgstr "Matriculation number"
@@ -58,6 +67,24 @@ msgstr "Email address"
 
 msgid "or"
 msgstr "or"
+
+msgid "Already exists"
+msgstr "Already exists"
+
+msgid "Already in use"
+msgstr "Already in use"
+
+msgid "Too short"
+msgstr "Too short"
+
+msgid "Does not match"
+msgstr "Does not match"
+
+msgid "Does not exist"
+msgstr "Does not exist"
+
+msgid "Wrong"
+msgstr "Wrong"
 
 
 msgctxt "http"

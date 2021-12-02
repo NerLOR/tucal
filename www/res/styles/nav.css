@@ -60,8 +60,39 @@ body > nav a.active {
     padding-right: 0;
 }
 
+#nav-live {
+    flex: 100px 1 1;
+    text-align: right;
+    padding: 0.5em;
+    box-sizing: border-box;
+}
+
+#nav-live a.live {
+    padding: 0.125em 0.5em;
+    color: var(--red);
+    border-color: var(--red);
+    text-align: center;
+    font-weight: bold;
+}
+
+#nav-live a[href=""] {
+    display: none;
+}
+
+#nav-live a.live:hover {
+    background-color: var(--red);
+    color: #FFFFFF;
+}
+
+#nav-live a.live span {
+    display: block;
+    font-weight: normal;
+    font-size: 0.75em;
+    text-align: center;
+    margin-top: -0.375em;
+}
+
 #nav-user {
-    flex-grow: 1;
     text-align: right;
     display: flex;
     justify-content: flex-end;
@@ -89,6 +120,90 @@ body > nav a.active {
     width: 100%;
     margin: 0.375em 0;
     height: 2.25em;
+}
+
+#user-menu {
+    background-color: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    border-radius: var(--border-radius);
+    text-align: left;
+    height: fit-content;
+    width: 11em;
+    cursor: pointer;
+}
+
+#user-menu:hover {
+    border-color: #F0F0F0;
+}
+
+#user-menu.active {
+    border-color: #C0C0C0;
+}
+
+#user-menu > div {
+    height: 2.5em;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    position: relative;
+}
+
+#user-menu > div:first-child {
+    padding: 0 0.5em;
+    height: 2em;
+}
+
+#user-menu:not(.active) > *:not(:first-child) {
+    display: none;
+}
+
+#user-menu > div:nth-child(2) {
+    margin-top: 0.5em;
+}
+
+#user-menu > div:first-child > img {
+    float: left;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--border-radius);
+}
+
+#user-menu > div:first-child > a {
+    display: inline;
+    font-size: 0.75em;
+    margin-left: 0.5em;
+}
+
+#user-menu > div:first-child > span.arrow {
+    position: absolute;
+    right: 1em;
+    font-size: 0.75em;
+}
+
+#user-menu > div a {
+    padding: 0;
+    height: unset;
+    color: #000000;
+    font-size: 0.875em;
+}
+
+#user-menu > div:not(:first-child) a {
+    width: 100%;
+    height: 100%;
+    padding: 0.75em;
+    box-sizing: border-box;
+}
+
+#user-menu > div:not(:first-child):hover {
+    background-color: #F0F0F0;
+}
+
+#user-menu hr {
+    margin: 0;
+    border: none;
+    background-color: #C0C0C0;
+    height: 1px;
+    width: 100%;
 }
 
 @media screen and (max-width: 1000px) {

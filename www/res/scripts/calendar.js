@@ -4,6 +4,7 @@ const TIMEZONE = "Europe/Vienna";
 const START_TIME = 7 * 60;  // 07:00 [min]
 const END_TIME = 22 * 60;  // 22:00 [min]
 const CACHE_EVENTS = 15;  // 15 [min]
+const EVENT_PRE_LIVE = 15;  // 15 [min]
 const LOOK_AHEAD = 8;  // 8 [week]
 
 
@@ -118,6 +119,8 @@ class WeekSchedule {
     timer = null;
     lastReload = null;
     weeks = {};
+    currentEvents = [];
+    currentEventCb = null;
 
     constructor(subject, element) {
         this.subject = subject;
@@ -152,9 +155,9 @@ class WeekSchedule {
             const theadTr3 = document.createElement("tr");
             const th = document.createElement("th");
             switch (i) {
-                case 0: th.innerHTML = '<button>HEUTE</button>'; break;
-                case 1: th.innerHTML = '<button>🡄</button>'; break;
-                case 2: th.innerHTML = '<button>🡆</button>'; break;
+                case 0: th.innerHTML = `<button class="today-button">${_("Today").toUpperCase()}</button>`; break;
+                case 1: th.innerHTML = `<button class="arrow-button">&larr;</button>`; break;
+                case 2: th.innerHTML = `<button class="arrow-button">&rarr;</button>`; break;
             }
             theadTr3.appendChild(th);
             thead.appendChild(theadTr3);
@@ -228,7 +231,7 @@ class WeekSchedule {
             history.replaceState({
                 year: this.week.year,
                 week: this.week.week,
-            }, '', `/calendar/${this.subject}/${this.week.year}/W${this.week.week}`);
+            }, '', `/calendar/${this.subject}/${this.week.year}/W${this.week.week}/`);
         }
 
         this.timer = setInterval(() => {
@@ -249,6 +252,8 @@ class WeekSchedule {
         while (now.length > 0) {
             now[0].classList.remove("now");
         }
+        const lastEvents = this.currentEvents;
+        this.currentEvents = [];
 
         if (dt >= this.startDate() && dt < this.endDate()) {
             const weekDay = (dt.getDay() + 6) % 7;
@@ -260,11 +265,21 @@ class WeekSchedule {
             const w = this.week.toString();
             if (w in this.weeks) {
                 for (const evt of this.weeks[w].events) {
-                    if (dt >= evt.start && dt < evt.end) {
-                        const evtElem = document.getElementById(`event-${evt.id}`);
+                    const preStart = new Date(evt.start);
+                    const evtElem = document.getElementById(`event-${evt.id}`);
+                    preStart.setMinutes(preStart.getMinutes() - EVENT_PRE_LIVE);
+                    if (dt >= preStart && dt < evt.end) {
+                        this.currentEvents.push(evt);
+                    }
+                    if (evtElem !== null && dt >= evt.start && dt < evt.end) {
                         evtElem.classList.add("now");
                     }
                 }
+            }
+
+            if (this.currentEventCb !== null && !(lastEvents.every(item => this.currentEvents.includes(item)) &&
+                    this.currentEvents.every(item => lastEvents.includes(item)))) {
+                this.currentEventCb(this.currentEvents);
             }
         }
 
@@ -276,6 +291,10 @@ class WeekSchedule {
         } else {
             hr.style.display = "none";
         }
+    }
+
+    setCurrentEventCb(cb) {
+        this.currentEventCb = cb;
     }
 
     now() {
@@ -309,7 +328,9 @@ class WeekSchedule {
         const w = this.week.toString();
         let fetchCurrent = false;
         if (!this.weekIsValid(this.week)) {
-            this.clearEvents(this.lastReload === null);
+            if (this.lastReload === null) {
+                this.clearEvents(true);
+            }
             if (!(w in this.weeks) || !this.weeks[w].promise) {
                 fetchCurrent = true;
                 this.fetchWeeks(this.week, this.week);
@@ -375,6 +396,14 @@ class WeekSchedule {
         const req = await fetch(`/api/tucal/calendar?subject=${this.subject}&${start}&${end}`);
         const json = await req.json();
 
+        if (json.message !== null) {
+            if (json.status === "success") {
+                console.warn(`API: ${json.message}`);
+            } else {
+                console.error(`API: ${json.message}`);
+            }
+        }
+
         if (req.status === 200 && json.status === "success") {
             const ts = new Date(Date.parse(json.data.timestamp));
 
@@ -396,8 +425,6 @@ class WeekSchedule {
             if (weeks.includes(this.week.toString())) {
                 this.reloadEvents();
             }
-        } else if (json.message !== null) {
-            console.error(json.message);
         }
     }
 
@@ -411,7 +438,7 @@ class WeekSchedule {
             if (elem.length === 0) {
                 const loading = document.createElement("div");
                 loading.classList.add("loading");
-                loading.innerText = "Loading...";
+                loading.innerText = _("Loading...");
                 wrapper.appendChild(loading);
             }
         } else {
@@ -559,5 +586,10 @@ class Event {
 
     getEndMinutes() {
         return this.end.getHours() * 60 + this.end.getMinutes();
+    }
+
+    isNow() {
+        const dt = asTimezone(new Date());
+        return dt >= this.start && dt < this.end;
     }
 }

@@ -3,29 +3,91 @@
 global $TITLE;
 
 require "../.php/session.php";
-if (isset($USER)) {
+if (isset($USER) && $USER['verified']) {
     redirect('/account/');
+} elseif (isset($USER)) {
+    redirect('/account/verify');
 }
 
 require "../.php/main.php";
+
+$error = false;
+$errorMsg = null;
+$errors = [
+    "subject" => null,
+    "pwd" => null,
+];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $subj = $_POST['subject'] ?? null;
+    $pwd = $_POST['password'] ?? null;
+
+    if ($subj === null || $pwd === null) {
+        header("Status: 400");
+        goto doc;
+    }
+
+    try {
+        $stmt = db_exec("SELECT account_nr, mnr, username, (pwd_hash = crypt(:pwd, pwd_salt)) AS pwd_match, verified FROM tucal.account WHERE mnr::text = :subj OR lower(username) = lower(:subj::text)", [
+            'subj' => $subj,
+            'pwd' => $pwd,
+        ]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (sizeof($data) === 0) {
+            $errors['subject'] = 'Does not exist';
+            header("Status: 404");
+            goto doc;
+        }
+
+        $row = $data[0];
+        if (!$row['pwd_match']) {
+            $errors['pwd'] = 'Wrong';
+            header("Status: 401");
+            goto doc;
+        }
+
+        $USER = ['nr' => $row['account_nr']];
+        if (!$row['verified']) {
+            redirect('/account/verify');
+        } else {
+            redirect($_SESSION['redirect'] ?? '/');
+            unset($_SESSION['redirect']);
+        }
+    } catch (Exception $e) {
+        db_rollback();
+        header("Status: 500");
+        $errorMsg = $e->getMessage();
+        goto doc;
+    }
+} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    $STATUS = 405;
+    header("Allow: GET, POST");
+}
+
+doc:
 
 $TITLE = [_('Login')];
 require "../.php/header.php";
 ?>
 <main class="w1">
     <section>
-        <form action="/account/login" method="post">
+        <form action="/account/login" method="post" class="panel">
             <h1><?php echo _('Login');?></h1>
-            <div class="text">
-                <input name="subject" id="subject" type="text" placeholder=" " pattern="[0-9]{7,8}|\p{L}[0-9\p{L}_ -][0-9\p{L}]" required/>
+            <div class="text<?php echo $errors['subject'] ? " error" : "";?>">
+                <input name="subject" id="subject" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['subject']);?>" pattern="[0-9]{7,8}|\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>
                 <label for="subject"><?php echo _('Matriculation number or username');?></label>
+                <label for="subject"><?php echo _($errors['subject']);?></label>
             </div>
-            <div class="text">
-                <input name="password" id="password" type="password" placeholder=" " required/>
+            <div class="text<?php echo $errors['pwd'] ? " error" : "";?>">
+                <input name="password" id="password" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password']);?>" required/>
                 <label for="password"><?php echo _('Password');?></label>
+                <label for="password"><?php echo _($errors['pwd']);?></label>
             </div>
             <button type="submit"><?php echo _('Login');?></button>
         </form>
+        <?php if ($errorMsg !== null) { ?>
+            <div class="container error"><?php echo $errorMsg;?></div>
+        <?php } ?>
     </section>
 </main>
 <?php

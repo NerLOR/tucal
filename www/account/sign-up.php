@@ -2,6 +2,7 @@
 
 global $TITLE;
 global $USER;
+global $LOCALE;
 
 require "../.php/session.php";
 if (isset($USER)) {
@@ -10,34 +11,91 @@ if (isset($USER)) {
 
 require "../.php/main.php";
 
+$error = false;
+$errorMsg = null;
+$errors = [
+    "mnr" => null,
+    "username" => null,
+    "pw1" => null,
+    "pw2" => null,
+];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mnr = $_POST['mnr'] ?? null;
     $username = $_POST['username'] ?? null;
+    $pw1 = $_POST['password'] ?? null;
+    $pw2 = $_POST['repeat-password'] ?? null;
 
-    if ($mnr === null || $username === null) {
+    if ($mnr === null || $username === null || $pw1 === null || $pw2 === null) {
         header("Status: 400");
         goto doc;
     }
 
+    if (strlen($pw1) < 6) {
+        $errors['pw1'] = 'Too short';
+        $error = 400;
+    }
+
+    if ($pw1 !== $pw2) {
+        $errors['pw2'] = 'Does not match';
+        $error = 400;
+    }
+
     try {
-        $stmt = db_exec("INSERT INTO tucal.account (mnr, username) VALUES (:mnr, :username) RETURNING account_nr", [
+        db_exec("LOCK TABLE tucal.account IN EXCLUSIVE MODE");
+
+        $stmt = db_exec("SELECT mnr, username FROM tucal.account WHERE mnr = ? OR username = ?", [$mnr, $username]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (sizeof($data) > 0) {
+            foreach ($data as $row) {
+                if (strtolower($row['username']) === strtolower($username)) {
+                    $errors['username'] = 'Already exists';
+                }
+                if ($row['mnr'] == $mnr) {
+                    $errors['mnr'] = 'Already in use';
+                }
+            }
+            $error = 409;
+        }
+
+        if ($error !== false) {
+            db_rollback();
+            header("Status: $error");
+            goto doc;
+        }
+
+        $stmt = db_exec("INSERT INTO tucal.account (mnr, username, pwd_hash) " .
+                            "VALUES (:mnr, :username, NULL) " .
+                            "RETURNING account_nr", [
             'mnr' => $mnr,
             'username' => $username,
         ]);
         $nr = $stmt->fetch()[0];
-        $USER = ['nr' => $nr];
+
+        $stmt = db_exec("UPDATE tucal.account SET pwd_hash = crypt(:pwd, pwd_salt) WHERE account_nr = :nr", [
+            'nr' => $nr,
+            'pwd' => $pw1,
+        ]);
+
+        $USER = [
+            'nr' => $nr,
+            'opts' => [
+                'locale' => $LOCALE,
+            ],
+        ];
     } catch (Exception $e) {
         db_rollback();
-        header("Status: 409");
+        header("Status: 500");
+        $errorMsg = $e->getMessage();
         goto doc;
     }
 
     header("Status: 303");
-    header("Location: " . $_SESSION['opts']['login_redirect'] ?? '/');
-    unset($_SESSION['opts']['login_redirect']);
+    header("Location: /account/verify");
     tucal_exit();
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-    $STATUS = 400;
+    $STATUS = 405;
+    header("Allow: GET, POST");
 }
 
 doc:
@@ -47,26 +105,33 @@ require "../.php/header.php";
 ?>
 <main class="w1">
     <section>
-        <form action="/account/sign-up" method="post">
+        <form action="/account/sign-up" method="post" class="panel">
             <h1><?php echo _('Sign up');?></h1>
-            <div class="text">
+            <div class="text<?php echo $errors['mnr'] ? " error" : "";?>">
                 <input name="mnr" id="mnr" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['mnr'] ?? '');?>" pattern="[0-9]{7,8}" required/>
                 <label for="mnr"><?php echo _('Matriculation number');?></label>
+                <label for="mnr"><?php echo _($errors['mnr']);?></label>
             </div>
-            <div class="text">
+            <div class="text<?php echo $errors['username'] ? " error" : "";?>">
                 <input name="username" id="username" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['username'] ?? '');?>" pattern="\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>
                 <label for="username"><?php echo _('Username');?></label>
+                <label for="username"><?php echo _($errors['username']);?></label>
             </div>
-            <div class="text">
+            <div class="text<?php echo $errors['pw1'] ? " error" : "";?>">
                 <input name="password" id="password" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password'] ?? '');?>" required/>
                 <label for="password"><?php echo _('Password');?></label>
+                <label for="password"><?php echo _($errors['pw1']);?></label>
             </div>
-            <div class="text">
+            <div class="text<?php echo $errors['pw2'] ? " error" : "";?>">
                 <input name="repeat-password" id="repeat-password" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['repeat-password'] ?? '');?>" required/>
                 <label for="repeat-password"><?php echo _('Repeat password');?></label>
+                <label for="repeat-password"><?php echo _($errors['pw2']);?></label>
             </div>
             <button type="submit"><?php echo _('Sign up');?></button>
         </form>
+<?php if ($errorMsg !== null) { ?>
+        <div class="container error"><?php echo $errorMsg;?></div>
+<?php } ?>
     </section>
 </main>
 <?php

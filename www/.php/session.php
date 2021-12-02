@@ -11,11 +11,17 @@ $COOKIE_AGE = 15768000;  // 6 months
 function tucal_exit(bool $db_error = false) {
     global $USER;
     if (!$db_error) {
-        db_exec("UPDATE tucal.session SET last_ts = now(), account_nr = :acc_nr, options = :opts WHERE session_nr = :nr", [
+        db_exec("UPDATE tucal.session SET account_nr = :acc_nr, options = :opts WHERE session_nr = :nr", [
             'nr' => $_SESSION['nr'],
             'acc_nr' => isset($USER) ? $USER['nr'] : null,
             'opts' => json_encode($_SESSION['opts']),
         ]);
+        if (isset($USER)) {
+            db_exec("UPDATE tucal.account SET options = :opts WHERE account_nr = :nr", [
+                'nr' => $USER['nr'],
+                'opts' => isset($USER['opts']) ? json_encode($USER['opts']) : '{}',
+            ]);
+        }
         try {
             db_commit();
         } catch (Exception $e) {}
@@ -46,8 +52,8 @@ if (isset($_COOKIE['tucal_session'])) {
                 'mnr' => $s['mnr_normal'],
                 'mnr_int' => $s['mnr'],
                 'username' => $s['username'],
-                'email_addr_1' => $s['email_address_1'],
-                'email_addr_2' => $s['email_address_2'],
+                'email_address_1' => $s['email_address_1'],
+                'email_address_2' => $s['email_address_2'],
                 'verified' => $s['verified'],
                 'avatar_uri' => $s['avatar_uri'],
                 'opts' => json_decode($s['account_opts'], true),

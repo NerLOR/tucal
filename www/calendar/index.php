@@ -5,25 +5,25 @@ global $USER;
 global $USE_PATH_INFO;
 
 require "../.php/session.php";
-force_user_login();
+force_user_login(null, false);
 
 $parts = explode('/', $_SERVER['PATH_INFO']);
 $year = date('Y');
 $week = 'W' . date('W');
 if (sizeof($parts) < 2 || strlen($parts[1]) === 0)
-    redirect("/calendar/$USER[mnr]/$year/$week");
+    redirect("/calendar/$USER[mnr]/$year/$week/");
 
 $subject = $parts[1];
 if (sizeof($parts) < 3 || strlen($parts[2]) === 0)
-    redirect("/calendar/$subject/$year/$week");
+    redirect("/calendar/$subject/$year/$week/");
 
 $year = $parts[2];
-if (sizeof($parts) < 4 || strlen($parts[3]) === 0)
-    redirect("/calendar/$subject/$year/$week");
+if (sizeof($parts) < 5 || strlen($parts[3]) === 0)
+    redirect("/calendar/$subject/$year/$week/");
 
 $unit = $parts[3];
 
-if (sizeof($parts) !== 4) {
+if (sizeof($parts) !== 5) {
     $STATUS = 404;
 }
 
@@ -54,7 +54,7 @@ if ($unit[0] === 'W' || $unit[0] === 'w') {
 $USE_PATH_INFO = true;
 require "../.php/main.php";
 
-$wanted_uri = "/calendar/$subject/$year/$unit";
+$wanted_uri = "/calendar/$subject/$year/$unit/";
 if ($_SERVER['REQUEST_URI'] !== $wanted_uri) {
     redirect($wanted_uri);
 }

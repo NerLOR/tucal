@@ -7,6 +7,7 @@ DROP SCHEMA tucal CASCADE;
 CREATE SCHEMA tucal;
 
 CREATE EXTENSION IF NOT EXISTS citext;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE tucal.account
 (
@@ -19,9 +20,14 @@ CREATE TABLE tucal.account
     avatar_uri    TEXT                              DEFAULT NULL,
 
     create_ts     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    login_ts      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    active_ts     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     sync_ts       TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
 
     options       JSONB                    NOT NULL DEFAULT '{}'::jsonb,
+
+    pwd_salt      TEXT                              DEFAULT gen_salt('bf'),
+    pwd_hash      TEXT,
 
     CONSTRAINT pk_account PRIMARY KEY (account_nr),
     CONSTRAINT sk_account_mnr UNIQUE (mnr),
@@ -32,13 +38,15 @@ CREATE TABLE tucal.account
 CREATE OR REPLACE VIEW tucal.v_account AS
 SELECT a.account_nr,
        a.mnr,
-       LPAD(a.mnr::text, 8, '0') AS mnr_normal,
+       LPAD(a.mnr::text, 8, '0')                                       AS mnr_normal,
        a.username,
        CONCAT('e', LPAD(a.mnr::text, 8, '0'), '@student.tuwien.ac.at') AS email_address_1,
        a.email_address                                                 AS email_address_2,
        a.verified,
        a.avatar_uri,
        a.create_ts,
+       a.login_ts,
+       a.active_ts,
        a.sync_ts,
        a.options
 FROM tucal.account a;
@@ -52,7 +60,8 @@ CREATE TABLE tucal.session
     options    JSONB                    NOT NULL DEFAULT '{}'::jsonb,
 
     create_ts  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    last_ts    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    login_ts   TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
+    active_ts  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 
     CONSTRAINT pk_sessoin PRIMARY KEY (session_nr),
     CONSTRAINT sk_session_token UNIQUE (token),
@@ -73,10 +82,39 @@ SELECT s.session_nr,
        a.email_address_2,
        a.verified,
        a.avatar_uri,
+       s.create_ts,
+       s.login_ts,
+       s.active_ts,
        a.create_ts AS account_create_ts,
+       a.login_ts  AS account_login_ts,
+       a.active_ts AS account_active_ts,
+       a.sync_ts   AS account_sync_ts,
        a.options   AS account_opts
 FROM tucal.session s
          LEFT JOIN tucal.v_account a ON a.account_nr = s.account_nr;
+
+
+CREATE OR REPLACE FUNCTION tucal.update_session()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.active_ts = now();
+    UPDATE tucal.account SET active_ts = now() WHERE account_nr = OLD.account_nr;
+    IF OLD.account_nr IS NULL and NEW.account_nr IS NOT NULL THEN
+        UPDATE tucal.account SET active_ts = now(), login_ts = now() WHERE account_nr = NEW.account_nr;
+        NEW.login_ts = now();
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER t_update
+    BEFORE UPDATE
+    ON tucal.session
+    FOR EACH ROW
+EXECUTE PROCEDURE tucal.update_session();
+
+
 
 CREATE TABLE tucal.area
 (

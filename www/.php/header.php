@@ -46,6 +46,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <link rel="stylesheet" href="/res/styles/styles.css" type="text/css"/>
+    <script src="/res/scripts/localisation.js" type="application/javascript"></script>
     <script src="/res/scripts/calendar.js" type="application/javascript"></script>
     <script src="/res/scripts/main.js" type="application/javascript"></script>
 </head>
@@ -60,9 +61,25 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <div><a href="<?php echo $cal_uri;?>" class="<?php echo uri_active($cal_uri);?>"><?php echo _('My Calendar');?></a></div>
     <div><a href="/friends" class="<?php echo uri_active('/friends', true)?>"><?php echo _('My Friends');?></a></div>
     <div><a href="/course/" class="<?php echo uri_active('/course/')?>"><?php echo _('LVAs');?></a></div>
+    <div id="nav-live">
+        <a href="" class="button live" target="_blank">LIVE<span></span></a>
+        <a href="" class="button live" target="_blank">LIVE<span></span></a>
+        <a href="" class="button live" target="_blank">LIVE<span></span></a>
+    </div>
     <div id="nav-user">
 <?php if (isset($USER)) { ?>
-        USER
+        <div id="user-menu">
+            <div>
+                <img src="/res/avatars/default.png" alt="<?php echo _('Avatar');?>"/>
+                <a><?php echo $USER['username'];?></a>
+                <span class="arrow">▾</span>
+            </div>
+            <div><a href="/account/"><?php echo _('Settings');?></a></div>
+            <?php if (!$USER['verified']) {?><div><a href="/account/verify"><?php echo _('Verify account');?></a></div><?php } ?>
+
+            <hr/>
+            <div><a href="/account/logout"><?php echo _('Logout');?></a></div>
+        </div>
 <?php } else { ?>
         <a href="/account/sign-up" class="button <?php echo uri_active('/account/sign-up', true);?>"><?php echo _('Sign up');?></a>
         <a href="/account/login" class="button <?php echo uri_active('/account/login', true);?>"><?php echo _('Login');?></a>

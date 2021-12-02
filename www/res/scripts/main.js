@@ -1,21 +1,67 @@
 "use strict";
 
-let LOCALE;
-
 window.addEventListener("DOMContentLoaded", () => {
-    LOCALE = document.documentElement.lang;
-    if (LOCALE.startsWith('bar')) {
-        LOCALE = 'de' + LOCALE.substr(3);
-    }
-
     const status = parseInt(document.title.split(' ')[0]) || 200;
+
+    initNav();
+
     if (window.location.pathname.startsWith('/calendar/') && status === 200) {
-        const uri = window.location.pathname;
-        const parts = uri.split('/');
-        const cal = new WeekSchedule(parts[2], document.getElementsByTagName("main")[0]);
-        cal.setWeek(new Week(parseInt(parts[3]), parseInt(parts[4].substr(1))));
+        initCalendar();
     }
 });
+
+function initCalendar() {
+    const main = document.getElementsByTagName("main")[0];
+
+    const uri = window.location.pathname;
+    const parts = uri.split('/');
+
+    const subject = parts[2];
+    const year = parseInt(parts[3]);
+    const week = parseInt(parts[4].substr(1));
+
+    const cal = new WeekSchedule(subject, main);
+    cal.setCurrentEventCb((events) => {
+        const navLive = document.getElementById("nav-live");
+        const liveButtons = navLive.getElementsByClassName("live");
+        for (const btn of liveButtons) btn.href = '';
+
+        console.log(events);
+        for (let i = 0, j = 0; i < events.length; i++) {
+            const evt = events[i];
+            if (evt.live && evt.liveUrl) {
+                const btn = liveButtons[j++];
+                btn.href = evt.liveUrl;
+                btn.getElementsByTagName("span")[0].innerText = evt.courseShort || evt.courseNr;
+            }
+        }
+    });
+    cal.setWeek(new Week(year, week));
+}
+
+function initNav() {
+    const userMenu = document.getElementById("user-menu");
+    const menu = null;
+
+    if (userMenu) {
+        userMenu.addEventListener("click", (evt) => {
+            if (userMenu.classList.contains("active")) {
+                userMenu.classList.remove("active");
+            } else {
+                userMenu.classList.add("active");
+            }
+        });
+    }
+
+    window.addEventListener("click", (evt) => {
+        if (userMenu && !evt.composedPath().includes(userMenu)) {
+            userMenu.classList.remove("active");
+        }
+        if (menu && !evt.composedPath().includes(menu)) {
+            menu.classList.remove("menu-active");
+        }
+    });
+}
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
