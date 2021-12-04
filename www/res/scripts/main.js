@@ -51,6 +51,17 @@ function initNav() {
                 userMenu.classList.add("active");
             }
         });
+
+        const form = document.forms.logout;
+        const links = userMenu.getElementsByTagName("a");
+        for (const a of links) {
+            if (a.href.endsWith('/account/logout')) {
+                a.removeAttribute("href");
+                a.addEventListener("click", (evt) => {
+                    form.submit();
+                });
+            }
+        }
     }
 
     window.addEventListener("click", (evt) => {

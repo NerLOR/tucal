@@ -78,7 +78,10 @@ if ($STATUS >= 400 && $STATUS < 600) {
             <?php if (!$USER['verified']) {?><div><a href="/account/verify"><?php echo _('Verify account');?></a></div><?php } ?>
 
             <hr/>
-            <div><a href="/account/logout"><?php echo _('Logout');?></a></div>
+            <div>
+                <form action="/account/logout" method="post" name="logout"></form>
+                <a href="/account/logout"><?php echo _('Logout');?></a>
+            </div>
         </div>
 <?php } else { ?>
         <a href="/account/sign-up" class="button <?php echo uri_active('/account/sign-up', true);?>"><?php echo _('Sign up');?></a>
