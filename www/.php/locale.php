@@ -16,7 +16,7 @@ function init_locale() {
 
     $locales = [str_replace('-', '_', $LOCALE) . '.UTF-8'];
     if ($LOCALE === 'bar-AT')
-        array_push($locales, 'de_AT.UTF-8');
+        $locales[] = 'de_AT.UTF-8';
 
     setlocale(LC_ALL, $locales);
     bindtextdomain('tucal', "$_SERVER[DOCUMENT_ROOT]/.php/locale/");
@@ -58,7 +58,7 @@ function get_locale(): string {
             if (strpos($loc, '-') === false) {
                 foreach ($LOCALES as $avail) {
                     if (substr($avail, 0, 2) === $loc)
-                        return $loc;
+                        return $avail;
                 }
             }
         }

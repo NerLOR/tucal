@@ -47,7 +47,9 @@ body > nav a.button {
 }
 
 body > nav > div.link a:hover,
-body > nav > div.link a:focus {
+body > nav > div.link a:focus,
+body > nav a.button:hover,
+body > nav a.button:focus {
     color: var(--color);
     border-color: var(--color);
 }

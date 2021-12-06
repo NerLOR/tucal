@@ -16,10 +16,10 @@ function tucal_exit(bool $db_error = false) {
             'acc_nr' => isset($USER) ? $USER['nr'] : null,
             'opts' => json_encode($_SESSION['opts']),
         ]);
-        if (isset($USER)) {
+        if (isset($USER) && isset($USER['opts'])) {
             db_exec("UPDATE tucal.account SET options = :opts WHERE account_nr = :nr", [
                 'nr' => $USER['nr'],
-                'opts' => isset($USER['opts']) ? json_encode($USER['opts']) : '{}',
+                'opts' => json_encode($USER['opts']),
             ]);
         }
         try {
