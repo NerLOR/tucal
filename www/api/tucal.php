@@ -13,6 +13,7 @@ try {
     switch ($info) {
         case '/rooms': rooms(); break;
         case '/calendar': calendar(); break;
+        case '/job': job(); break;
         default: error(404);
     }
 } catch (Exception $e) {
@@ -104,4 +105,8 @@ function calendar() {
 
     echo "\n]}}\n";
     tucal_exit();
+}
+
+function job() {
+
 }

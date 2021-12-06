@@ -5,6 +5,7 @@ html {
 
 body > nav {
     width: 100%;
+    max-width: 100vw;
     z-index: 100;
     display: flex;
     height: var(--nav-height);
@@ -15,6 +16,7 @@ body > nav {
     top: 0;
     left: 0;
     justify-content: center;
+    flex-wrap: nowrap;
 }
 
 body > nav > * {
@@ -23,35 +25,45 @@ body > nav > * {
 
 body > nav a {
     text-decoration: none;
-    color: #808080;
-    height: 100%;
     box-sizing: border-box;
-    padding: 1em 2em 0 2em;
-    display: block;
     white-space: nowrap;
+    display: block;
+    height: 100%;
+}
+
+body > nav > div.link a {
+    color: #808080;
+    padding: 1em 2em 0 2em;
+    text-align: center;
 }
 
 body > nav a.button {
+    color: #808080;
     border: 1px solid #C0C0C0;
     border-radius: var(--border-radius);
     display: inline-block;
     height: 2em;
-    padding: 0.4375em 1em;
+    padding: 0.375em 1em;
 }
 
-body > nav a:hover,
-body > nav a:focus {
+body > nav > div.link a:hover,
+body > nav > div.link a:focus {
     color: var(--color);
     border-color: var(--color);
 }
 
-body > nav a.active {
+body > nav > div.link a.active,
+body > nav a.button.active {
     color: var(--color);
+}
+
+body > nav > div.link {
+    order: 50;
 }
 
 #nav-home {
     width: var(--nav-height);
-    flex-grow: 1;
+    order: 10;
 }
 
 #nav-home a {
@@ -60,11 +72,23 @@ body > nav a.active {
     padding-right: 0;
 }
 
+#nav-home img {
+    height: 48px;
+    width: 48px;
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+#nav-home-explicit {
+    display: none;
+}
+
 #nav-live {
     flex: 100px 1 1;
     text-align: right;
     padding: 0.5em;
     box-sizing: border-box;
+    order: 80;
 }
 
 #nav-live a.live {
@@ -99,15 +123,17 @@ body > nav a.active {
     gap: 0.5em;
     padding: 0.5em;
     box-sizing: border-box;
+    order: 90;
 }
 
 #nav-search {
-    width: 300px;
-    flex-shrink: 1;
+    flex: 244px 1 1;
+    order: 20;
 }
 
 #nav-search form {
-
+    max-width: 250px;
+    margin-left: 0.5em;
 }
 
 #nav-search input {
@@ -129,7 +155,7 @@ body > nav a.active {
     text-align: left;
     height: fit-content;
     width: 11em;
-    cursor: pointer;
+    z-index: 110;
 }
 
 #user-menu:hover {
@@ -151,6 +177,7 @@ body > nav a.active {
 #user-menu > div:first-child {
     padding: 0 0.5em;
     height: 2em;
+    cursor: pointer;
 }
 
 #user-menu:not(.active) > *:not(:first-child) {
@@ -185,12 +212,13 @@ body > nav a.active {
     height: unset;
     color: #000000;
     font-size: 0.875em;
+    cursor: pointer;
 }
 
 #user-menu > div:not(:first-child) a {
     width: 100%;
     height: 100%;
-    padding: 0.75em;
+    padding: 0.875em 0.75em;
     box-sizing: border-box;
 }
 
@@ -207,8 +235,46 @@ body > nav a.active {
 }
 
 @media screen and (max-width: 1000px) {
+    #nav-search form {
+        display: none;
+    }
     body > nav a {
         padding-left: 1em;
         padding-right: 1em;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    body > nav {
+        height: unset;
+        flex-wrap: wrap;
+    }
+    body > nav > * {
+        height: 3rem;
+        flex: 100% 0 0;
+    }
+    #nav-user {
+        order: 12;
+        flex: 50% 100 0;
+    }
+    #nav-home {
+        flex: 12.5% 100 0;
+    }
+    #nav-search {
+        flex: 100% 1 1;
+    }
+    #nav-search form {
+        margin: auto;
+        display: block;
+    }
+    #nav-live {
+        order: 18;
+        flex: 100% 1 1;
+    }
+    body > nav.active > #nav-home-explicit {
+        display: block;
+    }
+    body > nav:not(.active) > *:not(:first-child):not(:last-child) {
+        display: none;
     }
 }

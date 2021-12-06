@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Allow: GET, POST");
 }
 
-$TITLE = [_('Account overview')];
+$TITLE = [_('Settings')];
 require "../.php/header.php";
 ?>
 <main class="w3">

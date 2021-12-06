@@ -41,10 +41,14 @@ function initCalendar() {
 
 function initNav() {
     const userMenu = document.getElementById("user-menu");
-    const menu = null;
+    const menu = document.getElementById("nav-home").getElementsByTagName("a")[0];
+    const nav = document.getElementsByTagName("nav")[0];
+    //const testElem = document.getElementById("nav-search").getElementsByTagName("form")[0];
+    const testElem = document.getElementById("nav-live");
 
     if (userMenu) {
-        userMenu.addEventListener("click", (evt) => {
+        const navUser = userMenu.getElementsByTagName("div")[0];
+        navUser.addEventListener("click", (evt) => {
             if (userMenu.classList.contains("active")) {
                 userMenu.classList.remove("active");
             } else {
@@ -64,12 +68,22 @@ function initNav() {
         }
     }
 
+    menu.addEventListener("click", (evt) => {
+        if (nav.classList.contains("active")) {
+            nav.classList.remove("active");
+            evt.preventDefault();
+        } else if (window.getComputedStyle(testElem).display === 'none') {
+            nav.classList.add("active");
+            evt.preventDefault();
+        }
+    });
+
     window.addEventListener("click", (evt) => {
         if (userMenu && !evt.composedPath().includes(userMenu)) {
             userMenu.classList.remove("active");
         }
-        if (menu && !evt.composedPath().includes(menu)) {
-            menu.classList.remove("menu-active");
+        if (!evt.composedPath().includes(nav)) {
+            nav.classList.remove("active");
         }
     });
 }

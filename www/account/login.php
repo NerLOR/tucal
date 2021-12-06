@@ -28,6 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
+        if (strlen($subj) >= 1 && $subj[0] === '0') {
+            $subj = substr($subj, 1);
+        }
         $stmt = db_exec("SELECT account_nr, mnr, username, (pwd_hash = crypt(:pwd, pwd_salt)) AS pwd_match, verified FROM tucal.account WHERE mnr::text = :subj OR lower(username) = lower(:subj::text)", [
             'subj' => $subj,
             'pwd' => $pwd,

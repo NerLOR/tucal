@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" xmlns="http://www.w3.org/2000/svg" viewBox="-10 -20 92 92">
+    <title>TUcal</title>
+    <!--rect x="-1000" y="-1000" width="2000" height="2000"/-->
+
+    <!--rect x="-8" y="-16" height="85" width="87" fill="#4080C0" rx="6"/-->
+    <rect x="-8" y="-5" height="71" width="87" fill="#4080C0" rx="4" stroke="#FFFFFF" stroke-width="2"/>
+
+    <rect x="10" y="-12" height="14" width="8" rx="4" fill="#4080C0" stroke="#FFFFFF" stroke-width="2"/>
+    <rect x="54" y="-12" height="14" width="8" rx="4" fill="#4080C0" stroke="#FFFFFF" stroke-width="2"/>
+    
+    <rect x="0" y="9" width="71" height="51" fill="#4080C0" rx="2"/>
+
+    <rect x="1" y="10" height="9" width="9" fill="#FFFFFF" rx="2"/>
+    <rect x="11" y="10" height="9" width="9" fill="#FFFFFF" rx="2"/>
+    <rect x="21" y="10" height="9" width="9" fill="#FFFFFF" rx="2"/>
+    <rect x="31" y="10" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="41" y="10" height="9" width="9" fill="#FFFFFF" rx="2"/>
+    <rect x="51" y="10" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="61" y="10" height="9" width="9" fill="#FFFFFF" rx="2"/>
+
+    <rect x="1" y="20" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="11" y="20" height="9" width="9" fill="#FFFFFF" rx="2"/>
+    <rect x="21" y="20" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="31" y="20" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="41" y="20" height="9" width="9" fill="#FFFFFF" rx="2"/>
+    <rect x="51" y="20" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="61" y="20" height="9" width="9" fill="#FFFFFF" rx="2"/>
+
+    <rect x="1" y="30" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="11" y="30" height="9" width="9" fill="#FFFFFF" rx="2"/>
+    <rect x="21" y="30" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="31" y="30" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="41" y="30" height="9" width="9" fill="#FFFFFF" rx="2"/>
+    <rect x="51" y="30" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="61" y="30" height="9" width="9" fill="#FFFFFF" rx="2"/>
+
+    <rect x="1" y="40" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="11" y="40" height="9" width="9" fill="#FFFFFF" rx="2"/>
+    <rect x="21" y="40" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="31" y="40" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="41" y="40" height="9" width="9" fill="#FFFFFF" rx="2"/>
+    <rect x="51" y="40" height="9" width="9" fill="#FFFFFF" rx="2"/>
+    <rect x="61" y="40" height="9" width="9" fill="#FFFFFF" rx="2"/>
+
+    <rect x="1" y="50" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="11" y="50" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="21" y="50" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="31" y="50" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="41" y="50" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="51" y="50" height="9" width="9" fill="#3060A0" rx="2"/>
+    <rect x="61" y="50" height="9" width="9" fill="#3060A0" rx="2"/>
+</svg>

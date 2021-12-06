@@ -15,7 +15,8 @@ main form.panel p {
 
 main form.panel div.text,
 main form.panel div.container,
-main form.panel button {
+main form.panel button,
+main form.panel a.button {
     display: block;
     width: calc(100% - 1em);
     margin: 0.5em;
@@ -37,7 +38,8 @@ main form.panel div.text.error {
 }
 
 main form.panel div.container,
-main form.panel button {
+main form.panel button,
+main form.panel a.button {
     border: 1px solid var(--border-color);
 }
 
@@ -80,13 +82,18 @@ main form.panel div.text > input {
     border-radius: var(--border-radius);
 }
 
-main form.panel button {
+main form.panel button,
+main form.panel a.button {
     color: var(--color);
     outline: none;
+    text-align: center;
+    text-decoration: none;
 }
 
 main form.panel button:hover,
-main form.panel button:focus {
+main form.panel button:focus,
+main form.panel a.button:hover,
+main form.panel a.button:focus {
     background-color: var(--color);
     border-color: var(--color-dark);
     cursor: pointer;

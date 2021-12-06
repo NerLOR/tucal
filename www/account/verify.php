@@ -13,17 +13,9 @@ require "../.php/header.php";
 <main class="w1">
     <section>
         <h1><?php echo _('Verify account');?></h1>
-        <form action="/account/verify" method="post" class="panel">
+        <form class="panel">
             <p><?php echo _('SSO verification (description)');?></p>
-            <div class="text">
-                <input name="sso-password" id="sso-password" type="password" placeholder=" " required/>
-                <label for="sso-password"><?php echo _('SSO password');?></label>
-            </div>
-            <div class="container red">
-                <input name="sso-store" id="sso-store" type="checkbox"/>
-                <label for="sso-store"><?php echo _('SSO password storage warning');?></label>
-            </div>
-            <button type="submit" name="mode" value="sso"><?php echo _('SSO verification');?></button>
+            <a class="button" href="/account/tuwien-sso"><?php echo _('SSO verification');?></a>
         </form>
         <form action="/account/verify" method="post" class="panel">
             <hr data-content="<?php echo strtoupper(_('or'));?>"/>

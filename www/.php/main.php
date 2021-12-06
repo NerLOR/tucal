@@ -12,4 +12,6 @@ if ((isset($STATUS) && $STATUS >= 400 && $STATUS < 600) || ((!isset($USE_PATH_IN
 
 if (isset($STATUS)) {
     header("Status: $STATUS");
+} else {
+    $STATUS = 200;
 }

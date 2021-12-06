@@ -26,9 +26,12 @@ function uri_active(string $uri, bool $exact = false): string {
 
 $cal_uri = isset($USER) ? "/calendar/$USER[mnr]/" : "/calendar/";
 
+$icon = "tucal";
+
 if ($STATUS >= 400 && $STATUS < 600) {
     $msg = http_message($STATUS);
     $TITLE = ["$STATUS " . _ctx('http', $msg)];
+    $icon = "tp";  // "Technische Probleme Wien" Easter Egg
 }
 
 ?>
@@ -37,7 +40,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
 <head>
     <title><?php
         $TITLE = $TITLE ?? [];
-        array_push($TITLE, 'TUcal');
+        $TITLE[] = 'TUcal';
         echo implode(' - ', $TITLE);
     ?></title>
     <meta charset="UTF-8"/>
@@ -46,21 +49,28 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <link rel="stylesheet" href="/res/styles/styles.css" type="text/css"/>
+    <link rel="icon" href="/res/svgs/<?php echo $icon;?>.svg" type="image/svg+xml" sizes="any"/>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="256x256 128x128 64x64 32x32 24x24 16x16"/>
     <script src="/res/scripts/localisation.js" type="application/javascript"></script>
     <script src="/res/scripts/calendar.js" type="application/javascript"></script>
     <script src="/res/scripts/main.js" type="application/javascript"></script>
 </head>
 <body>
 <nav>
-    <div id="nav-home"><a href="/" class="<?php echo uri_active('/', true)?>"><?php echo _('Home');?></a></div>
+    <div id="nav-home">
+        <a href="/" class="<?php echo uri_active('/', true);?>">
+            <img src="/res/svgs/<?php echo $icon;?>.svg" alt="<?php echo _('Home');?>"/>
+        </a>
+    </div>
     <div id="nav-search">
         <form action="/search" method="get">
             <input name="q" placeholder="<?php echo _('Search (for)');?>"/>
         </form>
     </div>
-    <div><a href="<?php echo $cal_uri;?>" class="<?php echo uri_active($cal_uri);?>"><?php echo _('My Calendar');?></a></div>
-    <div><a href="/friends" class="<?php echo uri_active('/friends', true)?>"><?php echo _('My Friends');?></a></div>
-    <div><a href="/course/" class="<?php echo uri_active('/course/')?>"><?php echo _('LVAs');?></a></div>
+    <div class="link" id="nav-home-explicit"><a href="/" class="<?php echo uri_active('/', true);?>"><?php echo _('Home');?></a></div>
+    <div class="link"><a href="<?php echo $cal_uri;?>" class="<?php echo uri_active($cal_uri);?>"><?php echo _('My Calendar');?></a></div>
+    <div class="link"><a href="/friends" class="<?php echo uri_active('/friends', true);?>"><?php echo _('My Friends');?></a></div>
+    <div class="link"><a href="/course/" class="<?php echo uri_active('/course/');?>"><?php echo _('LVAs');?></a></div>
     <div id="nav-live">
         <a href="" class="button live" target="_blank">LIVE<span></span></a>
         <a href="" class="button live" target="_blank">LIVE<span></span></a>
@@ -77,6 +87,8 @@ if ($STATUS >= 400 && $STATUS < 600) {
             <div><a href="/account/"><?php echo _('Settings');?></a></div>
             <?php if (!$USER['verified']) {?><div><a href="/account/verify"><?php echo _('Verify account');?></a></div><?php } ?>
 
+            <hr/>
+            <div><a href="/search"><?php echo _('Search (for)');?></a></div>
             <hr/>
             <div>
                 <form action="/account/logout" method="post" name="logout"></form>
