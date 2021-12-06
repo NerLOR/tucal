@@ -235,6 +235,18 @@ div.calendar div.event-wrapper div.event.now {
     box-shadow: 0 0 4px var(--glow);
 }
 
+div.calendar div.event span {
+    display: block;
+}
+
+div.calendar div.event span.time {
+    font-size: 0.75em;
+}
+
+div.calendar div.event span.course {
+    font-weight: bold;
+}
+
 @media screen and (max-width: 800px) {
     div.calendar thead th.day-header {
         font-size: 0.75em;

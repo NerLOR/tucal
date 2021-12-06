@@ -462,6 +462,11 @@ class WeekSchedule {
             }
         }
 
+        const formatter = new Intl.DateTimeFormat(LOCALE, {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+
         for (const day of events) {
             const partList = {};
             for (let i = START_TIME; i <= END_TIME; i++) {
@@ -556,7 +561,9 @@ class WeekSchedule {
                 evt.style.setProperty("--part1", `${eventData.part1}`);
                 evt.style.setProperty("--part2", `${eventData.part2}`)
 
-                evt.innerText = "Event";
+                const startFmt = formatter.format(start);
+                const endFmt = formatter.format(end);
+                evt.innerHTML = `<span class="time">${startFmt}-${endFmt}</span><span class="course">Evt</span>`;
                 day.appendChild(evt);
             }
         }
