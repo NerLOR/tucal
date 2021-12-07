@@ -109,7 +109,7 @@ class Handler(StreamRequestHandler):
 
         proc.stdout.read()
         err = proc.stderr.read().decode('utf8')
-        print('\n'.join([f'[{job_nr:8}] {line}' for line in err.splitlines()]), end='')
+        print('\n'.join([f'[{job_nr:8}] {line}' for line in err.splitlines()]))
 
         data['data'] = reader.json()
 
