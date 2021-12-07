@@ -20,7 +20,7 @@ DECLARE
 BEGIN
     FOR i IN 0 .. 63
         LOOP
-            new_nr = new_nr | ((int8and(nr, 1 << i) >> i << (63 - i)));
+            new_nr = new_nr | (((int8and(nr, 1 << i) >> i) << (63 - i)));
         END LOOP;
     new_nr = int8xor(new_nr, init);
     new_nr = int8xor(new_nr, (key_nr::int8 << 48) | (key_nr::int8 << 32) | (key_nr::int8 << 16) | (key_nr::int8));
