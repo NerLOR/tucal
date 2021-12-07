@@ -4,6 +4,8 @@ import datetime
 import typing
 import sys
 import time
+import json
+import pytz
 
 
 class Semester:
@@ -120,7 +122,7 @@ class Job:
         self._name = name
         self._clock_id = time.CLOCK_MONOTONIC
         self._proc_start = time.clock_gettime(self._clock_id)
-        print(f'**{datetime.datetime.utcnow().isoformat()}')
+        print(f'**{datetime.datetime.now().astimezone().isoformat()}')
         print(f'*{self._format_time()}:0.0000:START:{sub_steps}:{name}')
         sys.stdout.flush()
 
@@ -137,5 +139,173 @@ class Job:
         self._n += steps
 
     def _format_time(self) -> str:
-        return f'{time.clock_gettime(self._clock_id) - self._proc_start:7.2f}'
+        return f'{time.clock_gettime(self._clock_id) - self._proc_start:7.4f}'
 
+
+class JobStatus:
+    progress: float
+    start: typing.Optional[datetime.datetime]
+    time: float
+    steps: typing.List[typing.Dict[str, typing.Any]]
+    comments: typing.List[str]
+    finished: bool
+    success: bool
+    current_step: typing.Optional[typing.Tuple]
+
+    def __init__(self):
+        self.progress = 0
+        self.start = None
+        self.time = 0
+        self.steps = []
+        self.comments = []
+        self.finished = False
+        self.success = False
+        self.current_step = None
+
+    def line(self, line: str) -> bool:
+        if len(line) == 0:
+            return False
+        line = line.rstrip()
+        if len(line) == 0:
+            return True
+        elif line[0] != '*':
+            cur = self.get_current_step()
+            if cur is not None:
+                cur['comments'].append(line)
+            else:
+                self.comments.append(line)
+            return True
+        line = line[1:].strip()
+
+        if self.start is None and line.startswith('*'):
+            self.start = datetime.datetime.fromisoformat(line[1:]).astimezone()
+            return True
+        elif line.startswith('*'):
+            raise RuntimeError('invalid job format')
+
+        line = line.split(':', 3)
+        if len(line) < 3:
+            raise RuntimeError('invalid job format')
+
+        time_sec = float(line[0])
+        self.time = time_sec
+        self.progress = float(line[1])
+
+        cmd = line[2]
+        if cmd == 'STOP':
+            if len(line) > 3 or self.current_step is None:
+                raise RuntimeError('invalid job format')
+            if len(self.current_step) == 1:
+                self.current_step = None
+                self.finished = True
+                self.success = True
+            else:
+                step = self.get_current_step()
+                step['end'] = time_sec
+                step['time'] = step['end'] - step['start']
+
+                self.current_step = self.current_step[:-1]
+                step = self.get_current_step()
+                step['next_step_nr'] += 1
+        elif cmd == 'START':
+            step_num, name = line[3].split(':', 1)
+            step_num = int(step_num)
+
+            step = self.get_current_step()
+
+            if step_num == 0:
+                if self.current_step is None:
+                    self.current_step = (0, step['next_step_nr'])
+                else:
+                    self.current_step = self.current_step + (step['next_step_nr'],)
+
+                if self.current_step[-1] >= len(step['steps']):
+                    raise RuntimeError('invalid job format')
+
+                step = self.get_current_step()
+                step['name'] = name
+                step['start'] = time_sec
+                step['end'] = None
+                step['time'] = None
+                step['steps'] = None
+                step['comments'] = []
+            else:
+                if step is None:
+                    self.steps.append({})
+                    step = self.steps[0]
+                    self.current_step = (0,)
+                else:
+                    self.current_step = self.current_step + (step['next_step_nr'],)
+                    if self.current_step[-1] >= len(step['steps']):
+                        raise RuntimeError('invalid job format')
+                    step = self.get_current_step()
+
+                step['name'] = name
+                step['next_step_nr'] = 0
+                step['start'] = time_sec
+                step['end'] = None
+                step['time'] = None
+                step['steps'] = []
+                step['comments'] = []
+                for i in range(step_num):
+                    step['steps'].append({})
+        else:
+            raise RuntimeError('invalid job format')
+        return True
+
+    def get_current_step(self) -> typing.Optional[typing.Dict[str, typing.Any]]:
+        if len(self.steps) == 0:
+            return None
+        cur = self.steps[0]
+        if self.current_step is None:
+            return cur
+        for idx in self.current_step[1:]:
+            cur = cur['steps'][idx]
+        return cur
+
+    def path(self) -> typing.Generator[typing.Tuple[typing.Dict[str, typing.Any], int]]:
+        cur = self.steps[0]
+        yield cur, 1, 1
+        if self.current_step is None:
+            return
+        for idx in self.current_step[1:]:
+            step_num = len(cur['steps'])
+            cur = cur['steps'][idx]
+            yield cur, idx + 1, step_num
+        return
+
+    def _json(self, steps: typing.List[typing.Dict[str, typing.Any]]) -> typing.List[typing.Dict[str, typing.Any]]:
+        cur = self.get_current_step()
+        updated = []
+        for step in steps:
+            if 'name' not in step:
+                updated.append({})
+                continue
+            running = (step['steps'] is None and step == cur) or \
+                      (step['steps'] is not None and len(step['steps']) != step['next_step_nr'])
+            updated.append({
+                'name': step['name'],
+                'time': step['time'] or self.time - step['start'],
+                'is_running': running,
+                'comments': step['comments'],
+            })
+            if step['steps'] is None:
+                updated[-1]['steps'] = None
+            else:
+                updated[-1]['steps'] = self._json(step['steps'])
+        return updated
+
+    def json(self) -> str:
+        eta = self.time / self.progress if self.progress > 0 else None
+        data = {
+            'progress': self.progress,
+            'is_running': not self.finished,
+            'start_ts': self.start.isoformat() if self.start else None,
+            'time': self.time,
+            'remaining': eta - self.time if eta else None,
+            'eta_ts': (self.start + datetime.timedelta(seconds=eta)).isoformat() if eta else None,
+            'name': self.steps[0]['name'] if len(self.steps) > 0 else None,
+            'steps': self._json(self.steps[0]['steps']) if len(self.steps) > 0 else None,
+            'comments': self.comments,
+        }
+        return json.dumps(data)
