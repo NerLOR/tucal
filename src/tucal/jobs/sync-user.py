@@ -36,10 +36,19 @@ if __name__ == '__main__':
     tfa_gen = None
     if not args.database:
         pwd = input()
-        tfa = input()
-        tfa = None if len(tfa) == 0 else tfa
+        try:
+            tfa = input()
+            tfa = None if len(tfa) == 0 else tfa.replace(' ', '')
+            if tfa and len(tfa) <= 6:
+                tfa_token = tfa
+            elif tfa:
+                tfa_gen = tfa
+        except EOFError:
+            pass
     else:
         pass  # TODO
+
+    # TODO tfa_gen -> tfa_token
 
     cur = tucal.db.cursor()
 
