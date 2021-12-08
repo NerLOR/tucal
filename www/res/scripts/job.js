@@ -3,10 +3,12 @@
 class Job {
     elem;
     id;
-    timer;
+    timerFetch;
+    timerUpdate;
     onSuccess;
     onError;
     lastEtas;
+    data;
 
     constructor(element, success = null, error = null) {
         this.elem = element;
@@ -14,6 +16,7 @@ class Job {
         this.onSuccess = success;
         this.onError = error;
         this.lastEtas = [];
+        this.data = {};
 
         const container = document.createElement("div");
         container.classList.add('progress-bar');
@@ -26,13 +29,18 @@ class Job {
 
         this.elem.appendChild(container);
 
-        this.update();
-        this.timer = setInterval(() => {
-            this.update();
+        this.fetch();
+        this.timerFetch = setInterval(() => {
+            this.fetch();
         }, 500);
+
+        this.update();
+        this.timerUpdate = setInterval(() => {
+            this.update();
+        }, 125);
     }
 
-    async update() {
+    async fetch() {
         let job;
         try {
             const req = await fetch(`/api/tucal/job?id=${this.id}`);
@@ -44,10 +52,21 @@ class Job {
                 'error': e.message,
             }
         }
-
         if (job.status !== 'running') {
-            clearInterval(this.timer);
+            clearInterval(this.timerFetch);
         }
+        if (job.remaining) {
+            const eta = job.time + job.remaining;
+            if (this.lastEtas.length === 0 || job.time !== this.data.time) {
+                this.lastEtas.push(eta);
+            }
+        }
+        this.data = job;
+        this.update();
+    }
+
+    update() {
+        const job = this.data;
 
         const container = this.elem.getElementsByClassName("progress-bar")[0];
         const progBar = container.getElementsByTagName("div")[0];
@@ -66,14 +85,13 @@ class Job {
         }
 
         let progress = job.progress || 0;
+        if (progress === 1) {
+            clearInterval(this.timerUpdate);
+        }
 
         if (job.remaining) {
             const start = new Date(Date.parse(job.start_ts));
             const elapsed = (new Date() - start) / 1000;
-            const eta = job.time + job.remaining;
-            if (this.lastEtas.length === 0 || eta !== this.lastEtas[this.lastEtas.length - 1]) {
-                this.lastEtas.push(eta);
-            }
 
             const max = Math.max(this.lastEtas);
             const average = (this.lastEtas.reduce((a, b) => a + b)) / this.lastEtas.length;
