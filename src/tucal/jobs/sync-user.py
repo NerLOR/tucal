@@ -1,4 +1,3 @@
-#!/bin/env python3
 
 import datetime
 import argparse
@@ -20,7 +19,7 @@ TISS_VAL = 10
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--mnr', '-m', required=True,
+    parser.add_argument('--mnr', '-m', required=True, type=int,
                         help='Matriculation number')
     parser.add_argument('--keep-calendar-settings', '-k', action='store_true', default=False,
                         help='Do not alter any TISS calendar settings')
