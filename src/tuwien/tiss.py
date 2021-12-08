@@ -434,7 +434,20 @@ class Session:
         r = self.get('/events/personSchedule.xhtml')
         for link in LINK_TOKEN.finditer(r.text):
             return link.group(1)
-        # FIXME generate tiss calendar token
+
+        # Fallback. generate new token
+        data = {
+            'javax.faces.behavior.event': 'action',
+            'javax.faces.partial.event': 'click',
+            'javax.faces.source': 'j_id_7g:j_id_7h_8',
+            'javax.faces.partial.execute': 'j_id_7g:j_id_7h_8',
+            'javax.faces.partial.render': 'j_id_7g globalMessagesPanel',
+            'j_id_7g_SUBMIT': '1',
+        }
+        r = self.post('/events/personSchedule.xhtml', data, ajax=True)
+        for link in LINK_TOKEN.finditer(r.text):
+            return link.group(1)
+
         raise RuntimeError('can not find calendar token')
 
     @property
