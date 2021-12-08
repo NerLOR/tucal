@@ -8,15 +8,27 @@ div.job-viewer div.progress-bar {
     width: 100%;
     box-sizing: border-box;
     border: 1px solid #808080;
-    background-color: #FFFFFF;
+    background-color: #F8F8F8;
     border-radius: 12px;
     text-align: center;
     position: relative;
 }
 
+div.job-viewer.error div.progress-bar {
+    border-color: var(--red);
+}
+
+div.job-viewer.error div.progress-bar div {
+    display: none !important;
+}
+
+div.job-viewer.error div.progress-bar span {
+    color: var(--red);
+}
+
 div.job-viewer div.progress-bar div {
     background-color: var(--color-light);
-    border: 1px solid var(--color);
+    border: 1px solid var(--color-dark);
     border-radius: 12px;
     width: 0;
     height: 100%;

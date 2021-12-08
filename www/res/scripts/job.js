@@ -14,7 +14,6 @@ class Job {
         this.id = this.elem.getAttribute('data-job');
         this.onSuccess = success;
         this.onError = error;
-        this.eta = null;
         this.lastEtas = [];
         this.firstEta = null;
 
@@ -36,32 +35,42 @@ class Job {
     }
 
     async update() {
-        const req = await fetch(`/api/tucal/job?id=${this.id}`);
-        const json = await req.json();
-        const job = json.data;
+        let job;
+        try {
+            const req = await fetch(`/api/tucal/job?id=${this.id}`);
+            const json = await req.json();
+            job = json.data;
+        } catch (e) {
+            job = {
+                'status': 'error',
+                'error': e.message,
+            }
+        }
 
         if (job.status !== 'running') {
             clearInterval(this.timer);
-        }
-
-        if (job.status === 'error') {
-            if (this.onError !== null) {
-                this.onError();
-            }
-        } else if (job.status === 'success') {
-            if (this.onSuccess !== null) {
-                this.onSuccess();
-            }
         }
 
         const container = this.elem.getElementsByClassName("progress-bar")[0];
         const progBar = container.getElementsByTagName("div")[0];
         const statusText = container.getElementsByTagName("span")[0];
 
+        if (job.status === 'error') {
+            this.elem.classList.add('error');
+            if (this.onError !== null) {
+                this.onError();
+            }
+        } else if (job.status === 'success') {
+            this.elem.classList.add('success');
+            if (this.onSuccess !== null) {
+                this.onSuccess();
+            }
+        }
+
         let progress = job.progress || 0;
-        const start = new Date(Date.parse(job.start_ts));
 
         if (job.remaining) {
+            const start = new Date(Date.parse(job.start_ts));
             const elapsed = (new Date() - start) / 1000;
             const eta = job.time + job.remaining;
             if (this.lastEtas.length === 0 || eta !== this.lastEtas[this.lastEtas.length - 1]) {
@@ -79,14 +88,14 @@ class Job {
             }
         }
 
-        let status = `${job.status} - ${(progress * 100).toFixed(0)}%`;
+        let status = `${(progress * 100).toFixed(0)}%`;
         progBar.style.width = `${progress * 100}%`;
         progBar.style.display = 'unset';
 
         if (job.status === 'error' && job.error) {
             const line = job.error.split('\n').splice(-2)[0];
             const err = line.split(':').splice(-1)[0].trim();
-            status = `${job.status} - ${err}`;
+            status = _('Error') + `: ${err}`;
         }
 
         statusText.innerText = status;
