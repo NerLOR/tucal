@@ -7,7 +7,6 @@ class Job {
     onSuccess;
     onError;
     lastEtas;
-    firstEta;
 
     constructor(element, success = null, error = null) {
         this.elem = element;
@@ -15,7 +14,6 @@ class Job {
         this.onSuccess = success;
         this.onError = error;
         this.lastEtas = [];
-        this.firstEta = null;
 
         const container = document.createElement("div");
         container.classList.add('progress-bar');
@@ -76,12 +74,10 @@ class Job {
             if (this.lastEtas.length === 0 || eta !== this.lastEtas[this.lastEtas.length - 1]) {
                 this.lastEtas.push(eta);
             }
-            if (this.firstEta === null) {
-                this.firstEta = eta;
-            }
 
+            const max = Math.max(this.lastEtas);
             const average = (this.lastEtas.reduce((a, b) => a + b)) / this.lastEtas.length;
-            const conservativeEta = (this.firstEta + average) / 2 * 1.25;
+            const conservativeEta = (max + average) / 2 * 1.25;
             const progressEstimate = elapsed / conservativeEta;
             if (progressEstimate <= 0.99 && progress < progressEstimate) {
                 progress = progressEstimate;
