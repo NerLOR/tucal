@@ -31,7 +31,7 @@ if __name__ == '__main__':
                        help='Fetch password (and 2fa token) from database')
     args = parser.parse_args()
 
-    mnr = args.mnr
+    mnr = f'{args.mnr:08}'
     pwd = None
     tfa_token = None
     tfa_gen = None

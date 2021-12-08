@@ -51,7 +51,7 @@ class Handler(StreamRequestHandler):
                 self.wfile.write(b'error: job sync-user requires at least one argument <mnr>')
                 return
             mnr = int(job[0])
-            cmd += ['-m', mnr]
+            cmd += ['-m', str(mnr)]
             if len(job) > 1:
                 stdin += base64.b64decode(job[1]).decode('utf8') + '\n'
             if len(job) > 2:
