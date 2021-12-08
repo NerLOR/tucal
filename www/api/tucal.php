@@ -108,5 +108,27 @@ function calendar() {
 }
 
 function job() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        error(405);
+    }
 
+    $jobId = $_GET['id'] ?? null;
+
+    if ($jobId === null) {
+        error(400, "missing field 'id'");
+    }
+
+    $stmt = db_exec("SELECT data, status FROM tucal.v_job WHERE job_id = ?", [$jobId]);
+    $rows = $stmt->fetchAll();
+    if (sizeof($rows) === 0) {
+        error(404);
+    }
+
+    echo '{"status":"success","message":"work in progress","data":' . "\n";
+    $data = json_decode($rows[0][0], true);
+    $data['status'] = $rows[0][1];
+    echo json_encode($data, FLAGS);
+    echo "\n}\n";
+
+    tucal_exit();
 }

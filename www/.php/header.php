@@ -53,6 +53,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="256x256 128x128 64x64 32x32 24x24 16x16"/>
     <script src="/res/scripts/localisation.js" type="application/javascript"></script>
     <script src="/res/scripts/calendar.js" type="application/javascript"></script>
+    <script src="/res/scripts/job.js" type="application/javascript"></script>
     <script src="/res/scripts/main.js" type="application/javascript"></script>
 </head>
 <body>

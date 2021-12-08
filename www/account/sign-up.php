@@ -105,7 +105,7 @@ require "../.php/header.php";
 ?>
 <main class="w1">
     <section>
-        <form action="/account/sign-up" method="post" class="panel">
+        <form name="sign-up" action="/account/sign-up" method="post" class="panel">
             <h1><?php echo _('Sign up');?></h1>
             <div class="text<?php echo $errors['mnr'] ? " error" : "";?>">
                 <input name="mnr" id="mnr" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['mnr'] ?? '');?>" pattern="[0-9]{7,8}" required/>

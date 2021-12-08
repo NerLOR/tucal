@@ -145,8 +145,8 @@ CREATE TABLE tiss.event
         ON DELETE SET NULL
 );
 
-CREATE INDEX start_ts ON tiss.event (start_ts);
-CREATE INDEX end_ts ON tiss.event (end_ts);
+CREATE INDEX idx_start_ts ON tiss.event (start_ts);
+CREATE INDEX idx_end_ts ON tiss.event (end_ts);
 
 CREATE TABLE tiss.event_user
 (

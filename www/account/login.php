@@ -74,7 +74,7 @@ require "../.php/header.php";
 ?>
 <main class="w1">
     <section>
-        <form action="/account/login" method="post" class="panel">
+        <form name="login" action="/account/login" method="post" class="panel">
             <h1><?php echo _('Login');?></h1>
             <div class="text<?php echo $errors['subject'] ? " error" : "";?>">
                 <input name="subject" id="subject" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['subject'] ?? '');?>" pattern="[0-9]{7,8}|\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>

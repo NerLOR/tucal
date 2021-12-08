@@ -20,12 +20,27 @@ TISS_VAL = 10
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--mnr', '-m', required=True)
-    parser.add_argument('--keep-calendar-settings', '-k', action='store_true', default=False)
+    parser.add_argument('--mnr', '-m', required=True,
+                        help='Matriculation number')
+    parser.add_argument('--keep-calendar-settings', '-k', action='store_true', default=False,
+                        help='Do not alter any TISS calendar settings')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--store', '-s', action='store_true', default=False,
+                       help='Store provided password (and 2fa generator) in database')
+    group.add_argument('--database', '-d', action='store_true', default=False,
+                       help='Fetch password (and 2fa token) from database')
     args = parser.parse_args()
 
     mnr = args.mnr
-    pwd = input()
+    pwd = None
+    tfa_token = None
+    tfa_gen = None
+    if not args.database:
+        pwd = input()
+        tfa = input()
+        tfa = None if len(tfa) == 0 else tfa
+    else:
+        pass  # TODO
 
     cur = tucal.db.cursor()
 

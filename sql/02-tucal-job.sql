@@ -21,6 +21,9 @@ CREATE TABLE tucal.job
     CONSTRAINT sk_job_pid UNIQUE (pid)
 );
 
+CREATE INDEX idx_mnr ON tucal.job (mnr);
+CREATE INDEX idx_status ON tucal.job (status);
+
 CREATE OR REPLACE FUNCTION tucal.update_job_id()
     RETURNS TRIGGER AS
 $$
@@ -49,6 +52,9 @@ SELECT job_nr,
        pid,
        mnr,
        status,
+       regexp_replace(
+               substr(data ->> 'error'::text, 0, length(data ->> 'error'::text)),
+               e'.*\n', '')                        AS error_msg,
        start_ts,
        (data ->> 'eta_ts')::text::timestamptz      AS eta_ts,
        time,

@@ -4,6 +4,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const status = parseInt(document.title.split(' ')[0]) || 200;
 
     initNav();
+    initJobs();
 
     if (window.location.pathname.startsWith('/calendar/') && status === 200) {
         initCalendar();
@@ -86,6 +87,13 @@ function initNav() {
             nav.classList.remove("active");
         }
     });
+}
+
+function initJobs() {
+    const jobs = document.getElementsByClassName("job-viewer");
+    for (const job of jobs) {
+        new Job(job);
+    }
 }
 
 function sleep(ms) {

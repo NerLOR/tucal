@@ -25,7 +25,7 @@ require "../.php/header.php";
 <main class="w3">
     <section>
         <h1><?php echo _('Settings');?></h1>
-        <form action="/account/" method="post" class="table">
+        <form name="account-settings" action="/account/" method="post" class="table">
             <div class="text">
                 <label for="locale"><?php echo _('Locale');?></label>
                 <select name="locale" id="locale">

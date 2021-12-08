@@ -51,7 +51,7 @@ CREATE TABLE tuwel.event
         ON DELETE CASCADE
 );
 
-CREATE INDEX start_ts ON tuwel.event (start_ts);
+CREATE INDEX idx_start_ts ON tuwel.event (start_ts);
 
 CREATE TABLE tuwel.event_user
 (

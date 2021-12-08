@@ -35,21 +35,27 @@ class Handler(StreamRequestHandler):
             self.wfile.write(b'error: no input\n')
             return
         job = job.decode('utf8').strip().split(' ')
-        job_name = job[0]
+        job_name, job = job[0], job[1:]
         cur = tucal.db.cursor()
 
         cmd = []
         stdin = ''
         mnr = None
         if job_name == 'sync-user':
-            cmd = ['./sync-user.py']
+            # sync-user [store] <mnr> [<pwd-b64> [<2fa-token> | <2fa-generator-b64>]]
+            cmd += ['./tucal/jobs/sync-user.py']
+            if len(job) > 0 and job[0] == 'store':
+                job.pop(0)
+                cmd += ['-s']
+            if len(job) == 0:
+                self.wfile.write(b'error: job sync-user requires at least one argument <mnr>')
+                return
+            mnr = int(job[0])
+            cmd += ['-m', mnr]
             if len(job) > 1:
-                cmd += ['-m', job[1]]
-                mnr = int(job[1])
+                stdin += base64.b64decode(job[1]).decode('utf8') + '\n'
             if len(job) > 2:
-                stdin = base64.b64decode(job[2]).decode('utf8') + '\n'
-            else:
-                pass  # TODO get sso password from db
+                stdin += job[2] + '\n'
         else:
             self.wfile.write(b'error: unknown job type\n')
             return
@@ -76,7 +82,7 @@ class Handler(StreamRequestHandler):
 
         CHILDREN[pid]['job_nr'] = job_nr
 
-        print(f'[{job_nr:8}] {job_name} - PID {pid}')
+        print(f'[{job_nr:8}] {job_name} - PID {pid} - {" ".join(cmd)}')
         self.wfile.write(f'{job_nr} {job_id} {pid}\n'.encode('utf8'))
 
         reader = tucal.JobStatus()
