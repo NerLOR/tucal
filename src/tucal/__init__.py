@@ -116,13 +116,15 @@ class Job:
     _proc_start: float
     _clock_id: int
 
-    def __init__(self, name: str, sub_steps: int, perc_steps: int = 1):
+    def __init__(self, name: str, sub_steps: int, perc_steps: int = 1, estimate: int = None):
         self.perc_steps = perc_steps
         self._n = 0
         self._name = name
         self._clock_id = time.CLOCK_MONOTONIC
         self._proc_start = time.clock_gettime(self._clock_id)
         print(f'**{datetime.datetime.now().astimezone().isoformat()}')
+        if estimate:
+            print(f'**{estimate}')
         print(f'*{self._format_time()}:0.0000:START:{sub_steps}:{name}')
         sys.stdout.flush()
 
@@ -151,6 +153,7 @@ class JobStatus:
     finished: bool
     success: bool
     current_step: typing.Optional[typing.Tuple]
+    estimate: typing.Optional[int]
 
     def __init__(self):
         self.progress = 0
@@ -161,6 +164,7 @@ class JobStatus:
         self.finished = False
         self.success = False
         self.current_step = None
+        self.estimate = None
 
     def line(self, line: str) -> bool:
         if len(line) == 0:
@@ -177,11 +181,14 @@ class JobStatus:
             return True
         line = line[1:].strip()
 
-        if self.start is None and line.startswith('*'):
-            self.start = datetime.datetime.fromisoformat(line[1:]).astimezone()
+        if line.startswith('*'):
+            if self.start is None:
+                self.start = datetime.datetime.fromisoformat(line[1:]).astimezone()
+            elif self.estimate is None:
+                self.estimate = int(line[1:])
+            else:
+                raise RuntimeError('invalid job format')
             return True
-        elif line.startswith('*'):
-            raise RuntimeError('invalid job format')
 
         line = line.split(':', 3)
         if len(line) < 3:
@@ -296,7 +303,7 @@ class JobStatus:
         return updated
 
     def json(self) -> str:
-        eta = self.time / self.progress if self.progress > 0 else None
+        eta = self.time / self.progress if self.progress > 0 else self.estimate
         data = {
             'progress': self.progress,
             'is_running': not self.finished,

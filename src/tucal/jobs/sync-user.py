@@ -53,10 +53,10 @@ if __name__ == '__main__':
     cur = tucal.db.cursor()
 
     now = datetime.datetime.now().astimezone()
-    job = Job('sync user', 2, TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TISS_VAL)
+    job = Job('sync user', 2, TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TISS_VAL, estimate=20)
 
     sso = tuwien.sso.Session()
-    sso.credentials(mnr, pwd)
+    sso.credentials(mnr, pwd, tfa_token)
 
     job.begin('sync tiss')
     tiss = tuwien.tiss.Session(sso)

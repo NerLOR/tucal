@@ -15,8 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($mode === 'store') {
         $pwd = $_POST['password-store'] ?? null;
+        $tfaGen = $_POST['2fa-generator'] ?? null;
+        $tfaToken = null;
     } elseif ($mode === 'no-store') {
         $pwd = $_POST['password-no-store'] ?? null;
+        $tfaToken = $_POST['2fa-token'] ?? null;
+        $tfaGen = null;
     } else {
         header("Status: 400");
         goto doc;
@@ -34,7 +38,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         goto doc;
     }
 
-    $data = "sync-user $USER[mnr] " . base64_encode($pwd);
+    $pwd64 = base64_encode($pwd);
+    if ($tfaGen !== null) {
+        $tfa = base64_encode($tfaGen);
+    } elseif ($tfaToken !== null) {
+        $tfa = str_replace(' ', '', $tfaToken);
+    } else {
+        $tfa = '';
+    }
+
+    $data = "sync-user $USER[mnr] $pwd64 $tfa";
     fwrite($sock, "$data\n");
     $res = fread($sock, 64);
 
@@ -74,6 +87,10 @@ if ($jobId === null) { ?>
                 <input name="password-store" id="password-store" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password-store'] ?? '');?>" required/>
                 <label for="password-store"><?php echo _('SSO password');?></label>
             </div>
+            <div class="text">
+                <input name="2fa-generator" id="2fa-generator" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['2fa-generator'] ?? '');?>"/>
+                <label for="2fa-generator"><?php echo _('SSO 2FA generator');?></label>
+            </div>
             <div class="container red">
                 <input name="sso-store" id="sso-store" type="checkbox" required/>
                 <label for="sso-store"><?php echo _('SSO password storage warning');?></label>
@@ -86,6 +103,10 @@ if ($jobId === null) { ?>
             <div class="text">
                 <input name="password-no-store" id="password-no-store" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password-no-store'] ?? '');?>" required/>
                 <label for="password-no-store"><?php echo _('SSO password');?></label>
+            </div>
+            <div class="text">
+                <input name="2fa-token" id="2fa-token" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['2fa-token'] ?? '');?>"/>
+                <label for="2fa-token"><?php echo _('SSO 2FA token');?></label>
             </div>
             <button type="submit" name="mode" value="no-store"><?php echo _('SSO one-time authentication');?></button>
         </form>
