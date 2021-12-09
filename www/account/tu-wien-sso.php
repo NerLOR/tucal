@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($len === 128) {
             // Hex
             $tfaGen = hex2bin($tfaGen);
-        } else {
+        } elseif ($len !== 0) {
             header("Status: 400");
             $errors['2fa-gen'] = _('Invalid format');
             goto doc;

@@ -71,11 +71,24 @@ function base32_decode(string $data): string {
             break;
         }
         $val = 0;
+        $min = 0;
         for ($j = 0; $j < 8; $j++) {
             $pos = strpos($alpha, $block[$j]);
-            $val |= ($pos ?: 0) << ((7 - $j) * 5);
+            if ($pos === false) {
+                if ($j <= 3) {
+                    $min = 4;
+                } elseif ($j <= 4) {
+                    $min = 3;
+                } elseif ($j <= 6) {
+                    $min = 2;
+                } elseif ($j <= 7) {
+                    $min = 1;
+                }
+                break;
+            }
+            $val |= $pos << ((7 - $j) * 5);
         }
-        for ($j = 4; $j >= 0; $j--) {
+        for ($j = 4; $j >= $min; $j--) {
             $plain .= chr(($val >> ($j * 8)) & 0xFF);
         }
     }
