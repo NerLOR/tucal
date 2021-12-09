@@ -120,7 +120,13 @@ class Job {
         if (progress >= this.progress) {
             this.progress = progress;
         } else {
-            console.warn(`Real progress at ${(progress * 100).toFixed(0)}%, but displaying ${(this.progress * 100).toFixed(0)}% - Diff: ${((this.progress - progress) * 100).toFixed(0)}`);
+            const diff = this.progress - progress;
+            if (diff > 0.0625) {
+                console.warn(`Real progress at ${(progress * 100).toFixed(0)}%, but displaying ${(this.progress * 100).toFixed(0)}% - Diff: ${(diff * 100).toFixed(0)}`);
+            }
+            if (diff > 0.25) {
+                this.progress = progress;
+            }
         }
 
         let status = `${(this.progress * 100).toFixed(0)}%`;
