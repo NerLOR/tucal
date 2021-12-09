@@ -74,6 +74,7 @@ class Job {
 
     update() {
         const job = this.data;
+        if (!job.status) return;
 
         const container = this.elem.getElementsByClassName("progress-bar")[0];
         const progBar = container.getElementsByTagName("div")[0];
@@ -92,13 +93,11 @@ class Job {
         }
 
         let progress = job.progress || 0;
-        if (progress === 1) {
-            clearInterval(this.timerUpdate);
-        }
+        const now = new Date();
 
         if (job.remaining) {
             const start = new Date(Date.parse(job.start_ts));
-            const elapsed = (new Date() - start) / 1000;
+            const elapsed = (now - start) / 1000;
 
             const max = Math.max(this.lastEtas);
             const average = (this.lastEtas.reduce((a, b) => a + b)) / this.lastEtas.length;
@@ -107,6 +106,11 @@ class Job {
             if (progressEstimate <= 0.99 && progress < progressEstimate) {
                 progress = progressEstimate;
             }
+        }
+
+        if (progress >= 1) {
+            progress = 1;
+            clearInterval(this.timerUpdate);
         }
 
         let status = `${(progress * 100).toFixed(0)}%`;
