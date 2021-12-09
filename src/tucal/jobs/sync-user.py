@@ -22,9 +22,9 @@ TUWEL_MONTH_VAL = 1
 TISS_VAL = 10
 
 
-def totp_gen_token(gen: str, mode: str = 'sha1') -> str:
+def totp_gen_token(gen: bytes, mode: str = 'sha1') -> str:
     pad_len = 8 - (len(gen) % 8)
-    key = base64.b32decode(gen + ('=' * pad_len))
+    key = base64.b32decode(gen + (b'=' * pad_len))
 
     t = int(time.time() / 30)
     msg = struct.pack('>Q', t)
@@ -84,7 +84,7 @@ if __name__ == '__main__':
             if tfa and len(tfa) <= 6:
                 tfa_token = tfa
             elif tfa:
-                tfa_gen = tfa
+                tfa_gen = base64.b64decode(tfa)
         except EOFError:
             pass
     else:
