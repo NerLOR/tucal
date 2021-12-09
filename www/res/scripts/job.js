@@ -9,6 +9,7 @@ class Job {
     onError;
     lastEtas;
     data;
+    progress;
 
     constructor(element, success = null, error = null) {
         this.elem = element;
@@ -17,6 +18,7 @@ class Job {
         this.onError = error;
         this.lastEtas = [];
         this.data = {};
+        this.progress = 0;
 
         const container = document.createElement("div");
         container.classList.add('progress-bar');
@@ -94,14 +96,15 @@ class Job {
 
         let progress = job.progress || 0;
         const now = new Date();
+        now.setSeconds(now.getSeconds() - 1);
 
         if (job.remaining) {
             const start = new Date(Date.parse(job.start_ts));
             const elapsed = (now - start) / 1000;
 
-            const max = Math.max(this.lastEtas);
+            const max = Math.max(...this.lastEtas);
             const average = (this.lastEtas.reduce((a, b) => a + b)) / this.lastEtas.length;
-            const conservativeEta = (max + average) / 2;
+            const conservativeEta = (max + average) / 2 + 1;
             const progressEstimate = elapsed / conservativeEta;
             if (progressEstimate <= 0.99 && progress < progressEstimate) {
                 progress = progressEstimate;
@@ -113,8 +116,15 @@ class Job {
             clearInterval(this.timerUpdate);
         }
 
-        let status = `${(progress * 100).toFixed(0)}%`;
-        progBar.style.width = `${progress * 100}%`;
+
+        if (progress >= this.progress) {
+            this.progress = progress;
+        } else {
+            console.warn(`Real progress at ${(progress * 100).toFixed(0)}%, but displaying ${(this.progress * 100).toFixed(0)}% - Diff: ${((this.progress - progress) * 100).toFixed(0)}`);
+        }
+
+        let status = `${(this.progress * 100).toFixed(0)}%`;
+        progBar.style.width = `${this.progress * 100}%`;
         progBar.style.display = 'unset';
 
         if (job.status === 'error' && job.error) {
