@@ -23,6 +23,7 @@ CREATE TABLE tucal.job
 
 CREATE INDEX idx_mnr ON tucal.job (mnr);
 CREATE INDEX idx_status ON tucal.job (status);
+CREATE INDEX idx_job_id ON tucal.job (job_id);
 
 CREATE OR REPLACE FUNCTION tucal.update_job_id()
     RETURNS TRIGGER AS
