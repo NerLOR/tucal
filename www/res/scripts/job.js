@@ -111,7 +111,7 @@ class Job {
             }
         }
 
-        if (progress >= 1) {
+        if (progress >= 1 || job.status !== 'running') {
             progress = 1;
             clearInterval(this.timerUpdate);
         }
