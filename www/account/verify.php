@@ -5,6 +5,10 @@ global $USER;
 require "../.php/session.php";
 force_user_login(null, false);
 
+if ($USER['verified']) {
+    redirect('/account/tu-wien-sso');
+}
+
 require "../.php/main.php";
 
 $TITLE = [_('Verify account')];

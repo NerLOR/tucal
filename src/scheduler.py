@@ -7,6 +7,7 @@ import time
 import json
 import atexit
 import base64
+import re
 
 import tucal
 import tucal.db
@@ -34,7 +35,7 @@ class Handler(StreamRequestHandler):
         if not job:
             self.wfile.write(b'error: no input\n')
             return
-        job = job.decode('utf8').strip().split(' ')
+        job = re.sub(r'\s+', ' ', job.decode('utf8').strip()).split(' ')
         job_name, job = job[0], job[1:]
         cur = tucal.db.cursor()
 

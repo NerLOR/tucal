@@ -14,13 +14,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mode = $_POST['mode'] ?? null;
 
     if ($mode === 'store') {
+        $checkbox = $_POST['sso-store'] ?? null;
+        if ($checkbox !== 'accept') {
+            header("Status: 400");
+            goto doc;
+        }
         $pwd = $_POST['password-store'] ?? null;
         $tfaGen = $_POST['2fa-generator'] ?? null;
         $tfaToken = null;
+        $store = 'store';
     } elseif ($mode === 'no-store') {
         $pwd = $_POST['password-no-store'] ?? null;
         $tfaToken = $_POST['2fa-token'] ?? null;
         $tfaGen = null;
+        $store = '';
     } else {
         header("Status: 400");
         goto doc;
@@ -47,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tfa = '';
     }
 
-    $data = "sync-user $USER[mnr] $pwd64 $tfa";
+    $data = "sync-user $store $USER[mnr] $pwd64 $tfa";
     fwrite($sock, "$data\n");
     $res = fread($sock, 64);
 
@@ -93,7 +100,7 @@ if ($jobId === null) { ?>
                 <label for="2fa-generator"><?php echo _('SSO 2FA generator');?></label>
             </div>
             <div class="container red">
-                <input name="sso-store" id="sso-store" type="checkbox" required/>
+                <input name="sso-store" id="sso-store" type="checkbox" value="accept" required/>
                 <label for="sso-store"><?php echo _('SSO password storage warning');?></label>
             </div>
             <button type="submit" name="mode" value="store"><?php echo _('Automatic account synchronization');?></button>
