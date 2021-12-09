@@ -23,12 +23,9 @@ TISS_VAL = 10
 
 
 def totp_gen_token(gen: bytes, mode: str = 'sha1') -> str:
-    pad_len = 8 - (len(gen) % 8)
-    key = base64.b32decode(gen + (b'=' * pad_len))
-
     t = int(time.time() / 30)
     msg = struct.pack('>Q', t)
-    val = hmac.digest(key, msg, mode)
+    val = hmac.digest(gen, msg, mode)
 
     offset = val[-1] & 0x0F
     (num,) = struct.unpack('>I', val[offset:offset + 4])
@@ -38,20 +35,20 @@ def totp_gen_token(gen: bytes, mode: str = 'sha1') -> str:
     return f'{otp:06}'
 
 
-def enc(plain: str, key: int) -> str:
-    cipher = bytearray(plain.encode('utf8'))
+def enc(plain: bytes, key: int) -> str:
+    cipher = bytearray(plain)
     for i in range(len(cipher)):
         cipher[i] = (cipher[i] + key) % 256
         key += 3
     return base64.b64encode(cipher).decode('ascii')
 
 
-def dec(cipher: str, key: int) -> str:
+def dec(cipher: str, key: int) -> bytes:
     plain = bytearray(base64.b64decode(cipher.encode('ascii')))
     for i in range(len(plain)):
         plain[i] = (plain[i] - key + 256) % 256
         key += 3
-    return plain.decode('utf8')
+    return plain
 
 
 if __name__ == '__main__':
@@ -95,7 +92,7 @@ if __name__ == '__main__':
         if len(cred) == 0:
             raise RuntimeError('account credentials not found in database')
         acc_key, pwd_enc, tfa_gen_enc = cred[0]
-        pwd = dec(pwd_enc, acc_key)
+        pwd = dec(pwd_enc, acc_key).decode('utf8')
         tfa_gen = dec(tfa_gen_enc, acc_key) if tfa_gen_enc is not None else None
 
     if tfa_token is None and tfa_gen is not None:
@@ -120,7 +117,7 @@ if __name__ == '__main__':
 
     if args.store:
         acc_key = random.randint(10, 200)
-        pwd_enc = enc(pwd, acc_key)
+        pwd_enc = enc(pwd.encode('utf8'), acc_key)
         tfa_gen_enc = enc(tfa_gen, acc_key) if tfa_gen is not None else None
         data = {
             'mnr': mnr,

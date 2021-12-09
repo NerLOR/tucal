@@ -60,3 +60,24 @@ function redirect(string $location) {
     header("Content-Security-Policy: default-src 'unsafe-inline' 'self' data:");
     tucal_exit();
 }
+
+function base32_decode(string $data): string {
+    $alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    $data .= '========';
+    $plain = '';
+    for ($i = 0; $i < strlen($data); $i += 8) {
+        $block = substr($data, $i, 8);
+        if ($block[0] === '=') {
+            break;
+        }
+        $val = 0;
+        for ($j = 0; $j < 8; $j++) {
+            $pos = strpos($alpha, $block[$j]);
+            $val |= ($pos ?: 0) << ((7 - $j) * 5);
+        }
+        for ($j = 4; $j >= 0; $j--) {
+            $plain .= chr(($val >> ($j * 8)) & 0xFF);
+        }
+    }
+    return $plain;
+}
