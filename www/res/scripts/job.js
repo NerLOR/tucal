@@ -45,7 +45,14 @@ class Job {
         try {
             const req = await fetch(`/api/tucal/job?id=${this.id}`);
             const json = await req.json();
-            job = json.data;
+            if (json.data) {
+                job = json.data;
+            } else {
+                job = {
+                    'status': 'error',
+                    'error': json.message,
+                }
+            }
         } catch (e) {
             job = {
                 'status': 'error',
@@ -95,7 +102,7 @@ class Job {
 
             const max = Math.max(this.lastEtas);
             const average = (this.lastEtas.reduce((a, b) => a + b)) / this.lastEtas.length;
-            const conservativeEta = (max + average) / 2 * 1.25;
+            const conservativeEta = (max + average) / 2;
             const progressEstimate = elapsed / conservativeEta;
             if (progressEstimate <= 0.99 && progress < progressEstimate) {
                 progress = progressEstimate;
