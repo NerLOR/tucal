@@ -3,6 +3,8 @@ import typing
 import requests
 import re
 
+import tucal
+
 SSO_DOMAIN = 'idp.zid.tuwien.ac.at'
 SSO_URL = f'https://{SSO_DOMAIN}'
 
@@ -43,7 +45,7 @@ class Session:
             })
 
             if r.status_code != 200 or '<h3>Benutzername oder Passwort falsch.</h3>' in r.text:
-                raise RuntimeError('Unable to log in')
+                raise tucal.InvalidCredentialsError('invalid credentials')
 
         if '<title>Zustimmung zur Weitergabe persönlicher Daten</title>' in r.text:
             state_id = INPUT_STATE_ID.findall(r.text)[0]
@@ -63,7 +65,7 @@ class Session:
         })
 
         if r.status_code != 200:
-            raise RuntimeError('Unable to log in')
+            raise tucal.LoginError('unable to log in')
 
         return True
 

@@ -11,6 +11,11 @@ main form.panel h1 {
 
 main form.panel p {
     text-align: center;
+    font-size: 0.875rem;
+    margin: 1rem 0.5rem;
+    hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
 }
 
 main form.panel div.text,
@@ -26,6 +31,7 @@ main form.panel a.button {
     border-radius: var(--border-radius);
     background-color: #FFFFFF;
     --border-color: var(--color);
+    overflow: hidden;
 }
 
 main form.panel div.text {
@@ -50,6 +56,8 @@ main form.panel div.text > label {
     top: 0.875rem;
     transition: top 0.125s, font-size 0.125s;
     cursor: text;
+    user-select: none;
+    white-space: pre;
 }
 
 main form.panel div.text.error > label {
@@ -88,6 +96,7 @@ main form.panel a.button {
     outline: none;
     text-align: center;
     text-decoration: none;
+    user-select: none;
 }
 
 main form.panel button:hover,
@@ -110,6 +119,12 @@ main form.panel ~ div.error {
     color: var(--red);
 }
 
+main form.panel div.container label {
+    font-size: 0.875rem;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+}
 
 main form.table {
 

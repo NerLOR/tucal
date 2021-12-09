@@ -5,7 +5,18 @@ import typing
 import sys
 import time
 import json
-import pytz
+
+
+class LoginError(Exception):
+    pass
+
+
+class InvalidCredentialsError(LoginError):
+    pass
+
+
+class JobFormatError(Exception):
+    pass
 
 
 class Semester:
@@ -187,12 +198,12 @@ class JobStatus:
             elif self.estimate is None:
                 self.estimate = int(line[1:])
             else:
-                raise RuntimeError('invalid job format')
+                raise JobFormatError('invalid job format')
             return True
 
         line = line.split(':', 3)
         if len(line) < 3:
-            raise RuntimeError('invalid job format')
+            raise JobFormatError('invalid job format')
 
         time_sec = float(line[0])
         self.time = time_sec
@@ -201,7 +212,7 @@ class JobStatus:
         cmd = line[2]
         if cmd == 'STOP':
             if len(line) > 3 or self.current_step is None:
-                raise RuntimeError('invalid job format')
+                raise JobFormatError('invalid job format')
             if len(self.current_step) == 1:
                 self.current_step = None
                 self.finished = True
@@ -227,7 +238,7 @@ class JobStatus:
                     self.current_step = self.current_step + (step['next_step_nr'],)
 
                 if self.current_step[-1] >= len(step['steps']):
-                    raise RuntimeError('invalid job format')
+                    raise JobFormatError('invalid job format')
 
                 step = self.get_current_step()
                 step['name'] = name
@@ -244,7 +255,7 @@ class JobStatus:
                 else:
                     self.current_step = self.current_step + (step['next_step_nr'],)
                     if self.current_step[-1] >= len(step['steps']):
-                        raise RuntimeError('invalid job format')
+                        raise JobFormatError('invalid job format')
                     step = self.get_current_step()
 
                 step['name'] = name
@@ -257,7 +268,7 @@ class JobStatus:
                 for i in range(step_num):
                     step['steps'].append({})
         else:
-            raise RuntimeError('invalid job format')
+            raise JobFormatError('invalid job format')
         return True
 
     def get_current_step(self) -> typing.Optional[typing.Dict[str, typing.Any]]:

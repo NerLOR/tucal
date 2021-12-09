@@ -1,6 +1,11 @@
 
 import datetime
 import argparse
+import base64
+import random
+import time
+import hmac
+import struct
 
 from tucal import Job
 import tuwien.tuwel
@@ -17,6 +22,38 @@ TUWEL_MONTH_VAL = 1
 TISS_VAL = 10
 
 
+def totp_gen_token(gen: str, mode: str = 'sha1') -> str:
+    pad_len = 8 - (len(gen) % 8)
+    key = base64.b32decode(gen + ('=' * pad_len))
+
+    t = int(time.time() / 30)
+    msg = struct.pack('>Q', t)
+    val = hmac.digest(key, msg, mode)
+
+    offset = val[-1] & 0x0F
+    (num,) = struct.unpack('>I', val[offset:offset + 4])
+    num &= 0x7F_FF_FF_FF
+
+    otp = num % 1_000_000
+    return f'{otp:06}'
+
+
+def enc(plain: str, key: int) -> str:
+    cipher = bytearray(plain.encode('utf8'))
+    for i in range(len(cipher)):
+        cipher[i] = (cipher[i] + key) % 256
+        key += 3
+    return base64.b64encode(cipher).decode('ascii')
+
+
+def dec(cipher: str, key: int) -> str:
+    plain = bytearray(base64.b64decode(cipher.encode('ascii')))
+    for i in range(len(plain)):
+        plain[i] = (plain[i] - key + 256) % 256
+        key += 3
+    return plain.decode('utf8')
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--mnr', '-m', required=True, type=int,
@@ -29,6 +66,11 @@ if __name__ == '__main__':
     group.add_argument('--database', '-d', action='store_true', default=False,
                        help='Fetch password (and 2fa token) from database')
     args = parser.parse_args()
+
+    cur = tucal.db.cursor()
+
+    now = datetime.datetime.now().astimezone()
+    job = Job('sync user', 2, TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TISS_VAL, estimate=20)
 
     mnr = f'{args.mnr:08}'
     pwd = None
@@ -46,21 +88,52 @@ if __name__ == '__main__':
         except EOFError:
             pass
     else:
-        pass  # TODO
+        cur.execute("""
+            SELECT key, pwd, tfa_gen FROM tucal.sso_credential
+            WHERE account_nr = (SELECT account_nr FROM tucal.account WHERE mnr = %s)""", (mnr,))
+        cred = cur.fetchall()
+        if len(cred) == 0:
+            raise RuntimeError('account credentials not found in database')
+        acc_key, pwd_enc, tfa_gen_enc = cred[0]
+        pwd = dec(pwd_enc, acc_key)
+        tfa_gen = dec(tfa_gen_enc, acc_key) if tfa_gen_enc is not None else None
 
-    # TODO tfa_gen -> tfa_token
-
-    cur = tucal.db.cursor()
-
-    now = datetime.datetime.now().astimezone()
-    job = Job('sync user', 2, TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TISS_VAL, estimate=20)
+    if tfa_token is None and tfa_gen is not None:
+        tfa_token = totp_gen_token(tfa_gen)
 
     sso = tuwien.sso.Session()
     sso.credentials(mnr, pwd, tfa_token)
 
     job.begin('sync tiss')
     tiss = tuwien.tiss.Session(sso)
-    tiss.sso_login()
+
+    try:
+        tiss.sso_login()
+    except tucal.InvalidCredentialsError as e:
+        if args.database:
+            cur.execute("""
+                DELETE FROM tucal.sso_credential
+                WHERE account_nr = (SELECT account_nr FROM tucal.account WHERE mnr = %s)""", (mnr,))
+            tucal.db.commit()
+        cur.close()
+        raise e
+
+    if args.store:
+        acc_key = random.randint(10, 200)
+        pwd_enc = enc(pwd, acc_key)
+        tfa_gen_enc = enc(tfa_gen, acc_key) if tfa_gen is not None else None
+        data = {
+            'mnr': mnr,
+            'key': acc_key,
+            'pwd': pwd_enc,
+            'tfa_gen': tfa_gen_enc,
+        }
+        cur.execute("UPDATE tucal.account SET verified = TRUE WHERE mnr = %s", (mnr,))
+        cur.execute("""
+            INSERT INTO tucal.sso_credential (account_nr, key, pwd, tfa_gen)
+            VALUES ((SELECT account_nr FROM tucal.account WHERE mnr = %(mnr)s), %(key)s, %(pwd)s, %(tfa_gen)s)
+            ON CONFLICT ON CONSTRAINT pk_sso_credential DO
+            UPDATE SET key = %(key)s, pwd = %(pwd)s, tfa_gen = %(tfa_gen)s""", data)
 
     tiss_cal_token = tiss.calendar_token
 
@@ -83,7 +156,7 @@ if __name__ == '__main__':
 
     data = tiss.get_personal_schedule()
     for evt in data['events']:
-        tucal.db.tiss.insert_event(evt, now, mnr=mnr)
+        tucal.db.tiss.insert_event(evt, now, mnr=int(mnr))
 
     job.end(TISS_VAL)
 

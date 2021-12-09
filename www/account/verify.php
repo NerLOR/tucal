@@ -15,7 +15,7 @@ require "../.php/header.php";
         <h1><?php echo _('Verify account');?></h1>
         <form class="panel">
             <p><?php echo _('SSO verification (description)');?></p>
-            <a class="button" href="/account/tuwien-sso"><?php echo _('SSO verification');?></a>
+            <a class="button" href="/account/tu-wien-sso"><?php echo _('SSO verification');?></a>
         </form>
         <form action="/account/verify" method="post" class="panel">
             <hr data-content="<?php echo strtoupper(_('or'));?>"/>

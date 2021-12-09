@@ -1,4 +1,3 @@
-
 CREATE TABLE tucal.account
 (
     account_nr    INT                      NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -25,6 +24,20 @@ CREATE TABLE tucal.account
     CONSTRAINT sk_account_username UNIQUE (username)
 );
 
+CREATE TABLE tucal.sso_credential
+(
+    account_nr INT      NOT NULL,
+
+    key        SMALLINT NOT NULL,
+    pwd        TEXT     NOT NULL,
+    tfa_gen    TEXT,
+
+    CONSTRAINT pk_sso_credential PRIMARY KEY (account_nr),
+    CONSTRAINT fk_sso_credential_account FOREIGN KEY (account_nr) REFERENCES tucal.account (account_nr)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
 CREATE OR REPLACE VIEW tucal.v_account AS
 SELECT a.account_nr,
        a.mnr,
@@ -33,13 +46,15 @@ SELECT a.account_nr,
        CONCAT('e', LPAD(a.mnr::text, 8, '0'), '@student.tuwien.ac.at') AS email_address_1,
        a.email_address                                                 AS email_address_2,
        a.verified,
+       (sso.pwd IS NOT NULL)                                           AS sso_credentials,
        a.avatar_uri,
        a.create_ts,
        a.login_ts,
        a.active_ts,
        a.sync_ts,
        a.options
-FROM tucal.account a;
+FROM tucal.account a
+         LEFT JOIN tucal.sso_credential sso ON sso.account_nr = a.account_nr;
 
 CREATE TABLE tucal.session
 (
@@ -71,6 +86,7 @@ SELECT s.session_nr,
        a.email_address_1,
        a.email_address_2,
        a.verified,
+       a.sso_credentials,
        a.avatar_uri,
        s.create_ts,
        s.login_ts,

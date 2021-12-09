@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $res = explode(' ', $res);
 
-   redirect("/account/tuwien-sso?job=$res[1]");
+   redirect("/account/tu-wien-sso?job=$res[1]");
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     $STATUS = 405;
     header("Allow: GET, POST");
@@ -68,21 +68,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rows = $stmt->fetchAll();
     if (sizeof($rows) > 0) {
         $jobId = $rows[0][0];
-        redirect("/account/tuwien-sso?job=$jobId");
+        redirect("/account/tu-wien-sso?job=$jobId");
     }
 }
 
 doc:
 
-$TITLE = [_('TU Wien SSO authentication')];
+$TITLE = [_('TU Wien account synchronization')];
 require "../.php/header.php";
 
 if ($jobId === null) { ?>
 <main class="w1">
     <section>
-        <h1><?php echo _('TU Wien SSO authentication');?></h1>
-        <form name="sso-store" action="/account/tuwien-sso" method="post" class="panel">
-            <p><?php echo _('SSO authentication (description)');?></p>
+        <h1><?php echo _('TU Wien account synchronization');?></h1>
+        <form name="sso-store" action="/account/tu-wien-sso" method="post" class="panel">
+            <p><?php echo _('Account synchronization (description)');?></p>
+            <p><?php echo _('Automatic account synchronization (description)');?></p>
             <div class="text">
                 <input name="password-store" id="password-store" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password-store'] ?? '');?>" required/>
                 <label for="password-store"><?php echo _('SSO password');?></label>
@@ -95,11 +96,11 @@ if ($jobId === null) { ?>
                 <input name="sso-store" id="sso-store" type="checkbox" required/>
                 <label for="sso-store"><?php echo _('SSO password storage warning');?></label>
             </div>
-            <button type="submit" name="mode" value="store"><?php echo _('SSO authentication');?></button>
+            <button type="submit" name="mode" value="store"><?php echo _('Automatic account synchronization');?></button>
         </form>
-        <form name="sso-no-store" action="/account/tuwien-sso" method="post" class="panel">
+        <form name="sso-no-store" action="/account/tu-wien-sso" method="post" class="panel">
             <hr data-content="<?php echo strtoupper(_('or'));?>"/>
-            <p><?php echo _('SSO one-time authentication (description)');?></p>
+            <p><?php echo _('One-time account synchronization (description)');?></p>
             <div class="text">
                 <input name="password-no-store" id="password-no-store" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password-no-store'] ?? '');?>" required/>
                 <label for="password-no-store"><?php echo _('SSO password');?></label>
@@ -108,7 +109,7 @@ if ($jobId === null) { ?>
                 <input name="2fa-token" id="2fa-token" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['2fa-token'] ?? '');?>"/>
                 <label for="2fa-token"><?php echo _('SSO 2FA token');?></label>
             </div>
-            <button type="submit" name="mode" value="no-store"><?php echo _('SSO one-time authentication');?></button>
+            <button type="submit" name="mode" value="no-store"><?php echo _('One-time account synchronization');?></button>
         </form>
 <?php if ($errorMsg !== null) { ?>
         <div class="container error"><?php echo $errorMsg;?></div>
@@ -118,7 +119,7 @@ if ($jobId === null) { ?>
 <?php } else { ?>
 <main class="w2">
     <section>
-        <h1><?php echo _('TU Wien SSO authentication');?></h1>
+        <h1><?php echo _('TU Wien account synchronization');?></h1>
         <div class="job-viewer" data-job="<?php echo $jobId;?>"></div>
     </section>
 </main>

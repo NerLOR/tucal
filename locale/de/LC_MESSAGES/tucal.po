@@ -86,6 +86,39 @@ msgstr "Existiert nicht"
 msgid "Wrong"
 msgstr "Falsch"
 
+msgid "TU Wien account synchronization"
+msgstr "TU-Account-Synchronisation"
+
+msgid "Automatic account synchronization"
+msgstr "Automatische Account-Synchronisation"
+
+msgid "One-time account synchronization"
+msgstr "Einmalige Account-Synchronisation"
+
+msgid "SSO 2FA generator"
+msgstr "SSO-Zwei-Faktor-Authentifizierung Generator"
+
+msgid "SSO 2FA token"
+msgstr "SSO-Zwei-Faktor-Authentifizierung Schlüssel"
+
+msgid "Account synchronization (description)"
+msgstr "Der TUcal-Server synchronisiert im Hintergrund Kalenderdaten mit den Systemen der TU Wien (TISS, TUWEL, etc.). "
+       "Um eine personalisierung zu ermöglichen (z.B. Anmeldungen für LVAs) ist es dabei leider nötig, dass die:der "
+       "Benutzer:in ihr:sein TU-SSO-Passwort angibt."
+
+msgid "Automatic account synchronization (description)"
+msgstr "Empfohlen wird, dass das SSO-Passwort beim TUcal-Server hinterlegt wird. "
+       "So können die Kalenderdaten regelmäßig im Hintergrund snychronisiert werden."
+
+msgid "One-time account synchronization (description)"
+msgstr "Es gibt auch die Möglichkeit die Account-Synchronisierung nur einmalig durchzuführen. "
+       "Hierbei wird das Passwort nicht auf dem TUcal-Server gespeichert. "
+       "Es kann nicht garantiert werden, dass der persönliche TUcal-Kalender automatisch aktualisiert wird."
+
+msgid "SSO password storage warning"
+msgstr "Mir ist bewusst, welche Risiken das Speichern meines Passwortes auf einem fremden Server birgt. "
+       "Weiters nehme ich zur Kenntnis, dass das Passwort auf dem Server so gespeichert werden muss, dass es im "
+       "Endeffekt lesbar bleibt. Daher ist kein „sicheres“ Verschlüsseln des Passworts möglich."
 
 msgctxt "http"
 msgid "Unauthorized"
