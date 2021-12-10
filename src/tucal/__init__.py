@@ -5,6 +5,7 @@ import typing
 import sys
 import time
 import json
+import socket
 
 
 class LoginError(Exception):
@@ -17,6 +18,30 @@ class InvalidCredentialsError(LoginError):
 
 class JobFormatError(Exception):
     pass
+
+
+def schedule_job(name: str, *args):
+    reader = JobStatus()
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
+        client.connect('/var/tucal/scheduler.sock')
+        client.send(' '.join([name, *args]).encode('utf8') + b'\n')
+        msg = client.recv(64).strip().decode('utf8')
+        if msg.startswith('error:'):
+            raise RuntimeError(msg[6:].strip())
+
+        job_nr, job_id, pid = msg.split(' ')
+
+        fin = False
+        while not fin:
+            line = client.recv(1024)
+            if line.startswith(b'stdout:'):
+                line = line[7:].decode('utf8')
+                if not reader.line(line):
+                    time.sleep(0.125)
+                    continue
+            elif line.startswith(b'status:') or len(line) == 0:
+                fin = True
+            yield reader, fin
 
 
 class Semester:

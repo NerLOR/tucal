@@ -20,6 +20,7 @@ TUWEL_INIT_VAL = 1
 TUWEL_MONTHS = 12
 TUWEL_MONTH_VAL = 1
 TISS_VAL = 10
+SYNC_CAL_VAL = 5
 
 
 def totp_gen_token(gen: bytes, mode: str = 'sha1') -> str:
@@ -67,7 +68,7 @@ if __name__ == '__main__':
     cur = tucal.db.cursor()
 
     now = datetime.datetime.now().astimezone()
-    job = Job('sync user', 2, TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TISS_VAL, estimate=20)
+    job = Job('sync user', 3, TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TISS_VAL + SYNC_CAL_VAL, estimate=20)
 
     mnr = f'{args.mnr:08}'
     pwd = None
@@ -115,6 +116,7 @@ if __name__ == '__main__':
         cur.close()
         raise e
 
+    cur.execute("UPDATE tucal.account SET verified = TRUE, sync_ts = now() WHERE mnr = %s", (mnr,))
     if args.store:
         acc_key = random.randint(10, 200)
         pwd_enc = enc(pwd.encode('utf8'), acc_key)
@@ -125,7 +127,6 @@ if __name__ == '__main__':
             'pwd': pwd_enc,
             'tfa_gen': tfa_gen_enc,
         }
-        cur.execute("UPDATE tucal.account SET verified = TRUE WHERE mnr = %s", (mnr,))
         cur.execute("""
             INSERT INTO tucal.sso_credential (account_nr, key, pwd, tfa_gen)
             VALUES ((SELECT account_nr FROM tucal.account WHERE mnr = %(mnr)s), %(key)s, %(pwd)s, %(tfa_gen)s)
@@ -134,11 +135,13 @@ if __name__ == '__main__':
 
     tiss_cal_token = tiss.calendar_token
 
-    cur.execute(
-        "INSERT INTO tiss.user (mnr, auth_token, last_sync) VALUES (%s, %s, %s) "
-        "ON CONFLICT ON CONSTRAINT pk_user DO UPDATE SET auth_token = %s, last_sync = %s",
-        (mnr, tiss_cal_token, now, tiss_cal_token, now)
-    )
+    data = {
+        'mnr': mnr,
+        'token': tiss_cal_token,
+    }
+    cur.execute("""
+        INSERT INTO tiss.user (mnr, auth_token) VALUES (%(mnr)s, %(token)s)
+        ON CONFLICT ON CONSTRAINT pk_user DO UPDATE SET auth_token = %(token)s""", data)
 
     cur.execute("DELETE FROM tiss.course_user WHERE mnr = %s", (mnr,))
     cur.execute("DELETE FROM tiss.group_user WHERE mnr = %s", (mnr,))
@@ -166,23 +169,35 @@ if __name__ == '__main__':
     user_id = tuwel.user_id
     courses = tuwel.courses
 
-    cur.execute(
-        "INSERT INTO tuwel.user (user_id, mnr, auth_token, last_sync) VALUES (%s, %s, %s, %s)"
-        "ON CONFLICT ON CONSTRAINT pk_user DO UPDATE SET mnr = %s, auth_token = %s, last_sync = %s",
-        (user_id, mnr, tuwel_cal_token, now, mnr, tuwel_cal_token, now)
-    )
-    cur.execute("DELETE FROM tuwel.course_user WHERE user_id = %s", (user_id,))
+    data = {
+        'mnr': mnr,
+        'id': user_id,
+        'token': tuwel_cal_token
+    }
+    cur.execute("""
+        INSERT INTO tuwel.user (user_id, mnr, auth_token) VALUES (%(id)s, %(mnr)s, %(token)s)
+        ON CONFLICT ON CONSTRAINT pk_user DO UPDATE SET mnr = %(mnr)s, auth_token = %(token)s""", data)
 
+    cur.execute("DELETE FROM tuwel.course_user WHERE user_id = %s", (user_id,))
     for c in courses.values():
-        cur.execute(
-            "INSERT INTO tuwel.course (course_id, course_nr, semester, name, suffix, short) "
-            "VALUES (%s, %s, %s, %s, %s, %s) "
-            "ON CONFLICT ON CONSTRAINT pk_course "
-            "DO UPDATE SET course_nr = %s, semester = %s, name = %s, suffix = %s, short = %s",
-            (c.id, c.nr, str(c.semester), c.name, c.suffix, c.short, c.nr, str(c.semester), c.name, c.suffix, c.short)
-        )
-        cur.execute("INSERT INTO tuwel.course_user (course_id, user_id) VALUES (%s, %s) ON CONFLICT DO NOTHING",
-                    (c.id, user_id))
+        data = {
+            'cid': c.id,
+            'cnr': c.nr,
+            'sem': str(c.semester),
+            'name': c.name,
+            'suffix': c.suffix,
+            'short': c.short,
+        }
+        cur.execute("""
+            INSERT INTO tuwel.course (course_id, course_nr, semester, name, suffix, short)
+            VALUES (%(cid)s, %(cnr)s, %(sem)s, %(name)s, %(suffix)s, %(short)s)
+            ON CONFLICT ON CONSTRAINT pk_course
+            DO UPDATE SET course_nr = %(cnr)s, semester = %(sem)s, name = %(sem)s, suffix = %(suffix)s,
+                short = %(short)s""", data)
+
+        cur.execute("""
+            INSERT INTO tuwel.course_user (course_id, user_id) VALUES (%s, %s)
+            ON CONFLICT DO NOTHING""", (c.id, user_id))
     job.end(TUWEL_INIT_VAL)
 
     job.begin('sync tuwel calendar months', TUWEL_MONTHS)
@@ -208,5 +223,10 @@ if __name__ == '__main__':
 
     cur.close()
     tucal.db.commit()
+
+    job.begin('sync ical calendars')
+    for cal_job, fin in tucal.schedule_job('sync-cal', f'{mnr}'):
+        pass
+    job.end(SYNC_CAL_VAL)
 
     job.end(0)

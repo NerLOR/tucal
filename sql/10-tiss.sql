@@ -6,7 +6,6 @@ CREATE TABLE tiss.user
     mnr        INT NOT NULL,
 
     auth_token TEXT DEFAULT NULL,
-    last_sync  TIMESTAMP WITH TIME ZONE,
 
     CONSTRAINT pk_user PRIMARY KEY (mnr)
 );

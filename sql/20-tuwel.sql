@@ -7,7 +7,6 @@ CREATE TABLE tuwel.user
     mnr        INT NOT NULL,
 
     auth_token TEXT DEFAULT NULL,
-    last_sync  TIMESTAMP WITH TIME ZONE,
 
     CONSTRAINT pk_user PRIMARY KEY (user_id),
     CONSTRAINT sk_user_mnr UNIQUE (mnr)

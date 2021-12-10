@@ -49,14 +49,27 @@ class Handler(StreamRequestHandler):
                 job.pop(0)
                 cmd += ['-s']
             if len(job) == 0:
-                self.wfile.write(b'error: job sync-user requires at least one argument <mnr>')
+                self.wfile.write(b'error: job sync-user requires at least one argument <mnr>\n')
                 return
             mnr = int(job[0])
             cmd += ['-m', str(mnr)]
             if len(job) > 1:
                 stdin += base64.b64decode(job[1]).decode('utf8') + '\n'
+            else:
+                cmd += ['-d']
             if len(job) > 2:
                 stdin += job[2] + '\n'
+        elif job_name == 'sync-cal':
+            # sync-cal [<mnr>]
+            cmd += ['tucal.jobs.sync-cal']
+            if len(job) > 0:
+                cmd += ['-m', job[0]]
+        elif job_name == 'sync-users':
+            # sync-users
+            cmd += ['tucal.jobs.sync-users']
+            if len(job) > 0:
+                self.wfile.write(b'error: job sync-users has no additional arguments\n')
+                return
         else:
             self.wfile.write(b'error: unknown job type\n')
             return
@@ -99,6 +112,8 @@ class Handler(StreamRequestHandler):
 
         while proc.returncode is None:
             line = proc.stdout.readline().decode('utf8')
+            if len(line) > 0:
+                self.wfile.write(b'stdout:' + line.encode('utf8'))
             if not reader.line(line):
                 proc.poll()
                 time.sleep(0.125)
@@ -118,6 +133,9 @@ class Handler(StreamRequestHandler):
         err = proc.stderr.read().decode('utf8')
         if len(err) > 0:
             print('\n'.join([f'[{job_nr:8}] {line}' for line in err.rstrip().splitlines()]))
+            self.wfile.write(b'\n'.join(
+                [b'stderr:' + line.encode('utf8') for line in err.rstrip().splitlines()]
+            ) + b'\n')
 
         data['data'] = reader.json()
 
@@ -127,6 +145,7 @@ class Handler(StreamRequestHandler):
             data['data'] = json.dumps(d)
 
         data['status'] = 'success' if proc.returncode == 0 else 'error'
+        self.wfile.write(f'status:{proc.returncode}\n'.encode('utf8'))
 
         cur.execute("""
             UPDATE tucal.job
@@ -140,6 +159,8 @@ class Handler(StreamRequestHandler):
 
         print(f'[{job_nr:8}] terminated')
         del CHILDREN[pid]
+        self.wfile.close()
+        self.rfile.close()
 
 
 class ThreadedUnixStreamServer(ThreadingMixIn, UnixStreamServer):
