@@ -2,4 +2,4 @@
 __pycache__/
 *.pcy
 dest/
-build.sh
+/*.sh
