@@ -8,4 +8,54 @@ body > footer {
     box-sizing: border-box;
     border-top: 1px solid #C0C0C0;
     background-color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em 2em;
+    padding: 1em;
+    font-size: 0.875em;
+}
+
+body > footer > a {
+    text-decoration: none;
+    color: #808080;
+    display: block;
+    max-height: 64px;
+}
+
+body > footer > * {
+    order: 10;
+}
+
+body > footer > a:hover {
+    color: #606060;
+}
+
+body > footer > a img {
+    width: 64px;
+    height: 64px;
+}
+
+body > footer > div.copyright {
+    color: #C0C0C0;
+    text-align: center;
+}
+
+@media screen and (max-width: 700px) {
+    body > footer {
+        flex-wrap: wrap;
+        height: unset;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    body > footer {
+        flex-direction: column;
+        height: unset;
+        gap: 2em;
+        padding: 2em 1em;
+    }
+    body > footer > a:first-child {
+        order: 20;
+    }
 }

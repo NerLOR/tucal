@@ -67,6 +67,20 @@ body main > section {
     margin: 1em 0.5em;
 }
 
+main a {
+    color: var(--color);
+}
+
+main p.center {
+    text-align: center;
+}
+
+main section > p {
+    hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+}
+
 hr {
     border: none;
     border-top: 1px solid var(--border-color);

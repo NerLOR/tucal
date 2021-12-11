@@ -23,6 +23,12 @@ msgstr "Start"
 msgid "Home Page"
 msgstr "Startseite"
 
+msgid "Imprint"
+msgstr "Impressum"
+
+msgid "Contact"
+msgstr "Kontakt"
+
 msgid "Login"
 msgstr "Anmelden"
 

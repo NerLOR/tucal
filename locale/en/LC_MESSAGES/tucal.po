@@ -23,6 +23,12 @@ msgstr "Home"
 msgid "Home Page"
 msgstr "Home Page"
 
+msgid "Imprint"
+msgstr "Imprint"
+
+msgid "Contact"
+msgstr "Contact"
+
 msgid "Login"
 msgstr "Login"
 

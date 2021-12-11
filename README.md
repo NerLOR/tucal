@@ -1,2 +1,2 @@
 
-# TUcal – A unified calendar for TU Wien
+# TUcal – a unified calendar for TU Wien
