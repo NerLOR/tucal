@@ -39,8 +39,9 @@ if __name__ == '__main__':
         job.perc_steps = TISS_INIT_VAL + n + DB_VAL
         job.end(TISS_INIT_VAL)
         job.begin('get tiss courses', n)
-        for c in gen:
-            job.begin(f'get tiss course {c.nr}-{c.semester} {c.type} {c.name_de}')
+        for c_nr, c_sem, cb in gen:
+            job.begin(f'get tiss course {c_nr}-{c_sem}')
+            c = cb()
             courses.append(c)
             print(json.dumps({
                 'nr': c.nr,

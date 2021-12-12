@@ -1,4 +1,3 @@
-#!/bin/env python3
 
 import argparse
 
@@ -80,6 +79,19 @@ if __name__ == '__main__':
                 UPDATE SET building_name = %(name)s, building_suffix = %(suffix)s, building_alt_name = %(alt_name)s,
                     object_nr = %(object_nr)s, address = %(address)s""", data)
 
+    s = tuwien.tiss.Session()
+    for room in s.rooms.values():
+        data = {
+            'id': room.id,
+            'name': room.name,
+            'full': room.tiss_name,
+        }
+        cur.execute("""
+            INSERT INTO tiss.room (code, name, name_full)
+            VALUES (%(id)s, %(name)s, %(full)s)
+            ON CONFLICT ON CONSTRAINT pk_room DO
+            UPDATE SET name = %(name)s, name_full = %(full)s""", data)
+
     tucal.db.commit()
 
     with open(ROOMS) as f:
@@ -140,17 +152,5 @@ if __name__ == '__main__':
                          WHERE room_code LIKE CONCAT('%%', %(room_code)s, '%%')), 
                     %(floor)s, %(local)s, %(name)s)""", data)
 
-    s = tuwien.tiss.Session()
-    for room in s.rooms.values():
-        data = {
-            'id': room.id,
-            'name': room.name,
-            'full': room.tiss_name,
-        }
-        cur.execute("""
-            INSERT INTO tiss.room (code, name, name_full)
-            VALUES (%(id)s, %(name)s, %(full)s)
-            ON CONFLICT ON CONSTRAINT pk_room DO
-            UPDATE SET name = %(name)s, name_full = %(full)s""", data)
     cur.close()
     tucal.db.commit()

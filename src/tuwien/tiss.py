@@ -351,7 +351,7 @@ class Session:
 
         yield len(course_nrs)
         for course in course_nrs - skip:
-            yield self._get_course(course[0], course[1])
+            yield course[0], course[1], lambda: self._get_course(course[0], course[1])
 
     def _get_courses(self, semester: Semester, semester_to: Semester = None) -> typing.Dict[str, Course]:
         gen = self.course_generator(semester, semester_to)

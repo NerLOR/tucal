@@ -1,4 +1,3 @@
-#!/bin/env python3
 
 from socketserver import UnixStreamServer, StreamRequestHandler, ThreadingMixIn
 import subprocess
