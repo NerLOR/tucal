@@ -112,7 +112,10 @@ class Handler(StreamRequestHandler):
         while proc.returncode is None:
             line = proc.stdout.readline().decode('utf8')
             if len(line) > 0:
-                self.wfile.write(b'stdout:' + line.encode('utf8'))
+                try:
+                    self.wfile.write(b'stdout:' + line.encode('utf8'))
+                except BrokenPipeError:
+                    pass
             if not reader.line(line):
                 proc.poll()
                 time.sleep(0.125)
@@ -132,9 +135,12 @@ class Handler(StreamRequestHandler):
         err = proc.stderr.read().decode('utf8')
         if len(err) > 0:
             print('\n'.join([f'[{job_nr:8}] {line}' for line in err.rstrip().splitlines()]))
-            self.wfile.write(b'\n'.join(
-                [b'stderr:' + line.encode('utf8') for line in err.rstrip().splitlines()]
-            ) + b'\n')
+            try:
+                self.wfile.write(b'\n'.join(
+                    [b'stderr:' + line.encode('utf8') for line in err.rstrip().splitlines()]
+                ) + b'\n')
+            except BrokenPipeError:
+                pass
 
         data['data'] = reader.json()
 
@@ -144,7 +150,10 @@ class Handler(StreamRequestHandler):
             data['data'] = json.dumps(d)
 
         data['status'] = 'success' if proc.returncode == 0 else 'error'
-        self.wfile.write(f'status:{proc.returncode}\n'.encode('utf8'))
+        try:
+            self.wfile.write(f'status:{proc.returncode}\n'.encode('utf8'))
+        except BrokenPipeError:
+            pass
 
         cur.execute("""
             UPDATE tucal.job
