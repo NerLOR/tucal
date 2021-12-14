@@ -43,7 +43,7 @@ class Handler(StreamRequestHandler):
         mnr = None
         if job_name == 'sync-user':
             # sync-user [store] <mnr> [<pwd-b64> [<2fa-token> | <2fa-generator-b64>]]
-            cmd += ['tucal.jobs.sync-user']
+            cmd += ['tucal.jobs.sync_user']
             if len(job) > 0 and job[0] == 'store':
                 job.pop(0)
                 cmd += ['-s']
@@ -60,12 +60,12 @@ class Handler(StreamRequestHandler):
                 stdin += job[2] + '\n'
         elif job_name == 'sync-cal':
             # sync-cal [<mnr>]
-            cmd += ['tucal.jobs.sync-cal']
+            cmd += ['tucal.jobs.sync_cal']
             if len(job) > 0:
                 cmd += ['-m', job[0]]
         elif job_name == 'sync-users':
             # sync-users
-            cmd += ['tucal.jobs.sync-users']
+            cmd += ['tucal.jobs.sync_users']
             if len(job) > 0:
                 self.wfile.write(b'error: job sync-users has no additional arguments\n')
                 return
