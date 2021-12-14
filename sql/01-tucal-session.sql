@@ -2,7 +2,7 @@ DROP VIEW IF EXISTS tucal.v_session;
 DROP TABLE IF EXISTS tucal.session;
 DROP VIEW IF EXISTS tucal.v_account;
 DROP TABLE IF EXISTS tucal.sso_credential;
-DROP TABLE IF EXISTS tucal.account;
+DROP TABLE IF EXISTS tucal.account CASCADE;
 
 CREATE TABLE tucal.account
 (

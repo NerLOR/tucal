@@ -3,6 +3,17 @@ DROP TABLE IF EXISTS tucal.event_history;
 DROP TABLE IF EXISTS tucal.event;
 DROP TABLE IF EXISTS tucal.group_member;
 DROP TABLE IF EXISTS tucal.group;
+DROP TRIGGER IF EXISTS t_insert ON tiss.course;
+DROP TRIGGER IF EXISTS t_insert ON tiss.group;
+DROP TRIGGER IF EXISTS t_insert ON tiss.exam;
+DROP TRIGGER IF EXISTS t_insert ON tuwel.course;
+DROP TRIGGER IF EXISTS t_insert ON tuwel.course_user;
+DROP TRIGGER IF EXISTS t_insert ON tiss.course_user;
+DROP TRIGGER IF EXISTS t_insert ON tiss.group_user;
+DROP TRIGGER IF EXISTS t_insert ON tiss.exam_user;
+DROP TRIGGER IF EXISTS t_delete ON tiss.course_user;
+DROP TRIGGER IF EXISTS t_delete ON tiss.group_user;
+DROP TRIGGER IF EXISTS t_delete ON tiss.exam_user;
 
 CREATE TABLE tucal.group
 (
@@ -93,6 +104,28 @@ CREATE TRIGGER t_insert
     ON tuwel.course
     FOR EACH ROW
 EXECUTE PROCEDURE tuwel.course_to_group();
+
+CREATE OR REPLACE FUNCTION tuwel.course_user_to_member()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    INSERT INTO tucal.group_member (account_nr, group_nr)
+    VALUES ((SELECT account_nr
+             FROM tucal.account a
+                      JOIN tuwel.user u ON u.mnr = a.mnr
+             WHERE user_id = NEW.user_id),
+            tucal.get_group((SELECT course_nr FROM tuwel.course WHERE course_id = NEW.course_id),
+                            (SELECT semester FROM tuwel.course WHERE course_id = NEW.course_id),
+                            'LVA'))
+    ON CONFLICT DO NOTHING;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER t_insert
+    AFTER INSERT
+    ON tuwel.course_user
+    FOR EACH ROW
+EXECUTE PROCEDURE tuwel.course_user_to_member();
 
 CREATE TABLE tucal.group_member
 (
