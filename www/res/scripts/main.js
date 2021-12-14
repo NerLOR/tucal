@@ -29,8 +29,8 @@ function initCalendar() {
     const year = parseInt(parts[3]);
     const week = parseInt(parts[4].substr(1));
 
-    const cal = new WeekSchedule(subject, main);
-    cal.setCurrentEventCb((events) => {
+    window.calenar = new WeekSchedule(subject, main);
+    calenar.setCurrentEventCb((events) => {
         const navLive = document.getElementById("nav-live");
         const liveButtons = navLive.getElementsByClassName("live");
         for (const btn of liveButtons) btn.href = '';
@@ -45,7 +45,7 @@ function initCalendar() {
             }
         }
     });
-    cal.setWeek(new Week(year, week));
+    calenar.setWeek(new Week(year, week));
 }
 
 function initNav() {
@@ -111,6 +111,9 @@ function initData() {
             for (const room of res.data.rooms) {
                 ROOMS[room['nr']] = room;
             }
+            if (window.calendar) {
+                window.calendar.reloadEvents();
+            }
         })
     });
     if (MNR === null) return;
@@ -126,14 +129,42 @@ function initData() {
                 COURSE_DEF[course['nr']] = {...course};
                 delete COURSE_DEF[course['nr']].semester;
             }
+            if (window.calendar) {
+                window.calendar.reloadEvents();
+            }
         })
     });
 }
 
 function getCourseName(courseNr) {
-    const course = COURSE_DEF[courseNr];
     const fallback = courseNr.slice(0, 3) + '.' + courseNr.slice(3);
-    return course && (course.acronym_1 || course.short || course.name_de) || fallback;
+    if (COURSE_DEF === null) return fallback;
+
+    const course = COURSE_DEF[courseNr];
+    if (!course) return fallback;
+
+    return course.acronym_1 || course.short || course.name_de;
+}
+
+function getRoomName(roomNr) {
+    const fallback = `#${roomNr}`;
+    if (ROOMS === null) return fallback
+
+    const room = ROOMS[roomNr];
+    return room && (room.name_short || room.name) || fallback;
+}
+
+function getRoomNameLong(roomNr) {
+    const fallback = `#${roomNr}`;
+    if (ROOMS === null) return fallback
+
+    const room = ROOMS[roomNr];
+    if (!room) return fallback;
+
+    let str = room.name;
+    if (room.suffix) str += ' ' + room.suffix;
+    if (room.alt_name) str += ' (' + room.alt_name + ')';
+    return str;
 }
 
 function sleep(ms) {
