@@ -539,6 +539,7 @@ class WeekSchedule {
 
             let shift = 0;
             let p = 0;
+            let last = null;
             for (const evt of parsed) {
                 if (p >= evt.parts) {
                     p = 0;
@@ -549,6 +550,15 @@ class WeekSchedule {
                     shift = evt.parts - p + 1;
                 }
                 evt.part2 = p;
+
+                const start0 = last !== null && last.event.start || null;
+                const start1 = evt.event.start;
+                if (last !== null && evt.affects.includes(last) && start1 > start0) {
+                    last.part2 += 0.75;
+                    evt.part1 -= 0.75;
+                }
+
+                last = evt;
                 p++;
             }
 
