@@ -553,9 +553,11 @@ class WeekSchedule {
 
                 const start0 = last !== null && last.event.start || null;
                 const start1 = evt.event.start;
-                if (last !== null && evt.affects.includes(last) && start1 > start0) {
-                    last.part2 += 0.75;
-                    evt.part1 -= 0.75;
+                if (last !== null && evt.affects.includes(last)) {
+                    if (start1 > start0 && last.part1 <= evt.part1) {
+                        last.part2 += 0.75;
+                        evt.part1 -= 0.75;
+                    }
                 }
 
                 last = evt;
@@ -589,7 +591,7 @@ class WeekSchedule {
 
                 const startFmt = formatter.format(start);
                 const endFmt = formatter.format(end);
-                const short = getCourseName(event.course.nr);
+                const short = event.course && getCourseName(event.course.nr) || null;
                 evt.innerHTML = `<span class="time">${startFmt}-${endFmt}</span><span class="course">${short}</span> ${event.summary}`;
                 day.appendChild(evt);
             }
