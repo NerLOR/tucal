@@ -33,10 +33,17 @@ div.calendar {
 
 div.calendar > table {
     width: 100%;
-    border-collapse: collapse;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: auto;
     table-layout: fixed;
+    position: relative;
+}
+
+div.calendar > table thead {
+    position: sticky;
+    top: var(--nav-height);
+    z-index: 5;
 }
 
 div.calendar > table th,
@@ -48,10 +55,14 @@ div.calendar > table td {
 
 div.calendar > table tbody th,
 div.calendar > table tbody td {
-    border-left: 1px solid var(--border-color);
     border-right: 1px solid var(--border-color);
     width: calc((100% - var(--left-size)) / 7);
     height: var(--row-size);
+}
+
+div.calendar > table tbody th:first-child,
+div.calendar > table tbody td:first-child {
+    border-left: 1px solid var(--border-color);
 }
 
 div.calendar > table tbody tr:nth-child(2n) th,
@@ -67,8 +78,18 @@ div.calendar > table tbody tr:nth-child(2n + 1) td {
 div.calendar > table thead th,
 div.calendar > table thead td {
     height: var(--row-size);
-    border: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
     background-color: #E8E8E8;
+}
+
+div.calendar > table thead tr:not(:nth-child(2)) th:first-child,
+div.calendar > table thead td:first-child {
+    border-left: 1px solid var(--border-color);
+}
+
+div.calendar > table thead tr:first-child th {
+    border-top: 1px solid var(--border-color);
 }
 
 div.calendar > table tbody th:first-child,
@@ -79,7 +100,7 @@ div.calendar > table thead tr:first-child th:first-child {
 div.calendar > table tbody th:first-child {
     font-weight: normal;
     font-size: 0.75rem;
-    padding-bottom: 10px;
+    padding-bottom: 8px;
     background-color: #E8E8E8;
 }
 
@@ -149,10 +170,6 @@ div.calendar div.panel span.year-header {
 div.calendar div.panel span.week-header {
     font-size: 0.75em;
     flex: 20px 1 0;
-}
-
-div.calendar thead tr:nth-child(2) th {
-
 }
 
 div.calendar thead tr:nth-child(2) th > div {
@@ -227,12 +244,12 @@ div.calendar div.event-wrapper div.loading {
 div.calendar div.event-wrapper div.day {
     --n: 0;
     height: 100%;
-    width: calc((100% - 1px) / 7 - 1px);
+    width: calc((100%) / 7 - 1px);
     box-sizing: border-box;
     border-left: 2px solid #00000000;
     border-right: 2px solid #00000000;
     border-bottom: 1px solid #00000000;
-    left: calc((100% - 1px) / 7 * var(--n) + 1px);
+    left: calc((100%) / 7 * var(--n));
 }
 
 div.calendar div.event-wrapper div.day:nth-of-type(1) {
