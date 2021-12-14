@@ -105,6 +105,14 @@ function initJobs() {
 }
 
 function initData() {
+    fetch(`/api/tucal/rooms`).then((res) => {
+        res.json().then((res) => {
+            ROOMS = {};
+            for (const room of res.data.rooms) {
+                ROOMS[room['nr']] = room;
+            }
+        })
+    });
     if (MNR === null) return;
     fetch(`/api/tucal/courses?mnr=${MNR}`).then((res) => {
         res.json().then((res) => {
@@ -120,14 +128,6 @@ function initData() {
             }
         })
     });
-    fetch(`/api/tucal/rooms`).then((res) => {
-        res.json().then((res) => {
-            ROOMS = {};
-            for (const room of res.data.rooms) {
-                ROOMS[room['nr']] = room;
-            }
-        })
-    })
 }
 
 function getCourseName(courseNr) {
