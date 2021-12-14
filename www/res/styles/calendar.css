@@ -18,7 +18,7 @@ div.calendar {
     background-color: #FFFFFF;
     box-sizing: border-box;
     --left-size: 50px;
-    --header-size: 125px;
+    --header-size: calc(var(--row-size) * 5);
     --border-color: #C0C0C0;
     --row-size: 25px;
     --time-start: calc(7 * 60);
@@ -221,7 +221,7 @@ div.calendar div.event-wrapper > * {
 div.calendar div.event-wrapper > hr {
     --time: 0;
     border: none;
-    width: 100%;
+    width: calc(100% - 1px);
     height: 2px;
     margin-top: -1px;
     background-color: var(--red);
