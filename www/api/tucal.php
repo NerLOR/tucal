@@ -34,6 +34,8 @@ function rooms() {
         error(405);
     }
 
+    header("Cache-Control: public, max-age=86400");
+
     $res = db_exec("SELECT r.room_nr, r.room_code, r.tiss_code, r.room_name, r.room_suffix, r.room_name_short,
                   r.room_alt_name, r.room_name_normal, lt.room_code AS lt_room_code, lt.lt_name
                   FROM tucal.v_room r LEFT JOIN tucal.v_lecture_tube lt ON lt.room_nr = r.room_nr");
@@ -43,7 +45,7 @@ function rooms() {
     for ($i = 0; $i < sizeof($arr); $i++) {
         $row = $arr[$i];
         $data = [
-            "room_nr" => (int) $row["room_nr"],
+            "nr" => (int) $row["room_nr"],
             "room_codes" => explode('/', $row["room_code"]),
             "tiss_code" => $row["tiss_code"],
             "name" => $row["room_name"],

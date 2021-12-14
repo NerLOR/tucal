@@ -5,9 +5,10 @@ const MNR = (document.documentElement.getAttribute("data-mnr").length > 0) ? doc
 
 let COURSE_DEF = null;
 let COURSES = null;
+let ROOMS = null;
 
 
-initCourses();
+initData();
 
 window.addEventListener("DOMContentLoaded", () => {
     initNav();
@@ -103,7 +104,7 @@ function initJobs() {
     }
 }
 
-function initCourses() {
+function initData() {
     if (MNR === null) return;
     fetch(`/api/tucal/courses?mnr=${MNR}`).then((res) => {
         res.json().then((res) => {
@@ -119,6 +120,14 @@ function initCourses() {
             }
         })
     });
+    fetch(`/api/tucal/rooms`).then((res) => {
+        res.json().then((res) => {
+            ROOMS = {};
+            for (const room of res.data.rooms) {
+                ROOMS[room['nr']] = room;
+            }
+        })
+    })
 }
 
 function getCourseName(courseNr) {
