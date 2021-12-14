@@ -23,9 +23,8 @@ CREATE TABLE tucal.job
 
 CREATE INDEX idx_mnr ON tucal.job (mnr);
 CREATE INDEX idx_status ON tucal.job (status);
-CREATE INDEX idx_job_id ON tucal.job (job_id);
 
-CREATE OR REPLACE FUNCTION tucal.update_job_id()
+CREATE OR REPLACE FUNCTION tucal.job_id()
     RETURNS TRIGGER AS
 $$
 BEGIN
@@ -38,13 +37,7 @@ CREATE TRIGGER t_insert
     BEFORE INSERT
     ON tucal.job
     FOR EACH ROW
-EXECUTE PROCEDURE tucal.update_job_id();
-
-CREATE TRIGGER t_update
-    BEFORE UPDATE
-    ON tucal.job
-    FOR EACH ROW
-EXECUTE PROCEDURE tucal.update_job_id();
+EXECUTE PROCEDURE tucal.job_id();
 
 CREATE OR REPLACE VIEW tucal.v_job AS
 SELECT job_nr,

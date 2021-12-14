@@ -1,3 +1,11 @@
+DROP VIEW IF EXISTS tucal.v_lecture_tube;
+DROP VIEW IF EXISTS tucal.v_room;
+DROP TABLE IF EXISTS tucal.lecture_tube;
+DROP TABLE IF EXISTS tucal.room_location;
+DROP TABLE IF EXISTS tucal.room;
+DROP VIEW IF EXISTS tucal.v_building;
+DROP TABLE IF EXISTS tucal.building;
+DROP TABLE IF EXISTS tucal.area;
 
 CREATE TABLE tucal.area
 (

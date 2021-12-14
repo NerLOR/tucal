@@ -146,6 +146,7 @@ class WeekSchedule {
         const theadTr2 = document.createElement("tr");
         for (let j = 1; j <= 7; j++) {
             const th = document.createElement("th");
+            th.innerHTML = `<div><ul></ul></div>`;
             th.rowSpan = 4;
             theadTr2.appendChild(th);
         }
@@ -433,6 +434,10 @@ class WeekSchedule {
         const events = wrapper.getElementsByClassName("event");
         while (events.length > 0) events[0].remove();
 
+        const theadTr = this.cal.getElementsByTagName("thead")[0].getElementsByTagName("tr")[1];
+        const lis = theadTr.getElementsByTagName("li");
+        while (lis.length > 0) lis[0].remove();
+
         const elem = wrapper.getElementsByClassName("loading");
         if (loading) {
             if (elem.length === 0) {
@@ -451,21 +456,32 @@ class WeekSchedule {
             return a.start - b.start;
         });
 
-        const deadlines = [[], [], [], [], [], [], []];
+        const formatter = new Intl.DateTimeFormat('de-AT', {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+
+        const deadlines = [];
         const events = [[], [], [], [], [], [], []];
         for (const event of all_events) {
             const weekDay = (event.start.getDay() + 6) % 7;
-            if (event.start === event.end) {
-                deadlines[weekDay].push(event);
+            if (event.start.getTime() === event.end.getTime()) {
+                deadlines.push(event);
             } else {
                 events[weekDay].push(event);
             }
         }
 
-        const formatter = new Intl.DateTimeFormat(LOCALE, {
-            hour: "2-digit",
-            minute: "2-digit",
-        });
+        const theadTr = this.cal.getElementsByTagName("thead")[0].getElementsByTagName("tr")[1];
+        for (const deadline of deadlines) {
+            const time = deadline.start;
+            const day = theadTr.getElementsByTagName("th")[(time.getDay() + 6) % 7].getElementsByTagName("ul")[0];
+
+            const el = document.createElement("li");
+            const short = getCourseName(deadline.course.nr);
+            el.innerHTML = `<span class="time">${formatter.format(time)}</span> <span class="course">${short}</span> ${deadline.summary}`;
+            day.appendChild(el);
+        }
 
         for (const day of events) {
             const partList = {};
@@ -563,7 +579,8 @@ class WeekSchedule {
 
                 const startFmt = formatter.format(start);
                 const endFmt = formatter.format(end);
-                evt.innerHTML = `<span class="time">${startFmt}-${endFmt}</span><span class="course">Evt</span>`;
+                const short = getCourseName(event.course.nr);
+                evt.innerHTML = `<span class="time">${startFmt}-${endFmt}</span><span class="course">${short}</span> ${event.summary}`;
                 day.appendChild(evt);
             }
         }
@@ -576,11 +593,21 @@ class Event {
     start;
     end;
     id;
+    course;
+    semester;
+    summary;
+    desc;
+    details;
 
     constructor(json) {
         this.id = json.id;
         this.start = asTimezone(new Date(Date.parse(json.start)), TIMEZONE);
         this.end = asTimezone(new Date(Date.parse(json.end)), TIMEZONE);
+        this.course = json.course;
+        this.semester = null;
+        this.summary = json.data.summary;
+        this.desc = json.data.desc;
+        this.details = json.data.details;
     }
 
     getWeek() {

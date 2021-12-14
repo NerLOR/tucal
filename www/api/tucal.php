@@ -14,6 +14,7 @@ try {
         case '/rooms': rooms(); break;
         case '/calendar': calendar(); break;
         case '/job': job(); break;
+        case '/courses': courses(); break;
         default: error(404);
     }
 } catch (Exception $e) {
@@ -75,7 +76,22 @@ function calendar() {
     $start = strtotime($start);
     $end = strtotime($end);
 
-    $stmt = db_exec("SELECT * FROM tiss.event WHERE room_code = 'AUDI' AND start_ts >= :start AND end_ts < :end", [
+    $stmt = db_exec("
+            SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.data,
+                   g.course_nr, g.semester, g.group_name
+            FROM tucal.event e
+            JOIN tucal.external_event x ON x.event_nr = e.event_nr
+            JOIN tucal.group_member m ON m.group_nr = e.group_nr
+            JOIN tucal.account a ON a.account_nr = m.account_nr
+            LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
+            WHERE e.start_ts >= :start AND e.start_ts < :end AND
+                  a.mnr = :mnr AND NOT e.deleted AND
+                  (e.global OR (:mnr IN (SELECT mnr FROM tuwel.event_user u WHERE u.event_id::text = x.event_id))) AND
+                  (m.ignore_from IS NULL OR e.start_ts < m.ignore_from) AND
+                  (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
+            GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data,
+                     g.course_nr, g.semester, g.group_name", [
+        'mnr' => $subject,
         'start' => date('c', $start),
         'end' => date('c', $end),
     ]);
@@ -99,6 +115,13 @@ function calendar() {
             'id' => $row['event_id'],
             'start' => date('c', $start),
             'end' => date('c', $end),
+            'room_nr' => $row['room_nr'],
+            'course' => [
+                'nr' => $row['course_nr'],
+                'semester' => $row['semester'],
+                'group' => $row['group_name'],
+            ],
+            'data' => json_decode($row['data']),
         ];
         echo json_encode($data, FLAGS);
     }
@@ -130,5 +153,63 @@ function job() {
     echo json_encode($data, FLAGS);
     echo "\n}\n";
 
+    tucal_exit();
+}
+
+function courses() {
+    global $USER;
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        error(405);
+    }
+
+    $mnr = $_GET['mnr'] ?? null;
+    if ($mnr === null) {
+        error(501);
+    }
+
+    if (!isset($USER)) {
+        error(401);
+    } elseif ($USER['mnr'] !== $mnr) {
+        error(403);
+    }
+
+    $stmt = db_exec("
+            SELECT c.course_nr, c.semester, c.ects, cd.type, cd.name_de, cd.name_en,
+                   ca.acronym_1, ca.acronym_2, ca.short, ca.program
+            FROM tiss.course_user cu
+            JOIN tiss.course c ON (c.course_nr, c.semester) = (cu.course_nr, cu.semester)
+            JOIN tiss.course_def cd ON cd.course_nr = c.course_nr
+            LEFT JOIN tucal.course_acronym ca ON ca.course_nr = c.course_nr
+            WHERE cu.mnr = :mnr", [
+        'mnr' => $mnr,
+    ]);
+
+    echo '{"status":"success","message":"work in progress","data":{"personal":[' . "\n";
+    $first = true;
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        if ($first) {
+            $first = false;
+        } else {
+            echo ",\n";
+        }
+        $data = [
+            'nr' => $row['course_nr'],
+            'semester' => $row['semester'],
+            'ects' => (float) $row['ects'],
+            'type' => $row['type'],
+            'name_de' => $row['name_de'],
+            'name_en' => $row['name_en'],
+            'acronym_1' => $row['acronym_1'],
+            'acronym_2' => $row['acronym_2'],
+            'short' => $row['short'],
+            'program' => $row['program'],
+        ];
+        echo json_encode($data, FLAGS);
+    }
+
+    echo "\n],\"friends\":[\n";
+
+    echo "\n]}}\n";
     tucal_exit();
 }

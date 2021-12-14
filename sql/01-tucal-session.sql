@@ -1,6 +1,14 @@
+DROP VIEW IF EXISTS tucal.v_session;
+DROP TABLE IF EXISTS tucal.session;
+DROP VIEW IF EXISTS tucal.v_account;
+DROP TABLE IF EXISTS tucal.sso_credential;
+DROP TABLE IF EXISTS tucal.account;
+
 CREATE TABLE tucal.account
 (
-    account_nr    INT                      NOT NULL GENERATED ALWAYS AS IDENTITY,
+    account_nr    BIGINT                   NOT NULL GENERATED ALWAYS AS IDENTITY,
+    account_id    TEXT                              DEFAULT NULL,
+
     mnr           INT                      NOT NULL,
     username      CITEXT                   NOT NULL CHECK (username ~ '[[:alpha:]][[:alnum:]_ -]{1,30}[[:alnum:]]'),
     email_address CITEXT                            DEFAULT NULL CHECK (email_address ~ '[^@]+@([a-z0-9_-]+\.)+[a-z]{2,}'),
@@ -19,10 +27,27 @@ CREATE TABLE tucal.account
     pwd_hash      TEXT,
 
     CONSTRAINT pk_account PRIMARY KEY (account_nr),
+    CONSTRAINT sk_account_id UNIQUE (account_id),
     CONSTRAINT sk_account_mnr UNIQUE (mnr),
     CONSTRAINT sk_account_email UNIQUE (email_address),
     CONSTRAINT sk_account_username UNIQUE (username)
 );
+
+CREATE OR REPLACE FUNCTION tucal.account_id()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.account_id = tucal.gen_id(NEW.account_nr, 15344::smallint);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER t_insert
+    BEFORE INSERT
+    ON tucal.account
+    FOR EACH ROW
+EXECUTE PROCEDURE tucal.account_id();
+
 
 CREATE TABLE tucal.sso_credential
 (

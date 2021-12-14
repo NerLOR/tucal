@@ -1,4 +1,4 @@
-DROP SCHEMA tuwel CASCADE;
+DROP SCHEMA IF EXISTS tuwel CASCADE;
 CREATE SCHEMA tuwel;
 
 CREATE TABLE tuwel.user
@@ -50,7 +50,9 @@ CREATE TABLE tuwel.event
         ON DELETE CASCADE
 );
 
-CREATE INDEX idx_start_ts ON tuwel.event (start_ts);
+CREATE INDEX idx_course ON tuwel.event (course_id);
+CREATE INDEX idx_start ON tuwel.event (start_ts);
+CREATE INDEX idx_end ON tuwel.event (end_ts);
 
 CREATE TABLE tuwel.event_user
 (

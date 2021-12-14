@@ -7,6 +7,8 @@ import time
 import json
 import socket
 
+import tuwien.sso
+
 
 class LoginError(Exception):
     pass
@@ -18,6 +20,16 @@ class InvalidCredentialsError(LoginError):
 
 class JobFormatError(Exception):
     pass
+
+
+class Plugin:
+    @staticmethod
+    def sync():
+        pass
+
+    @staticmethod
+    def sync_auth(sso: tuwien.sso.Session):
+        pass
 
 
 def schedule_job(name: str, *args):

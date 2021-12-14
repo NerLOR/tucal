@@ -1,4 +1,16 @@
 
+body main.wcal {
+    width: 80%;
+    min-width: 1200px;
+}
+
+@media screen and (max-width: 1200px) {
+    body main.wcal {
+        width: unset;
+        min-width: unset;
+    }
+}
+
 div.calendar {
     position: relative;
     width: 100%;
@@ -6,11 +18,17 @@ div.calendar {
     background-color: #FFFFFF;
     box-sizing: border-box;
     --left-size: 50px;
-    --header-size: 100px;
+    --header-size: 125px;
     --border-color: #C0C0C0;
     --row-size: 25px;
     --time-start: calc(7 * 60);
     --time-end: calc(22 * 60);
+}
+
+@media screen and (min-height: 1080px) {
+    div.calendar {
+        --row-size: 30px;
+    }
 }
 
 div.calendar > table {
@@ -133,6 +151,43 @@ div.calendar div.panel span.week-header {
     flex: 20px 1 0;
 }
 
+div.calendar thead tr:nth-child(2) th {
+
+}
+
+div.calendar thead tr:nth-child(2) th > div {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 100%;
+    height: var(--header-size);
+}
+
+div.calendar thead ul {
+    font-size: 0.75em;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    text-align: left;
+    position: relative;
+}
+
+div.calendar thead li {
+    margin: 0.5em 0 0.5em 3em;
+    hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+}
+
+div.calendar thead span.time {
+    font-weight: bold;
+    position: absolute;
+    left: 0.25em;
+}
+
+div.calendar thead span.course {
+    font-weight: bold;
+}
+
 div.calendar div.event-wrapper {
     position: absolute;
     width: calc(100% - var(--left-size));
@@ -219,6 +274,7 @@ div.calendar div.event-wrapper div.event {
     display: block;
     font-size: 0.75em;
     cursor: pointer;
+    overflow: hidden;
     border: 1px solid #C00000;
     border-radius: var(--border-radius);
     background-color: #FFC0C0;
@@ -255,6 +311,14 @@ div.calendar div.event span.course {
 
     div.calendar div.event-wrapper div.event {
         font-size: 0.625em;
+    }
+
+    div.calendar thead li {
+        margin-left: 0.5em;
+    }
+
+    div.calendar thead span.time {
+        position: unset;
     }
 }
 

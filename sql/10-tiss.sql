@@ -1,4 +1,4 @@
-DROP SCHEMA tiss CASCADE;
+DROP SCHEMA IF EXISTS tiss CASCADE;
 CREATE SCHEMA tiss;
 
 CREATE TABLE tiss.user
@@ -144,8 +144,10 @@ CREATE TABLE tiss.event
         ON DELETE SET NULL
 );
 
-CREATE INDEX idx_start_ts ON tiss.event (start_ts);
-CREATE INDEX idx_end_ts ON tiss.event (end_ts);
+CREATE INDEX idx_course ON tiss.event (course_nr, semester);
+CREATE INDEX idx_room ON tiss.event (room_code);
+CREATE INDEX idx_start ON tiss.event (start_ts);
+CREATE INDEX idx_end ON tiss.event (end_ts);
 
 CREATE TABLE tiss.event_user
 (

@@ -8,6 +8,7 @@ import hmac
 import struct
 
 from tucal import Job
+import tucal.plugins
 import tuwien.tuwel
 import tuwien.tiss
 import tuwien.sso
@@ -21,6 +22,7 @@ TUWEL_MONTHS = 12
 TUWEL_MONTH_VAL = 1
 TISS_VAL = 10
 SYNC_CAL_VAL = 5
+SYNC_PLUGIN_VAL = 5
 
 
 def totp_gen_token(gen: bytes, mode: str = 'sha1') -> str:
@@ -68,7 +70,8 @@ if __name__ == '__main__':
     cur = tucal.db.cursor()
 
     now = datetime.datetime.now().astimezone()
-    job = Job('sync user', 3, TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TISS_VAL + SYNC_CAL_VAL, estimate=20)
+    val = TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TISS_VAL + SYNC_CAL_VAL + SYNC_PLUGIN_VAL
+    job = Job('sync user', 4, val, estimate=20)
 
     mnr = f'{args.mnr:08}'
     pwd = None
@@ -221,12 +224,27 @@ if __name__ == '__main__':
         tucal.db.tuwel.insert_event(evt, acc, user_id)
     job.end(0)
 
-    cur.close()
     tucal.db.commit()
+
+    job.begin('sync plugin calendars')
+    cur.execute("""
+        SELECT course_nr FROM tucal.group_member m
+        JOIN tucal.group g ON g.group_nr = m.group_nr
+        JOIN tucal.account a ON a.account_nr = m.account_nr
+        WHERE a.mnr = %s""", (mnr,))
+    rows = cur.fetchall()
+    courses = [r[0] for r in rows]
+
+    for course, p in tucal.plugins.plugins():
+        if course not in courses:
+            continue
+        p.sync_auth(sso)
+    job.end(SYNC_PLUGIN_VAL)
 
     job.begin('sync ical calendars')
     for cal_job, fin in tucal.schedule_job('sync-cal', f'{mnr}'):
         pass
     job.end(SYNC_CAL_VAL)
 
+    cur.close()
     job.end(0)

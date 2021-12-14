@@ -1,12 +1,19 @@
 "use strict";
 
-window.addEventListener("DOMContentLoaded", () => {
-    const status = parseInt(document.title.split(' ')[0]) || 200;
+const STATUS = parseInt(document.documentElement.getAttribute("data-status"));
+const MNR = (document.documentElement.getAttribute("data-mnr").length > 0) ? document.documentElement.getAttribute("data-mnr") : null;
 
+let COURSE_DEF = null;
+let COURSES = null;
+
+
+initCourses();
+
+window.addEventListener("DOMContentLoaded", () => {
     initNav();
     initJobs();
 
-    if (window.location.pathname.startsWith('/calendar/') && status === 200) {
+    if (window.location.pathname.startsWith('/calendar/') && STATUS === 200) {
         initCalendar();
     }
 });
@@ -94,6 +101,30 @@ function initJobs() {
     for (const job of jobs) {
         new Job(job);
     }
+}
+
+function initCourses() {
+    if (MNR === null) return;
+    fetch(`/api/tucal/courses?mnr=${MNR}`).then((res) => {
+        res.json().then((res) => {
+            COURSES = res.data.personal;
+            COURSE_DEF = {};
+            for (const course of COURSES) {
+                COURSE_DEF[course['nr']] = {...course};
+                delete COURSE_DEF[course['nr']].semester;
+            }
+            for (const course of res.data.friends) {
+                COURSE_DEF[course['nr']] = {...course};
+                delete COURSE_DEF[course['nr']].semester;
+            }
+        })
+    });
+}
+
+function getCourseName(courseNr) {
+    const course = COURSE_DEF[courseNr];
+    const fallback = courseNr.slice(0, 3) + '.' + courseNr.slice(3);
+    return course && (course.acronym_1 || course.short || course.name_de) || fallback;
 }
 
 function sleep(ms) {

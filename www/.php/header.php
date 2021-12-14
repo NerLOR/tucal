@@ -36,7 +36,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
 
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LOCALE;?>">
+<html lang="<?php echo $LOCALE;?>" data-status="<?php echo $STATUS;?>" data-mnr="<?php if (isset($USER)) echo $USER['mnr'];?>">
 <head>
     <title><?php
         $TITLE = $TITLE ?? [];

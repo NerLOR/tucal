@@ -63,7 +63,7 @@ $TITLE = [_('Calendar')];
 
 require "../.php/header.php";
 ?>
-<main class="w4">
+<main class="wcal">
 
 </main>
 <?php

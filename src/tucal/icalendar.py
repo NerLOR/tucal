@@ -32,6 +32,7 @@ def _split(data: str, split: str = None) -> typing.List[str]:
 
 class Event:
     uid: typing.Optional[str]
+    sequence: typing.Optional[int]
     summary: typing.Optional[str]
     description: typing.Optional[str]
     last_modified: typing.Optional[datetime.datetime]
@@ -40,9 +41,13 @@ class Event:
     end: typing.Optional[datetime.datetime or datetime.date]
     categories: typing.List[str]
     location: typing.Optional[str]
+    recurrence_id: typing.Optional[str]
+    url: typing.Optional[str]
+    conference: typing.Optional[str]
 
     def __init__(self):
         self.uid = None
+        self.sequence = None
         self.summary = None
         self.description = None
         self.last_modified = None
@@ -51,6 +56,16 @@ class Event:
         self.end = None
         self.categories = []
         self.location = None
+        self.recurrence_id = None
+        self.url = None
+        self.conference = None
+
+    @property
+    def uid_rec(self) -> str:
+        if self.recurrence_id is not None:
+            return f'{self.uid}-{self.recurrence_id}'
+        else:
+            return self.uid
 
     def _parse(self, dir_gen):
         for d, opt, val in dir_gen:
@@ -61,6 +76,14 @@ class Event:
                     raise ValueError('invalid ical format')
             elif d == 'UID':
                 self.uid = _split(val)[0] if len(val) > 0 else None
+            elif d == 'SEQUENCE':
+                self.sequence = int(_split(val)[0]) if len(val) > 0 else None
+            elif d == 'RECURRENCE-ID':
+                self.recurrence_id = _split(val)[0] if len(val) > 0 else None
+            elif d == 'URL':
+                self.url = _split(val)[0] if len(val) > 0 else None
+            elif d == 'CONFERENCE':
+                self.conference = _split(val)[0] if len(val) > 0 else None
             elif d == 'CATEGORIES':
                 self.categories = [html.unescape(part).strip() for part in _split(val, ',')]
             elif d == 'SUMMARY':
@@ -72,22 +95,23 @@ class Event:
             elif d in ('DTSTART', 'DTEND', 'DTSTAMP', 'LAST-MODIFIED'):
                 if len(opt) > 0 and opt[0] == 'VALUE=DATE':
                     iso = f'{val[:4]}-{val[4:6]}-{val[6:8]}'
-                    dat = datetime.date.fromisoformat(iso)
+                    dt = datetime.date.fromisoformat(iso)
                 else:
                     iso = f'{val[:4]}-{val[4:6]}-{val[6:8]}T{val[9:11]}:{val[11:13]}:{val[13:15]}'
                     if val[-1] == 'Z':
-                        dat = datetime.datetime.fromisoformat(iso).astimezone(pytz.UTC)
-                    elif len(opt) > 0:
-                        tz = pytz.timezone(opt[0].split('=')[1])
-                        dat = datetime.datetime.fromisoformat(iso).astimezone(tz)
+                        dt = datetime.datetime.fromisoformat(iso + '+00:00')
+                    else:
+                        dt = datetime.datetime.fromisoformat(iso)
+                        if len(opt) > 0:
+                            dt = pytz.timezone(opt[0].split('=')[1]).localize(dt)
                 if d == 'DTSTART':
-                    self.start = dat
+                    self.start = dt
                 elif d == 'DTEND':
-                    self.end = dat
+                    self.end = dt
                 elif d == 'DTSTAMP':
-                    self.access = dat
+                    self.access = dt
                 elif d == 'LAST-MODIFIED':
-                    self.last_modified = dat
+                    self.last_modified = dt
 
 
 class Timezone:
