@@ -304,6 +304,10 @@ div.calendar div.event-wrapper div.event {
     height: calc((var(--end) - var(--start)) / (var(--time-end) - var(--time-start)) * 100% - 1px - var(--margin) * 2);
 }
 
+div.calendar div.event-wrapper div.event:hover {
+    z-index: 1;
+}
+
 div.calendar div.event-wrapper div.event.now {
     box-shadow: 0 0 4px var(--glow);
 }
