@@ -179,7 +179,7 @@ class DWI(tucal.Plugin):
                     INSERT INTO tucal.external_event (source, event_id, start_ts, end_ts, room_nr, group_nr, data)
                     VALUES ('187B12-review', %(id)s, %(ts)s, %(ts)s, NULL, %(group)s, %(data)s)
                     ON CONFLICT ON CONSTRAINT pk_external_event DO
-                    UPDATE set start_ts = %(ts)s, end_ts = %(ts)s, room_nr = NULL, group_nr = %(group)s,
+                    UPDATE SET start_ts = %(ts)s, end_ts = %(ts)s, room_nr = NULL, group_nr = %(group)s,
                                data = %(data)s""", data)
         tucal.db.commit()
 

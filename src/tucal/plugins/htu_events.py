@@ -46,7 +46,7 @@ class HTUEvents(tucal.Plugin):
                 INSERT INTO tucal.external_event (source, event_id, start_ts, end_ts, room_nr, group_nr, data)
                 VALUES ('htu-events', %(id)s, %(start)s, %(end)s, NULL, NULL, %(data)s)
                 ON CONFLICT ON CONSTRAINT pk_external_event DO
-                UPDATE set start_ts = %(start)s, end_ts = %(end)s, data = %(data)s""", data)
+                UPDATE SET start_ts = %(start)s, end_ts = %(end)s, data = %(data)s""", data)
         tucal.db.commit()
 
     @staticmethod
