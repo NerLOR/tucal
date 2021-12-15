@@ -22,6 +22,18 @@ require ".php/header.php";
             Termine bearbeiten können, um eventuell falsche Informationen zu korrigieren.
         </p>
     </section>
+    <section lang="de-AT">
+        <h1>Benutzer:innenzahlen</h1>
+        <?php
+        $stmt = db_exec("SELECT COUNT(*), SUM((active_ts >= current_date - INTERVAL '7' DAY)::int)
+                         FROM tucal.v_account WHERE verified = TRUE");
+        $row = $stmt->fetchAll()[0];
+        $userNum = $row[0];
+        $weeklyNum = $row[1];
+        ?>
+        <h2>In den letzten 7 Tagen: <?php echo $weeklyNum;?></h2>
+        <h2>Insgesamt verifiziert: <?php echo $userNum;?></h2>
+    </section>
 </main>
 <?php
 require ".php/footer.php";

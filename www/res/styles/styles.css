@@ -38,6 +38,15 @@ h1, h2, h3, h4 {
     text-align: center;
 }
 
+h1 {
+    font-size: 1.5em;
+}
+
+h2 {
+    font-size: 1.25em;
+    color: #000000;
+}
+
 body main {
     margin: 2em auto;
 }
