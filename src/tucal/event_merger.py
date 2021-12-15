@@ -21,6 +21,8 @@ def update_event(events: typing.List[typing.Dict[str, typing.Any]]):
         evt['summary'] = evt['tuwel']['name']
     if 'aurora' in evt:
         evt['summary'] = evt['aurora']['summary']
+    if 'eventHTU' in evt:
+        evt['summary'] = evt['eventHTU']['title']
     return evt
 
 
