@@ -38,7 +38,7 @@ def get_group_nr(semester: tucal.Semester) -> typing.Optional[int]:
     return rows[0][0]
 
 
-class DWI(tucal.Plugin):
+class Plugin(tucal.Plugin):
     @staticmethod
     def sync():
         group_nr = get_group_nr(tucal.Semester('2021W'))

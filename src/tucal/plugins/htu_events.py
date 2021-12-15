@@ -3,7 +3,6 @@ import json
 
 import tucal
 import tucal.db
-import tuwien.sso
 
 QUERY = {
   "operationName": "FetchEvents",
@@ -22,7 +21,7 @@ EVENTS_HTU_HOST = 'events.htu.at'
 EVENTS_HTU = f'https://{EVENTS_HTU_HOST}'
 
 
-class HTUEvents(tucal.Plugin):
+class Plugin(tucal.Plugin):
     @staticmethod
     def sync():
         r = requests.post(f'{EVENTS_HTU}/api', json=QUERY)
@@ -48,7 +47,3 @@ class HTUEvents(tucal.Plugin):
                 ON CONFLICT ON CONSTRAINT pk_external_event DO
                 UPDATE SET start_ts = %(start)s, end_ts = %(end)s, data = %(data)s""", data)
         tucal.db.commit()
-
-    @staticmethod
-    def sync_auth(sso: tuwien.sso.Session):
-        pass
