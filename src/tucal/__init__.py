@@ -1,6 +1,7 @@
 
 from __future__ import annotations
 import datetime
+import pytz
 import typing
 import sys
 import time
@@ -30,6 +31,26 @@ class Plugin:
     @staticmethod
     def sync_auth(sso: tuwien.sso.Session):
         pass
+
+
+def parse_iso_timestamp(iso: str, default: bool = False, tz: str = None) -> datetime.datetime:
+    if iso[-1] == 'Z':
+        iso = iso[:-1] + '+00:00'
+    elif iso[-5] == '+':
+        iso = iso[:-2] + ':' + iso[-2:]
+    dt = datetime.datetime.fromisoformat(iso)
+    if dt.tzinfo is None:
+        if tz is not None:
+            dt = pytz.timezone(tz).localize(dt)
+        elif default:
+            dt = pytz.timezone('Europe/Vienna').localize(dt)
+        else:
+            dt = dt.astimezone()
+    return dt
+
+
+def now() -> datetime.datetime:
+    return datetime.datetime.now().astimezone()
 
 
 def schedule_job(name: str, *args):
@@ -146,7 +167,7 @@ class Semester:
 
     @staticmethod
     def current() -> Semester:
-        return Semester.from_date(datetime.datetime.utcnow())
+        return Semester.from_date(now())
 
     @staticmethod
     def last() -> Semester:
@@ -170,7 +191,7 @@ class Job:
         self._name = name
         self._clock_id = time.CLOCK_MONOTONIC
         self._proc_start = time.clock_gettime(self._clock_id)
-        print(f'**{datetime.datetime.now().astimezone().isoformat()}')
+        print(f'**{now().isoformat()}')
         if estimate:
             print(f'**{estimate}')
         print(f'*{self._format_time()}:0.0000:START:{sub_steps}:{name}')
@@ -231,7 +252,7 @@ class JobStatus:
 
         if line.startswith('*'):
             if self.start is None:
-                self.start = datetime.datetime.fromisoformat(line[1:]).astimezone()
+                self.start = parse_iso_timestamp(line[1:])
             elif self.estimate is None:
                 self.estimate = int(line[1:])
             else:

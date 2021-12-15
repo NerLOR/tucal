@@ -43,15 +43,6 @@ TAGS = re.compile(r'<script[^>]*>.*?</script>|<[^>]*>', re.MULTILINE | re.DOTALL
 SPACES = re.compile(r'\s+')
 
 
-def iso_to_datetime(iso_str: str) -> (datetime.datetime, datetime.timezone):
-    td = datetime.timedelta(hours=int(iso_str[-4:-3]), minutes=int(iso_str[-2:-1]))
-    if iso_str[-5] == '-':
-        td = -td
-    tz = datetime.timezone(td)
-    dt = datetime.datetime.fromisoformat(iso_str[:19])
-    return dt, tz
-
-
 class Building:
     id: str
     name: str
@@ -156,8 +147,9 @@ class Event:
 
     @staticmethod
     def from_json_obj(obj: typing.Dict[str], room: Room) -> Event:
-        return Event(obj['id'], iso_to_datetime(obj['start'])[0], iso_to_datetime(obj['end'])[0], obj['title'],
-                     obj['className'], room, obj['allDay'])
+        start = tucal.parse_iso_timestamp(obj['start'], True)
+        end = tucal.parse_iso_timestamp(obj['end'], True)
+        return Event(obj['id'], start, end, obj['title'], obj['className'], room, obj['allDay'])
 
 
 class Session:
