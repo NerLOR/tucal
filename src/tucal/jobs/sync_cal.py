@@ -46,7 +46,7 @@ if __name__ == '__main__':
         job.begin('sync tiss room schedules', len(rooms))
         for room_code, room_name in rooms:
             job.begin(f'sync tiss room schedule {room_name} <{room_code}>')
-            access = datetime.datetime.utcnow()
+            access = tucal.now()
 
             cal = tiss.get_room_schedule_ical(room_code)
             for evt in cal.events:

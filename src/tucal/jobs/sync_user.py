@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
     cur = tucal.db.cursor()
 
-    now = datetime.datetime.now().astimezone()
+    now = tucal.now()
     val = TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TISS_VAL + SYNC_CAL_VAL + SYNC_PLUGIN_VAL
     job = Job('sync user', 4, val, estimate=20)
 
@@ -204,7 +204,7 @@ if __name__ == '__main__':
     job.end(TUWEL_INIT_VAL)
 
     job.begin('sync tuwel calendar months', TUWEL_MONTHS)
-    acc = datetime.datetime.utcnow()
+    acc = tucal.now()
     months = [(acc.year + (acc.month - i - 1) // 12, (acc.month - i + 11) % 12 + 1) for i in range(0, TUWEL_MONTHS)]
 
     events = []

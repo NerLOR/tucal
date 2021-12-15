@@ -4,6 +4,8 @@ import datetime
 import pytz
 import html
 
+import tucal
+
 
 def _split(data: str, split: str = None) -> typing.List[str]:
     parts = []
@@ -97,13 +99,8 @@ class Event:
                     iso = f'{val[:4]}-{val[4:6]}-{val[6:8]}'
                     dt = datetime.date.fromisoformat(iso)
                 else:
-                    iso = f'{val[:4]}-{val[4:6]}-{val[6:8]}T{val[9:11]}:{val[11:13]}:{val[13:15]}'
-                    if val[-1] == 'Z':
-                        dt = datetime.datetime.fromisoformat(iso + '+00:00')
-                    else:
-                        dt = datetime.datetime.fromisoformat(iso)
-                        if len(opt) > 0:
-                            dt = pytz.timezone(opt[0].split('=')[1]).localize(dt)
+                    iso = f'{val[:4]}-{val[4:6]}-{val[6:8]}T{val[9:11]}:{val[11:13]}:{val[13:15]}{val[15:]}'
+                    dt = tucal.parse_iso_timestamp(iso, tz=opt[0].split('=')[1] if len(opt) > 0 else None)
                 if d == 'DTSTART':
                     self.start = dt
                 elif d == 'DTEND':
