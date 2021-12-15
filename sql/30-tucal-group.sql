@@ -245,3 +245,20 @@ CREATE TRIGGER t_delete
     ON tiss.exam_user
     FOR EACH ROW
 EXECUTE PROCEDURE tiss.exam_user_del_member();
+
+
+CREATE OR REPLACE VIEW tucal.v_account_group AS
+SELECT a.account_nr,
+       a.account_id,
+       a.mnr,
+       a.username,
+       g.group_nr,
+       g.group_id,
+       m.ignore_until,
+       m.ignore_from,
+       g.course_nr,
+       g.semester,
+       g.group_name
+FROM tucal.v_account a
+         LEFT JOIN tucal.group_member m ON m.account_nr = a.account_nr
+         LEFT JOIN tucal.group g ON g.group_nr = m.group_nr;

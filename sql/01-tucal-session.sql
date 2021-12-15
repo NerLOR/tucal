@@ -65,6 +65,7 @@ CREATE TABLE tucal.sso_credential
 
 CREATE OR REPLACE VIEW tucal.v_account AS
 SELECT a.account_nr,
+       a.account_id,
        a.mnr,
        LPAD(a.mnr::text, 8, '0')                                       AS mnr_normal,
        a.username,

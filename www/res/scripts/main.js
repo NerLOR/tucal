@@ -143,7 +143,7 @@ function getCourseName(courseNr) {
     const course = COURSE_DEF[courseNr];
     if (!course) return fallback;
 
-    return course.acronym_1 || course.short || course.name_de;
+    return course.acronym_1 || course.acronym_2 || course.short || course.name_de;
 }
 
 function getRoomName(roomNr) {

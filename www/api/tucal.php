@@ -181,11 +181,11 @@ function courses() {
     $stmt = db_exec("
             SELECT c.course_nr, c.semester, c.ects, cd.type, cd.name_de, cd.name_en,
                    ca.acronym_1, ca.acronym_2, ca.short, ca.program
-            FROM tiss.course_user cu
-            JOIN tiss.course c ON (c.course_nr, c.semester) = (cu.course_nr, cu.semester)
-            JOIN tiss.course_def cd ON cd.course_nr = c.course_nr
+            FROM tucal.v_account_group m
+            LEFT JOIN tiss.course c ON (c.course_nr, c.semester) = (m.course_nr, m.semester)
+            LEFT JOIN tiss.course_def cd ON cd.course_nr = c.course_nr
             LEFT JOIN tucal.course_acronym ca ON ca.course_nr = c.course_nr
-            WHERE cu.mnr = :mnr", [
+            WHERE m.mnr = :mnr", [
         'mnr' => $mnr,
     ]);
 
