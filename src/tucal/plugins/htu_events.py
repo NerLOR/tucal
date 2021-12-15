@@ -1,6 +1,5 @@
 import requests
 import json
-import dateutil.parser
 
 import tucal
 import tucal.db
@@ -26,8 +25,7 @@ EVENTS_HTU = f'https://{EVENTS_HTU_HOST}'
 class HTUEvents(tucal.Plugin):
     @staticmethod
     def sync():
-        url = f'{EVENTS_HTU}/api'
-        r = requests.post(url, json=QUERY)
+        r = requests.post(f'{EVENTS_HTU}/api', json=QUERY)
         if r.status_code != 200:
             raise RuntimeError()
 
@@ -38,18 +36,17 @@ class HTUEvents(tucal.Plugin):
 
         for event in events:
             data = {
-                'id': event["id"],
-                'start': dateutil.parser.isoparse(event['beginsOn']),
-                'end': dateutil.parser.isoparse(event['endsOn']),
+                'id': event['id'],
+                'start': tucal.parse_iso_timestamp(event['beginsOn'], True),
+                'end': tucal.parse_iso_timestamp(event['endsOn'], True),
                 'data': json.dumps({'htu': event})
             }
 
             cur.execute("""
                 INSERT INTO tucal.external_event (source, event_id, start_ts, end_ts, room_nr, group_nr, data)
-                VALUES ('eventHTU', %(id)s, %(start)s, %(end)s, NULL, NULL, %(data)s, %(del)s)
+                VALUES ('htu-events', %(id)s, %(start)s, %(end)s, NULL, NULL, %(data)s)
                 ON CONFLICT ON CONSTRAINT pk_external_event DO
-                UPDATE set start_ts = %(start)s, end_ts = %(end)s, room_nr = NULL, group_nr = NULL,
-                           data = %(data)s""", data)
+                UPDATE set start_ts = %(start)s, end_ts = %(end)s, data = %(data)s""", data)
         tucal.db.commit()
 
     @staticmethod
