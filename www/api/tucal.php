@@ -88,7 +88,9 @@ function calendar() {
             LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
             WHERE e.start_ts >= :start AND e.start_ts < :end AND
                   a.mnr = :mnr AND NOT e.deleted AND
-                  (e.global OR (:mnr IN (SELECT mnr FROM tuwel.event_user u WHERE u.event_id::text = x.event_id))) AND
+                  (e.global OR (:mnr IN (SELECT u.mnr FROM tuwel.event_user eu
+                                         JOIN tuwel.user u ON u.user_id = eu.user_id
+                                         WHERE eu.event_id::text = x.event_id))) AND
                   (m.ignore_from IS NULL OR e.start_ts < m.ignore_from) AND
                   (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
             GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data,
