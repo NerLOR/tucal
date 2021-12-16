@@ -44,6 +44,20 @@ CREATE INDEX idx_end ON tucal.event (end_ts);
 CREATE INDEX idx_group ON tucal.event (group_nr);
 CREATE INDEX idx_room ON tucal.event (room_nr);
 
+CREATE OR REPLACE FUNCTION tucal.event_id()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.event_id = tucal.gen_id(NEW.event_nr, 15981::smallint);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER t_insert
+    BEFORE INSERT
+    ON tucal.event
+    FOR EACH ROW
+EXECUTE PROCEDURE tucal.event_id();
+
 CREATE TABLE tucal.event_history
 (
     event_nr      BIGINT                   NOT NULL,

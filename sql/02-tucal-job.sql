@@ -32,7 +32,6 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER t_insert
     BEFORE INSERT
     ON tucal.job
