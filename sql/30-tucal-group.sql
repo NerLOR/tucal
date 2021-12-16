@@ -32,6 +32,20 @@ CREATE TABLE tucal.group
         ON DELETE RESTRICT
 );
 
+CREATE OR REPLACE FUNCTION tucal.group_id()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.group_id = tucal.gen_id(NEW.group_nr, 14379::smallint);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER t_insert
+    BEFORE INSERT
+    ON tucal.group
+    FOR EACH ROW
+EXECUTE PROCEDURE tucal.group_id();
+
 CREATE OR REPLACE FUNCTION tucal.get_group(cnr TEXT, sem TEXT, name TEXT) RETURNS BIGINT AS
 $$
 BEGIN
