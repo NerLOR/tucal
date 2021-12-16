@@ -1,13 +1,12 @@
 
 body main.wcal {
     width: 80%;
-    min-width: 1200px;
+    max-width: 100%;
 }
 
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1500px) {
     body main.wcal {
-        width: unset;
-        min-width: unset;
+        width: 1200px;
     }
 }
 

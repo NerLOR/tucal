@@ -11,7 +11,7 @@ body > footer {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1em 2em;
+    gap: 1em 3em;
     padding: 1em;
     font-size: 0.875em;
 }
@@ -48,7 +48,7 @@ body > footer > div.copyright {
     }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 500px) {
     body > footer {
         flex-direction: column;
         height: unset;
