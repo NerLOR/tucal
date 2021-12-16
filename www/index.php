@@ -25,12 +25,15 @@ require ".php/header.php";
     <section lang="de-AT">
         <h1>Benutzer:innenzahlen</h1>
         <?php
-        $stmt = db_exec("SELECT COUNT(*), SUM((active_ts >= current_date - INTERVAL '7' DAY)::int)
+        $stmt = db_exec("SELECT COUNT(*), SUM((active_ts >= current_date - INTERVAL '7' DAY)::int),
+                         SUM((active_ts >= current_date)::int)
                          FROM tucal.v_account WHERE verified = TRUE");
         $row = $stmt->fetchAll()[0];
         $userNum = $row[0];
         $weeklyNum = $row[1];
+        $todayNum = $row[2];
         ?>
+        <h2>Heute: <?php echo $todayNum;?></h2>
         <h2>In den letzten 7 Tagen: <?php echo $weeklyNum;?></h2>
         <h2>Insgesamt verifiziert: <?php echo $userNum;?></h2>
     </section>
