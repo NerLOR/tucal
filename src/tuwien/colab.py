@@ -1,5 +1,5 @@
 
-import typing
+from typing import Optional
 import requests
 import re
 import html
@@ -13,9 +13,9 @@ TD = re.compile(r'<td.*?>(.*?)</td>')
 class Room:
     id: str
     name: str
-    building: typing.Optional[str]
+    building: Optional[str]
 
-    def __init__(self, room_id: str, name: str, building: typing.Optional[str]):
+    def __init__(self, room_id: str, name: str, building: Optional[str]):
         self.id = room_id
         self.name = name.replace('Semianrraum', 'Seminarraum')
         self.building = building

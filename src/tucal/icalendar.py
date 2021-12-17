@@ -1,12 +1,12 @@
 
-import typing
+from typing import Optional, List, Tuple, Generator
 import datetime
 import html
 
 import tucal
 
 
-def _split(data: str, split: str = None) -> typing.List[str]:
+def _split(data: str, split: str = None) -> List[str]:
     parts = []
     cur = ''
     esc = False
@@ -32,19 +32,19 @@ def _split(data: str, split: str = None) -> typing.List[str]:
 
 
 class Event:
-    uid: typing.Optional[str]
-    sequence: typing.Optional[int]
-    summary: typing.Optional[str]
-    description: typing.Optional[str]
-    last_modified: typing.Optional[datetime.datetime]
-    access: typing.Optional[datetime.datetime]
-    start: typing.Optional[datetime.datetime or datetime.date]
-    end: typing.Optional[datetime.datetime or datetime.date]
-    categories: typing.List[str]
-    location: typing.Optional[str]
-    recurrence_id: typing.Optional[str]
-    url: typing.Optional[str]
-    conference: typing.Optional[str]
+    uid: Optional[str]
+    sequence: Optional[int]
+    summary: Optional[str]
+    description: Optional[str]
+    last_modified: Optional[datetime.datetime]
+    access: Optional[datetime.datetime]
+    start: Optional[datetime.datetime or datetime.date]
+    end: Optional[datetime.datetime or datetime.date]
+    categories: List[str]
+    location: Optional[str]
+    recurrence_id: Optional[str]
+    url: Optional[str]
+    conference: Optional[str]
 
     def __init__(self):
         self.uid = None
@@ -121,7 +121,7 @@ class Timezone:
 
 
 class Calendar:
-    events: typing.List[Event]
+    events: List[Event]
 
     def __init__(self):
         self.events = []
@@ -142,13 +142,13 @@ class Calendar:
 
 
 def parse_ical(data: str) -> Calendar:
-    def parse_line(line: str) -> typing.Tuple[str, typing.List[str], str]:
+    def parse_line(line: str) -> Tuple[str, List[str], str]:
         directive, value = line.split(':', 1)
         directive = directive.split(';')
         directive, opts = directive[0], directive[1:]
         return directive, opts, value
 
-    def gen() -> typing.Generator[str, None, None]:
+    def gen() -> Generator[str, None, None]:
         last = None
         for cur in data.splitlines():
             if last is not None and len(cur) > 0 and cur[0] in ('\t', ' '):

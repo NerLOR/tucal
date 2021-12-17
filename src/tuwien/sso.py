@@ -1,5 +1,5 @@
 
-import typing
+from typing import Optional
 import requests
 import re
 
@@ -17,9 +17,9 @@ INPUT_RELAY_STATE = re.compile(r'<input type="hidden" name="RelayState" value="(
 
 class Session:
     _session: requests.Session
-    _username: typing.Optional[str]
-    _password: typing.Optional[str]
-    _totp: typing.Optional[str]
+    _username: Optional[str]
+    _password: Optional[str]
+    _totp: Optional[str]
 
     def __init__(self, session: requests.Session = None):
         self._username = None

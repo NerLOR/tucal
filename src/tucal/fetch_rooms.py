@@ -1,6 +1,6 @@
 
+from typing import Optional
 import re
-import typing
 import sys
 
 import tuwien.tiss
@@ -12,16 +12,16 @@ NAME_REPLACE = re.compile(r'[^A-Za-z0-9äüößÄÜÖẞ]')
 
 class Room:
     name: str
-    suffix: typing.Optional[str]
-    name_short: typing.Optional[str]
-    alt_name: typing.Optional[str]
+    suffix: Optional[str]
+    name_short: Optional[str]
+    alt_name: Optional[str]
     room_codes: [str]
-    tiss_code: typing.Optional[str]
-    type: typing.Optional[str]
-    parent_name: typing.Optional[str]
-    area: typing.Optional[int]
-    capacity: typing.Optional[int]
-    comment: typing.Optional[str]
+    tiss_code: Optional[str]
+    type: Optional[str]
+    parent_name: Optional[str]
+    area: Optional[int]
+    capacity: Optional[int]
+    comment: Optional[str]
 
     def __init__(self, name: str, room_code: str, tiss_code: str = None, room_type: str = None,
                  area: int = None, capacity: int = None, comment: str = None):

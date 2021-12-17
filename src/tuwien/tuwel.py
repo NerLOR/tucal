@@ -1,5 +1,5 @@
 
-import typing
+from typing import Optional, Dict
 import requests
 import re
 import json
@@ -43,10 +43,10 @@ class Course:
 class Session:
     _session: requests.Session
     _sso: tuwien.sso.Session
-    _courses: typing.Optional[typing.Dict[str, Course]]
-    _user_id: typing.Optional[int]
-    _sess_key: typing.Optional[str]
-    _calendar_token: typing.Optional[str]
+    _courses: Optional[Dict[str, Course]]
+    _user_id: Optional[int]
+    _sess_key: Optional[str]
+    _calendar_token: Optional[str]
     _timeout: float
 
     def __init__(self, session: tuwien.sso.Session = None, timeout: float = 20):
@@ -71,7 +71,7 @@ class Session:
     def post(self, uri: str, data=None, headers=None) -> requests.Response:
         return self._session.post(f'{TUWEL_URL}{uri}', data=data, headers=headers, timeout=self._timeout)
 
-    def ajax(self, method: str, **args) -> typing.Dict:
+    def ajax(self, method: str, **args) -> Dict:
         data = [{
             'index': 0,
             'methodname': method,
@@ -110,7 +110,7 @@ class Session:
 
         return Course(course_id, Semester(semester), course_nr, name, short)
 
-    def _get_courses(self) -> typing.Dict[str, Course]:
+    def _get_courses(self) -> Dict[str, Course]:
         r = self.get('/my/')
         courses = {
             (link.group(1), link.group(2), link.group(3), link.group(4))
@@ -122,7 +122,7 @@ class Session:
         }
 
     @property
-    def courses(self) -> typing.Dict[str, Course]:
+    def courses(self) -> Dict[str, Course]:
         if self._courses is None:
             self._courses = self._get_courses()
         return self._courses
@@ -140,7 +140,7 @@ class Session:
         return self._calendar_token
 
     def get_personal_calendar(self, token: str, what: str = 'all', time: str = 'custom',
-                              user_id: int = None) -> typing.Optional[tucal.icalendar.Calendar]:
+                              user_id: int = None) -> Optional[tucal.icalendar.Calendar]:
         r = self.get(f'/calendar/export_execute.php?userid={user_id or self.user_id}&authtoken={token}&'
                      f'preset_what={what}&preset_time={time}')
         if r.status_code == 200:

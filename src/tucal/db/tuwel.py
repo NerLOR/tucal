@@ -1,5 +1,5 @@
 
-import typing
+from typing import Dict, Any
 import datetime
 
 import tucal.icalendar as ical
@@ -37,7 +37,7 @@ def insert_event_ical(evt: ical.Event, user_id: int = None):
     cur.close()
 
 
-def insert_event(evt: typing.Dict[str, typing.Any], access_time: datetime.datetime, user_id: int = None):
+def insert_event(evt: Dict[str, Any], access_time: datetime.datetime, user_id: int = None):
     cur = db.cursor()
 
     start = datetime.datetime.fromtimestamp(evt['timestart']).astimezone()

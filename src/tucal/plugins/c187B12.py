@@ -1,6 +1,6 @@
 # 187.B12 VU Denkweisen der Informatik
 
-import typing
+from typing import Optional
 import requests
 import requests.cookies
 import json
@@ -28,7 +28,7 @@ AURORA = f'https://{AURORA_HOST}'
 LITTLE_AURORA = f'https://{REVIEW_HOST}'
 
 
-def get_group_nr(semester: tucal.Semester) -> typing.Optional[int]:
+def get_group_nr(semester: tucal.Semester) -> Optional[int]:
     cur = tucal.db.cursor()
     cur.execute("SELECT group_nr FROM tucal.group_link WHERE (course_nr, semester) = ('187B12', %s)", (str(semester),))
     rows = cur.fetch_all()

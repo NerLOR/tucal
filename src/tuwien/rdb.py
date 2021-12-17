@@ -1,8 +1,7 @@
 
-import sys
+from typing import Optional
 import requests
 import re
-import typing
 
 TUWIEN_URL = 'https://www.tuwien.at'
 GUT_URI = '/tu-wien/organisation/zentrale-bereiche/gebaeude-und-technik'
@@ -28,9 +27,9 @@ class Room:
     room_nr: str
     name: str
     type: str
-    area: typing.Optional[int]
+    area: Optional[int]
 
-    def __init__(self, room_id: str, name: str, room_type: str, area: typing.Optional[float]):
+    def __init__(self, room_id: str, name: str, room_type: str, area: Optional[float]):
         parts = room_id.split(' ')
         if len(parts) == 1:
             parts = [room_id[0:2], room_id[2:4], room_id[4:]]

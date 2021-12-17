@@ -1,8 +1,8 @@
 
 from __future__ import annotations
+from typing import Optional, List, Dict, Any, Tuple, Generator
 import datetime
 import pytz
-import typing
 import sys
 import time
 import json
@@ -155,7 +155,7 @@ class Semester:
             return Semester(f'{date.year}S')
 
     @staticmethod
-    def from_date_strict(date: datetime.datetime) -> typing.Optional[Semester]:
+    def from_date_strict(date: datetime.datetime) -> Optional[Semester]:
         if date.month >= 10:
             return Semester(f'{date.year}W')
         elif date.month <= 1:
@@ -215,14 +215,14 @@ class Job:
 
 class JobStatus:
     progress: float
-    start: typing.Optional[datetime.datetime]
+    start: Optional[datetime.datetime]
     time: float
-    steps: typing.List[typing.Dict[str, typing.Any]]
-    comments: typing.List[str]
+    steps: List[Dict[str, Any]]
+    comments: List[str]
     finished: bool
     success: bool
-    current_step: typing.Optional[typing.Tuple]
-    estimate: typing.Optional[int]
+    current_step: Optional[Tuple]
+    estimate: Optional[int]
 
     def __init__(self):
         self.progress = 0
@@ -329,7 +329,7 @@ class JobStatus:
             raise JobFormatError('invalid job format')
         return True
 
-    def get_current_step(self) -> typing.Optional[typing.Dict[str, typing.Any]]:
+    def get_current_step(self) -> Optional[Dict[str, Any]]:
         if len(self.steps) == 0:
             return None
         cur = self.steps[0]
@@ -339,7 +339,7 @@ class JobStatus:
             cur = cur['steps'][idx]
         return cur
 
-    def path(self) -> typing.Generator[typing.Tuple[typing.Dict[str, typing.Any], int]]:
+    def path(self) -> Generator[Tuple[Dict[str, Any], int]]:
         cur = self.steps[0]
         yield cur, 1, 1
         if self.current_step is None:
@@ -350,7 +350,7 @@ class JobStatus:
             yield cur, idx + 1, step_num
         return
 
-    def _json(self, steps: typing.List[typing.Dict[str, typing.Any]]) -> typing.List[typing.Dict[str, typing.Any]]:
+    def _json(self, steps: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         cur = self.get_current_step()
         updated = []
         for step in steps:
