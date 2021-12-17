@@ -30,7 +30,7 @@ if __name__ == '__main__':
     cur = tucal.db.cursor()
 
     cur.execute("""
-        SELECT e.event_nr, array_agg(x.data) FROM tucal.event e
+        SELECT e.event_nr, array_agg(x.data), e.start_ts, e.end_ts, e.room_nr FROM tucal.event e
         LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
         GROUP BY e.event_nr""")
     rows = cur.fetch_all()

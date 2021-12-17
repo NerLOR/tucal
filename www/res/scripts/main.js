@@ -6,6 +6,7 @@ const MNR = (document.documentElement.getAttribute("data-mnr").length > 0) ? doc
 let COURSE_DEF = null;
 let COURSES = null;
 let ROOMS = null;
+let CALENDAR = null;
 
 
 initData();
@@ -29,8 +30,8 @@ function initCalendar() {
     const year = parseInt(parts[3]);
     const week = parseInt(parts[4].substr(1));
 
-    window.calenar = new WeekSchedule(subject, main);
-    calenar.setCurrentEventCb((events) => {
+    CALENDAR = new WeekSchedule(subject, main);
+    CALENDAR.setCurrentEventCb((events) => {
         const navLive = document.getElementById("nav-live");
         const liveButtons = navLive.getElementsByClassName("live");
         for (const btn of liveButtons) btn.href = '';
@@ -45,7 +46,7 @@ function initCalendar() {
             }
         }
     });
-    calenar.setWeek(new Week(year, week));
+    CALENDAR.setWeek(new Week(year, week));
 }
 
 function initNav() {
@@ -110,8 +111,8 @@ function initData() {
         for (const room of res.data.rooms) {
             ROOMS[room['nr']] = room;
         }
-        if (window.calendar) {
-            window.calendar.reloadEvents();
+        if (CALENDAR) {
+            CALENDAR.reloadEvents(true);
         }
     });
     if (MNR === null) return;
@@ -126,8 +127,8 @@ function initData() {
             COURSE_DEF[course['nr']] = {...course};
             delete COURSE_DEF[course['nr']].semester;
         }
-        if (window.calendar) {
-            window.calendar.reloadEvents();
+        if (CALENDAR) {
+            CALENDAR.reloadEvents(true);
         }
     });
 }

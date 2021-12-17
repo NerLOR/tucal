@@ -272,7 +272,7 @@ if __name__ == '__main__':
     job.begin('sync plugin calendars')
     cur.execute("""
         SELECT course_nr FROM tucal.group_member m
-        JOIN tucal.group g ON g.group_nr = m.group_nr
+        JOIN tucal.group_link g ON g.group_nr = m.group_nr
         JOIN tucal.account a ON a.account_nr = m.account_nr
         WHERE a.mnr = %s""", (mnr,))
     rows = cur.fetch_all()

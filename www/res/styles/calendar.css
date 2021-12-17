@@ -311,11 +311,11 @@ div.calendar div.event-wrapper div.event.now {
     box-shadow: 0 0 4px var(--glow);
 }
 
-div.calendar div.event span {
+div.calendar div.event > div {
     display: block;
 }
 
-div.calendar div.event span.time {
+div.calendar div.event div.time {
     font-size: 0.75em;
 }
 
@@ -345,5 +345,11 @@ div.calendar div.event span.course {
 @media screen and (max-width: 600px) {
     div.calendar thead th.day-header {
         font-size: 0.625em;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    div.calendar div.event div.summary {
+        display: none;
     }
 }

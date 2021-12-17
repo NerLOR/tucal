@@ -30,7 +30,7 @@ LITTLE_AURORA = f'https://{REVIEW_HOST}'
 
 def get_group_nr(semester: tucal.Semester) -> typing.Optional[int]:
     cur = tucal.db.cursor()
-    cur.execute("SELECT group_nr FROM tucal.group WHERE (course_nr, semester) = ('187B12', %s)", (str(semester),))
+    cur.execute("SELECT group_nr FROM tucal.group_link WHERE (course_nr, semester) = ('187B12', %s)", (str(semester),))
     rows = cur.fetch_all()
     if len(rows) == 0:
         return None

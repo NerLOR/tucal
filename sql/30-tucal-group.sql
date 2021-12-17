@@ -1,7 +1,9 @@
 DROP TABLE IF EXISTS tucal.external_event;
 DROP TABLE IF EXISTS tucal.event_history;
 DROP TABLE IF EXISTS tucal.event;
+DROP VIEW IF EXISTS tucal.v_account_group;
 DROP TABLE IF EXISTS tucal.group_member;
+DROP TABLE IF EXISTS tucal.group_link;
 DROP TABLE IF EXISTS tucal.group;
 DROP TRIGGER IF EXISTS t_insert ON tiss.course;
 DROP TRIGGER IF EXISTS t_insert ON tiss.group;
@@ -14,19 +16,32 @@ DROP TRIGGER IF EXISTS t_insert ON tiss.exam_user;
 DROP TRIGGER IF EXISTS t_delete ON tiss.course_user;
 DROP TRIGGER IF EXISTS t_delete ON tiss.group_user;
 DROP TRIGGER IF EXISTS t_delete ON tiss.exam_user;
+DROP FUNCTION IF EXISTS tucal.get_group;
 
 CREATE TABLE tucal.group
 (
     group_nr   BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
     group_id   TEXT DEFAULT NULL,
 
-    course_nr  TEXT                                NOT NULL,
-    semester   TEXT                                NOT NULL,
     group_name TEXT                                NOT NULL,
 
     CONSTRAINT pk_group PRIMARY KEY (group_nr),
-    CONSTRAINT sk_group_id UNIQUE (group_id),
-    CONSTRAINT sk_group UNIQUE (course_nr, semester, group_name),
+    CONSTRAINT sk_group_id UNIQUE (group_id)
+);
+
+CREATE TABLE tucal.group_link
+(
+    group_nr  BIGINT NOT NULL,
+
+    course_nr TEXT   NOT NULL,
+    semester  TEXT   NOT NULL,
+    name      TEXT   NOT NULL,
+
+    CONSTRAINT pk_group_link PRIMARY KEY (group_nr),
+    CONSTRAINT sk_group_link UNIQUE (course_nr, semester, name),
+    CONSTRAINT fk_group_link_group FOREIGN KEY (group_nr) REFERENCES tucal.group (group_nr)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     CONSTRAINT fk_group_course FOREIGN KEY (course_nr, semester) REFERENCES tiss.course (course_nr, semester)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
@@ -46,26 +61,31 @@ CREATE TRIGGER t_insert
     FOR EACH ROW
 EXECUTE PROCEDURE tucal.group_id();
 
-CREATE OR REPLACE FUNCTION tucal.get_group(cnr TEXT, sem TEXT, name TEXT) RETURNS BIGINT AS
+CREATE OR REPLACE FUNCTION tucal.get_group(cnr TEXT, sem TEXT, gname TEXT) RETURNS BIGINT AS
 $$
 BEGIN
-    RETURN (SELECT g.group_nr
-            FROM tucal.group g
-            WHERE (g.course_nr, g.semester, g.group_name) = (cnr, sem, name));
+    RETURN (SELECT l.group_nr
+            FROM tucal.group_link l
+            WHERE (l.course_nr, l.semester, l.name) = (cnr, sem, gname));
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION tiss.course_to_group()
     RETURNS TRIGGER AS
 $$
+DECLARE
+    nr BIGINT;
 BEGIN
     IF EXISTS(SELECT 1
-              FROM tucal.group
-              WHERE (course_nr, semester, group_name) = (NEW.course_nr, NEW.semester, 'LVA')) THEN
+              FROM tucal.group_link
+              WHERE (course_nr, semester, name) = (NEW.course_nr, NEW.semester, 'LVA')) THEN
         RETURN NULL;
     END IF;
-    INSERT INTO tucal.group (course_nr, semester, group_name)
-    VALUES (NEW.course_nr, NEW.semester, 'LVA');
+    INSERT INTO tucal.group (group_name)
+    VALUES (CONCAT(NEW.course_nr, '-', NEW.semester, ' LVA'))
+    RETURNING group_nr INTO nr;
+    INSERT INTO tucal.group_link (group_nr, course_nr, semester, name)
+    VALUES (nr, NEW.course_nr, NEW.semester, 'LVA');
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -78,15 +98,20 @@ EXECUTE PROCEDURE tiss.course_to_group();
 CREATE OR REPLACE FUNCTION tiss.group_to_group()
     RETURNS TRIGGER AS
 $$
+DECLARE
+    nr BIGINT;
 BEGIN
     IF EXISTS(SELECT 1
-              FROM tucal.group
-              WHERE (course_nr, semester, group_name) =
+              FROM tucal.group_link
+              WHERE (course_nr, semester, name) =
                     (NEW.course_nr, NEW.semester, CONCAT('Gruppe ', NEW.group_name))) THEN
         RETURN NULL;
     END IF;
-    INSERT INTO tucal.group (course_nr, semester, group_name)
-    VALUES (NEW.course_nr, NEW.semester, CONCAT('Gruppe ', NEW.group_name));
+    INSERT INTO tucal.group (group_name)
+    VALUES (CONCAT(NEW.course_nr, '-', NEW.semester, ' Gruppe ', NEW.group_name))
+    RETURNING group_nr INTO nr;
+    INSERT INTO tucal.group_link (group_nr, course_nr, semester, name)
+    VALUES (nr, NEW.course_nr, NEW.semester, CONCAT('Gruppe ', NEW.group_name));
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -99,15 +124,20 @@ EXECUTE PROCEDURE tiss.group_to_group();
 CREATE OR REPLACE FUNCTION tiss.exam_to_group()
     RETURNS TRIGGER AS
 $$
+DECLARE
+    nr BIGINT;
 BEGIN
     IF EXISTS(SELECT 1
-              FROM tucal.group
-              WHERE (course_nr, semester, group_name) =
+              FROM tucal.group_link
+              WHERE (course_nr, semester, name) =
                     (NEW.course_nr, NEW.semester, CONCAT('Prüfung ', NEW.exam_name))) THEN
         RETURN NULL;
     END IF;
-    INSERT INTO tucal.group (course_nr, semester, group_name)
-    VALUES (NEW.course_nr, NEW.semester, CONCAT('Prüfung ', NEW.exam_name));
+    INSERT INTO tucal.group (group_name)
+    VALUES (CONCAT(NEW.course_nr, '-', NEW.semester, ' Prüfung ', NEW.exam_name))
+    RETURNING group_nr INTO nr;
+    INSERT INTO tucal.group_link (group_nr, course_nr, semester, name)
+    VALUES (nr, NEW.course_nr, NEW.semester, CONCAT('Prüfung ', NEW.exam_name));
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -120,14 +150,19 @@ EXECUTE PROCEDURE tiss.exam_to_group();
 CREATE OR REPLACE FUNCTION tuwel.course_to_group()
     RETURNS TRIGGER AS
 $$
+DECLARE
+    nr BIGINT;
 BEGIN
     IF EXISTS(SELECT 1
-              FROM tucal.group
-              WHERE (course_nr, semester, group_name) = (NEW.course_nr, NEW.semester, 'LVA')) THEN
+              FROM tucal.group_link
+              WHERE (course_nr, semester, name) = (NEW.course_nr, NEW.semester, 'LVA')) THEN
         RETURN NULL;
     END IF;
-    INSERT INTO tucal.group (course_nr, semester, group_name)
-    VALUES (NEW.course_nr, NEW.semester, 'LVA');
+    INSERT INTO tucal.group (group_name)
+    VALUES (CONCAT(NEW.course_nr, '-', NEW.semester, ' LVA'))
+    RETURNING group_nr INTO nr;
+    INSERT INTO tucal.group_link (group_nr, course_nr, semester, name)
+    VALUES (nr, NEW.course_nr, NEW.semester, 'LVA');
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -288,10 +323,12 @@ SELECT a.account_nr,
        g.group_id,
        m.ignore_until,
        m.ignore_from,
-       g.course_nr,
-       g.semester,
-       g.group_name
+       g.group_name,
+       l.course_nr,
+       l.semester,
+       l.name
 FROM tucal.v_account a
          LEFT JOIN tucal.group_member m ON m.account_nr = a.account_nr
          LEFT JOIN tucal.group g ON g.group_nr = m.group_nr
-ORDER BY a.account_nr, g.semester, g.course_nr, g.group_name;
+         LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
+ORDER BY a.account_nr, l.semester, l.course_nr, g.group_name;

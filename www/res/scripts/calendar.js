@@ -325,7 +325,7 @@ class WeekSchedule {
         return w in this.weeks && this.weeks[w].date !== null && this.weeks[w].date > ref;
     }
 
-    reloadEvents() {
+    reloadEvents(forceRedraw = false) {
         const w = this.week.toString();
         let fetchCurrent = false;
         if (!this.weekIsValid(this.week)) {
@@ -336,7 +336,7 @@ class WeekSchedule {
                 fetchCurrent = true;
                 this.fetchWeeks(this.week, this.week);
             }
-        } else if (this.lastReload === null || this.lastReload !== this.weeks[w].date)  {
+        } else if (forceRedraw || this.lastReload === null || this.lastReload !== this.weeks[w].date)  {
             this.clearEvents();
             const week = this.weeks[w];
             this.lastReload = week.date;
@@ -579,8 +579,12 @@ class WeekSchedule {
 
                 const startFmt = formatter.format(start);
                 const endFmt = formatter.format(end);
-                const short = event.course && getCourseName(event.course.nr) || null;
-                evt.innerHTML = `<span class="time">${startFmt}-${endFmt}</span><span class="course">${short}</span> ${event.summary}`;
+                const course = event.course && getCourseName(event.course.nr) || null;
+                const room = event.room_nr && getRoomName(event.room_nr) || null;
+                evt.innerHTML = `<div class="time">${startFmt}-${endFmt}</div>` +
+                    `<div><span class="course">${course}</span>` +
+                    (room !== null ? ` - <span class="room">${room}</span></div>` : '') +
+                    (event.summary !== null ? `<div class="summary">${event.summary}</div>` : '');
                 day.appendChild(evt);
             }
         }
@@ -598,6 +602,7 @@ class Event {
     summary;
     desc;
     details;
+    room_nr;
 
     constructor(json) {
         this.id = json.id;
@@ -608,6 +613,7 @@ class Event {
         this.summary = json.data.summary;
         this.desc = json.data.desc;
         this.details = json.data.details;
+        this.room_nr = json.room_nr;
     }
 
     getWeek() {
