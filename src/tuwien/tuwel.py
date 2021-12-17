@@ -36,7 +36,7 @@ class Course:
         self.nr = nr.replace('.', '')
         name = name.rsplit(' (', 1)
         self.name = name[0].strip()
-        self.suffix = name[1].replace(')', '').strip()
+        self.suffix = name[1].replace(')', '').strip() if len(name) > 1 else None
         self.short = short
 
 
