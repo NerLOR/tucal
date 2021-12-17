@@ -1,12 +1,14 @@
 
-import typing
+from typing import List, Dict, Any
 import time
 import json
+import datetime
 
 import tucal.db
 
 
-def update_event(events: typing.List[typing.Dict[str, typing.Any]]):
+def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: datetime.datetime,
+                 room: int):
     evt = {
         'summary': None,
         'desc': None,
@@ -34,8 +36,8 @@ if __name__ == '__main__':
         LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
         GROUP BY e.event_nr""")
     rows = cur.fetch_all()
-    for event_nr, datas in rows:
-        data = json.dumps(update_event(datas))
+    for event_nr, datas, start_ts, end_ts, room_nr in rows:
+        data = json.dumps(update_event(datas, start_ts, end_ts, room_nr))
         cur.execute("UPDATE tucal.event SET data = %s, updated = TRUE WHERE event_nr = %s", (data, event_nr))
     tucal.db.commit()
 
@@ -58,13 +60,13 @@ if __name__ == '__main__':
         tucal.db.commit()
 
         cur.execute("""
-               SELECT e.event_nr, array_agg(x.data) FROM tucal.event e
+               SELECT e.event_nr, array_agg(x.data), e.start_ts, e.end_ts, e.room_nr FROM tucal.event e
                LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
                WHERE e.updated = FALSE
                GROUP BY e.event_nr""")
         rows = cur.fetch_all()
-        for event_nr, datas in rows:
-            data = json.dumps(update_event(datas))
+        for event_nr, datas, start_ts, end_ts, room_nr in rows:
+            data = json.dumps(update_event(datas, start_ts, end_ts, room_nr))
             cur.execute("UPDATE tucal.event SET data = %s, updated = TRUE WHERE event_nr = %s", (data, event_nr))
         tucal.db.commit()
 
