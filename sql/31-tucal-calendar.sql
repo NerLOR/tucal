@@ -166,7 +166,10 @@ BEGIN
     INSERT INTO tucal.external_event (source, event_id, event_nr, start_ts, end_ts, room_nr, group_nr, data)
     VALUES ('tiss', NEW.event_nr::text, NULL, NEW.start_ts, NEW.end_ts,
             (SELECT room_nr FROM tucal.v_room r WHERE r.tiss_code = NEW.room_code),
-            tucal.get_group(NEW.course_nr, NEW.semester, 'LVA'), jsonb_build_object('tiss', tiss));
+            tucal.get_group(NEW.course_nr, NEW.semester, COALESCE(
+                        'Prüfung ' || NEW.exam_name,
+                        'Gruppe ' || NEW.group_name,
+                        'LVA')), jsonb_build_object('tiss', tiss));
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -193,7 +196,11 @@ BEGIN
     SET start_ts = NEW.start_ts,
         end_ts   = NEW.end_ts,
         room_nr  = (SELECT room_nr FROM tucal.v_room r WHERE r.tiss_code = NEW.room_code),
-        group_nr = tucal.get_group(NEW.course_nr, NEW.semester, 'LVA'),
+        group_nr = tucal.get_group(NEW.course_nr, NEW.semester,
+                                   COALESCE(
+                                               'Prüfung ' || NEW.exam_name,
+                                               'Gruppe ' || NEW.group_name,
+                                               'LVA')),
         data     = jsonb_build_object('tiss', tiss)
     WHERE (source, event_id) = ('tiss', NEW.event_nr::text);
     RETURN NEW;

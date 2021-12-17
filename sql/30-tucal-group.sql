@@ -294,4 +294,4 @@ SELECT a.account_nr,
 FROM tucal.v_account a
          LEFT JOIN tucal.group_member m ON m.account_nr = a.account_nr
          LEFT JOIN tucal.group g ON g.group_nr = m.group_nr
-ORDER BY a.account_nr;
+ORDER BY a.account_nr, g.semester, g.course_nr, g.group_name;
