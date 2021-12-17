@@ -74,7 +74,8 @@ def commit() -> bool:
     return True
 
 
-def upsert(table: str, data: List[Dict[str, Any]], fields: Dict[str, str], pk: Tuple, types: Dict[str, str] = None):
+def upsert_values(table: str, data: List[Dict[str, Any]], fields: Dict[str, str], pk: Tuple,
+                  types: Dict[str, str] = None):
     types = types or {}
     cur = cursor()
     cur.execute(f"SELECT {', '.join(pk)} FROM {table}")

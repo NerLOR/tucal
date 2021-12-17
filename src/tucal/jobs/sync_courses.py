@@ -66,9 +66,9 @@ if __name__ == '__main__':
             'ects': c.ects,
         })
     fields = {'course_nr': 'nr', 'name_de': 'de', 'name_en': 'en', 'type': 'type'}
-    tucal.db.upsert('tiss.course_def', rows, fields, ('course_nr',))
+    tucal.db.upsert_values('tiss.course_def', rows, fields, ('course_nr',))
     fields = {'course_nr': 'nr', 'semester': 'sem', 'ects': 'ects'}
-    tucal.db.upsert('tiss.course', rows, fields, ('course_nr', 'semester'))
+    tucal.db.upsert_values('tiss.course', rows, fields, ('course_nr', 'semester'))
 
     tucal.db.commit()
     job.end(DB_VAL)

@@ -26,7 +26,7 @@ if __name__ == '__main__':
             row = [d.strip() if len(d.strip()) > 0 else None for d in line.strip().split(',')]
             rows.append({heading[n]: int(row[n]) if heading[n] == 'nr' else row[n] for n in range(len(heading))})
     fields = {'type': 'nr', 'name_de': 'name_de', 'name_en': 'name_en'}
-    tucal.db.upsert('tiss.event_type', rows, fields, ('type',))
+    tucal.db.upsert_values('tiss.event_type', rows, fields, ('type',))
     print('Updated event types')
 
     print('Updating course types...')
@@ -37,7 +37,7 @@ if __name__ == '__main__':
             row = [d.strip() if len(d.strip()) > 0 else None for d in line.strip().split(',')]
             rows.append({heading[n]: row[n] for n in range(len(heading))})
     fields = {'type': 'code', 'name_de': 'name_de', 'name_en': 'name_en'}
-    tucal.db.upsert('tiss.course_type', rows, fields, ('type',))
+    tucal.db.upsert_values('tiss.course_type', rows, fields, ('type',))
     print('Updated course types')
 
     print('Updating course acronyms...')
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         'acronym_1': 'acronym_1',
         'acronym_2': 'acronym_2',
     }
-    tucal.db.upsert('tucal.course_acronym', rows, fields, ('course_nr',))
+    tucal.db.upsert_values('tucal.course_acronym', rows, fields, ('course_nr',))
     print('Updated course acronyms')
 
     print('Updating areas...')
@@ -67,7 +67,7 @@ if __name__ == '__main__':
             data['in_use'] = data['in_use'] == 'yes'
             rows.append(data)
     fields = {'area_id': 'area_id', 'area_name': 'name', 'area_suffix': 'suffix', 'in_use': 'in_use'}
-    tucal.db.upsert('tucal.area', rows, fields, ('area_id',))
+    tucal.db.upsert_values('tucal.area', rows, fields, ('area_id',))
     print('Updated areas')
 
     print('Updating buildings...')
@@ -89,7 +89,7 @@ if __name__ == '__main__':
         'object_nr': 'object_nr',
         'address': 'address',
     }
-    tucal.db.upsert('tucal.building', rows, fields, ('area_id', 'local_id'))
+    tucal.db.upsert_values('tucal.building', rows, fields, ('area_id', 'local_id'))
     print('Updated buildings')
 
     tucal.db.commit()
@@ -104,7 +104,7 @@ if __name__ == '__main__':
             'full': room.tiss_name,
         })
     fields = {'code': 'id', 'name': 'name', 'name_full': 'full'}
-    tucal.db.upsert('tiss.room', rows, fields, ('code',))
+    tucal.db.upsert_values('tiss.room', rows, fields, ('code',))
     print('Updated tiss rooms')
 
     tucal.db.commit()
