@@ -161,8 +161,8 @@ def insert_event(evt: Dict[str, Any], access_time: datetime.datetime, room_code:
     return data['nr']
 
 
-def insert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], course: Course, access_time: datetime.datetime,
-                        mnr: int = None) -> Optional[int]:
+def insert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], course: Course,
+                        access_time: datetime.datetime, mnr: int = None) -> Optional[int]:
     cur = tucal.db.cursor()
     rows_insert = []
     rows_update = []
@@ -184,7 +184,7 @@ def insert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], cou
         cur.execute("""
             SELECT event_nr FROM tiss.event
             WHERE (room_code IS NULL OR %(room)s IS NULL OR COALESCE(room_code, '') = COALESCE(%(room)s, '')) AND
-                  (type, name, start_ts, end_ts, course_nr) = 
+                  (type, name, start_ts, end_ts, course_nr) =
                   (%(type)s, %(name)s, %(start)s, %(end)s, %(cnr)s)""", data)
         matching = cur.fetch_all()
         if len(matching) > 0:
@@ -197,7 +197,7 @@ def insert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], cou
         cur.execute_values("""
             UPDATE tiss.event e SET group_name = d.group_name, location = d.location, description = d.description,
                                     access_ts = d.acc
-            FROM (VALUES (%(nr)s, %(group_name)s, %(loc)s, %(desc)s, %(acc)s)) AS 
+            FROM (VALUES (%(nr)s, %(group_name)s, %(loc)s, %(desc)s, %(acc)s)) AS
                 d (event_nr, group_name, location, description, acc)
             WHERE e.event_nr = d.event_nr""", rows_update)
 
@@ -217,6 +217,64 @@ def insert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], cou
             INSERT INTO tiss.event_user (event_nr, mnr)
             VALUES (%s, %s)
             ON CONFLICT DO NOTHING""", [(evt, mnr) for evt in evt_nrs])
+
+    cur.close()
+    return None
+
+
+def insert_course_events(events: List[Dict[str, Any]], course: Course, access_time: datetime.datetime, mnr: int = None):
+    cur = tucal.db.cursor()
+    rows_insert = []
+    rows_update = []
+    for evt in events:
+        data = {
+            'name': course.name_de,
+            'type': 1,
+            'cnr': course.nr,
+            'sem': str(course.semester),
+            'start': evt['start'],
+            'end': evt['end'],
+            'room': evt['room_code'],
+            'loc': evt['location'],
+            'desc': evt['comment'],
+            'acc': access_time,
+        }
+        cur.execute("""
+                SELECT event_nr FROM tiss.event
+                WHERE (room_code IS NULL OR %(room)s IS NULL OR COALESCE(room_code, '') = COALESCE(%(room)s, '')) AND
+                      (type, name, start_ts, end_ts, course_nr) =
+                      (%(type)s, %(name)s, %(start)s, %(end)s, %(cnr)s)""", data)
+        matching = cur.fetch_all()
+        if len(matching) > 0:
+            data['nr'] = matching[0][0]
+            rows_update.append(data)
+        else:
+            rows_insert.append(data)
+
+    if len(rows_update) > 0:
+        cur.execute_values("""
+                UPDATE tiss.event e SET location = d.location, description = d.description,
+                                        access_ts = d.acc
+                FROM (VALUES (%(nr)s, %(loc)s, %(desc)s, %(acc)s)) AS
+                    d (event_nr, location, description, acc)
+                WHERE e.event_nr = d.event_nr""", rows_update)
+
+    inserted = []
+    if len(rows_insert) > 0:
+        cur.execute_values("""
+                INSERT INTO tiss.event (type, course_nr, semester, room_code, start_ts, end_ts, access_ts, name,
+                    description, location)
+                VALUES (%(type)s, %(cnr)s, %(sem)s, %(room)s, %(start)s, %(end)s, %(acc)s, %(name)s,
+                    %(desc)s, %(loc)s)
+                RETURNING event_nr""", rows_insert)
+        inserted = cur.fetch_all()
+    evt_nrs = inserted + [evt['nr'] for evt in rows_update]
+
+    if mnr and len(evt_nrs) > 0:
+        cur.execute_values("""
+                INSERT INTO tiss.event_user (event_nr, mnr)
+                VALUES (%s, %s)
+                ON CONFLICT DO NOTHING""", [(evt, mnr) for evt in evt_nrs])
 
     cur.close()
     return None

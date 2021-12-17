@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     now = tucal.now()
     val = TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TISS_VAL + SYNC_CAL_VAL + SYNC_PLUGIN_VAL
-    job = Job('sync user', 4, val, estimate=20)
+    job = Job('sync user', 4, val, estimate=50)
 
     mnr = f'{args.mnr:08}'
     pwd = None
@@ -149,8 +149,12 @@ if __name__ == '__main__':
     tucal.db.commit()
 
     favorites = tiss.favorites
+    course_events = {}
     course_groups = {}
-    for course in tiss.favorites:
+    for course in favorites:
+        if course.semester < tucal.Semester.last():
+            continue
+        course_events[course] = tiss.get_course_events(course)
         course_groups[course] = tiss.get_groups(course)
 
     cur.execute("DELETE FROM tiss.course_user WHERE mnr = %s", (mnr,))
@@ -164,25 +168,45 @@ if __name__ == '__main__':
         WHERE mnr = %s AND
         (SELECT e.deregistration_end > now() FROM tiss.exam e
             WHERE (e.course_nr, e.semester, e.exam_name) = (u.course_nr, u.semester, u.exam_name))""", (mnr,))
+
+    cur.execute_values("INSERT INTO tiss.course_user (course_nr, semester, mnr) VALUES (%s, %s, %s)",
+                       [(course.nr, str(course.semester), mnr) for course in favorites])
+
+    for course, events in course_events.items():
+        tucal.db.tiss.insert_course_events(events, course, access_time=now, mnr=int(mnr))
+
     for course, groups in course_groups.items():
-        cur.execute("INSERT INTO tiss.course_user (course_nr, semester, mnr) VALUES (%s, %s, %s)",
-                    (course.nr, str(course.semester), mnr))
+        rows = [{
+            'nr': course.nr,
+            'sem': str(course.semester),
+            'name': group['name'],
+            'appl_start': group['application_start'],
+            'appl_end': group['application_end'],
+            'dereg_end': group['deregistration_end'],
+        } for group in groups.values()]
+
+        fields = {
+            'course_nr': 'nr',
+            'semester': 'sem',
+            'group_name': 'name',
+            'application_start': 'appl_start',
+            'application_end': 'appl_end',
+            'deregistration_end': 'dereg_end',
+        }
+        types = {
+            'application_start': 'timestamptz',
+            'application_end': 'timestamptz',
+            'deregistration_end': 'timestamptz',
+        }
+        tucal.db.upsert_values('tiss.group', rows, fields, ('course_nr', 'semester', 'group_name'), types=types)
+
         for group in groups.values():
             data = {
                 'nr': course.nr,
-                'sem': str(course.semester),
                 'mnr': mnr,
+                'sem': str(course.semester),
                 'name': group['name'],
-                'appl_start': group['application_start'],
-                'appl_end': group['application_end'],
-                'dereg_end': group['deregistration_end'],
             }
-            cur.execute("""
-                INSERT INTO tiss.group (course_nr, semester, group_name,
-                    application_start, application_end, deregistration_end)
-                VALUES (%(nr)s, %(sem)s, %(name)s, %(appl_start)s, %(appl_end)s, %(dereg_end)s)
-                ON CONFLICT ON CONSTRAINT pk_group DO NOTHING""", data)
-
             if group['enrolled']:
                 cur.execute("""
                     INSERT INTO tiss.group_user (course_nr, semester, group_name, mnr)

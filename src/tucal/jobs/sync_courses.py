@@ -55,16 +55,14 @@ if __name__ == '__main__':
     job.end(0)
 
     job.begin('update database')
-    rows = []
-    for c in courses:
-        rows.append({
-            'nr': c.nr,
-            'de': c.name_de,
-            'en': c.name_en,
-            'type': c.type,
-            'sem': str(c.semester),
-            'ects': c.ects,
-        })
+    rows = [{
+        'nr': c.nr,
+        'de': c.name_de,
+        'en': c.name_en,
+        'type': c.type,
+        'sem': str(c.semester),
+        'ects': c.ects,
+    } for c in courses]
     fields = {'course_nr': 'nr', 'name_de': 'de', 'name_en': 'en', 'type': 'type'}
     tucal.db.upsert_values('tiss.course_def', rows, fields, ('course_nr',))
     fields = {'course_nr': 'nr', 'semester': 'sem', 'ects': 'ects'}

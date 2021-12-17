@@ -1,7 +1,7 @@
 
 from __future__ import annotations
+from typing import List, Dict, Any, Optional, Set, Generator
 import random
-import typing
 import requests
 import re
 import datetime
@@ -48,11 +48,11 @@ class Building:
     id: str
     name: str
     tiss_name: str
-    address: typing.Optional[str]
-    _global_rooms: typing.Dict[str, Room]
+    address: Optional[str]
+    _global_rooms: Dict[str, Room]
 
-    def __init__(self, building_id: str, tiss_name: str, name: typing.Optional[str] = None,
-                 address: typing.Optional[str] = None, global_rooms: typing.Dict[str, Room] = None):
+    def __init__(self, building_id: str, tiss_name: str, name: Optional[str] = None,
+                 address: Optional[str] = None, global_rooms: Dict[str, Room] = None):
         self.id = building_id
         self.tiss_name = tiss_name
         self.name = name or tiss_name
@@ -74,13 +74,13 @@ class Room:
     id: str
     name: str
     tiss_name: str
-    capacity: typing.Optional[int]
-    global_id: typing.Optional[str]
+    capacity: Optional[int]
+    global_id: Optional[str]
     _building_id: str
-    _global_buildings: typing.Dict[str, Building]
+    _global_buildings: Dict[str, Building]
 
-    def __init__(self, room_id: str, building_id: str, tiss_name: str, name: typing.Optional[str] = None,
-                 capacity: typing.Optional[int] = None, global_buildings: {str: Building} = None):
+    def __init__(self, room_id: str, building_id: str, tiss_name: str, name: Optional[str] = None,
+                 capacity: Optional[int] = None, global_buildings: {str: Building} = None):
         self.id = room_id
         self.tiss_name = tiss_name
         self.name = name or tiss_name.split(' - Achtung!')[0]
@@ -131,12 +131,12 @@ class Event:
     end: datetime.datetime
     all_day: bool
     title: str
-    description: typing.Optional[str]
+    description: Optional[str]
     type: str
     room: Room
 
     def __init__(self, event_id: str, start: datetime.datetime, end: datetime.datetime, title: str, event_type: str,
-                 room: Room, description: typing.Optional[str] = None, all_day: bool = False):
+                 room: Room, description: Optional[str] = None, all_day: bool = False):
         self.id = event_id.replace('.', '')
         self.start = start
         self.end = end
@@ -147,7 +147,7 @@ class Event:
         self.room = room
 
     @staticmethod
-    def from_json_obj(obj: typing.Dict[str], room: Room) -> Event:
+    def from_json_obj(obj: Dict[str], room: Room) -> Event:
         start = tucal.parse_iso_timestamp(obj['start'], True)
         end = tucal.parse_iso_timestamp(obj['end'], True)
         return Event(obj['id'], start, end, obj['title'], obj['className'], room, obj['allDay'])
@@ -156,14 +156,14 @@ class Event:
 class Session:
     _win_id: int
     _req_token: int
-    _view_state: typing.Optional[str]
+    _view_state: Optional[str]
     _session: requests.Session
     _sso: tuwien.sso.Session
-    _buildings: typing.Optional[typing.Dict[str, Building]]
-    _rooms: typing.Optional[typing.Dict[str, Room]]
-    _courses: typing.Optional[typing.Dict[str, Course]]
-    _calendar_token: typing.Optional[str]
-    _favorites = typing.Optional[typing.List[Course]]
+    _buildings: Optional[Dict[str, Building]]
+    _rooms: Optional[Dict[str, Room]]
+    _courses: Optional[Dict[str, Course]]
+    _calendar_token: Optional[str]
+    _favorites = Optional[List[Course]]
     _timeout: float
 
     def __init__(self, session: tuwien.sso.Session = None, timeout: float = 20):
@@ -201,14 +201,14 @@ class Session:
         for update in pattern.finditer(text):
             self._view_state = update.group(1)
 
-    def get(self, endpoint: str, headers: typing.Dict[str, object] = None,
+    def get(self, endpoint: str, headers: Dict[str, object] = None,
             allow_redirects: bool = True) -> requests.Response:
         r = self._session.get(f'{TISS_URL}{self.update_endpoint(endpoint)}', headers=headers,
                               allow_redirects=allow_redirects, timeout=self._timeout)
         self._update_view_state(r.text)
         return r
 
-    def post(self, endpoint: str, data: typing.Dict[str, object], headers: typing.Dict[str, object] = None,
+    def post(self, endpoint: str, data: Dict[str, object], headers: Dict[str, object] = None,
              ajax: bool = False, allow_redirects: bool = True) -> requests.Response:
         headers = headers or {}
         headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -310,7 +310,7 @@ class Session:
         return Course(course_nr, semester, title_de, title_en, course_type, ects)
 
     def course_generator(self, semester: Semester, semester_to: Semester = None,
-                         skip: typing.Set[(str, Semester)] = None) -> typing.Generator[Course or int]:
+                         skip: Set[(str, Semester)] = None) -> Generator[Course or int]:
         skip = skip or set()
 
         data1 = {
@@ -346,7 +346,7 @@ class Session:
         for course in course_nrs - skip:
             yield course[0], course[1], lambda: self._get_course(course[0], course[1])
 
-    def _get_courses(self, semester: Semester, semester_to: Semester = None) -> typing.Dict[str, Course]:
+    def _get_courses(self, semester: Semester, semester_to: Semester = None) -> Dict[str, Course]:
         gen = self.course_generator(semester, semester_to)
         next(gen)
         return {
@@ -355,7 +355,7 @@ class Session:
         }
 
     @property
-    def buildings(self) -> typing.Dict[str, Building]:
+    def buildings(self) -> Dict[str, Building]:
         if self._buildings is None:
             self._buildings = {}
             for building in self._get_buildings():
@@ -363,7 +363,7 @@ class Session:
         return self._buildings
 
     @property
-    def rooms(self) -> typing.Dict[str, Room]:
+    def rooms(self) -> Dict[str, Room]:
         if self._rooms is None:
             self._rooms = {}
             for building in self.buildings.values():
@@ -372,12 +372,12 @@ class Session:
         return self._rooms
 
     @property
-    def courses(self) -> typing.Dict[str, Course]:
+    def courses(self) -> Dict[str, Course]:
         if self._courses is None:
             self._courses = self._get_courses(Semester.last(), Semester.current())
         return self._courses
 
-    def get_room_schedule_ical(self, room_code: str) -> typing.Optional[tucal.icalendar.Calendar]:
+    def get_room_schedule_ical(self, room_code: str) -> Optional[tucal.icalendar.Calendar]:
         r = self._session.get(f'{TISS_URL}/events/rest/calendar/room?locale=de&roomCode={room_code}',
                               timeout=self._timeout, allow_redirects=False)
         if r.status_code == 200:
@@ -385,7 +385,7 @@ class Session:
         else:
             return None
 
-    def get_room_schedule(self, room_code: str) -> typing.Dict[str, typing.Any]:
+    def get_room_schedule(self, room_code: str) -> Dict[str, Any]:
         data = {
             'javax.faces.partial.execute': 'calendarForm:schedule',
             'javax.faces.partial.render': 'calendarForm:schedule',
@@ -400,7 +400,7 @@ class Session:
             if cd.startswith('{') and cd.endswith('}'):
                 return json.loads(cd)
 
-    def get_personal_schedule_ical(self, token: str) -> typing.Optional[tucal.icalendar.Calendar]:
+    def get_personal_schedule_ical(self, token: str) -> Optional[tucal.icalendar.Calendar]:
         r = self._session.get(f'{TISS_URL}/events/rest/calendar/personal?locale=de&token={token}',
                               timeout=self._timeout, allow_redirects=False)
         if r.status_code == 200:
@@ -408,7 +408,7 @@ class Session:
         else:
             return None
 
-    def get_personal_schedule(self) -> typing.Dict[str, typing.Any]:
+    def get_personal_schedule(self) -> Dict[str, Any]:
         data = {
             'javax.faces.partial.execute': 'calendarForm:schedule',
             'javax.faces.partial.render': 'calendarForm:schedule',
@@ -471,12 +471,12 @@ class Session:
             self.post('/education/subscriptionSettings.xhtml', data)
 
     @property
-    def favorites(self) -> typing.List[Course]:
+    def favorites(self) -> List[Course]:
         if self._favorites is None:
             self._favorites = self._get_favorites()
         return self._favorites
 
-    def _get_favorites(self) -> typing.List[Course]:
+    def _get_favorites(self) -> List[Course]:
         r = self.get('/education/favorites.xhtml')
         courses = []
         for row in TABLE_TR.finditer(r.text):
@@ -487,7 +487,7 @@ class Session:
             courses.append(Course(course[1], course[0], course[2], None, None, float(data[2])))
         return courses
 
-    def get_groups(self, course: Course) -> typing.Dict[str, typing.Dict[str, typing.Any]]:
+    def get_groups(self, course: Course) -> Dict[str, Dict[str, Any]]:
         r = self.get(f'/education/course/groupList.xhtml?semester={course.semester}&courseNr={course.nr}')
         groups = {}
         for g_html in GROUP_DIV.finditer(r.text):
@@ -535,4 +535,51 @@ class Session:
         return groups
 
     def get_course_events(self, course: Course):
-        r = self.get(f'/course/educationDetails.xhtml?semester={course.semester}&courseNr={course.nr}')
+        self.get(f'/course/educationDetails.xhtml?semester={course.semester}&courseNr={course.nr}')
+
+        data = {
+            'javax.faces.source': 'j_id_4n:eventDetailDateTable',
+            'javax.faces.partial.execute': 'j_id_4n:eventDetailDateTable',
+            'javax.faces.partial.render': 'j_id_4n:eventDetailDateTable',
+            'j_id_4n:eventDetailDateTable': 'j_id_4n:eventDetailDateTable',
+            'j_id_4n:eventDetailDateTable_pagination': 'true',
+            'j_id_4n:eventDetailDateTable_first': 0,
+            'j_id_4n:eventDetailDateTable_rows': 20,
+            'j_id_4n:eventDetailDateTable_skipChildren': 'true',
+            'j_id_4n:eventDetailDateTable_encodeFeature': 'true',
+            'j_id_4n_SUBMIT': '1',
+        }
+        events = []
+        stop = False
+        while not stop:
+            stop = True
+            r = self.post(f'/course/educationDetails.xhtml', data, ajax=True)
+            for cdata in CDATA.finditer(r.text):
+                cd = cdata.group(1)
+                if not cd.startswith('<tr'):
+                    continue
+                stop = False
+                for row in TABLE_TR.finditer(cd):
+                    event = [d.group(1) for d in TABLE_TD.finditer(row.group(1))]
+                    if len(event) == 0:
+                        continue
+                    day, date, time_from_to, location, comment = event
+                    m = ROOM_CODE.findall(location)
+                    room_code = None
+                    if len(m) > 0:
+                        room_code = m[0]
+
+                    start_time, end_time = time_from_to.split(' - ')
+                    iso_date = '-'.join(date.split('.')[::-1])
+                    start = tucal.parse_iso_timestamp(f'{iso_date}T{start_time}:00', True)
+                    end = tucal.parse_iso_timestamp(f'{iso_date}T{end_time}:00', True)
+
+                    events.append({
+                        'location': location if not room_code else None,
+                        'room_code': room_code,
+                        'comment': comment,
+                        'start': start,
+                        'end': end,
+                    })
+            data['j_id_4n:eventDetailDateTable_first'] += 20
+        return events

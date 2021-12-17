@@ -33,15 +33,13 @@ class Plugin(tucal.Plugin):
         raw_events = r.json()
         events = raw_events['data']['events']['elements']
 
-        rows = []
-        for event in events:
-            rows.append({
-                'source': 'htu-events',
-                'id': event['id'],
-                'start': tucal.parse_iso_timestamp(event['beginsOn'], True),
-                'end': tucal.parse_iso_timestamp(event['endsOn'], True),
-                'data': json.dumps({'htu': event}),
-            })
+        rows = [{
+            'source': 'htu-events',
+            'id': event['id'],
+            'start': tucal.parse_iso_timestamp(event['beginsOn'], True),
+            'end': tucal.parse_iso_timestamp(event['endsOn'], True),
+            'data': json.dumps({'htu': event}),
+        } for event in events]
 
         fields = {
             'source': 'source',

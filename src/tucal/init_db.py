@@ -96,13 +96,12 @@ if __name__ == '__main__':
 
     print('Fetching tiss rooms...')
     s = tuwien.tiss.Session()
-    rows = []
-    for room in s.rooms.values():
-        rows.append({
-            'id': room.id,
-            'name': room.name,
-            'full': room.tiss_name,
-        })
+    rows = [{
+        'id': room.id,
+        'name': room.name,
+        'full': room.tiss_name,
+    } for room in s.rooms.values()]
+
     fields = {'code': 'id', 'name': 'name', 'name_full': 'full'}
     tucal.db.upsert_values('tiss.room', rows, fields, ('code',))
     print('Updated tiss rooms')
