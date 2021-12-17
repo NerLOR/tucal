@@ -105,35 +105,61 @@ function initJobs() {
 }
 
 function initData() {
-    fetch(`/api/tucal/rooms`).then((res) => {
-        res.json().then((res) => {
-            ROOMS = {};
-            for (const room of res.data.rooms) {
-                ROOMS[room['nr']] = room;
-            }
-            if (window.calendar) {
-                window.calendar.reloadEvents();
-            }
-        })
+    api(`/tucal/rooms`).then((res) => {
+        ROOMS = {};
+        for (const room of res.data.rooms) {
+            ROOMS[room['nr']] = room;
+        }
+        if (window.calendar) {
+            window.calendar.reloadEvents();
+        }
     });
     if (MNR === null) return;
-    fetch(`/api/tucal/courses?mnr=${MNR}`).then((res) => {
-        res.json().then((res) => {
-            COURSES = res.data.personal;
-            COURSE_DEF = {};
-            for (const course of COURSES) {
-                COURSE_DEF[course['nr']] = {...course};
-                delete COURSE_DEF[course['nr']].semester;
-            }
-            for (const course of res.data.friends) {
-                COURSE_DEF[course['nr']] = {...course};
-                delete COURSE_DEF[course['nr']].semester;
-            }
-            if (window.calendar) {
-                window.calendar.reloadEvents();
-            }
-        })
+    api(`/tucal/courses?mnr=${MNR}`).then((res) => {
+        COURSES = res.data.personal;
+        COURSE_DEF = {};
+        for (const course of COURSES) {
+            COURSE_DEF[course['nr']] = {...course};
+            delete COURSE_DEF[course['nr']].semester;
+        }
+        for (const course of res.data.friends) {
+            COURSE_DEF[course['nr']] = {...course};
+            delete COURSE_DEF[course['nr']].semester;
+        }
+        if (window.calendar) {
+            window.calendar.reloadEvents();
+        }
     });
+}
+
+async function api(endpoint, data = null) {
+    let info = {};
+    if (data !== null) {
+        info = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+            },
+            body: JSON.stringify(data)
+        }
+    }
+
+    const req = await fetch(`/api${endpoint}`, info);
+    const json = await req.json();
+
+    if (json.message !== null) {
+        if (json.status === "success") {
+            console.warn(`API: ${json.message}`);
+        } else {
+            console.error(`API: ${json.message}`);
+        }
+    }
+
+    if (req.status === 200 && json.status === "success") {
+        return json;
+    } else {
+        throw new Error(json.message);
+    }
 }
 
 function getCourseName(courseNr) {

@@ -394,38 +394,26 @@ class WeekSchedule {
     async fetch(start, end, weeks = []) {
         start = `start=${start.toISOString()}`;
         end = `end=${end.toISOString()}`;
-        const req = await fetch(`/api/tucal/calendar?subject=${this.subject}&${start}&${end}`);
-        const json = await req.json();
+        const json = await api(`/tucal/calendar?subject=${this.subject}&${start}&${end}`)
 
-        if (json.message !== null) {
-            if (json.status === "success") {
-                console.warn(`API: ${json.message}`);
-            } else {
-                console.error(`API: ${json.message}`);
+        const ts = new Date(Date.parse(json.data.timestamp));
+        for (const week of weeks) {
+            const w = this.weeks[week];
+            if (w.date === null || w.date !== ts) {
+                w.date = ts;
+                w.events = [];
+                w.promise = null;
             }
         }
 
-        if (req.status === 200 && json.status === "success") {
-            const ts = new Date(Date.parse(json.data.timestamp));
+        for (const evtJson of json.data.events) {
+            const evt = new Event(evtJson);
+            const w = this.weeks[evt.getWeek().toString()];
+            w.events.push(evt);
+        }
 
-            for (const week of weeks) {
-                const w = this.weeks[week];
-                if (w.date === null || w.date !== ts) {
-                    w.date = ts;
-                    w.events = [];
-                    w.promise = null;
-                }
-            }
-
-            for (const evtJson of json.data.events) {
-                const evt = new Event(evtJson);
-                const w = this.weeks[evt.getWeek().toString()];
-                w.events.push(evt);
-            }
-
-            if (weeks.includes(this.week.toString())) {
-                this.reloadEvents();
-            }
+        if (weeks.includes(this.week.toString())) {
+            this.reloadEvents();
         }
     }
 
