@@ -18,7 +18,7 @@ INPUT_SESS_KEY = re.compile(r'<input name="sesskey" type="hidden" value="([^"]*)
 USER_ID = re.compile(r'data-userid="([0-9]+)"')
 SESS_KEY = re.compile(r'"sesskey":"([^"]*)"')
 
-H1 = re.compile(r'<h1>([0-9]{3}\.[0-9A-Z]{3})\s*(.*?)\s*([0-9]{4}[SW])</h1>')
+H1 = re.compile(r'<h1>([0-9]{3}\.[0-9A-Z]{3})\s*(.*?)\s*([0-9]{4}[SW])?</h1>')
 SPAN = re.compile(r'<span class="media-body font-weight-bold">\s*([^<>]*)\s*</span>')
 
 
@@ -105,7 +105,8 @@ class Session:
     def _get_course(self, course_id: int) -> Course:
         r = self.get(f'/course/view.php?id={course_id}')
 
-        course_nr, name, semester = H1.findall(r.text)[0]
+        groups = H1.findall(r.text)[0]
+        course_nr, name, semester = groups[0], groups[1], len(groups) > 2 and groups[2] or Semester.current()
         short = SPAN.findall(r.text)[0]
 
         return Course(course_id, Semester(semester), course_nr, name, short)
