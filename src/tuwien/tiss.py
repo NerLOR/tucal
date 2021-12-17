@@ -518,7 +518,7 @@ class Session:
                 m = ROOM_CODE.findall(location)
                 room_code = None
                 if len(m) > 0:
-                    room_code = m[0]
+                    room_code = m[0].replace('+', ' ')
 
                 iso_date = '-'.join(date.split('.')[::-1])
                 start = tucal.parse_iso_timestamp(f'{iso_date}T{start_time}:00', True)
@@ -567,7 +567,7 @@ class Session:
                     m = ROOM_CODE.findall(location)
                     room_code = None
                     if len(m) > 0:
-                        room_code = m[0]
+                        room_code = m[0].replace('+', ' ')
 
                     start_time, end_time = time_from_to.split(' - ')
                     iso_date = '-'.join(date.split('.')[::-1])
