@@ -59,9 +59,13 @@ CREATE OR REPLACE FUNCTION tiss.course_to_group()
     RETURNS TRIGGER AS
 $$
 BEGIN
+    IF EXISTS(SELECT 1
+              FROM tucal.group
+              WHERE (course_nr, semester, group_name) = (NEW.course_nr, NEW.semester, 'LVA')) THEN
+        RETURN NULL;
+    END IF;
     INSERT INTO tucal.group (course_nr, semester, group_name)
-    VALUES (NEW.course_nr, NEW.semester, 'LVA')
-    ON CONFLICT DO NOTHING;
+    VALUES (NEW.course_nr, NEW.semester, 'LVA');
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -75,9 +79,14 @@ CREATE OR REPLACE FUNCTION tiss.group_to_group()
     RETURNS TRIGGER AS
 $$
 BEGIN
+    IF EXISTS(SELECT 1
+              FROM tucal.group
+              WHERE (course_nr, semester, group_name) =
+                    (NEW.course_nr, NEW.semester, CONCAT('Gruppe ', NEW.group_name))) THEN
+        RETURN NULL;
+    END IF;
     INSERT INTO tucal.group (course_nr, semester, group_name)
-    VALUES (NEW.course_nr, NEW.semester, CONCAT('Gruppe ', NEW.group_name))
-    ON CONFLICT DO NOTHING;
+    VALUES (NEW.course_nr, NEW.semester, CONCAT('Gruppe ', NEW.group_name));
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -91,9 +100,14 @@ CREATE OR REPLACE FUNCTION tiss.exam_to_group()
     RETURNS TRIGGER AS
 $$
 BEGIN
+    IF EXISTS(SELECT 1
+              FROM tucal.group
+              WHERE (course_nr, semester, group_name) =
+                    (NEW.course_nr, NEW.semester, CONCAT('Prüfung ', NEW.exam_name))) THEN
+        RETURN NULL;
+    END IF;
     INSERT INTO tucal.group (course_nr, semester, group_name)
-    VALUES (NEW.course_nr, NEW.semester, CONCAT('Prüfung ', NEW.exam_name))
-    ON CONFLICT DO NOTHING;
+    VALUES (NEW.course_nr, NEW.semester, CONCAT('Prüfung ', NEW.exam_name));
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -107,9 +121,13 @@ CREATE OR REPLACE FUNCTION tuwel.course_to_group()
     RETURNS TRIGGER AS
 $$
 BEGIN
+    IF EXISTS(SELECT 1
+              FROM tucal.group
+              WHERE (course_nr, semester, group_name) = (NEW.course_nr, NEW.semester, 'LVA')) THEN
+        RETURN NULL;
+    END IF;
     INSERT INTO tucal.group (course_nr, semester, group_name)
-    VALUES (NEW.course_nr, NEW.semester, 'LVA')
-    ON CONFLICT DO NOTHING;
+    VALUES (NEW.course_nr, NEW.semester, 'LVA');
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
