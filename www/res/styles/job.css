@@ -7,8 +7,8 @@ div.job-viewer div.progress-bar {
     height: 24px;
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid #808080;
-    background-color: #F8F8F8;
+    border: 1px solid var(--grey-80);
+    background-color: var(--grey-F8);
     border-radius: 12px;
     text-align: center;
     position: relative;

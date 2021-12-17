@@ -29,7 +29,7 @@ main form.panel a.button {
     padding: 0.75em 1em;
     font-size: 1em;
     border-radius: var(--border-radius);
-    background-color: #FFFFFF;
+    background-color: var(--color-comp);
     --border-color: var(--color);
     overflow: hidden;
 }
@@ -50,7 +50,7 @@ main form.panel a.button {
 }
 
 main form.panel div.text > label {
-    color: #808080;
+    color: var(--grey-80);
     position: absolute;
     left: 1rem;
     top: 0.875rem;
@@ -88,6 +88,7 @@ main form.panel div.text > input {
     width: 100%;
     padding: 1.25rem 1rem 0.25rem 1rem;
     border-radius: var(--border-radius);
+    background-color: var(--input-bg-color);
 }
 
 main form.panel button,
@@ -106,7 +107,7 @@ main form.panel a.button:focus {
     background-color: var(--color);
     border-color: var(--color-dark);
     cursor: pointer;
-    color: #FFFFFF;
+    color: var(--color-comp);
 }
 
 main form.panel ~ div.error {

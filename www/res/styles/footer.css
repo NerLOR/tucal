@@ -6,8 +6,8 @@ html {
 body > footer {
     height: var(--footer-height);
     box-sizing: border-box;
-    border-top: 1px solid #C0C0C0;
-    background-color: #FFFFFF;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--sec-bg-color);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,7 +18,7 @@ body > footer {
 
 body > footer > a {
     text-decoration: none;
-    color: #808080;
+    color: var(--grey-80);
     display: block;
     max-height: 64px;
 }
@@ -28,7 +28,7 @@ body > footer > * {
 }
 
 body > footer > a:hover {
-    color: #606060;
+    color: var(--grey-60);
 }
 
 body > footer > a img {
@@ -37,7 +37,7 @@ body > footer > a img {
 }
 
 body > footer > div.copyright {
-    color: #C0C0C0;
+    color: var(--grey-C0);
     text-align: center;
 }
 

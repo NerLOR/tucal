@@ -10,8 +10,8 @@ body > nav {
     display: flex;
     height: var(--nav-height);
     box-sizing: content-box;
-    border-bottom: 1px solid #C0C0C0;
-    background-color: #FFFFFF;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--sec-bg-color);
     position: fixed;
     top: 0;
     left: 0;
@@ -32,14 +32,14 @@ body > nav a {
 }
 
 body > nav > div.link a {
-    color: #808080;
+    color: var(--grey-80);
     padding: 1em 2em 0 2em;
     text-align: center;
 }
 
 body > nav a.button {
-    color: #808080;
-    border: 1px solid #C0C0C0;
+    color: var(--grey-80);
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     display: inline-block;
     height: 2em;
@@ -107,7 +107,7 @@ body > nav > div.link {
 
 #nav-live a.live:hover {
     background-color: var(--red);
-    color: #FFFFFF;
+    color: var(--color-comp);
 }
 
 #nav-live a.live span {
@@ -142,17 +142,18 @@ body > nav > div.link {
     outline: none;
     border-radius: var(--border-radius);
     font-size: 1em;
-    border: 1px solid #C0C0C0;
+    border: 1px solid var(--border-color);
     padding: 0.5em 0.75em;
     box-sizing: border-box;
     width: 100%;
     margin: 0.375em 0;
     height: 2.25em;
+    background-color: var(--input-bg-color);
 }
 
 #user-menu {
-    background-color: #FFFFFF;
-    border: 1px solid #FFFFFF;
+    background-color: var(--sec-bg-color);
+    border: 1px solid var(--sec-bg-color);
     border-radius: var(--border-radius);
     text-align: left;
     height: fit-content;
@@ -161,11 +162,11 @@ body > nav > div.link {
 }
 
 #user-menu:hover {
-    border-color: #F0F0F0;
+    border-color: var(--grey-F0);
 }
 
 #user-menu.active {
-    border-color: #C0C0C0;
+    border-color: var(--grey-C0);
 }
 
 #user-menu > div {
@@ -212,7 +213,7 @@ body > nav > div.link {
 #user-menu > div a {
     padding: 0;
     height: unset;
-    color: #000000;
+    color: var(--black);
     font-size: 0.875em;
     cursor: pointer;
 }
@@ -225,13 +226,13 @@ body > nav > div.link {
 }
 
 #user-menu > div:not(:first-child):hover {
-    background-color: #F0F0F0;
+    background-color: var(--grey-F0);
 }
 
 #user-menu hr {
     margin: 0;
     border: none;
-    background-color: #C0C0C0;
+    background-color: var(--border-color);
     height: 1px;
     width: 100%;
 }
