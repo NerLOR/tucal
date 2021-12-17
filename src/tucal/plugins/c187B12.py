@@ -31,7 +31,7 @@ LITTLE_AURORA = f'https://{REVIEW_HOST}'
 def get_group_nr(semester: tucal.Semester) -> typing.Optional[int]:
     cur = tucal.db.cursor()
     cur.execute("SELECT group_nr FROM tucal.group WHERE (course_nr, semester) = ('187B12', %s)", (str(semester),))
-    rows = cur.fetchall()
+    rows = cur.fetch_all()
     if len(rows) == 0:
         return None
     return rows[0][0]
@@ -45,13 +45,14 @@ class Plugin(tucal.Plugin):
         if r.status_code != 200:
             return
 
-        cur = tucal.db.cursor()
         cal = tucal.icalendar.parse_ical(r.text)
+        rows = []
         for evt in cal.events:
             if evt.summary.startswith('Abgabe:') or evt.summary.startswith('Ende Reviewing:') or \
                     evt.summary.startswith('Finale Abgabe:') or evt.summary.startswith('Start:'):
                 continue
-            data = {
+            rows.append({
+                'source': '187B12-aurora',
                 'id': evt.uid_rec,
                 'start': evt.start,
                 'end': evt.end,
@@ -63,14 +64,18 @@ class Plugin(tucal.Plugin):
                         'url': evt.url,
                     },
                 }),
-            }
-            cur.execute("""
-                INSERT INTO tucal.external_event (source, event_id, start_ts, end_ts, room_nr, group_nr,
-                    data, deleted)
-                VALUES ('187B12-aurora', %(id)s, %(start)s, %(end)s, NULL, %(group)s, %(data)s, %(del)s)
-                ON CONFLICT ON CONSTRAINT pk_external_event DO
-                UPDATE SET start_ts = %(start)s, end_ts = %(end)s, room_nr = NULL, group_nr = %(group)s,
-                           data = %(data)s, deleted = %(del)s""", data)
+            })
+
+        fields = {
+            'source': 'source',
+            'event_id': 'id',
+            'start_ts': 'start',
+            'end_ts': 'end',
+            'group_nr': 'group',
+            'deleted': 'del',
+            'data': 'data'
+        }
+        tucal.db.upsert('tuccal.external_event', rows, fields, ('source', 'event_id'))
         tucal.db.commit()
 
     @staticmethod
@@ -152,7 +157,7 @@ class Plugin(tucal.Plugin):
                 evt['challenges'].append(ass)
             evt.update(data)
 
-        cur = tucal.db.cursor()
+        rows = []
         for name, event in events.items():
             for sub in ('end', 'reviewing_end', 'reflection'):
                 if sub not in event:
@@ -166,18 +171,22 @@ class Plugin(tucal.Plugin):
                 data = {'aurora': {'summary': name + ((' - ' + suffix) if suffix else '')}}
                 if 'challenges' in event:
                     data['aurora']['challenges'] = event['challenges']
-                data = {
+                rows.append({
+                    'source': '187B12-review',
                     'id': evt_id,
                     'ts': event[sub],
                     'group': group_nr,
                     'data': json.dumps(data),
-                }
+                })
 
-                cur.execute("""
-                    INSERT INTO tucal.external_event (source, event_id, start_ts, end_ts, room_nr, group_nr, data)
-                    VALUES ('187B12-review', %(id)s, %(ts)s, %(ts)s, NULL, %(group)s, %(data)s)
-                    ON CONFLICT ON CONSTRAINT pk_external_event DO
-                    UPDATE SET start_ts = %(ts)s, end_ts = %(ts)s, room_nr = NULL, group_nr = %(group)s,
-                               data = %(data)s""", data)
+        fields = {
+            'source': 'source',
+            'event_id': 'id',
+            'start_ts': 'ts',
+            'end_ts': 'ts',
+            'group_nr': 'group',
+            'data': 'data',
+        }
+        tucal.db.upsert('tucal.external_event', rows, fields, ('source', 'event_id'))
         tucal.db.commit()
 

@@ -30,22 +30,26 @@ class Plugin(tucal.Plugin):
         if r.status_code != 200:
             raise RuntimeError()
 
-        cur = tucal.db.cursor()
-
         raw_events = r.json()
         events = raw_events['data']['events']['elements']
 
+        rows = []
         for event in events:
-            data = {
+            rows.append({
+                'source': 'htu-events',
                 'id': event['id'],
                 'start': tucal.parse_iso_timestamp(event['beginsOn'], True),
                 'end': tucal.parse_iso_timestamp(event['endsOn'], True),
-                'data': json.dumps({'htu': event})
-            }
+                'data': json.dumps({'htu': event}),
+            })
 
-            cur.execute("""
-                INSERT INTO tucal.external_event (source, event_id, start_ts, end_ts, room_nr, group_nr, data)
-                VALUES ('htu-events', %(id)s, %(start)s, %(end)s, NULL, NULL, %(data)s)
-                ON CONFLICT ON CONSTRAINT pk_external_event DO
-                UPDATE SET start_ts = %(start)s, end_ts = %(end)s, data = %(data)s""", data)
+        fields = {
+            'source': 'source',
+            'event_id': 'id',
+            'start_ts': 'start',
+            'end_ts': 'end',
+            'group_nr': 'group',
+            'data': 'data',
+        }
+        tucal.db.upsert('tucal.external_event', rows, fields, ('source', 'event_id'))
         tucal.db.commit()

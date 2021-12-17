@@ -55,27 +55,21 @@ if __name__ == '__main__':
     job.end(0)
 
     job.begin('update database')
-    cur = tucal.db.cursor()
+    rows = []
     for c in courses:
-        data = {
+        rows.append({
             'nr': c.nr,
             'de': c.name_de,
             'en': c.name_en,
             'type': c.type,
             'sem': str(c.semester),
             'ects': c.ects,
-        }
-        cur.execute("""
-            INSERT INTO tiss.course_def (course_nr, name_de, name_en, type)
-            VALUES (%(nr)s, %(de)s, %(en)s, %(type)s)
-            ON CONFLICT ON CONSTRAINT pk_course_def
-            DO UPDATE SET name_de = %(de)s, name_en = %(en)s, type = %(type)s""", data)
-        cur.execute("""
-            INSERT INTO tiss.course (course_nr, semester, ects)
-            VALUES (%(nr)s, %(sem)s, %(ects)s)
-            ON CONFLICT ON CONSTRAINT pk_course
-            DO UPDATE SET ects = %(ects)s""", data)
-    cur.close()
+        })
+    fields = {'course_nr': 'nr', 'name_de': 'de', 'name_en': 'en', 'type': 'type'}
+    tucal.db.upsert('tiss.course_def', rows, fields, ('course_nr',))
+    fields = {'course_nr': 'nr', 'semester': 'sem', 'ects': 'ects'}
+    tucal.db.upsert('tiss.course', rows, fields, ('course_nr', 'semester'))
+
     tucal.db.commit()
     job.end(DB_VAL)
 

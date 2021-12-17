@@ -6,6 +6,7 @@ import re
 import tucal.db
 import tucal.db as db
 import tucal.icalendar as ical
+from tuwien.tiss import Course
 
 COURSE_NR = re.compile(r'^([0-9]{3})\.([0-9A-Z]{3})')
 
@@ -30,7 +31,7 @@ def get_course(name: str) -> typing.Optional[str]:
     course = course[0][0] + course[0][1] if len(course) > 0 else None
     cur = tucal.db.cursor()
     cur.execute("SELECT course_nr FROM tiss.course_def WHERE course_nr = %s", (course,))
-    courses = cur.fetchall()
+    courses = cur.fetch_all()
     cur.close()
     if len(courses) == 0:
         return None
@@ -47,7 +48,7 @@ def insert_event_ical(evt: ical.Event, room_code: str = None, mnr: int = None) -
     location = None
     if room_code is None and evt.location is not None:
         cur.execute("SELECT code FROM tiss.room WHERE name_full = %s", (evt.location,))
-        codes = cur.fetchall()
+        codes = cur.fetch_all()
         if len(codes) > 0:
             room_code = codes[0][0] if len(codes) > 0 else None
         else:
@@ -76,7 +77,7 @@ def insert_event_ical(evt: ical.Event, room_code: str = None, mnr: int = None) -
         WHERE event_id IS NULL AND
         (room_code IS NULL OR %(room)s IS NULL OR COALESCE(room_code, '') = COALESCE(%(room)s, '')) AND
         (type, name, start_ts, end_ts) = (%(type)s, %(name)s, %(start)s, %(end)s)""", data)
-    events = cur.fetchall()
+    events = cur.fetch_all()
 
     if len(events) > 0:
         data['nr'] = events[0][0]
@@ -93,7 +94,7 @@ def insert_event_ical(evt: ical.Event, room_code: str = None, mnr: int = None) -
                 course_nr, location)
             VALUES (%(id)s, %(type)s, %(room)s, %(start)s, %(end)s, %(access)s, %(name)s, %(desc)s, %(course)s, %(loc)s)
             RETURNING event_nr""", data)
-        events = cur.fetchall()
+        events = cur.fetch_all()
         data['nr'] = events[0][0]
 
     if mnr is not None:
@@ -130,7 +131,7 @@ def insert_event(evt: typing.Dict[str, typing.Any], access_time: datetime.dateti
         SELECT event_nr FROM tiss.event
         WHERE (room_code IS NULL OR %(room)s IS NULL OR COALESCE(room_code, '') = COALESCE(%(room)s, '')) AND
         (type, name, start_ts, end_ts) = (%(type)s, %(name)s, %(start)s, %(end)s)""", data)
-    events = cur.fetchall()
+    events = cur.fetch_all()
 
     if len(events) > 0:
         data['nr'] = events[0][0]
@@ -148,7 +149,7 @@ def insert_event(evt: typing.Dict[str, typing.Any], access_time: datetime.dateti
             VALUES (%(type)s, %(room)s, %(start)s, %(end)s, %(access)s, %(name)s, NULL, %(live)s, %(online)s,
                 %(course)s)
             RETURNING event_nr""", data)
-        events = cur.fetchall()
+        events = cur.fetch_all()
         data['nr'] = events[0][0]
 
     if mnr is not None:
@@ -158,3 +159,18 @@ def insert_event(evt: typing.Dict[str, typing.Any], access_time: datetime.dateti
 
     cur.close()
     return data['nr']
+
+
+def insert_group_event(evt: typing.Dict[str, typing.Any], course: Course, access_time: datetime.datetime,
+                       mnr: int = None) -> typing.Optional[int]:
+    cur = tucal.db.cursor()
+
+    data = {
+
+    }
+
+    #cur.execute("""
+    #""", data)
+
+    cur.close()
+    return None

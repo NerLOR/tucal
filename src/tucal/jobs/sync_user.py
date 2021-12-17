@@ -92,7 +92,7 @@ if __name__ == '__main__':
         cur.execute("""
             SELECT key, pwd, tfa_gen FROM tucal.sso_credential
             WHERE account_nr = (SELECT account_nr FROM tucal.account WHERE mnr = %s)""", (mnr,))
-        cred = cur.fetchall()
+        cred = cur.fetch_all()
         if len(cred) == 0:
             raise RuntimeError('account credentials not found in database')
         acc_key, pwd_enc, tfa_gen_enc = cred[0]
@@ -146,13 +146,50 @@ if __name__ == '__main__':
         INSERT INTO tiss.user (mnr, auth_token) VALUES (%(mnr)s, %(token)s)
         ON CONFLICT ON CONSTRAINT pk_user DO UPDATE SET auth_token = %(token)s""", data)
 
+    favorites = tiss.favorites
+    for course in tiss.favorites:
+        groups = tiss.get_groups(course)
+        # TODO wait for data, then db
+
     cur.execute("DELETE FROM tiss.course_user WHERE mnr = %s", (mnr,))
-    cur.execute("DELETE FROM tiss.group_user WHERE mnr = %s", (mnr,))
-    cur.execute("DELETE FROM tiss.exam_user WHERE mnr = %s", (mnr,))
+    cur.execute("""
+        DELETE FROM tiss.group_user u
+        WHERE u.mnr = %s AND
+        (SELECT g.deregistration_end > now() FROM tiss.group g
+            WHERE (g.course_nr, g.semester, g.group_name) = (u.course_nr, u.semester, u.group_name))""", (mnr,))
+    cur.execute("""
+        DELETE FROM tiss.exam_user u
+        WHERE mnr = %s AND
+        (SELECT e.deregistration_end > now() FROM tiss.exam e
+            WHERE (e.course_nr, e.semester, e.exam_name) = (u.course_nr, u.semester, u.exam_name))""", (mnr,))
     for course in tiss.favorites:
         cur.execute("INSERT INTO tiss.course_user (course_nr, semester, mnr) VALUES (%s, %s, %s)",
                     (course.nr, str(course.semester), mnr))
-        tiss.get_groups(course)
+        groups = tiss.get_groups(course)
+        for group in groups.values():
+            data = {
+                'nr': course.nr,
+                'sem': str(course.semester),
+                'mnr': mnr,
+                'name': group['name'],
+                'appl_start': group['application_start'],
+                'appl_end': group['application_end'],
+                'dereg_end': group['deregistration_end'],
+            }
+            cur.execute("""
+                INSERT INTO tiss.group (course_nr, semester, group_name,
+                    application_start, application_end, deregistration_end)
+                VALUES (%(nr)s, %(sem)s, %(name)s, %(appl_start)s, %(appl_end)s, %(dereg_end)s)
+                ON CONFLICT ON CONSTRAINT pk_group DO NOTHING""", data)
+
+            if group['enrolled']:
+                cur.execute("""
+                    INSERT INTO tiss.group_user (course_nr, semester, group_name, mnr)
+                    VALUES (%(nr)s, %(sem)s, %(name)s, %(mnr)s)
+                    ON CONFLICT ON CONSTRAINT pk_group_user DO NOTHING""", data)
+
+            for event in group['events']:
+                tucal.db.tiss.insert_group_event(event, course=course, access_time=now, mnr=int(mnr))
 
     if not args.keep_calendar_settings:
         tiss.update_calendar_settings()
@@ -220,6 +257,10 @@ if __name__ == '__main__':
         job.end(TUWEL_MONTH_VAL)
     job.end(0)
 
+    cur.execute("""
+        DELETE FROM tuwel.event_user
+        WHERE user_id = (SELECT user_id FROM tuwel.user WHERE mnr = %s) AND
+            event_id IN (SELECT event_id FROM tuwel.event WHERE start_ts >= current_date)""", (mnr,))
     for evt in events:
         tucal.db.tuwel.insert_event(evt, acc, user_id)
     job.end(0)
@@ -232,8 +273,7 @@ if __name__ == '__main__':
         JOIN tucal.group g ON g.group_nr = m.group_nr
         JOIN tucal.account a ON a.account_nr = m.account_nr
         WHERE a.mnr = %s""", (mnr,))
-    rows = cur.fetchall()
-    courses = [r[0] for r in rows]
+    courses = [r[0] for r in cur]
 
     for course, p in tucal.plugins.plugins():
         if course not in courses:

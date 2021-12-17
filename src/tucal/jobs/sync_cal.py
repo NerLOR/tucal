@@ -25,12 +25,12 @@ if __name__ == '__main__':
     tuwel = tuwien.tuwel.Session()
 
     cur.execute("SELECT code, name FROM tiss.room")
-    rooms = cur.fetchall()
+    rooms = cur.fetch_all()
     cur.execute("SELECT mnr, auth_token FROM tiss.user WHERE auth_token IS NOT NULL")
-    tiss_users = cur.fetchall()
+    tiss_users = cur.fetch_all()
     tiss_mnr = [u[0] for u in tiss_users]
     cur.execute("SELECT user_id, mnr, auth_token FROM tuwel.user WHERE auth_token IS NOT NULL")
-    tuwel_users = cur.fetchall()
+    tuwel_users = cur.fetch_all()
     tuwel_mnr = [u[1] for u in tuwel_users]
 
     if args.mnr is not None:
@@ -42,6 +42,7 @@ if __name__ == '__main__':
         tuwel_num = len(tuwel_users)
         job = Job('sync calendars', 3, len(rooms) + len(tiss_users) + len(tuwel_users))
 
+    # FIXME db.commit or db.rollback to stop blocking other connections
     if args.mnr is None:
         job.begin('sync tiss room schedules', len(rooms))
         for room_code, room_name in rooms:

@@ -91,7 +91,7 @@ class Handler(StreamRequestHandler):
             VALUES (%(name)s, %(pid)s, %(mnr)s, %(status)s)
             RETURNING job_nr, job_id""", data)
         tucal.db.commit()
-        job_nr, job_id = cur.fetchall()[0]
+        job_nr, job_id = cur.fetch_all()[0]
 
         CHILDREN[pid]['job_nr'] = job_nr
 

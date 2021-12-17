@@ -34,9 +34,10 @@ LINK_COURSE = re.compile(r'<a href="/course/educationDetails\.xhtml\?'
                          r'semester=([0-9WS]+)&amp;courseNr=([A-Z0-9]+)">([^<]*)</a>')
 SPAN_BOLD = re.compile(r'<span class="bold">\s*(.*?)\s*</span>', re.MULTILINE | re.DOTALL)
 GROUP_OL_LI = re.compile(r'<li>\s*<label[^>]*>\s*(.*?)\s*</label>\s*<span[^>]*>\s*(.*?)\s*</span>\s*</li>')
+ROOM_CODE = re.compile(r'roomCode=([^/&]*)')
 
-TABLE_TR = re.compile(r'<tr[^>]*>(.*?)</tr>', re.MULTILINE | re.DOTALL)
-TABLE_TD = re.compile(r'<td[^>]*>(.*?)</td>', re.MULTILINE | re.DOTALL)
+TABLE_TR = re.compile(r'<tr[^>]*>\s*(.*?)\s*</tr>', re.MULTILINE | re.DOTALL)
+TABLE_TD = re.compile(r'<td[^>]*>\s*(.*?)\s*</td>', re.MULTILINE | re.DOTALL)
 GROUP_DIV = re.compile(r'<div class="groupWrapper">(.*?)</fieldset>', re.MULTILINE | re.DOTALL)
 
 TAGS = re.compile(r'<script[^>]*>.*?</script>|<[^>]*>', re.MULTILINE | re.DOTALL)
@@ -486,11 +487,52 @@ class Session:
             courses.append(Course(course[1], course[0], course[2], None, None, float(data[2])))
         return courses
 
-    def get_groups(self, course: Course):
+    def get_groups(self, course: Course) -> typing.Dict[str, typing.Dict[str, typing.Any]]:
         r = self.get(f'/education/course/groupList.xhtml?semester={course.semester}&courseNr={course.nr}')
+        groups = {}
         for g_html in GROUP_DIV.finditer(r.text):
             text = g_html.group(1).strip()
             name, status = SPAN_BOLD.findall(text)
-            data = GROUP_OL_LI.findall(text)
-            print(name, status, data)
+            data = {a: b for a, b in GROUP_OL_LI.findall(text)}
+            enrolled = (status == 'angemeldet')
 
+            appl_start = datetime.datetime.strptime(
+                data['Beginn der Anmeldung'], '%d.%m.%Y, %H:%M') if 'Beginn der Anmeldung' in data else None
+            appl_end = datetime.datetime.strptime(
+                data['Ende der Anmeldung'], '%d.%m.%Y, %H:%M') if 'Ende der Anmeldung' in data else None
+            dereg_end = datetime.datetime.strptime(
+                data['Ende der Online-Abmeldung'], '%d.%m.%Y, %H:%M') if 'Ende der Online-Abmeldung' in data else None
+            groups[name] = {
+                'name': name,
+                'enrolled': enrolled,
+                'application_start': appl_start,
+                'application_end': appl_end,
+                'deregistration_end': dereg_end,
+                'events': []
+            }
+            for row in TABLE_TR.finditer(text):
+                event = [d.group(1) for d in TABLE_TD.finditer(row.group(1))]
+                if len(event) == 0:
+                    continue
+                date, start_time, end_time, location, comment = event
+                m = ROOM_CODE.findall(location)
+                room_code = None
+                if len(m) > 0:
+                    room_code = m[0]
+
+                iso_date = '-'.join(date.split('.')[::-1])
+                start = tucal.parse_iso_timestamp(f'{iso_date}T{start_time}:00', True)
+                end = tucal.parse_iso_timestamp(f'{iso_date}T{end_time}:00', True)
+
+                groups[name]['events'].append({
+                    'location': location if not room_code else None,
+                    'room_code': room_code,
+                    'comment': comment,
+                    'group': name,
+                    'start': start,
+                    'end': end,
+                })
+        return groups
+
+    def get_course_events(self, course: Course):
+        r = self.get(f'/course/educationDetails.xhtml?semester={course.semester}&courseNr={course.nr}')
