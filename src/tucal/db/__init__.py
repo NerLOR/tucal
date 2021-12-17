@@ -45,9 +45,6 @@ class Cursor:
     def fetch_all(self) -> List[Tuple]:
         return self.cursor.fetchall()
 
-    def __iter__(self) -> Tuple:
-        return self.cursor.__iter__()
-
     def __del__(self):
         del self.cursor
 
@@ -77,9 +74,10 @@ def commit() -> bool:
     return True
 
 
-def upsert(table: str, data: List[Dict[str, Any]], fields: Dict[str, str], pk: Tuple):
+def upsert(table: str, data: List[Dict[str, Any]], fields: Dict[str, str], pk: Tuple, types: Dict[str, str] = None):
+    types = types or {}
     cur = cursor()
-    cur.execute(f"SELECT {','.join(pk)} FROM {table}")
+    cur.execute(f"SELECT {', '.join(pk)} FROM {table}")
     pks = cur.fetch_all()
     rows_insert = []
     rows_update = []
@@ -94,11 +92,15 @@ def upsert(table: str, data: List[Dict[str, Any]], fields: Dict[str, str], pk: T
     template = '(' + ', '.join([f'%({k})s' for k in fields.values()]) + ')'
 
     if len(rows_insert) > 0:
-        sql = f"INSERT INTO {table} ({','.join(fields.keys())}) VALUES %s"
+        sql = f"INSERT INTO {table} ({', '.join(fields.keys())}) VALUES %s"
         cur.execute_values(sql, rows_insert, template=template)
 
     if len(rows_update) > 0:
-        sql = f"""UPDATE {table} t SET {', '.join([ a + ' = ' + 'd.' + a for a in fields.keys() - set(pk)])}
+        var = ', '.join([
+            a + ' = ' + 'd.' + a + (('::' + types[a]) if a in types else '')
+            for a in fields.keys() - set(pk)
+        ])
+        sql = f"""UPDATE {table} t SET {var}
                   FROM (VALUES %s) AS d ({', '.join(fields.keys())})
                   WHERE ({','.join(['t.' + k for k in pk])}) = ({', '.join(['d.' + k for k in pk])})"""
         cur.execute_values(sql, rows_update, template=template)

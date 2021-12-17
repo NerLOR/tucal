@@ -116,7 +116,6 @@ if __name__ == '__main__':
                 DELETE FROM tucal.sso_credential
                 WHERE account_nr = (SELECT account_nr FROM tucal.account WHERE mnr = %s)""", (mnr,))
             tucal.db.commit()
-        cur.close()
         raise e
 
     cur.execute("UPDATE tucal.account SET verified = TRUE, sync_ts = now() WHERE mnr = %s", (mnr,))
@@ -136,8 +135,9 @@ if __name__ == '__main__':
             ON CONFLICT ON CONSTRAINT pk_sso_credential DO
             UPDATE SET key = %(key)s, pwd = %(pwd)s, tfa_gen = %(tfa_gen)s""", data)
 
-    tiss_cal_token = tiss.calendar_token
+    tucal.db.commit()
 
+    tiss_cal_token = tiss.calendar_token
     data = {
         'mnr': mnr,
         'token': tiss_cal_token,
@@ -146,10 +146,12 @@ if __name__ == '__main__':
         INSERT INTO tiss.user (mnr, auth_token) VALUES (%(mnr)s, %(token)s)
         ON CONFLICT ON CONSTRAINT pk_user DO UPDATE SET auth_token = %(token)s""", data)
 
+    tucal.db.commit()
+
     favorites = tiss.favorites
+    course_groups = {}
     for course in tiss.favorites:
-        groups = tiss.get_groups(course)
-        # TODO wait for data, then db
+        course_groups[course] = tiss.get_groups(course)
 
     cur.execute("DELETE FROM tiss.course_user WHERE mnr = %s", (mnr,))
     cur.execute("""
@@ -162,10 +164,9 @@ if __name__ == '__main__':
         WHERE mnr = %s AND
         (SELECT e.deregistration_end > now() FROM tiss.exam e
             WHERE (e.course_nr, e.semester, e.exam_name) = (u.course_nr, u.semester, u.exam_name))""", (mnr,))
-    for course in tiss.favorites:
+    for course, groups in course_groups.items():
         cur.execute("INSERT INTO tiss.course_user (course_nr, semester, mnr) VALUES (%s, %s, %s)",
                     (course.nr, str(course.semester), mnr))
-        groups = tiss.get_groups(course)
         for group in groups.values():
             data = {
                 'nr': course.nr,
@@ -188,8 +189,9 @@ if __name__ == '__main__':
                     VALUES (%(nr)s, %(sem)s, %(name)s, %(mnr)s)
                     ON CONFLICT ON CONSTRAINT pk_group_user DO NOTHING""", data)
 
-            for event in group['events']:
-                tucal.db.tiss.insert_group_event(event, course=course, access_time=now, mnr=int(mnr))
+            tucal.db.tiss.insert_group_events(group['events'], group, course=course, access_time=now, mnr=int(mnr))
+
+    tucal.db.commit()
 
     if not args.keep_calendar_settings:
         tiss.update_calendar_settings()
@@ -273,7 +275,8 @@ if __name__ == '__main__':
         JOIN tucal.group g ON g.group_nr = m.group_nr
         JOIN tucal.account a ON a.account_nr = m.account_nr
         WHERE a.mnr = %s""", (mnr,))
-    courses = [r[0] for r in cur]
+    rows = cur.fetch_all()
+    courses = [r[0] for r in rows]
 
     for course, p in tucal.plugins.plugins():
         if course not in courses:

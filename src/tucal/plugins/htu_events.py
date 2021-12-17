@@ -48,8 +48,8 @@ class Plugin(tucal.Plugin):
             'event_id': 'id',
             'start_ts': 'start',
             'end_ts': 'end',
-            'group_nr': 'group',
+            # 'group_nr': 'group',
             'data': 'data',
         }
-        tucal.db.upsert('tucal.external_event', rows, fields, ('source', 'event_id'))
+        tucal.db.upsert('tucal.external_event', rows, fields, ('source', 'event_id'), {'data': 'jsonb'})
         tucal.db.commit()

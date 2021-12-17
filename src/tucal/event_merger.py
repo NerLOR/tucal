@@ -33,7 +33,8 @@ if __name__ == '__main__':
         SELECT e.event_nr, array_agg(x.data) FROM tucal.event e
         LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
         GROUP BY e.event_nr""")
-    for event_nr, datas in cur:
+    rows = cur.fetch_all()
+    for event_nr, datas in rows:
         data = json.dumps(update_event(datas))
         cur.execute("UPDATE tucal.event SET data = %s, updated = TRUE WHERE event_nr = %s", (data, event_nr))
     tucal.db.commit()
@@ -61,7 +62,8 @@ if __name__ == '__main__':
                LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
                WHERE e.updated = FALSE
                GROUP BY e.event_nr""")
-        for event_nr, datas in cur:
+        rows = cur.fetch_all()
+        for event_nr, datas in rows:
             data = json.dumps(update_event(datas))
             cur.execute("UPDATE tucal.event SET data = %s, updated = TRUE WHERE event_nr = %s", (data, event_nr))
         tucal.db.commit()
