@@ -7,7 +7,6 @@ import json
 import re
 import html
 import datetime
-import pytz
 
 import tucal
 import tucal.db
@@ -134,7 +133,6 @@ class Plugin(tucal.Plugin):
                     dt = dt.replace(year=2021)
                 else:
                     dt = dt.replace(year=2022)
-                dt = pytz.timezone('Europe/Vienna').localize(dt)
                 assignments[current_assignment][s] = dt
 
         events = {}
