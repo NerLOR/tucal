@@ -3,6 +3,7 @@ from typing import Optional, Dict
 import requests
 import re
 import json
+import html
 
 from tucal import Semester
 import tucal.icalendar
@@ -12,7 +13,7 @@ TUWEL_DOMAIN = 'tuwel.tuwien.ac.at'
 TUWEL_URL = f'https://{TUWEL_DOMAIN}'
 
 LINK_COURSE = re.compile(rf'<a href="https://tuwel\.tuwien\.ac\.at/course/view\.php\?id=([0-9]+)" '
-                         r'title="([0-9]{3}\.[0-9A-Z]{3})\s*(.*?)\s*([0-9]{4}[SW])">')
+                         r'title="([0-9]{3}\.[0-9A-Z]{3})\s*(.*?)\s*([0-9]{4}[SW])?">')
 AUTH_TOKEN = re.compile(r'authtoken=([^&]*)')
 INPUT_SESS_KEY = re.compile(r'<input name="sesskey" type="hidden" value="([^"]*)" */?>')
 USER_ID = re.compile(r'data-userid="([0-9]+)"')
@@ -106,10 +107,10 @@ class Session:
         r = self.get(f'/course/view.php?id={course_id}')
 
         groups = H1.findall(r.text)[0]
-        course_nr, name, semester = groups[0], groups[1], len(groups) > 2 and groups[2] or Semester.current()
-        short = SPAN.findall(r.text)[0]
+        course_nr, name, semester = groups[0], groups[1], len(groups) > 2 and groups[2] or str(Semester.current())
+        short = html.unescape(SPAN.findall(r.text)[0])
 
-        return Course(course_id, Semester(semester), course_nr, name, short)
+        return Course(course_id, Semester(semester), course_nr, html.unescape(name), short)
 
     def _get_courses(self) -> Dict[str, Course]:
         r = self.get('/my/')

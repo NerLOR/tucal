@@ -254,6 +254,7 @@ if __name__ == '__main__':
             'suffix': c.suffix,
             'short': c.short,
         }
+        print(data)
         cur.execute("""
             INSERT INTO tuwel.course (course_id, course_nr, semester, name, suffix, short)
             VALUES (%(cid)s, %(cnr)s, %(sem)s, %(name)s, %(suffix)s, %(short)s)
