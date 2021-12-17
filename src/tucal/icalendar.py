@@ -1,7 +1,6 @@
 
 import typing
 import datetime
-import pytz
 import html
 
 import tucal
