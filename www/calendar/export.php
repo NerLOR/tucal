@@ -103,6 +103,10 @@ if ($ext === 'ics') {
     ical_line("BEGIN", ["VCALENDAR"]);
     ical_line("VERSION", ["2.0"]);
     ical_line("PRODID", ["TUcal"]);
+    ical_line("X-WR-CALNAME", []);
+    ical_line("X-WR-CALDESC", []);
+    ical_line("X-WR-TIMEZONE", ["Europe/Vienna"]);
+    ical_line("X-FROM-URL", ["https://tucal.necronda.net/calendar/export/$token/$file"]);
     ical_line("CALSCALE", ["GREGORIAN"]);
 
     $fn = fopen("europe-vienna.txt", "r");
@@ -125,6 +129,11 @@ if ($ext === 'ics') {
 <html lang="de-AT">
 <head>
     <title>Calendar Export</title>
+    <style>
+        * {
+            font-family: 'Arial', sans-serif;
+        }
+    </style>
 </head>
 <body>
 <?php
@@ -264,7 +273,17 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 "id" => $row['event_id'],
         ], JSON_FLAGS);
     } elseif ($ext === 'html') {
-
+        echo '<div class="event">';
+        echo "<span>";
+        echo $start->format("d.m.Y H:i");
+        if (!$todo) {
+            echo "–";
+            echo $end->format("H:i");
+        }
+        echo "</span>";
+        echo "<h1></h1>";
+        echo "<h6>$row[event_id]</h6>";
+        echo "</div><hr/>\n";
     }
     $first = false;
 }
