@@ -210,6 +210,7 @@ div.calendar div.event-wrapper {
     height: calc(var(--row-size) * 30 + 1px);
     bottom: 0;
     right: 0;
+    overflow: hidden;
 }
 
 div.calendar div.event-wrapper > * {

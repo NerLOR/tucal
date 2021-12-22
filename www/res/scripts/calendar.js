@@ -441,7 +441,11 @@ class WeekSchedule {
 
     drawEvents(all_events) {
         all_events.sort((a, b) => {
-            return a.start - b.start;
+            const diff = a.start - b.start;
+            if (diff === 0) {
+                return a.end - b.end;
+            }
+            return diff;
         });
 
         const formatter = new Intl.DateTimeFormat('de-AT', {
@@ -472,92 +476,7 @@ class WeekSchedule {
         }
 
         for (const day of events) {
-            const partList = {};
-            for (let i = START_TIME; i <= END_TIME; i++) {
-                let parts = 0;
-                for (const evt of day) {
-                    if (i > evt.getStartMinutes() && i < evt.getEndMinutes()) {
-                        parts++;
-                    }
-                }
-                partList[i] = parts;
-            }
-
-            const parsed = [];
-            for (const evt of day) {
-                let parts = 1;
-                for (let i = evt.getStartMinutes(); i <= evt.getEndMinutes(); i++) {
-                    if (partList[i] > parts) {
-                        parts = partList[i];
-                    }
-                }
-                parsed.push({
-                    event: evt,
-                    partsSelf: parts,
-                    parts: parts,
-                    part1: 0,
-                    part2: 0,
-                    affects: [],
-                })
-            }
-
-            for (const evt1 of parsed) {
-                const s1 = evt1.event.start;
-                const e1 = evt1.event.end;
-                for (const evt2 of parsed) {
-                    const s2 = evt2.event.start;
-                    const e2 = evt2.event.end;
-                    if ((s2 >= s1 && s2 < e1) || (e2 > s1 && e2 <= e1) || (s2 < s1 && e2 > e1)) {
-                        evt1.affects.push(evt2);
-                    }
-                }
-            }
-
-            let changed;
-            do {
-                changed = false;
-                for (const evt1 of parsed) {
-                    for (const evt2 of evt1.affects) {
-                        if (evt2.parts > evt1.parts) {
-                            evt1.parts = evt2.parts
-                        }
-                    }
-                }
-            } while (changed);
-
-            let shift = 0;
-            let p = 0;
-            let last = null;
-            for (const evt of parsed) {
-                if (p >= evt.parts) {
-                    p = 0;
-                }
-                evt.part1 = p;
-                p += (evt.parts - evt.partsSelf);
-                if (p >= evt.parts) {
-                    shift = evt.parts - p + 1;
-                }
-                evt.part2 = p;
-
-                const start0 = last !== null && last.event.start || null;
-                const start1 = evt.event.start;
-                if (last !== null && evt.affects.includes(last)) {
-                    if (start1 > start0 && last.part1 <= evt.part1) {
-                        last.part2 += 0.75;
-                        evt.part1 -= 0.75;
-                    }
-                }
-
-                last = evt;
-                p++;
-            }
-
-            for (const evt of parsed) {
-                evt.part1 = (evt.part1 + shift) % evt.parts;
-                evt.part2 = (evt.part2 + shift) % evt.parts;
-            }
-
-            for (const eventData of parsed) {
+            for (const eventData of placeDayEvents(day)) {
                 const event = eventData.event;
                 const start = event.start;
                 const end = event.end;
@@ -632,4 +551,93 @@ class Event {
         const dt = asTimezone(new Date());
         return dt >= this.start && dt < this.end;
     }
+}
+
+function placeDayEvents(dayEvents) {
+    const partList = {};
+    for (let i = START_TIME; i <= END_TIME; i++) {
+        let parts = 0;
+        for (const evt of dayEvents) {
+            if (i > evt.getStartMinutes() && i < evt.getEndMinutes()) {
+                parts++;
+            }
+        }
+        partList[i] = parts;
+    }
+
+    const parsed = [];
+    for (const evt of dayEvents) {
+        let parts = 1;
+        for (let i = evt.getStartMinutes(); i <= evt.getEndMinutes(); i++) {
+            if (partList[i] > parts) {
+                parts = partList[i];
+            }
+        }
+        parsed.push({
+            event: evt,
+            partsSelf: parts,
+            parts: parts,
+            part1: 0,
+            part2: 0,
+            affects: [],
+        })
+    }
+
+    for (const evt1 of parsed) {
+        const s1 = evt1.event.start;
+        const e1 = evt1.event.end;
+        for (const evt2 of parsed) {
+            const s2 = evt2.event.start;
+            const e2 = evt2.event.end;
+            if ((s2 >= s1 && s2 < e1) || (e2 > s1 && e2 <= e1) || (s2 < s1 && e2 > e1)) {
+                evt1.affects.push(evt2);
+            }
+        }
+    }
+
+    let changed;
+    do {
+        changed = false;
+        for (const evt1 of parsed) {
+            const max = Math.max(...evt1.affects.map((e) => e.parts));
+            if (max > evt1.parts) {
+                evt1.parts = max;
+                changed = true;
+            }
+        }
+    } while (changed);
+
+    let shift = 0;
+    let p = 0;
+    let last = null;
+    for (const evt of parsed) {
+        if (p >= evt.parts) {
+            p = 0;
+        }
+        evt.part1 = p;
+        p += (evt.parts - evt.partsSelf);
+        if (p >= evt.parts) {
+            //shift = evt.parts - p + 1;
+        }
+        evt.part2 = p;
+
+        /*const start0 = last !== null && last.event.start || null;
+        const start1 = evt.event.start;
+        if (last !== null && evt.affects.includes(last)) {
+            if (start1 > start0 && last.part1 <= evt.part1) {
+                last.part2 += 0.75;
+                evt.part1 -= 0.75;
+            }
+        }*/
+
+        last = evt;
+        p++;
+    }
+
+    for (const evt of parsed) {
+        evt.part1 = (evt.part1 + shift + evt.parts) % evt.parts;
+        evt.part2 = (evt.part2 + shift + evt.parts) % evt.parts;
+    }
+
+    return parsed
 }
