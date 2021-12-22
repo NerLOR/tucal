@@ -286,7 +286,7 @@ div.calendar div.event-wrapper div.event {
     --end: 0;
     --parts: 1;
     --part1: 0;
-    --part2: 0;
+    --part2: 1;
     position: absolute;
     display: block;
     font-size: 0.75em;
@@ -298,7 +298,7 @@ div.calendar div.event-wrapper div.event {
     margin: var(--margin);
     box-sizing: border-box;
     padding: 0.25em;
-    width: calc((100% * (var(--part2) - var(--part1) + 1) / var(--parts)) - var(--margin) * 2);
+    width: calc((100% * (var(--part2) - var(--part1)) / var(--parts)) - var(--margin) * 2);
     left: calc(var(--part1) / var(--parts) * 100%);
     top: calc((var(--start) - var(--time-start)) / (var(--time-end) - var(--time-start)) * 100% + 1px);
     height: calc((var(--end) - var(--start)) / (var(--time-end) - var(--time-start)) * 100% - 1px - var(--margin) * 2);

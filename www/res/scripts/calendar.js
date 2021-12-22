@@ -554,89 +554,59 @@ class Event {
 }
 
 function placeDayEvents(dayEvents) {
-    const partList = {};
-    for (let i = START_TIME; i <= END_TIME; i++) {
-        let parts = 0;
-        for (const evt of dayEvents) {
-            if (i > evt.getStartMinutes() && i < evt.getEndMinutes()) {
-                parts++;
-            }
-        }
-        partList[i] = parts;
-    }
-
     const parsed = [];
-    for (const evt of dayEvents) {
-        let parts = 1;
-        for (let i = evt.getStartMinutes(); i <= evt.getEndMinutes(); i++) {
-            if (partList[i] > parts) {
-                parts = partList[i];
-            }
-        }
+    for (const evt1 of dayEvents) {
         parsed.push({
-            event: evt,
-            partsSelf: parts,
-            parts: parts,
+            event: evt1,
+            parts: 1,
             part1: 0,
-            part2: 0,
-            affects: [],
+            part2: 1,
+            concurrent: [],
+            placed: false,
         })
     }
-
     for (const evt1 of parsed) {
-        const s1 = evt1.event.start;
-        const e1 = evt1.event.end;
+        const start1 = evt1.event.start.getTime();
+        const end1 = evt1.event.end.getTime();
         for (const evt2 of parsed) {
-            const s2 = evt2.event.start;
-            const e2 = evt2.event.end;
-            if ((s2 >= s1 && s2 < e1) || (e2 > s1 && e2 <= e1) || (s2 < s1 && e2 > e1)) {
-                evt1.affects.push(evt2);
+            if (evt2 === evt1) continue;
+            const start2 = evt2.event.start.getTime();
+            const end2 = evt2.event.end.getTime();
+
+            if (start1 === start2 || (start1 > start2 && end1 < end2) || (start2 > start1 && end2 < end1)) {
+                evt1.concurrent.push(evt2);
             }
         }
     }
 
-    let changed;
-    do {
-        changed = false;
-        for (const evt1 of parsed) {
-            const max = Math.max(...evt1.affects.map((e) => e.parts));
-            if (max > evt1.parts) {
-                evt1.parts = max;
-                changed = true;
+    let cur = [];
+    for (const evt of parsed) {
+        if (evt.placed) {
+            continue;
+        }
+        for (let i = 0; i < cur.length; i++) {
+            if (cur[i].event.end <= evt.event.start) {
+                cur.splice(i);
             }
         }
-    } while (changed);
-
-    let shift = 0;
-    let p = 0;
-    let last = null;
-    for (const evt of parsed) {
-        if (p >= evt.parts) {
-            p = 0;
+        let p = Math.pow(0.75, cur.length);
+        if (evt.event.end > evt.event.start) {
+            cur.push(evt);
         }
-        evt.part1 = p;
-        p += (evt.parts - evt.partsSelf);
-        if (p >= evt.parts) {
-            //shift = evt.parts - p + 1;
+        const f = (1 - p);
+        const t = 1;
+        const step = (t - f) / (evt.concurrent.length + 1);
+        evt.part1 = f;
+        evt.part2 = f + step;
+        let l = evt.part2;
+        for (let i = 0; i < evt.concurrent.length; i++) {
+            const e = evt.concurrent[i];
+            e.part1 = l;
+            l += step;
+            e.part2 = l;
+            e.placed = true;
         }
-        evt.part2 = p;
-
-        /*const start0 = last !== null && last.event.start || null;
-        const start1 = evt.event.start;
-        if (last !== null && evt.affects.includes(last)) {
-            if (start1 > start0 && last.part1 <= evt.part1) {
-                last.part2 += 0.75;
-                evt.part1 -= 0.75;
-            }
-        }*/
-
-        last = evt;
-        p++;
-    }
-
-    for (const evt of parsed) {
-        evt.part1 = (evt.part1 + shift + evt.parts) % evt.parts;
-        evt.part2 = (evt.part2 + shift + evt.parts) % evt.parts;
+        evt.placed = true;
     }
 
     return parsed
