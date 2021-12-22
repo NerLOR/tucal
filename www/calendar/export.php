@@ -30,9 +30,9 @@ if ($file !== '' && (sizeof($file_parts) !== 2 || !in_array($file_parts[1], ['ic
     header("Content-Length: 0");
     exit();
 }
-$ext = ($file === '') ? $file_parts[1] : null;
+$ext = ($file !== '') ? $file_parts[1] : null;
 
-if ($token !== 'asdf') {
+if ($token !== 'Test123') {
     header("Status: 404");
     header("Content-Length: 0");
     exit();
@@ -58,4 +58,248 @@ if ($file === '') {
     exit();
 }
 
-echo 'Ich bin eine Datei :D';
+$rooms = [];
+$stmt = db_exec("
+        SELECT room_nr, room_code, room_code_long, b.building_id, tiss_code, room_name, room_suffix,
+               room_name_short, room_alt_name, room_name_normal, area, capacity, b.area_name, b.address, b.building_name
+        FROM tucal.v_room r
+            LEFT JOIN tucal.v_building b ON b.building_id = r.building_id");
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $rooms[$row['room_nr']] = $row;
+}
+
+$courses = [];
+$stmt = db_exec("
+        SELECT c.course_nr, c.name_de, c.name_en, c.type, a.acronym_1, a.acronym_2, a.short, a.program
+        FROM tiss.course_def c
+            LEFT JOIN tucal.course_acronym a ON a.course_nr= c.course_nr");
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $courses[$row['course_nr']] = $row;
+}
+
+$stmt = db_exec("
+        SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.create_ts, e.update_ts, e.update_seq, e.room_nr, e.data,
+               l.course_nr, l.semester, l.name, g.group_id
+        FROM tucal.event e
+        JOIN tucal.external_event x ON x.event_nr = e.event_nr
+        JOIN tucal.group_member m ON m.group_nr = e.group_nr
+        JOIN tucal.account a ON a.account_nr = m.account_nr
+        LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
+        LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
+        WHERE a.mnr = :mnr AND NOT e.deleted AND
+              (e.global OR (:mnr IN (SELECT u.mnr FROM tuwel.event_user eu
+                                     JOIN tuwel.user u ON u.user_id = eu.user_id
+                                     WHERE eu.event_id::text = x.event_id))) AND
+              (m.ignore_from IS NULL OR e.start_ts < m.ignore_from) AND
+              (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
+        GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data,
+                 l.course_nr, l.semester, l.name, g.group_id
+        ORDER BY e.start_ts, e.event_nr", ["mnr" => 12102620]);
+
+header("Cache-Control: private, no-cache");
+if ($ext === 'ics') {
+    header("Content-Type: text/calendar; charset=UTF-8");
+
+    ical_line("BEGIN", ["VCALENDAR"]);
+    ical_line("VERSION", ["2.0"]);
+    ical_line("PRODID", ["TUcal"]);
+    ical_line("CALSCALE", ["GREGORIAN"]);
+
+    $fn = fopen("europe-vienna.txt", "r");
+    while (!feof($fn)) {
+        $result = rtrim(fgets($fn), "\r\n");
+        echo "$result\r\n";
+    }
+    fclose($fn);
+
+    // ical_line("METHOD", ["PUBLISH"]);
+} elseif ($ext === 'json') {
+    header("Content-Type: application/json; charset=UTF-8");
+
+    echo '{"events":[' . "\n";
+} elseif ($ext === 'html') {
+    header("Content-Type: text/html; charset=UTF-8");
+
+?>
+<!DOCTYPE html>
+<html lang="de-AT">
+<head>
+    <title>Calendar Export</title>
+</head>
+<body>
+<?php
+}
+
+$first = true;
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $start = new DateTime($row['start_ts']);
+    $end = new DateTime($row['end_ts']);
+    $update = new DateTime($row['update_ts']);
+    $create = new DateTime($row['create_ts']);
+
+    $utcTz = new DateTimeZone("UTC");
+    $tz = new DateTimeZone("Europe/Vienna");
+    $start->setTimezone($tz);
+    $end->setTimezone($tz);
+    $update->setTimezone($tz);
+    $create->setTimezone($tz);
+
+    $data = json_decode($row['data'], true);
+    $todo = ($row['start_ts'] === $row['end_ts']);
+
+    $courseNr = $row['course_nr'];
+    if ($courseNr !== null) {
+        $courseNrLong = substr($courseNr, 0, 3) . '.' . substr($courseNr, 3);
+        $course = $courses[$courseNr];
+        $courseName = $course['acronym_1'] ?? $course['acronym_2'] ?? $course['short'] ?? $course['name_de'] ?? $courseNrLong;
+    } else {
+        $courseNrLong = null;
+        $course = null;
+        $courseName = null;
+    }
+
+    $roomNr = $row['room_nr'];
+    if ($roomNr !== null) {
+        $room = $rooms[$roomNr];
+        $roomName = $room['room_name'] ?? "#$roomNr";
+        $roomLoc = explode('/', $room['room_code'])[0];
+        $roomLocLong = explode('/', $room['room_code_long'])[0];
+    } else {
+        $room = null;
+        $roomName = null;
+        $roomLoc = null;
+        $roomLocLong = null;
+    }
+
+    if ($ext === 'ics') {
+        $format = "Ymd\\THis";
+        $formatZ = "$format\\Z";
+
+        if ($todo) {
+            ical_line("BEGIN", ["VTODO"]);
+            ical_line("DUE", [$start->format($format)], ["TZID=Europe/Vienna"]);
+        } else {
+            ical_line("BEGIN", ["VEVENT"]);
+            ical_line("DTSTART", [$start->format($format)], ["TZID=Europe/Vienna"]);
+            ical_line("DTEND", [$end->format($format)], ["TZID=Europe/Vienna"]);
+        }
+
+        $summary = "";
+        $desc = "";
+        if ($courseName !== null) {
+            $summary .= $courseName;
+        }
+        if ($todo) {
+            $summary .= " - $data[summary]";
+            $desc .= $data['description'] ?? '';
+        } else {
+            $desc .= $data['summary'];
+            if (array_key_exists('description', $data)) {
+                $desc .= "\n\n$data[description]";
+            }
+        }
+
+        ical_line("SUMMARY", [$summary]);
+        ical_line("DESCRIPTION", [$desc]);
+
+        $loc = null;
+        $locAlt = null;
+        if ($room !== null) {
+            $bName = $room['building_name'];
+            if ($bName === null) {
+                $bName = "";
+            } else {
+                $bName = "$bName, ";
+            }
+            $addr = $room['address'];
+            if ($addr === null) {
+                $addr = "";
+            } else {
+                $addr = " ($addr, Wien, Österreich)";
+            }
+            $locAlt = "https://tuw-maps.tuwien.ac.at/?q=$roomLoc";
+            $loc = "$roomName ($roomLocLong), $bName$room[area_name], Technische Universität Wien$addr\n$locAlt";
+        }
+
+        if ($loc !== null) {
+            $altRep = [];
+            if ($locAlt !== null) {
+                $altRep [] = "ALTREP=\"$locAlt\"";
+            }
+            ical_line("LOCATION", [$loc], $altRep);
+        }
+
+        $categories = [];
+        if ($courseNrLong !== null) {
+            $categories[] = "$courseNrLong $course[type] $course[name_de] ($row[semester])";
+        }
+
+        ical_line("CATEGORIES", $categories);
+        ical_line("CLASS", ["PUBLIC"]);
+
+        if ($todo) {
+            ical_line("STATUS", ["NEEDS-ACTION"]);
+        } else {
+            ical_line("STATUS", ["CONFIRMED"]);
+        }
+
+        $create->setTimezone($utcTz);
+        $update->setTimezone($utcTz);
+        ical_line("UID", ["$row[event_id]@tucal.necronda.net"]);
+        ical_line("CREATE", [$create->format($formatZ)]);
+        ical_line("DTSTAMP", [$create->format($formatZ)]);
+        ical_line("LAST-MODIFIED", [$update->format($formatZ)]);
+        ical_line("SEQUENCE", ["$row[update_seq]"]);
+
+        if ($todo) {
+            ical_line("END", ["VTODO"]);
+        } else {
+            ical_line("END", ["VEVENT"]);
+        }
+    } elseif ($ext === 'json') {
+        if (!$first) {
+            echo ",\n";
+        }
+        echo json_encode([
+                "id" => $row['event_id'],
+        ], JSON_FLAGS);
+    } elseif ($ext === 'html') {
+
+    }
+    $first = false;
+}
+
+if ($ext === 'ics') {
+    ical_line("END", ["VCALENDAR"]);
+} elseif ($ext === 'json') {
+    echo "\n]}\n";
+} elseif ($ext === 'html') {
+    echo "</body>\n</html>\n";
+}
+
+function ical_line(string $param, array $value, array $opts = []) {
+    $value = str_replace("\r\n", "\n", $value);
+    $opts = str_replace("\r\n", "\n", $opts);
+    $value = str_replace("\r", "\n", $value);
+    $opts = str_replace("\r", "\n", $opts);
+    $value = preg_replace("/[,;\\\\]/", "\\\\\\0", $value);
+    $opts = preg_replace("/[,;\\\\]/", "\\\\\\0", $opts);
+    $value = str_replace("\n", "\\n", $value);
+    $opts = str_replace("\n", "\\n", $opts);
+
+    $valueStr =  implode(',', $value);
+    $optsStr = implode(';', array_merge([$param], $opts));
+    $line = "$optsStr:$valueStr";
+    $len = strlen($line);
+
+    $pos = 0;
+    while ($pos < $len) {
+        $part = substr($line, $pos, ($pos === 0) ? 75 : 74);
+        $partLen = strlen($part);
+        if ($pos > 0) {
+            $part = " $part";
+        }
+        $pos += $partLen;
+        echo "$part\r\n";
+    }
+}

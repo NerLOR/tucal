@@ -17,6 +17,9 @@ CREATE TABLE tucal.event
 
     start_ts        TIMESTAMP WITH TIME ZONE            NOT NULL,
     end_ts          TIMESTAMP WITH TIME ZONE            NOT NULL,
+    create_ts       TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT now(),
+    update_ts       TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT now(),
+    update_seq      INT                                 NOT NULL DEFAULT 0,
 
     room_nr         INT                                          DEFAULT NULL,
     group_nr        BIGINT,
@@ -117,23 +120,27 @@ BEGIN
     IF NEW.event_nr IS NULL THEN
     ELSEIF OLD IS NULL OR OLD.event_nr IS NULL OR NEW.event_nr != OLD.event_nr THEN
         UPDATE tucal.event
-        SET start_ts = NEW.start_ts,
-            end_ts   = NEW.end_ts,
-            room_nr  = (CASE WHEN NEW.room_nr IS NULL THEN room_nr ELSE NEW.room_nr END),
-            group_nr = (CASE WHEN NEW.group_nr IS NULL THEN group_nr ELSE NEW.group_nr END),
-            deleted  = (CASE WHEN NEW.deleted IS NULL THEN deleted ELSE NEW.deleted END),
-            global   = (CASE WHEN NEW.global IS NULL THEN global ELSE NEW.global END),
-            updated  = FALSE
+        SET start_ts   = NEW.start_ts,
+            end_ts     = NEW.end_ts,
+            room_nr    = (CASE WHEN NEW.room_nr IS NULL THEN room_nr ELSE NEW.room_nr END),
+            group_nr   = (CASE WHEN NEW.group_nr IS NULL THEN group_nr ELSE NEW.group_nr END),
+            deleted    = (CASE WHEN NEW.deleted IS NULL THEN deleted ELSE NEW.deleted END),
+            global     = (CASE WHEN NEW.global IS NULL THEN global ELSE NEW.global END),
+            updated    = FALSE,
+            update_ts  = now(),
+            update_seq = update_seq + 1
         WHERE event_nr = NEW.event_nr;
     ELSE
         UPDATE tucal.event
-        SET start_ts = (CASE WHEN OLD.start_ts != NEW.start_ts THEN NEW.start_ts ELSE start_ts END),
-            end_ts   = (CASE WHEN OLD.end_ts != NEW.end_ts THEN NEW.end_ts ELSE end_ts END),
-            room_nr  = (CASE WHEN OLD.room_nr != NEW.room_nr THEN NEW.room_nr ELSE room_Nr END),
-            group_nr = (CASE WHEN OLD.group_nr != NEW.group_nr THEN NEW.group_nr ELSE group_nr END),
-            deleted  = (CASE WHEN OLD.deleted != NEW.deleted THEN NEW.deleted ELSE deleted END),
-            global   = (CASE WHEN OLD.global != NEW.global THEN NEW.global ELSE global END),
-            updated  = FALSE
+        SET start_ts   = (CASE WHEN OLD.start_ts != NEW.start_ts THEN NEW.start_ts ELSE start_ts END),
+            end_ts     = (CASE WHEN OLD.end_ts != NEW.end_ts THEN NEW.end_ts ELSE end_ts END),
+            room_nr    = (CASE WHEN OLD.room_nr != NEW.room_nr THEN NEW.room_nr ELSE room_Nr END),
+            group_nr   = (CASE WHEN OLD.group_nr != NEW.group_nr THEN NEW.group_nr ELSE group_nr END),
+            deleted    = (CASE WHEN OLD.deleted != NEW.deleted THEN NEW.deleted ELSE deleted END),
+            global     = (CASE WHEN OLD.global != NEW.global THEN NEW.global ELSE global END),
+            updated    = FALSE,
+            update_ts  = now(),
+            update_seq = update_seq + 1
         WHERE event_nr = NEW.event_nr;
     END IF;
     RETURN NEW;

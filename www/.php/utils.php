@@ -1,5 +1,7 @@
 <?php
 
+const JSON_FLAGS = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+
 /**
  * Uses random_int() to generate a cryptographically secure base58 token
  * @param int $len The length of the token to generate

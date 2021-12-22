@@ -2,8 +2,6 @@
 
 require "../.php/session.php";
 
-const FLAGS = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
-
 try {
     $info = $_SERVER['PATH_INFO'] ?? '';
 
@@ -22,7 +20,7 @@ try {
 }
 
 function error(int $status, string $message = null, bool $db_error = false) {
-    $content = '{"status":"error","message":' . json_encode($message, FLAGS) .'}' . "\n";
+    $content = '{"status":"error","message":' . json_encode($message, JSON_FLAGS) .'}' . "\n";
     header("Status: $status");
     header("Content-Length: " . strlen($content));
     echo $content;
@@ -56,7 +54,7 @@ function rooms() {
             "lt_room_code" => $row["lt_room_code"],
             "lt_name" => $row["lt_name"],
         ];
-        $content .= json_encode($data, FLAGS);
+        $content .= json_encode($data, JSON_FLAGS);
         if ($i !== sizeof($arr) - 1) $content .= ",";
         $content .= "\n";
     }
@@ -130,7 +128,7 @@ function calendar() {
             'group_id' => $row['group_id'],
             'data' => json_decode($row['data']),
         ];
-        echo json_encode($data, FLAGS);
+        echo json_encode($data, JSON_FLAGS);
     }
 
     echo "\n]}}\n";
@@ -157,7 +155,7 @@ function job() {
     echo '{"status":"success","message":"work in progress","data":' . "\n";
     $data = json_decode($rows[0][0], true);
     $data['status'] = $rows[0][1];
-    echo json_encode($data, FLAGS);
+    echo json_encode($data, JSON_FLAGS);
     echo "\n}\n";
 
     tucal_exit();
@@ -212,7 +210,7 @@ function courses() {
             'short' => $row['short'],
             'program' => $row['program'],
         ];
-        echo json_encode($data, FLAGS);
+        echo json_encode($data, JSON_FLAGS);
     }
 
     echo "\n],\"friends\":[\n";
