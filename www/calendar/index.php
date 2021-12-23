@@ -64,7 +64,22 @@ $TITLE = [_('Calendar')];
 require "../.php/header.php";
 ?>
 <main class="wcal">
+    <!--Calendar-->
+    <section>
+        <h2>Export</h2>
+        <table class="calendar-exports">
+            <thead>
+                <tr><th>Name</th><th>URL</th><th>Settings</th></tr>
+            </thead>
+            <tbody>
+<?php
 
+//$stmt = db_exec("");
+
+?>
+            </tbody>
+        </table>
+    </section>
 </main>
 <?php
 require "../.php/footer.php";
