@@ -198,6 +198,9 @@ h2 {
 
 body main {
     margin: 2em auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
 }
 
 body main.w1 {
@@ -222,7 +225,6 @@ body main > section {
     background-color: var(--sec-bg-color);
     padding: 1em 2em;
     box-sizing: border-box;
-    margin: 1em 0.5em;
 }
 
 main a {

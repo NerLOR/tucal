@@ -201,7 +201,7 @@ class WeekSchedule {
         }
         this.cal.appendChild(wrapper);
 
-        element.appendChild(this.cal);
+        element.insertBefore(this.cal, element.firstChild);
     }
 
     setWeek(week, keep = false) {
