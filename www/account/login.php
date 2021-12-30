@@ -53,8 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$row['verified']) {
             redirect('/account/verify');
         } else {
-            redirect($_SESSION['redirect'] ?? '/');
-            unset($_SESSION['redirect']);
+            redirect($_SESSION['opts']['redirect'] ?? '/');
+            unset($_SESSION['opts']['redirect']);
         }
     } catch (Exception $e) {
         db_rollback();
