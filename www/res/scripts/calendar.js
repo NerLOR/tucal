@@ -641,7 +641,7 @@ function placeDayEvents(dayEvents) {
                 cur.splice(i);
             }
         }
-        let p = Math.pow(0.75, cur.length);
+        let p = Math.pow(0.875, cur.length);
         if (evt.event.end > evt.event.start) {
             cur.push(evt);
         }
