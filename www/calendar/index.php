@@ -54,7 +54,7 @@ if ($unit[0] === 'W' || $unit[0] === 'w') {
 $USE_PATH_INFO = true;
 require "../.php/main.php";
 
-$wanted_uri = "/calendar/$subject/$year/$unit/";
+$wanted_uri = "/calendar/$subject/$year/$unit/$parts[4]";
 if ($_SERVER['REQUEST_URI'] !== $wanted_uri) {
     redirect($wanted_uri);
 }

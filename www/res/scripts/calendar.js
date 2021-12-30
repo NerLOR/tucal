@@ -113,17 +113,19 @@ class Week {
 }
 
 class WeekSchedule {
-    week = null;
     cal;
+    week = null;
     subject;
+    eventId;
     timer = null;
     lastReload = null;
     weeks = {};
     currentEvents = [];
     currentEventCb = null;
 
-    constructor(subject, element) {
+    constructor(element, subject, eventId = null) {
         this.subject = subject;
+        this.eventId = eventId;
         this.cal = document.createElement("div");
         this.cal.classList.add("calendar");
 
@@ -202,12 +204,25 @@ class WeekSchedule {
         this.cal.appendChild(wrapper);
 
         element.insertBefore(this.cal, element.firstChild);
+        window.addEventListener("click", (evt) => {
+            const path = evt.composedPath();
+            const divs = document.getElementsByClassName("event-details");
+            const navs = document.getElementsByTagName("nav");
+            if ((divs.length > 0 && path.includes(divs[0])) || (navs.length > 0 && path.includes(navs[0]))) {
+                return;
+            }
+            this.setEventId(null);
+        });
     }
 
     setWeek(week, keep = false) {
         if (this.timer !== null) {
             clearInterval(this.timer);
             this.timer = null;
+        }
+
+        if (this.week !== null) {
+            this.eventId = null;
         }
 
         this.week = week;
@@ -232,13 +247,27 @@ class WeekSchedule {
             history.replaceState({
                 year: this.week.year,
                 week: this.week.week,
-            }, '', `/calendar/${this.subject}/${this.week.year}/W${this.week.week}/`);
+            }, '', `/calendar/${this.subject}/${this.week.year}/W${this.week.week}/${this.eventId ?? ''}`);
         }
 
         this.timer = setInterval(() => {
             this.updateTime();
             this.reloadEvents();
         }, 1000);
+    }
+
+    setEventId(eventId) {
+        if (eventId === this.eventId) return;
+        this.eventId = eventId;
+        history.replaceState({
+            year: this.week.year,
+            week: this.week.week,
+        }, '', `/calendar/${this.subject}/${this.week.year}/W${this.week.week}/${this.eventId ?? ''}`);
+        if (eventId === null) {
+            this.clearEventDetails();
+        } else {
+            this.displayEventDetails(eventId);
+        }
     }
 
     updateTime() {
@@ -341,6 +370,7 @@ class WeekSchedule {
             const week = this.weeks[w];
             this.lastReload = week.date;
             this.drawEvents(week.events);
+            this.displayEventDetails();
         }
 
         let upcoming = null;
@@ -494,7 +524,12 @@ class WeekSchedule {
                 evt.style.setProperty("--end", `${endMinute}`);
                 evt.style.setProperty("--parts", `${eventData.parts}`);
                 evt.style.setProperty("--part1", `${eventData.part1}`);
-                evt.style.setProperty("--part2", `${eventData.part2}`)
+                evt.style.setProperty("--part2", `${eventData.part2}`);
+
+                evt.addEventListener("click", (evt) => {
+                    evt.stopImmediatePropagation();
+                    this.setEventId(event.id);
+                });
 
                 const startFmt = formatter.format(start);
                 const endFmt = formatter.format(end);
@@ -509,6 +544,21 @@ class WeekSchedule {
         }
 
         this.updateTime();
+    }
+
+    displayEventDetails() {
+        this.clearEventDetails();
+        if (this.eventId === null) return;
+
+        const div = document.createElement("div");
+        div.classList.add("event-details");
+
+        this.cal.appendChild(div);
+    }
+
+    clearEventDetails() {
+        const eventDetails = this.cal.getElementsByClassName("event-details");
+        while (eventDetails.length > 0) eventDetails[0].remove();
     }
 }
 

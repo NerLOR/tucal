@@ -324,6 +324,28 @@ div.calendar div.event span.course {
     font-weight: bold;
 }
 
+div.calendar div.event-details {
+    position: fixed;
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    width: 600px;
+    margin: auto;
+    min-height: 300px;
+    top: 20vmin;
+    left: calc(50% - 300px);
+    z-index: 6;
+    box-sizing: border-box;
+    padding: 1em;
+}
+
+@media screen and (max-width: 616px) {
+    div.calendar div.event-details {
+        width: calc(100% - 16px);
+        left: 8px;
+    }
+}
+
 @media screen and (max-width: 800px) {
     div.calendar thead th.day-header {
         font-size: 0.75em;

@@ -29,8 +29,9 @@ function initCalendar() {
     const subject = parts[2];
     const year = parseInt(parts[3]);
     const week = parseInt(parts[4].substr(1));
+    const eventId = parts[5].length === 0 ? null : parts[5];
 
-    CALENDAR = new WeekSchedule(subject, main);
+    CALENDAR = new WeekSchedule(main, subject, eventId);
     CALENDAR.setCurrentEventCb((events) => {
         const navLive = document.getElementById("nav-live");
         const liveButtons = navLive.getElementsByClassName("live");
@@ -89,10 +90,11 @@ function initNav() {
     });
 
     window.addEventListener("click", (evt) => {
-        if (userMenu && !evt.composedPath().includes(userMenu)) {
+        const path = evt.composedPath();
+        if (userMenu && !path.includes(userMenu)) {
             userMenu.classList.remove("active");
         }
-        if (!evt.composedPath().includes(nav)) {
+        if (!path.includes(nav)) {
             nav.classList.remove("active");
         }
     });
