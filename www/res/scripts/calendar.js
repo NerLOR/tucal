@@ -615,6 +615,8 @@ function placeDayEvents(dayEvents) {
             placed: false,
         })
     }
+
+    const hour = 60 * 60 * 1000;
     for (const evt1 of parsed) {
         const start1 = evt1.event.start.getTime();
         const end1 = evt1.event.end.getTime();
@@ -623,7 +625,7 @@ function placeDayEvents(dayEvents) {
             const start2 = evt2.event.start.getTime();
             const end2 = evt2.event.end.getTime();
 
-            if (start1 === start2 || (start1 > start2 && end1 < end2) || (start2 > start1 && end2 < end1)) {
+            if (Math.abs(start1 - start2) < hour) {
                 evt1.concurrent.push(evt2);
             }
         }
