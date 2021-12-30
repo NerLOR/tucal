@@ -4,6 +4,8 @@
 @import "form.css";
 @import "status.css";
 @import "job.css";
+@import "search.css";
+@import "friends.css";
 @import "footer.css";
 
 html {
@@ -245,6 +247,7 @@ hr {
     border: none;
     border-top: 1px solid var(--border-color);
     box-sizing: border-box;
+    margin: 1em 0;
 }
 
 hr[data-content] {
@@ -280,6 +283,7 @@ body main > section > hr {
     position: relative;
     left: -2rem;
     width: calc(100% + 4rem);
+    margin: 2em 0;
 }
 
 @media screen and (max-width: 600px) {
@@ -287,4 +291,44 @@ body main > section > hr {
         padding-left: 0.5em;
         padding-right: 0.5em;
     }
+}
+
+a.account {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    box-sizing: border-box;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    color: var(--black);
+    cursor: pointer;
+}
+
+a.account:hover {
+    background-color: var(--grey-F0);
+}
+
+a.account > div {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+}
+
+a.account img {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--border-radius);
+}
+
+a.account span.username {
+    font-size: 1rem;
+}
+
+a.account span.mnr {
+    font-size: 0.75rem;
+    color: var(--grey-80);
+}
+
+a.account span.verified {
+    font-size: 1rem;
+    color: var(--green);
 }

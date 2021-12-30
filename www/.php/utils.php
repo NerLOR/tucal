@@ -34,6 +34,7 @@ function generate_token(int $len, string $table = null, string $column = 'token'
 
 function http_message(int $status): string {
     switch ($status) {
+        case 400: return 'Bad Request';
         case 401: return 'Unauthorized';
         case 403: return 'Forbidden';
         case 404: return 'Not Found';
@@ -95,4 +96,21 @@ function base32_decode(string $data): string {
         }
     }
     return $plain;
+}
+
+function echo_account($row, $mnr = false, $uri = null) {
+    echo '<a class="account"';
+    if ($uri !== null) {
+        echo " href=\"$uri\"";
+    }
+    echo '><div>';
+    echo '<img src="/res/avatars/default.png" alt="' . _('Avatar') . '"/>';
+    echo "<span class=\"username\">$row[username]";
+    if ($row['verified']) {
+        echo ' <span class="verified">✓</span>';
+    }
+    if ($mnr) {
+        echo " <span class=\"mnr\">$row[mnr]</span>";
+    }
+    echo "</span></div></a>";
 }

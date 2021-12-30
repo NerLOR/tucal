@@ -65,6 +65,7 @@ function rooms() {
 }
 
 function calendar() {
+    global $USER;
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         error(405);
     }
@@ -75,6 +76,23 @@ function calendar() {
 
     $start = strtotime($start);
     $end = strtotime($end);
+
+    if (!isset($USER)) {
+        error(401);
+    } elseif ($USER['mnr'] !== $subject) {
+        $stmt = db_exec("
+            SELECT a.username
+            FROM tucal.friend f
+                JOIN tucal.v_account a ON a.account_nr = f.account_nr_1
+            WHERE (a.mnr, account_nr_2) = (:mnr, :nr)", [
+            'mnr' => $subject,
+            'nr' => $USER['nr'],
+        ]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (sizeof($rows) === 0) {
+            error(403);
+        }
+    }
 
     $stmt = db_exec("
             SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.data,
@@ -190,14 +208,7 @@ function courses() {
         'mnr' => $mnr,
     ]);
 
-    echo '{"status":"success","message":"work in progress","data":{"personal":[' . "\n";
-    $first = true;
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        if ($first) {
-            $first = false;
-        } else {
-            echo ",\n";
-        }
+    function echo_course($row) {
         $data = [
             'nr' => $row['course_nr'],
             'semester' => $row['semester'],
@@ -213,7 +224,45 @@ function courses() {
         echo json_encode($data, JSON_FLAGS);
     }
 
+    echo '{"status":"success","message":"work in progress","data":{"personal":[' . "\n";
+    $first = true;
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        if ($first) {
+            $first = false;
+        } else {
+            echo ",\n";
+        }
+        echo_course($row);
+    }
+
     echo "\n],\"friends\":[\n";
+
+    $stmt = db_exec("SELECT account_nr_1 FROM tucal.friend WHERE account_nr_2 = :nr", ['nr' => $USER['nr']]);
+    $friends = [];
+    while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+        $friends[] = $row[0];
+    }
+    $friendsStr = '{' . implode(',', $friends) . '}';
+
+    $stmt = db_exec("
+            SELECT DISTINCT c.course_nr, c.semester, c.ects, cd.type, cd.name_de, cd.name_en,
+                   ca.acronym_1, ca.acronym_2, ca.short, ca.program
+            FROM tucal.v_account_group m
+            LEFT JOIN tiss.course c ON (c.course_nr, c.semester) = (m.course_nr, m.semester)
+            LEFT JOIN tiss.course_def cd ON cd.course_nr = c.course_nr
+            LEFT JOIN tucal.course_acronym ca ON ca.course_nr = c.course_nr
+            WHERE m.account_nr = ANY(:friends)", [
+        'friends' => $friendsStr,
+    ]);
+    $first = true;
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        if ($first) {
+            $first = false;
+        } else {
+            echo ",\n";
+        }
+        echo_course($row);
+    }
 
     echo "\n]}}\n";
     tucal_exit();

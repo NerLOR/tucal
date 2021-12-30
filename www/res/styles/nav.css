@@ -139,7 +139,6 @@ body > nav > div.link {
 }
 
 #nav-search input {
-    outline: none;
     border-radius: var(--border-radius);
     font-size: 1em;
     border: 1px solid var(--border-color);

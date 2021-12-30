@@ -49,6 +49,21 @@ CREATE TRIGGER t_insert
 EXECUTE PROCEDURE tucal.account_id();
 
 
+CREATE TABLE tucal.friend
+(
+    account_nr_1 BIGINT NOT NULL,
+    account_nr_2 BIGINT NOT NULL,
+
+    CONSTRAINT pk_friend PRIMARY KEY (account_nr_1, account_nr_2),
+    CONSTRAINT fk_friend_account_1 FOREIGN KEY (account_nr_1) REFERENCES tucal.account (account_nr)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT fk_friend_account_2 FOREIGN KEY (account_nr_2) REFERENCES tucal.account (account_nr)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+
 CREATE TABLE tucal.sso_credential
 (
     account_nr INT      NOT NULL,

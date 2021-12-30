@@ -41,7 +41,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <title><?php
         $TITLE = $TITLE ?? [];
         $TITLE[] = 'TUcal';
-        echo implode(' - ', $TITLE);
+        echo htmlspecialchars(implode(' - ', $TITLE));
     ?></title>
     <meta charset="UTF-8"/>
     <meta name="author" content="Lorenz Stechauner"/>
@@ -65,13 +65,13 @@ if ($STATUS >= 400 && $STATUS < 600) {
     </div>
     <div id="nav-search">
         <form action="/search" method="get">
-            <input name="q" placeholder="<?php echo _('Search (for)');?>"/>
+            <input type="text" name="q" placeholder="<?php echo _('Search (for)');?>" value="<?php echo htmlspecialchars($_GET['q'] ?? '');?>" minlength="3" required/>
         </form>
     </div>
     <div class="link" id="nav-home-explicit"><a href="/" class="<?php echo uri_active('/', true);?>"><?php echo _('Home');?></a></div>
     <div class="link"><a href="<?php echo $cal_uri;?>" class="<?php echo uri_active($cal_uri);?>"><?php echo _('My Calendar');?></a></div>
-    <div class="link"><a href="/friends" class="<?php echo uri_active('/friends', true);?>"><?php echo _('My Friends');?></a></div>
-    <div class="link"><a href="/course/" class="<?php echo uri_active('/course/');?>"><?php echo _('LVAs');?></a></div>
+    <div class="link"><a href="/friends/" class="<?php echo uri_active('/friends/', true);?>"><?php echo _('My Friends');?></a></div>
+    <div class="link"><a href="/courses/" class="<?php echo uri_active('/courses/');?>"><?php echo _('LVAs');?></a></div>
     <div id="nav-live">
         <a href="" class="button live" target="_blank">LIVE<span></span></a>
         <a href="" class="button live" target="_blank">LIVE<span></span></a>

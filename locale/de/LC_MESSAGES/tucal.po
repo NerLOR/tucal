@@ -8,6 +8,18 @@ msgstr "Kalender"
 msgid "My Friends"
 msgstr "Meine Freund:innen"
 
+msgid "Add friend"
+msgstr "Freund:in hinzufügen"
+
+msgid "Pending Friend Requests"
+msgstr "Ausstehende Freundschaftsanfragen"
+
+msgid "Sent Friend Requests"
+msgstr "Gesendete Freundschaftsanfragen"
+
+msgid "Students"
+msgstr "Studierende"
+
 msgid "LVAs"
 msgstr "LVAs"
 
@@ -125,6 +137,10 @@ msgid "SSO password storage warning"
 msgstr "Mir ist bewusst, welche Risiken das Speichern meines Passwortes auf einem fremden Server birgt. "
        "Weiters nehme ich zur Kenntnis, dass das Passwort auf dem Server so gespeichert werden muss, dass es im "
        "Endeffekt lesbar bleibt. Daher ist kein „sicheres“ Verschlüsseln des Passworts möglich."
+
+msgctxt "http"
+msgid "Bad Request"
+msgstr "Ungültige Anfrage"
 
 msgctxt "http"
 msgid "Unauthorized"

@@ -1,0 +1,7 @@
+
+div.friend-container {
+    display: block;
+    width: fit-content;
+    width: -moz-fit-content;
+    margin: auto;
+}

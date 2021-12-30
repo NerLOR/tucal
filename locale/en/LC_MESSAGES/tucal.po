@@ -8,6 +8,18 @@ msgstr "Calendar"
 msgid "My Friends"
 msgstr "My Friends"
 
+msgid "Add friend"
+msgstr "Add friend"
+
+msgid "Pending Friend Requests"
+msgstr "Pending Friend Requests"
+
+msgid "Sent Friend Requests"
+msgstr "Sent Friend Requests"
+
+msgid "Students"
+msgstr "Students"
+
 msgid "LVAs"
 msgstr "Courses"
 
@@ -92,6 +104,10 @@ msgstr "Does not exist"
 msgid "Wrong"
 msgstr "Wrong"
 
+
+msgctxt "http"
+msgid "Bad Request"
+msgstr "Invalid Request"
 
 msgctxt "http"
 msgid "Unauthorized"

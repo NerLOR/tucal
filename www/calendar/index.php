@@ -5,7 +5,7 @@ global $USER;
 global $USE_PATH_INFO;
 
 require "../.php/session.php";
-force_user_login(null, false);
+force_user_login();
 
 $parts = explode('/', $_SERVER['PATH_INFO']);
 $year = date('Y');
@@ -59,7 +59,28 @@ if ($_SERVER['REQUEST_URI'] !== $wanted_uri) {
     redirect($wanted_uri);
 }
 
-$TITLE = [_('Calendar')];
+$TITLE = [];
+
+if ($subject === $USER['mnr']) {
+    $TITLE[] = _('My Calendar');
+} else {
+    $stmt = db_exec("
+            SELECT a.username
+            FROM tucal.friend f
+                JOIN tucal.v_account a ON a.account_nr = f.account_nr_1
+            WHERE (a.mnr, account_nr_2) = (:mnr, :nr)", [
+        'mnr' => $subject,
+        'nr' => $USER['nr'],
+    ]);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (sizeof($rows) === 0) {
+        $STATUS = 403;
+    } else {
+        $TITLE[] = $rows[0]['username'];
+    }
+}
+
+$TITLE[] = _('Calendar');
 
 require "../.php/header.php";
 ?>
