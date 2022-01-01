@@ -18,7 +18,7 @@ function isoWeekFromDate(date) {
         firstThursday.setMonth(0, 1 + (4 - firstThursday.getDay() + 7) % 7);
     }
 
-    return 1 + Math.round((refThursday - firstThursday) / 604800000);
+    return new Week(refThursday.getFullYear(), 1 + Math.round((refThursday - firstThursday) / 604800000));
 }
 
 function isoWeekToDate(year, week) {
@@ -50,7 +50,7 @@ class Week {
     }
 
     static fromDate(date) {
-        return new Week(date.getFullYear(), isoWeekFromDate(date));
+        return isoWeekFromDate(date);
     }
 
     toString() {
@@ -74,7 +74,7 @@ class Week {
     add(n) {
         const ref = this.startDate();
         ref.setDate(ref.getDate() + 7 * n);
-        return new Week(ref.getFullYear(), isoWeekFromDate(ref));
+        return isoWeekFromDate(ref);
     }
 
     next() {
