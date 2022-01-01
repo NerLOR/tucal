@@ -8,8 +8,12 @@ require "../.php/session.php";
 force_user_login();
 
 $parts = explode('/', $_SERVER['PATH_INFO']);
-$year = date('Y');
-$week = 'W' . date('W');
+
+$ref = time();
+$ref = strtotime((4 - date('w', $ref)) . ' day', $ref);
+$year = date('Y', $ref);
+$week = 'W' . date('W', $ref);
+
 if (sizeof($parts) < 2 || strlen($parts[1]) === 0)
     redirect("/calendar/$USER[mnr]/$year/$week/");
 
