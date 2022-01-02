@@ -10,7 +10,7 @@ force_user_login();
 $parts = explode('/', $_SERVER['PATH_INFO']);
 
 $ref = time();
-$ref = strtotime((4 - date('w', $ref)) . ' day', $ref);
+$ref = strtotime((4 - date('N', $ref)) . ' day', $ref);
 $year = date('Y', $ref);
 $week = 'W' . date('W', $ref);
 
