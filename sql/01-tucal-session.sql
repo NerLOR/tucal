@@ -60,7 +60,8 @@ CREATE TABLE tucal.friend
         ON DELETE CASCADE,
     CONSTRAINT fk_friend_account_2 FOREIGN KEY (account_nr_2) REFERENCES tucal.account (account_nr)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT c_friend_equal CHECK (account_nr_1 != account_nr_2)
 );
 
 
@@ -121,6 +122,7 @@ SELECT s.session_nr,
        s.token,
        s.options   AS session_opts,
        a.account_nr,
+       a.account_id,
        a.mnr,
        a.mnr_normal,
        a.username,

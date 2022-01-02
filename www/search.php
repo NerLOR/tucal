@@ -36,17 +36,15 @@ require ".php/header.php";
 $stmt = db_exec("
         SELECT account_id, mnr, username, verified, account_nr_1 IS NOT NULL AS friend_request
         FROM tucal.v_account a
-            LEFT JOIN tucal.friend f ON (f.account_nr_1, f.account_nr_2) = (:mnr, a.account_nr)
+            LEFT JOIN tucal.friend f ON (f.account_nr_1, f.account_nr_2) = (:nr, a.account_nr)
         WHERE mnr::text = :q OR 
               username ILIKE CONCAT('%', :q, '%')
-        ORDER BY username", ['q' => $query, 'mnr' => $USER['mnr_int']]);
+        ORDER BY username", ['q' => $query, 'nr' => $USER['nr']]);
 while ($row = $stmt->fetch()) {
     echo "<div>";
     echo_account($row, true);
-    if (!$row['friend_request']) {
+    if (!$row['friend_request'] && $row['account_id'] !== $USER['id']) {
         echo "<a href=\"/friends/add?id=$row[account_id]\" class=\"friend-request\"><img src=\"/res/svgs/\"/></a>";
-    } else {
-        echo "<a href=\"/friends/remove?id=$row[account_id]\" class=\"friend-request\"><img src=\"/res/svgs/\"/></a>";
     }
     echo "</div>\n";
 }

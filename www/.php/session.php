@@ -49,6 +49,7 @@ if (isset($_COOKIE['tucal_session'])) {
         if ($s['mnr'] !== null) {
             $USER = [
                 'nr' => $s['account_nr'],
+                'id' => $s['account_id'],
                 'mnr' => $s['mnr_normal'],
                 'mnr_int' => $s['mnr'],
                 'username' => $s['username'],
