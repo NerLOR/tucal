@@ -62,7 +62,7 @@ $stmt = db_exec("SELECT * FROM tiss.course_def WHERE course_nr = :cnr::text OR n
 while ($row = $stmt->fetch()) {
     echo '<div><div lang="de" class="course">';
     $cnr = substr($row['course_nr'], 0, 3) . '.' . substr($row['course_nr'], 3);
-    echo "$cnr $row[name_de]";
+    echo "$cnr $row[name_de] ($row[type])";
     echo "</div></div>\n";
 }
 
