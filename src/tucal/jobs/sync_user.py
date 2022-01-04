@@ -224,6 +224,8 @@ if __name__ == '__main__':
     for evt in data['events']:
         tucal.db.tiss.insert_event(evt, now, mnr=int(mnr))
 
+    tucal.db.commit()
+
     job.end(TISS_VAL)
 
     job.begin('sync tuwel', 2)
@@ -266,6 +268,8 @@ if __name__ == '__main__':
             INSERT INTO tuwel.course_user (course_id, user_id) VALUES (%s, %s)
             ON CONFLICT DO NOTHING""", (c.id, user_id))
     job.end(TUWEL_INIT_VAL)
+
+    tucal.db.commit()
 
     job.begin('sync tuwel calendar months', TUWEL_MONTHS)
     acc = tucal.now()

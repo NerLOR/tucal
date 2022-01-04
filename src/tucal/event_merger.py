@@ -3,32 +3,52 @@ from typing import List, Dict, Any
 import time
 import json
 import datetime
+import argparse
+import re
 
 import tucal.db
 
 
-def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: datetime.datetime,
-                 room: int):
+ZOOM_LINK = re.compile(r'https?://([a-z]*\.zoom\.us[A-Za-z0-9/?=]*)')
+
+
+def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: datetime.datetime, room: int):
     evt = {
         'summary': None,
         'desc': None,
-        'details': None
+        'details': None,
+        'zoom': None,
+        'lt': None,
     }
     # FIXME better event merge
     for ext in events:
         if ext is None:
             continue
-        evt.update(ext)
+        for k1, v1 in ext.items():
+            if k1 in evt:
+                v1 = {k2: v2 for k2, v2 in v1.items() if v2 is not None}
+                evt[k1].update(v1)
+            else:
+                evt[k1] = v1
     if 'tuwel' in evt:
         evt['summary'] = evt['tuwel']['name']
+        for link in ZOOM_LINK.finditer(evt['tuwel']['description'] or ''):
+            evt['zoom'] = 'https://' + link.group(1)
     if 'aurora' in evt:
         evt['summary'] = evt['aurora']['summary']
+        url = evt['aurora'].get('url', None)
+        if url is not None:
+            evt['zoom'] = url
     if 'htu' in evt:
         evt['summary'] = evt['htu']['title']
     return evt
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-o', '--once', required=False, action='store_true')
+    args = parser.parse_args()
+
     cur = tucal.db.cursor()
 
     cur.execute("""
@@ -37,9 +57,13 @@ if __name__ == '__main__':
         GROUP BY e.event_nr""")
     rows = cur.fetch_all()
     for event_nr, datas, start_ts, end_ts, room_nr in rows:
-        data = json.dumps(update_event(datas, start_ts, end_ts, room_nr))
-        cur.execute("UPDATE tucal.event SET data = %s, updated = TRUE WHERE event_nr = %s", (data, event_nr))
+        data = update_event(datas, start_ts, end_ts, room_nr)
+        data_json = json.dumps(data)
+        cur.execute("UPDATE tucal.event SET data = %s, updated = TRUE WHERE event_nr = %s", (data_json, event_nr))
     tucal.db.commit()
+
+    if args.once:
+        exit(0)
 
     while True:
         cur.execute("""
@@ -66,8 +90,9 @@ if __name__ == '__main__':
                GROUP BY e.event_nr""")
         rows = cur.fetch_all()
         for event_nr, datas, start_ts, end_ts, room_nr in rows:
-            data = json.dumps(update_event(datas, start_ts, end_ts, room_nr))
-            cur.execute("UPDATE tucal.event SET data = %s, updated = TRUE WHERE event_nr = %s", (data, event_nr))
+            data = update_event(datas, start_ts, end_ts, room_nr)
+            data_json = json.dumps(data)
+            cur.execute("UPDATE tucal.event SET data = %s, updated = TRUE WHERE event_nr = %s", (data_json, event_nr))
         tucal.db.commit()
 
         time.sleep(1)

@@ -32,6 +32,7 @@ LINK_SUBSCRIPTION = re.compile(r'<a href="/education/subscriptionSettings\.xhtml
 INPUT_CHECKBOX = re.compile(r'<input id="([^"]*)" type="checkbox" name="([^"]*)"( checked="([^"]*)")?')
 LINK_COURSE = re.compile(r'<a href="/course/educationDetails\.xhtml\?'
                          r'semester=([0-9WS]+)&amp;courseNr=([A-Z0-9]+)">([^<]*)</a>')
+SPAN_TYPE = re.compile(r'<span title="Typ">, ([A-Z]+), </span>')
 SPAN_BOLD = re.compile(r'<span class="bold">\s*(.*?)\s*</span>', re.MULTILINE | re.DOTALL)
 GROUP_OL_LI = re.compile(r'<li>\s*<label[^>]*>\s*(.*?)\s*</label>\s*<span[^>]*>\s*(.*?)\s*</span>\s*</li>')
 ROOM_CODE = re.compile(r'roomCode=([^/&]*)')
@@ -119,7 +120,7 @@ class Course:
         self.ects = ects
 
     def __str__(self) -> str:
-        return f'<Course#{self.nr[:3]}.{self.nr[-3:]}-{self.semester}{{{self.type},{self.name_de},{self.ects}}}>'
+        return f'<Course#{self.nr[:3]}.{self.nr[3:]}-{self.semester}{{{self.type},{self.name_de},{self.ects}}}>'
 
     def __repr__(self) -> str:
         return f'<Course#{self.nr}-{self.semester}{{{self.type},{self.name_de},{self.name_en},{self.ects}}}>'
@@ -484,7 +485,8 @@ class Session:
             if len(data) != 3 or data[0] == 'Summe':
                 continue
             course = LINK_COURSE.findall(data[0])[0]
-            courses.append(Course(course[1], course[0], course[2], None, None, float(data[2])))
+            course_type = SPAN_TYPE.findall(data[0])[0]
+            courses.append(Course(course[1], course[0], course[2], None, course_type, float(data[2])))
         return courses
 
     def get_groups(self, course: Course) -> Dict[str, Dict[str, Any]]:

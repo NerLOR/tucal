@@ -167,7 +167,7 @@ def insert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], cou
     rows_insert = []
     rows_update = []
     for evt in events:
-        name = f'{course.name_de} - {group["name"]}'
+        name = f'{course.nr[:3]}.{course.nr[3:]} {course.type} {course.name_de} - {group["name"]}'
         data = {
             'name': name,
             'type': 2,
