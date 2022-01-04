@@ -324,6 +324,10 @@ div.calendar div.event span.course {
     font-weight: bold;
 }
 
+div.calendar div.event span.room {
+    white-space: nowrap;
+}
+
 div.calendar div.event a.live {
     float: right;
 }
