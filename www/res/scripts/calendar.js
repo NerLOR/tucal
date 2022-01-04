@@ -527,6 +527,9 @@ class WeekSchedule {
                 evt.style.setProperty("--part2", `${eventData.part2}`);
 
                 evt.addEventListener("click", (evt) => {
+                    for (const elem of evt.composedPath()) {
+                        if (elem.tagName === 'A') return;
+                    }
                     evt.stopImmediatePropagation();
                     this.setEventId(event.id);
                 });
@@ -535,7 +538,8 @@ class WeekSchedule {
                 const endFmt = formatter.format(end);
                 const course = event.course && getCourseName(event.course.nr) || null;
                 const room = event.room_nr && getRoomName(event.room_nr) || null;
-                evt.innerHTML = `<div class="time">${startFmt}-${endFmt}</div>` +
+                evt.innerHTML = (event.zoom !== null ? `<a href="${event.zoom}" target="_blank" class="live"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
+                    `<div class="time">${startFmt}-${endFmt}</div>` +
                     `<div><span class="course">${course}</span>` +
                     (room !== null ? ` - <span class="room">${room}</span></div>` : '') +
                     (event.summary !== null ? `<div class="summary">${event.summary}</div>` : '');
@@ -572,6 +576,8 @@ class Event {
     desc;
     details;
     room_nr;
+    zoom;
+    lecture_tube;
 
     constructor(json) {
         this.id = json.id;
@@ -583,6 +589,8 @@ class Event {
         this.desc = json.data.desc;
         this.details = json.data.details;
         this.room_nr = json.room_nr;
+        this.zoom = json.data.zoom;
+        this.lecture_tube = json.data.lt;
     }
 
     getWeek() {

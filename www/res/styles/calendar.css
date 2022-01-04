@@ -324,6 +324,19 @@ div.calendar div.event span.course {
     font-weight: bold;
 }
 
+div.calendar div.event a.live {
+    float: right;
+}
+
+div.calendar div.event a.live img {
+    height: 16px;
+    width: 16px;
+}
+
+div.calendar div.event a.live:hover img {
+    filter: drop-shadow(0 0 2px var(--black));
+}
+
 div.calendar div.event-details {
     position: fixed;
     background-color: var(--white);
