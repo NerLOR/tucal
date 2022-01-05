@@ -14,6 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $USER['opts']['locale'] = $_POST['locale'];
         init_locale();
     }
+    if (isset($_POST['lt-provider'])) {
+        $USER['opts']['lt_provider'] = $_POST['lt-provider'];
+    }
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     $STATUS = 405;
     header("Allow: GET, POST");
@@ -34,6 +37,13 @@ require "../.php/header.php";
                     <option value="en-GB"<?php echo $LOCALE === 'en-GB' ? " selected" : "";?>>English (United Kingdom)</option>
                     <option value="en-US"<?php echo $LOCALE === 'en-US' ? " selected" : "";?>>English (United Stated)</option>
                     <option value="bar-AT"<?php echo $LOCALE === 'bar-AT' ? " selected" : "";?>>Bairisch (Östareich)</option>
+                </select>
+            </div>
+            <div class="text">
+                <label for="lt-provider"><?php echo _('LectureTube provider');?></label>
+                <select name="lt-provider" id="lt-provider">
+                    <option value="live-video-tuwien"<?php echo $USER['opts']['lt_provider'] === "live-video-tuwien" ? " selected" : "";?>>live.video.tuwien.ac.at</option>
+                    <option value="hs-streamer"<?php echo $USER['opts']['lt_provider'] === "hs-streamer" ? " selected" : "";?>>HS-Streamer</option>
                 </select>
             </div>
             <button type="submit"><?php echo _('Save');?></button>

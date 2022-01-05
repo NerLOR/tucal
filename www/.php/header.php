@@ -48,6 +48,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <meta name="robots" content="notranslate"/>
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <meta name="user-options" content="<?php echo isset($USER) ? htmlspecialchars(json_encode($USER['opts'])) : '{}';?>"/>
     <link rel="stylesheet" href="/res/styles/styles.css" type="text/css"/>
     <link rel="icon" href="/res/svgs/<?php echo $icon;?>.svg" type="image/svg+xml" sizes="any"/>
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="256x256 128x128 64x64 32x32 24x24 16x16"/>

@@ -2,6 +2,8 @@
 
 const STATUS = parseInt(document.documentElement.getAttribute("data-status"));
 const MNR = (document.documentElement.getAttribute("data-mnr").length > 0) ? document.documentElement.getAttribute("data-mnr") : null;
+const USER_OPTS = JSON.parse(document.getElementsByName("user-options")[0].getAttribute("content"));
+const LT_PROVIDER = USER_OPTS['lt_provider'] || 'live-video-tuwien';
 
 let COURSE_DEF = null;
 let COURSES = null;
@@ -194,6 +196,17 @@ function getRoomNameLong(roomNr) {
     if (room.suffix) str += ' ' + room.suffix;
     if (room.alt_name) str += ' (' + room.alt_name + ')';
     return str;
+}
+
+function getLectureTubeLink(room_nr) {
+    const room = ROOMS[room_nr];
+    if (!room || !room.lt_room_code || !room.lt_name) return null;
+
+    switch (LT_PROVIDER) {
+        case 'hs-streamer': return `https://hs-streamer.fsbu.at/?hs=${room.lt_room_code}`;
+        case 'live-video-tuwien': return `https://live.video.tuwien.ac.at/room/${room.lt_room_code.toLowerCase()}/player.html`;
+        default: throw new Error(`Unknown LectureTube provider '${LT_PROVIDER}'`);
+    }
 }
 
 function sleep(ms) {

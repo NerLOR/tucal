@@ -538,7 +538,10 @@ class WeekSchedule {
                 const endFmt = formatter.format(end);
                 const course = event.course && getCourseName(event.course.nr) || null;
                 const room = event.room_nr && getRoomName(event.room_nr) || null;
-                evt.innerHTML = (event.zoom !== null ? `<a href="${event.zoom}" target="_blank" class="live"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
+                const ltLink = event.room_nr && getLectureTubeLink(event.room_nr) || null;
+                evt.innerHTML =
+                    (event.lecture_tube && ltLink ? `<a href="${ltLink}" target="_blank" class="live" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
+                    (event.zoom !== null ? `<a href="${event.zoom}" target="_blank" class="live" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
                     `<div><span class="course">${course}</span>` +
                     (room !== null ? ` - <span class="room">${room}</span></div>` : '') +

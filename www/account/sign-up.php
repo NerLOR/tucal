@@ -81,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'nr' => $nr,
             'opts' => [
                 'locale' => $LOCALE,
+                'lt_provider' => 'live-video-tuwien',
             ],
         ];
     } catch (Exception $e) {
