@@ -72,9 +72,12 @@ if __name__ == '__main__':
             job.end(1)
             continue
 
-        cur.execute("DELETE FROM tiss.event_user eu WHERE mnr = %s AND "
-                    "(SELECT start_ts FROM tiss.event e WHERE e.event_nr = eu.event_nr) >= %s",
-                    (mnr, Semester.current().first_day))
+        cur.execute("""
+            DELETE FROM tiss.event_user eu
+            WHERE mnr = %s AND
+                  (SELECT start_ts
+                   FROM tiss.event e
+                   WHERE e.event_nr = eu.event_nr) >= %s""", (mnr, Semester.current().first_day))
 
         for evt in cal.events:
             tucal.db.tiss.insert_event_ical(evt, mnr=mnr)
@@ -82,6 +85,7 @@ if __name__ == '__main__':
     job.end(0)
 
     job.begin('sync tuwel personal calendars', tuwel_num)
+    time = datetime.date.today() - datetime.timedelta(days=5)
     for user_id, mnr, token in tuwel_users:
         if args.mnr is not None and mnr != args.mnr:
             continue
@@ -94,9 +98,13 @@ if __name__ == '__main__':
             job.end(1)
             continue
 
-        cur.execute("DELETE FROM tuwel.event_user eu WHERE user_id = %s AND "
-                    "(SELECT start_ts FROM tuwel.event e WHERE e.event_id = eu.event_id) >= %s",
-                    (user_id, datetime.date.today() - datetime.timedelta(days=5)))
+        # TUWEL omits "Ankreuzen" events if no user is logged in to the current session
+        cur.execute("""
+            DELETE FROM tuwel.event_user eu
+            WHERE user_id = %s AND
+                  (SELECT start_ts >= %s AND NOT name ILIKE '%%Ankreuzen%%'
+                   FROM tuwel.event e
+                   WHERE e.event_id = eu.event_id)""", (user_id, time))
 
         for evt in cal.events:
             tucal.db.tuwel.insert_event_ical(evt, user_id)
