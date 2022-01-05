@@ -87,9 +87,9 @@ $stmt = db_exec("
         LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
         LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
         WHERE a.mnr = :mnr AND NOT e.deleted AND
-              (e.global OR (:mnr IN (SELECT u.mnr FROM tuwel.event_user eu
-                                     JOIN tuwel.user u ON u.user_id = eu.user_id
-                                     WHERE eu.event_id::text = x.event_id))) AND
+              (e.global OR (:mnr = ANY(SELECT u.mnr FROM tuwel.event_user eu
+                                       JOIN tuwel.user u ON u.user_id = eu.user_id
+                                       WHERE eu.event_id::text = x.event_id))) AND
               (m.ignore_from IS NULL OR e.start_ts < m.ignore_from) AND
               (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
         GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data,
