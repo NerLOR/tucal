@@ -52,7 +52,8 @@ if __name__ == '__main__':
     cur = tucal.db.cursor()
 
     cur.execute("""
-        SELECT e.event_nr, array_agg(x.data), e.start_ts, e.end_ts, e.room_nr FROM tucal.event e
+        SELECT e.event_nr, array_agg(x.data), e.start_ts, e.end_ts, e.room_nr
+        FROM tucal.event e
         LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
         GROUP BY e.event_nr""")
     rows = cur.fetch_all()
@@ -67,27 +68,38 @@ if __name__ == '__main__':
 
     while True:
         cur.execute("""
-            SELECT x.source, x.event_id, e.event_nr, x.start_ts, x.end_ts, x.group_nr FROM tucal.external_event x 
-            LEFT JOIN tucal.event e ON (e.group_nr, e.start_ts) = (x.group_nr, x.start_ts)
-            WHERE x.event_nr IS NULL""")
+            SELECT source, event_id, start_ts, end_ts, group_nr
+            FROM tucal.external_event
+            WHERE event_nr IS NULL""")
         rows = cur.fetch_all()
-        for source, evt_id, evt_nr, start, end, group in rows:
+        for source, evt_id, start, end, group in rows:
             # FIXME better equality check
-            if evt_nr is None:
+            cur.execute("""
+                SELECT e.event_nr, array_agg(x.source)
+                FROM tucal.event e
+                LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
+                WHERE (e.group_nr, e.start_ts) = (%s, %s)
+                GROUP BY e.event_nr""")
+            event_rows = cur.fetch_all()
+            event_rows = [(evt_nr, sources) for evt_nr, sources in event_rows if source not in sources]
+            if len(event_rows) == 0:
                 cur.execute("""
                     INSERT INTO tucal.event (start_ts, end_ts, room_nr, group_nr)
                     VALUES (%s, %s, NULL, %s) RETURNING event_nr""", (start, end, group))
                 evt_nr = cur.fetch_all()[0][0]
+            else:
+                evt_nr = event_rows[0][0]
             print(source, evt_id, evt_nr)
             cur.execute("UPDATE tucal.external_event SET event_nr = %s WHERE (source, event_id) = (%s, %s)",
                         (evt_nr, source, evt_id))
         tucal.db.commit()
 
         cur.execute("""
-               SELECT e.event_nr, array_agg(x.data), e.start_ts, e.end_ts, e.room_nr FROM tucal.event e
-               LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
-               WHERE e.updated = FALSE
-               GROUP BY e.event_nr""")
+            SELECT e.event_nr, array_agg(x.data), e.start_ts, e.end_ts, e.room_nr
+            FROM tucal.event e
+            LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
+            WHERE e.updated = FALSE
+            GROUP BY e.event_nr""")
         rows = cur.fetch_all()
         for event_nr, datas, start_ts, end_ts, room_nr in rows:
             data = update_event(datas, start_ts, end_ts, room_nr)
