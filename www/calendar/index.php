@@ -12,7 +12,7 @@ $parts = explode('/', $_SERVER['PATH_INFO']);
 $ref = time();
 $ref = strtotime((4 - date('N', $ref)) . ' day', $ref);
 $year = date('Y', $ref);
-$week = 'W' . date('W', $ref);
+$week = 'W' . (int) date('W', $ref);
 
 if (sizeof($parts) < 2 || strlen($parts[1]) === 0)
     redirect("/calendar/$USER[mnr]/$year/$week/");
