@@ -424,7 +424,7 @@ class WeekSchedule {
     async fetch(start, end, weeks = []) {
         start = `start=${start.toISOString()}`;
         end = `end=${end.toISOString()}`;
-        const json = await api(`/tucal/calendar?subject=${this.subject}&${start}&${end}`)
+        const json = await api(`/calendar/calendar?subject=${this.subject}&${start}&${end}`)
 
         const ts = new Date(Date.parse(json.data.timestamp));
         for (const week of weeks) {
