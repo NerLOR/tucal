@@ -132,8 +132,8 @@ if __name__ == '__main__':
         cur.execute("""
             INSERT INTO tucal.sso_credential (account_nr, key, pwd, tfa_gen)
             VALUES ((SELECT account_nr FROM tucal.account WHERE mnr = %(mnr)s), %(key)s, %(pwd)s, %(tfa_gen)s)
-            ON CONFLICT ON CONSTRAINT pk_sso_credential DO
-            UPDATE SET key = %(key)s, pwd = %(pwd)s, tfa_gen = %(tfa_gen)s""", data)
+            ON CONFLICT ON CONSTRAINT pk_sso_credential DO UPDATE
+            SET key = %(key)s, pwd = %(pwd)s, tfa_gen = %(tfa_gen)s""", data)
 
     tucal.db.commit()
 
@@ -144,7 +144,8 @@ if __name__ == '__main__':
     }
     cur.execute("""
         INSERT INTO tiss.user (mnr, auth_token) VALUES (%(mnr)s, %(token)s)
-        ON CONFLICT ON CONSTRAINT pk_user DO UPDATE SET auth_token = %(token)s""", data)
+        ON CONFLICT ON CONSTRAINT pk_user DO UPDATE
+        SET auth_token = %(token)s""", data)
 
     tucal.db.commit()
 
@@ -244,7 +245,8 @@ if __name__ == '__main__':
     }
     cur.execute("""
         INSERT INTO tuwel.user (user_id, mnr, auth_token) VALUES (%(id)s, %(mnr)s, %(token)s)
-        ON CONFLICT ON CONSTRAINT pk_user DO UPDATE SET mnr = %(mnr)s, auth_token = %(token)s""", data)
+        ON CONFLICT ON CONSTRAINT pk_user DO UPDATE
+        SET mnr = %(mnr)s, auth_token = %(token)s""", data)
 
     cur.execute("DELETE FROM tuwel.course_user WHERE user_id = %s", (user_id,))
     for c in courses.values():
@@ -256,12 +258,11 @@ if __name__ == '__main__':
             'suffix': c.suffix,
             'short': c.short,
         }
-        print(data)
         cur.execute("""
             INSERT INTO tuwel.course (course_id, course_nr, semester, name, suffix, short)
             VALUES (%(cid)s, %(cnr)s, %(sem)s, %(name)s, %(suffix)s, %(short)s)
-            ON CONFLICT ON CONSTRAINT pk_course
-            DO UPDATE SET course_nr = %(cnr)s, semester = %(sem)s, name = %(sem)s, suffix = %(suffix)s,
+            ON CONFLICT ON CONSTRAINT pk_course DO UPDATE
+            SET course_nr = %(cnr)s, semester = %(sem)s, name = %(sem)s, suffix = %(suffix)s,
                 short = %(short)s""", data)
 
         cur.execute("""
@@ -291,7 +292,7 @@ if __name__ == '__main__':
     cur.execute("""
         DELETE FROM tuwel.event_user
         WHERE user_id = (SELECT user_id FROM tuwel.user WHERE mnr = %s) AND
-            event_id IN (SELECT event_id FROM tuwel.event WHERE start_ts >= current_date)""", (mnr,))
+              event_id = ANY(SELECT event_id FROM tuwel.event WHERE start_ts >= current_date)""", (mnr,))
     for evt in events:
         tucal.db.tuwel.insert_event(evt, acc, user_id)
     job.end(0)

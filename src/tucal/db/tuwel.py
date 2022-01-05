@@ -25,14 +25,15 @@ def insert_event_ical(evt: ical.Event, user_id: int = None):
         INSERT INTO tuwel.event (event_id, course_id, start_ts, end_ts, access_ts, mod_ts, name, description) 
         VALUES (%(id)s, (SELECT course_id FROM tuwel.course WHERE short = %(short)s), %(start)s, %(end)s, %(access)s,
         %(mod)s, %(name)s, %(desc)s) 
-        ON CONFLICT ON CONSTRAINT pk_event 
-        DO UPDATE SET start_ts = %(start)s, end_ts = %(end)s, access_ts = %(access)s, mod_ts = %(mod)s, name = %(name)s,
-        description = %(desc)s""", data)
+        ON CONFLICT ON CONSTRAINT pk_event DO UPDATE
+        SET start_ts = %(start)s, end_ts = %(end)s, access_ts = %(access)s, mod_ts = %(mod)s, name = %(name)s,
+            description = %(desc)s""", data)
 
     if user_id is not None:
         cur.execute("""
             INSERT INTO tuwel.event_user (event_id, user_id) 
-            VALUES (%(id)s, %(user)s) ON CONFLICT DO NOTHING""", data)
+            VALUES (%(id)s, %(user)s)
+            ON CONFLICT DO NOTHING""", data)
 
     cur.close()
 
@@ -52,17 +53,18 @@ def insert_event(evt: Dict[str, Any], access_time: datetime.datetime, user_id: i
         'user': user_id
     }
 
-    cur.execute(
-        "INSERT INTO tuwel.event (event_id, course_id, start_ts, end_ts, access_ts, mod_ts, name, description) "
-        "VALUES (%(id)s, %(course)s, %(start)s, %(end)s, %(access)s, %(mod)s, %(name)s, NULL) "
-        "ON CONFLICT ON CONSTRAINT pk_event "
-        "DO UPDATE SET start_ts = %(start)s, end_ts = %(end)s, access_ts = %(access)s, mod_ts = %(mod)s,"
-        "name = %(name)s", data)
+    cur.execute("""
+        INSERT INTO tuwel.event (event_id, course_id, start_ts, end_ts, access_ts, mod_ts, name, description)
+        VALUES (%(id)s, %(course)s, %(start)s, %(end)s, %(access)s, %(mod)s, %(name)s, NULL)
+        ON CONFLICT ON CONSTRAINT pk_event DO UPDATE
+        SET start_ts = %(start)s, end_ts = %(end)s, access_ts = %(access)s, mod_ts = %(mod)s,
+            name = %(name)s""", data)
 
     if user_id is not None:
-        cur.execute(
-            """INSERT INTO tuwel.event_user (event_id, user_id)
-            VALUES (%(id)s, %(user)s) ON CONFLICT DO NOTHING""", data)
+        cur.execute("""
+            INSERT INTO tuwel.event_user (event_id, user_id)
+            VALUES (%(id)s, %(user)s)
+            ON CONFLICT DO NOTHING""", data)
 
     cur.close()
     return

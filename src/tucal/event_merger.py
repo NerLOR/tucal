@@ -79,7 +79,7 @@ if __name__ == '__main__':
                 FROM tucal.event e
                 LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
                 WHERE (e.group_nr, e.start_ts) = (%s, %s)
-                GROUP BY e.event_nr""")
+                GROUP BY e.event_nr""", (group, start))
             event_rows = cur.fetch_all()
             event_rows = [(evt_nr, sources) for evt_nr, sources in event_rows if source not in sources]
             if len(event_rows) == 0:
@@ -89,7 +89,7 @@ if __name__ == '__main__':
                 evt_nr = cur.fetch_all()[0][0]
             else:
                 evt_nr = event_rows[0][0]
-            print(source, evt_id, evt_nr)
+            print(f'{source}/{evt_id} -> {evt_nr}')
             cur.execute("UPDATE tucal.external_event SET event_nr = %s WHERE (source, event_id) = (%s, %s)",
                         (evt_nr, source, evt_id))
         tucal.db.commit()
