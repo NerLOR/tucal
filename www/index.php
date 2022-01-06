@@ -13,17 +13,17 @@ require ".php/header.php";
             Der Quellcode ist auf <a href="https://github.com/NerLOR/tucal">GitHub</a> zu finden.
         </p>
         <p>
-            Alle Studierenden an der <a href="https://www.tuwien.at/">TU Wien</a> kennen folgendes Problem: Jede LVA hat
-            einen mehr oder weniger unterschiedlichen Zugang Termine, Deadlines und Änderungen ebendieser an Studierende
+            Alle Studenten an der <a href="https://www.tuwien.at/">TU Wien</a> kennen folgendes Problem: Jede LVA hat
+            einen mehr oder weniger unterschiedlichen Zugang Termine, Deadlines und Änderungen ebendieser an Studenten
             zu kommunizieren. Die Idee von TUcal ist es eine Website zu schaffen, auf der mit einem Blick alle Termine,
             Deadlines uns sonstige terminliche Informationen einer jeden LVA gesammelt zu finden sind. Die Daten hierfür
             sollen automatisiert aus <a href="https://tiss.tuwien.ac.at/">TISS</a> und
-            <a href="https://tuwel.tuwien.ac.at/">TUWEL</a> synchronisiert werden. Weiters sollen Studierende die
-            Termine bearbeiten können, um eventuell falsche Informationen zu korrigieren.
+            <a href="https://tuwel.tuwien.ac.at/">TUWEL</a> synchronisiert werden. Weiters sollen Studenten die Termine
+            bearbeiten können, um eventuell falsche Informationen zu korrigieren.
         </p>
     </section>
     <section lang="de-AT">
-        <h1>Benutzer:innenzahlen</h1>
+        <h1>Benutzerzahlen</h1>
         <?php
         $stmt = db_exec("
             SELECT COUNT(*),

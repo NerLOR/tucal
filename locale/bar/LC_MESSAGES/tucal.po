@@ -6,7 +6,7 @@ msgid "Calendar"
 msgstr "kalenda"
 
 msgid "My Friends"
-msgstr "Meine Freind:inna"
+msgstr "Meine Freind"
 
 msgid "LVAs"
 msgstr "LVAs"

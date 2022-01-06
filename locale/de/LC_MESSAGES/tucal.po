@@ -6,10 +6,10 @@ msgid "Calendar"
 msgstr "Kalender"
 
 msgid "My Friends"
-msgstr "Meine Freund:innen"
+msgstr "Meine Freunde"
 
 msgid "Add friend"
-msgstr "Freund:in hinzufügen"
+msgstr "Freund hinzufügen"
 
 msgid "Pending Friend Requests"
 msgstr "Ausstehende Freundschaftsanfragen"
@@ -18,7 +18,7 @@ msgid "Sent Friend Requests"
 msgstr "Gesendete Freundschaftsanfragen"
 
 msgid "Students"
-msgstr "Studierende"
+msgstr "Studenten"
 
 msgid "LVAs"
 msgstr "LVAs"
@@ -121,8 +121,8 @@ msgstr "SSO-Zwei-Faktor-Authentifizierung Schlüssel"
 
 msgid "Account synchronization (description)"
 msgstr "Der TUcal-Server synchronisiert im Hintergrund Kalenderdaten mit den Systemen der TU Wien (TISS, TUWEL, etc.). "
-       "Um eine personalisierung zu ermöglichen (z.B. Anmeldungen für LVAs) ist es dabei leider nötig, dass die:der "
-       "Benutzer:in ihr:sein TU-SSO-Passwort angibt."
+       "Um eine personalisierung zu ermöglichen (z.B. Anmeldungen für LVAs) ist es dabei leider nötig, dass der "
+       "Benutzer sein TU-SSO-Passwort angibt."
 
 msgid "Automatic account synchronization (description)"
 msgstr "Empfohlen wird, dass das SSO-Passwort beim TUcal-Server hinterlegt wird. "
