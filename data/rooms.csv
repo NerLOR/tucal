@@ -171,16 +171,16 @@ Informatikhörsaal,,Inf. HS,,DEEG16 DEU116,INFH,lecture_hall,,303,392,colab tiss
 FAV Hörsaal 1,,FAV 1,,HEEG02,FAV1,lecture_hall,,,106,colab tiss
 FAV Hörsaal 2,,FAV 2,,HEEG03,FAV2,lecture_hall,,,35,colab tiss
 FAV Hörsaal 3,Zemanek,FAV 3,Seminarraum Zemanek,HHEG01,ZEMS,lecture_hall,,,40,colab tiss
-Hörsaal Atrium 1,,,,OZEG80,OZEG80,lecture_hall,,192,150,colab tiss rdb
-Hörsaal Atrium 2,,,,OZEG76,OZEG76,lecture_hall,,188,86,colab tiss rdb
-Hörsaal O221,,,,OA01E29,OA01E29,lecture_hall,,216,145,colab tiss rdb
+Hörsaal Atrium 1,,HS Atrium 1,,OZEG80,OZEG80,lecture_hall,,192,150,colab tiss rdb
+Hörsaal Atrium 2,,HS Atrium 2,,OZEG76,OZEG76,lecture_hall,,188,86,colab tiss rdb
+Hörsaal O221,,HS O221,,OA01E29,OA01E29,lecture_hall,,216,145,colab tiss rdb
 Theresianum Hörsaal 1,,THE 1,Bombardier Hörsaal,QA0101,THE1,lecture_hall,,117,78,colab tiss rdb
 Theresianum Hörsaal 2,,THE 2,,QA0107,THE2,lecture_hall,,51,35,colab tiss rdb
-Hörsaal W3,,,,WB03A24,WB03A24,lecture_hall,,,96,tiss
-Hörsaal W4,,,,WBU1F01,WBUIF01,lecture_hall,,,174,tiss
-Hörsaal W5,,,,WAEGE07,WAEG07,lecture_hall,,,138,tiss
-Hörsaal WEDV,,,,WC03A24,WC03A24,lecture_hall,,,70,tiss
-Hörsaal Atominstitut,,,,ZDEG01,AIHS,lecture_hall,,182,196,tiss rdb
+Hörsaal W3,,HS W3,,WB03A24,WB03A24,lecture_hall,,,96,tiss
+Hörsaal W4,,HS W4,,WBU1F01,WBUIF01,lecture_hall,,,174,tiss
+Hörsaal W5,,HS W5,,WAEGE07,WAEG07,lecture_hall,,,138,tiss
+Hörsaal WEDV,,HS WEDV,,WC03A24,WC03A24,lecture_hall,,,70,tiss
+Hörsaal Atominstitut,,HS AI,,ZDEG01,AIHS,lecture_hall,,182,196,tiss rdb
 Büro BC EG A12,,,,BCEGA12,BCEGA12,office,,,3,tiss
 Büro Birner-Grünberger,,,,BZ0101,BZ0101,office,,,3,tiss
 Büro Bösendorfer,,,,BZ0231,BZ0231,office,,,5,tiss
