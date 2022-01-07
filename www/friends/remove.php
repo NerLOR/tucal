@@ -3,7 +3,7 @@
 global $USER;
 
 require "../.php/session.php";
-force_user_login();
+force_user_login('/friends/');
 
 if (!isset($_GET['id'])) {
     $STATUS = 400;
