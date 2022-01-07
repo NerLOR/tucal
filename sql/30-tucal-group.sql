@@ -331,4 +331,4 @@ FROM tucal.v_account a
          LEFT JOIN tucal.group_member m ON m.account_nr = a.account_nr
          LEFT JOIN tucal.group g ON g.group_nr = m.group_nr
          LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
-ORDER BY a.account_nr, l.semester, l.course_nr, g.group_name;
+ORDER BY a.account_nr, l.semester DESC, l.course_nr, g.group_name;
