@@ -81,11 +81,11 @@ $stmt = db_exec("
         SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.create_ts, e.update_ts, e.update_seq, e.room_nr, e.data,
                l.course_nr, l.semester, l.name, g.group_id
         FROM tucal.event e
-        JOIN tucal.external_event x ON x.event_nr = e.event_nr
-        JOIN tucal.group_member m ON m.group_nr = e.group_nr
-        JOIN tucal.account a ON a.account_nr = m.account_nr
-        LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
-        LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
+            JOIN tucal.external_event x ON x.event_nr = e.event_nr
+            JOIN tucal.group_member m ON m.group_nr = e.group_nr
+            JOIN tucal.account a ON a.account_nr = m.account_nr
+            LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
+            LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
         WHERE a.mnr = :mnr AND NOT e.deleted AND
               (e.global OR (:mnr = ANY(SELECT u.mnr FROM tuwel.event_user eu
                                        JOIN tuwel.user u ON u.user_id = eu.user_id

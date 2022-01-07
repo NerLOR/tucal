@@ -34,9 +34,11 @@ function rooms() {
 
     header("Cache-Control: public, max-age=86400");
 
-    $res = db_exec("SELECT r.room_nr, r.room_code, r.tiss_code, r.room_name, r.room_suffix, r.room_name_short,
-                  r.room_alt_name, r.room_name_normal, lt.room_code AS lt_room_code, lt.lt_name
-                  FROM tucal.v_room r LEFT JOIN tucal.v_lecture_tube lt ON lt.room_nr = r.room_nr");
+    $res = db_exec("
+                SELECT r.room_nr, r.room_code, r.tiss_code, r.room_name, r.room_suffix, r.room_name_short,
+                       r.room_alt_name, r.room_name_normal, lt.room_code AS lt_room_code, lt.lt_name
+                FROM tucal.v_room r
+                    LEFT JOIN tucal.v_lecture_tube lt ON lt.room_nr = r.room_nr");
     $arr = $res->fetchAll();
 
     $content = '{"status":"success","message":null,"data":{"rooms":[' . "\n";
@@ -112,9 +114,9 @@ function courses() {
             SELECT c.course_nr, c.semester, c.ects, cd.type, cd.name_de, cd.name_en,
                    ca.acronym_1, ca.acronym_2, ca.short, ca.program
             FROM tucal.v_account_group m
-            LEFT JOIN tiss.course c ON (c.course_nr, c.semester) = (m.course_nr, m.semester)
-            LEFT JOIN tiss.course_def cd ON cd.course_nr = c.course_nr
-            LEFT JOIN tucal.course_acronym ca ON ca.course_nr = c.course_nr
+                LEFT JOIN tiss.course c ON (c.course_nr, c.semester) = (m.course_nr, m.semester)
+                LEFT JOIN tiss.course_def cd ON cd.course_nr = c.course_nr
+                LEFT JOIN tucal.course_acronym ca ON ca.course_nr = c.course_nr
             WHERE m.mnr = :mnr", [
         'mnr' => $mnr,
     ]);
@@ -156,12 +158,12 @@ function courses() {
     $friendsStr = '{' . implode(',', $friends) . '}';
 
     $stmt = db_exec("
-            SELECT DISTINCT c.course_nr, c.semester, c.ects, cd.type, cd.name_de, cd.name_en,
-                   ca.acronym_1, ca.acronym_2, ca.short, ca.program
+            SELECT DISTINCT c.course_nr, c.semester, c.ects, cd.type, cd.name_de, cd.name_en, ca.acronym_1,
+                            ca.acronym_2, ca.short, ca.program
             FROM tucal.v_account_group m
-            LEFT JOIN tiss.course c ON (c.course_nr, c.semester) = (m.course_nr, m.semester)
-            LEFT JOIN tiss.course_def cd ON cd.course_nr = c.course_nr
-            LEFT JOIN tucal.course_acronym ca ON ca.course_nr = c.course_nr
+                LEFT JOIN tiss.course c ON (c.course_nr, c.semester) = (m.course_nr, m.semester)
+                LEFT JOIN tiss.course_def cd ON cd.course_nr = c.course_nr
+                LEFT JOIN tucal.course_acronym ca ON ca.course_nr = c.course_nr
             WHERE m.account_nr = ANY(:friends)", [
         'friends' => $friendsStr,
     ]);
