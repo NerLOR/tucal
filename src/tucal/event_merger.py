@@ -78,8 +78,9 @@ if __name__ == '__main__':
                 SELECT e.event_nr, array_agg(x.source)
                 FROM tucal.event e
                 LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
-                WHERE (e.group_nr, e.start_ts) = (%s, %s)
-                GROUP BY e.event_nr""", (group, start))
+                WHERE e.group_nr = %s AND 
+                      (%s - e.start_ts <= INTERVAL '30' MINUTE AND e.end_ts - %s <= INTERVAL '30' MINUTE)
+                GROUP BY e.event_nr""", (group, start, end))
             event_rows = cur.fetch_all()
             event_rows = [(evt_nr, sources) for evt_nr, sources in event_rows if source not in sources]
             if len(event_rows) == 0:
