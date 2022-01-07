@@ -291,6 +291,9 @@ body main > section > hr {
         padding-left: 0.5em;
         padding-right: 0.5em;
     }
+    body main > section > hr {
+        width: calc(100% + 2.5rem);
+    }
 }
 
 a.account {
