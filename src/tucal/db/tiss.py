@@ -27,16 +27,24 @@ CATEGORY_TYPES = {
 
 
 def get_course(name: str) -> Optional[str]:
+    cur = tucal.db.cursor()
     course = COURSE_NR.findall(name)
     course = course[0][0] + course[0][1] if len(course) > 0 else None
-    cur = tucal.db.cursor()
+
     cur.execute("SELECT course_nr FROM tiss.course_def WHERE course_nr = %s", (course,))
     courses = cur.fetch_all()
-    cur.close()
-    if len(courses) == 0:
-        return None
-    else:
+    if len(courses) > 0:
+        cur.close()
         return course
+
+    cur.execute("SELECT course_nr FROM tiss.course_def WHERE name_de = %s", (name,))
+    courses = cur.fetch_all()
+    if len(courses) == 1:
+        cur.close()
+        return courses[0][0]
+
+    cur.close()
+    return None
 
 
 def insert_event_ical(evt: ical.Event, room_code: str = None, mnr: int = None) -> Optional[int]:
