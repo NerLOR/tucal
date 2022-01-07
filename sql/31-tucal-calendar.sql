@@ -120,8 +120,8 @@ BEGIN
     IF NEW.event_nr IS NULL THEN
     ELSEIF OLD IS NULL OR OLD.event_nr IS NULL OR NEW.event_nr != OLD.event_nr THEN
         UPDATE tucal.event
-        SET start_ts   = NEW.start_ts,
-            end_ts     = NEW.end_ts,
+        SET start_ts   = (CASE WHEN NEW.source != 'tuwel' THEN NEW.start_ts ELSE start_ts END),
+            end_ts     = (CASE WHEN NEW.source != 'tuwel' THEN NEW.end_ts ELSE end_ts END),
             room_nr    = (CASE WHEN NEW.room_nr IS NULL THEN room_nr ELSE NEW.room_nr END),
             group_nr   = (CASE WHEN NEW.group_nr IS NULL THEN group_nr ELSE NEW.group_nr END),
             deleted    = (CASE WHEN NEW.deleted IS NULL THEN deleted ELSE NEW.deleted END),
