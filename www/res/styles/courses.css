@@ -1,0 +1,29 @@
+
+section.course-list h2 {
+    font-size: 1em;
+    text-align: left;
+    margin-bottom: 0;
+    color: var(--black);
+    font-weight: bold;
+}
+
+section.course-list h3 {
+    font-size: 0.75em;
+    text-align: left;
+    margin-top: 0;
+    font-weight: normal;
+    color: var(--black);
+}
+
+section.course-list span.course-nr {
+    font-weight: normal;
+    font-size: 0.75em;
+}
+
+section.course-list a.link {
+    float: right;
+    font-weight: normal;
+    text-decoration: none;
+    margin: 0.125em 0.25em;
+    font-size: 0.75em;
+}
