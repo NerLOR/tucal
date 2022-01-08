@@ -188,6 +188,15 @@ class WeekSchedule {
         buttons[2].addEventListener("click", (evt) => {
             this.next();
         });
+        document.addEventListener("keydown", (evt) => {
+            if (evt.composedPath()[0].tagName !== 'BODY') return;
+            switch (evt.code) {
+                case 'ArrowLeft': this.previous(); break;
+                case 'ArrowRight': this.next(); break;
+                case 'Numpad0': this.now(); break;
+                default: return;
+            }
+        });
 
         this.cal.appendChild(table);
 
