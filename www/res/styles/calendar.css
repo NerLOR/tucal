@@ -244,7 +244,7 @@ div.calendar div.event-wrapper div.loading {
 div.calendar div.event-wrapper div.day {
     --n: 0;
     height: 100%;
-    width: calc((100%) / 7 - 1px);
+    width: calc((100% - 1px) / 7 - 1px);
     box-sizing: border-box;
     border-left: 2px solid #00000000;
     border-right: 2px solid #00000000;
@@ -367,6 +367,11 @@ div.calendar div.event-details {
     div.calendar thead th.day-header {
         font-size: 0.75em;
         padding: 0 0.5em;
+    }
+
+    div.calendar div.event-wrapper div.day {
+        border-left-width: 0;
+        border-right-width: 0;
     }
 
     div.calendar div.event-wrapper div.event {
