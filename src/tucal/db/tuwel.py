@@ -1,6 +1,7 @@
 
 from typing import Dict, Any
 import datetime
+import json
 
 import tucal.icalendar as ical
 import tucal.db as db
@@ -17,17 +18,19 @@ def insert_event_ical(evt: ical.Event, user_id: int = None):
         'access': evt.access,
         'mod': evt.last_modified,
         'name': evt.summary,
-        'desc': evt.description,
+        'data': json.dumps({
+            'desc': evt.description,
+        }),
         'user': user_id
     }
 
     cur.execute("""
-        INSERT INTO tuwel.event (event_id, course_id, start_ts, end_ts, access_ts, mod_ts, name, description) 
+        INSERT INTO tuwel.event (event_id, course_id, start_ts, end_ts, access_ts, mod_ts, name, data) 
         VALUES (%(id)s, (SELECT course_id FROM tuwel.course WHERE short = %(short)s), %(start)s, %(end)s, %(access)s,
-        %(mod)s, %(name)s, %(desc)s) 
+        %(mod)s, %(name)s, %(data)s)
         ON CONFLICT ON CONSTRAINT pk_event DO UPDATE
         SET start_ts = %(start)s, end_ts = %(end)s, access_ts = %(access)s, mod_ts = %(mod)s, name = %(name)s,
-            description = %(desc)s""", data)
+            data = event.data || %(data)s""", data)
 
     if user_id is not None:
         cur.execute("""
@@ -50,15 +53,19 @@ def insert_event(evt: Dict[str, Any], access_time: datetime.datetime, user_id: i
         'end': start + datetime.timedelta(seconds=evt['timeduration']),
         'mod': datetime.datetime.fromtimestamp(evt['timemodified']).astimezone(),
         'access': access_time,
-        'user': user_id
+        'user': user_id,
+        'data': json.dumps({
+            'desc_html': evt['description'],
+            'url': evt['url'],
+        }),
     }
 
     cur.execute("""
-        INSERT INTO tuwel.event (event_id, course_id, start_ts, end_ts, access_ts, mod_ts, name, description)
-        VALUES (%(id)s, %(course)s, %(start)s, %(end)s, %(access)s, %(mod)s, %(name)s, NULL)
+        INSERT INTO tuwel.event (event_id, course_id, start_ts, end_ts, access_ts, mod_ts, name, data)
+        VALUES (%(id)s, %(course)s, %(start)s, %(end)s, %(access)s, %(mod)s, %(name)s, %(data)s)
         ON CONFLICT ON CONSTRAINT pk_event DO UPDATE
-        SET start_ts = %(start)s, end_ts = %(end)s, access_ts = %(access)s, mod_ts = %(mod)s,
-            name = %(name)s""", data)
+        SET start_ts = %(start)s, end_ts = %(end)s, access_ts = %(access)s, mod_ts = %(mod)s, name = %(name)s,
+            data = event.data || %(data)s""", data)
 
     if user_id is not None:
         cur.execute("""

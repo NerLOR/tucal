@@ -242,9 +242,8 @@ $$
 DECLARE
     tuwel JSONB;
 BEGIN
-    tuwel = jsonb_build_object(
+    tuwel = NEW.data || jsonb_build_object(
             'name', NEW.name,
-            'description', NEW.description,
             'event_id', NEW.event_id,
             'course_id', NEW.course_id,
             'event_id', NEW.event_id);
@@ -269,9 +268,8 @@ $$
 DECLARE
     tuwel JSONB;
 BEGIN
-    tuwel = jsonb_build_object(
+    tuwel = NEW.data || jsonb_build_object(
             'name', NEW.name,
-            'description', NEW.description,
             'event_id', NEW.event_id,
             'course_id', NEW.course_id);
     UPDATE tucal.external_event

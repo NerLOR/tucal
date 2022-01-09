@@ -510,7 +510,11 @@ class WeekSchedule {
 
             const el = document.createElement("li");
             const short = getCourseName(deadline.course.nr);
-            el.innerHTML = `<span class="time">${formatter.format(time)}</span> <span class="course">${short}</span> ${deadline.summary}`;
+            let str = `<span class="time">${formatter.format(time)}</span> <span class="course">${short}</span> ${deadline.summary}`;
+            if (deadline.url && MNR === this.subject) {
+                str = `<a href="${deadline.url}" target="_blank">${str}</a>`;
+            }
+            el.innerHTML = str;
             day.appendChild(el);
         }
 
@@ -590,6 +594,7 @@ class Event {
     room_nr;
     zoom;
     lecture_tube;
+    url;
 
     constructor(json) {
         this.id = json.id;
@@ -603,6 +608,7 @@ class Event {
         this.room_nr = json.room_nr;
         this.zoom = json.data.zoom;
         this.lecture_tube = json.data.lt;
+        this.url = json.data.url;
     }
 
     getWeek() {

@@ -19,6 +19,7 @@ def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: da
         'details': None,
         'zoom': None,
         'lt': None,
+        'url': None,
     }
     # FIXME better event merge
     for ext in events:
@@ -32,8 +33,10 @@ def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: da
                 evt[k1] = v1
     if 'tuwel' in evt:
         evt['summary'] = evt['tuwel']['name']
-        for link in ZOOM_LINK.finditer(evt['tuwel']['description'] or ''):
+        for link in ZOOM_LINK.finditer(evt['tuwel'].get('desc', None) or evt['tuwel'].get('desc_html', None) or ''):
             evt['zoom'] = 'https://' + link.group(1)
+        if 'url' in evt['tuwel']:
+            evt['url'] = evt['tuwel']['url']
     if 'aurora' in evt:
         evt['summary'] = evt['aurora']['summary']
         url = evt['aurora'].get('url', None)

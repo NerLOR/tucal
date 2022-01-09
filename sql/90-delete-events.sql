@@ -5,3 +5,6 @@ DELETE FROM tucal.external_event;
 
 UPDATE tucal.external_event SET event_nr = NULL;
 DELETE FROM tucal.event;
+
+DELETE FROM tiss.group;
+DELETE FROM tuwel.group;

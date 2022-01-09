@@ -194,6 +194,15 @@ div.calendar thead li {
     -webkit-hyphens: auto;
 }
 
+div.calendar thead li > a {
+    text-decoration: none;
+    color: var(--black);
+}
+
+div.calendar thead li > a:hover {
+    color: var(--color);
+}
+
 div.calendar thead span.time {
     font-weight: bold;
     position: absolute;
