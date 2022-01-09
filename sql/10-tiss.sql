@@ -102,7 +102,7 @@ CREATE TABLE tiss.event
 (
     event_nr    BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
 
-    event_id    INT,
+    event_id    BIGINT,
     type        INT                                 NOT NULL,
 
     course_nr   TEXT,

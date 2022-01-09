@@ -18,6 +18,7 @@ import tucal.db.tuwel
 
 
 TUWEL_INIT_VAL = 1
+TUWEL_GROUP_VAL = 10
 TUWEL_MONTHS = 12
 TUWEL_MONTH_VAL = 1
 TISS_VAL = 10
@@ -70,7 +71,7 @@ if __name__ == '__main__':
     cur = tucal.db.cursor()
 
     now = tucal.now()
-    val = TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TISS_VAL + SYNC_CAL_VAL + SYNC_PLUGIN_VAL
+    val = TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TUWEL_GROUP_VAL + TISS_VAL + SYNC_CAL_VAL + SYNC_PLUGIN_VAL
     job = Job('sync user', 4, val, estimate=50)
 
     mnr = f'{args.mnr:08}'
@@ -229,7 +230,7 @@ if __name__ == '__main__':
 
     job.end(TISS_VAL)
 
-    job.begin('sync tuwel', 2)
+    job.begin('sync tuwel', 3)
     job.begin('init tuwel')
     tuwel = tuwien.tuwel.Session(sso)
     tuwel.sso_login()
@@ -237,6 +238,17 @@ if __name__ == '__main__':
     tuwel_cal_token = tuwel.calendar_token
     user_id = tuwel.user_id
     courses = tuwel.courses
+
+    job.end(TUWEL_INIT_VAL)
+    job.begin('sync tuwel user groups', len(courses))
+
+    groups = {}
+    val = TUWEL_GROUP_VAL // len(courses)
+    for c in courses.values():
+        job.begin(f'sync tuwel user groups course "{c.name[:30]}"')
+        groups[c.id] = tuwel.get_course_user_groups(c.id)
+        job.end(val)
+    job.end(TUWEL_GROUP_VAL - val * len(courses))
 
     data = {
         'mnr': mnr,
@@ -268,7 +280,28 @@ if __name__ == '__main__':
         cur.execute("""
             INSERT INTO tuwel.course_user (course_id, user_id) VALUES (%s, %s)
             ON CONFLICT DO NOTHING""", (c.id, user_id))
-    job.end(TUWEL_INIT_VAL)
+
+        for group_id, group_name in groups[c.id]:
+            if group_name.startswith('Gruppe ') or group_name.startswith('Kohorte '):
+                name_normal = group_name
+            else:
+                name_normal = 'Gruppe ' + group_name
+            data = {
+                'name': group_name,
+                'gid': group_id,
+                'cid': c.id,
+                'uid': user_id,
+                'norm': name_normal,
+            }
+            cur.execute("""
+                INSERT INTO tuwel.group (group_id, course_id, name, name_normalized)
+                VALUES (%(gid)s, %(cid)s, %(name)s, %(norm)s)
+                ON CONFLICT ON CONSTRAINT pk_group DO UPDATE
+                SET course_id = %(cid)s, name = %(name)s, name_normalized = %(norm)s""", data)
+            cur.execute("""
+                INSERT INTO tuwel.group_user (group_id, user_id)
+                VALUES (%(gid)s, %(uid)s)
+                ON CONFLICT DO NOTHING""", data)
 
     tucal.db.commit()
 

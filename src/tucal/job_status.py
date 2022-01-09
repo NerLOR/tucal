@@ -29,7 +29,6 @@ if __name__ == '__main__':
             steps = ' - '.join([f'{s["name"]} ({n}/{p})' for s, n, p in reader.path()])
             print(f'\r\x1B[2K', end='')
             print(f'{int(sec // 60):02}:{sec % 60:04.1f} - {perc:5.1f}% - {steps}: {step["name"][:100]} ', end='')
-            print(reader.json())
             sys.stdout.flush()
         f.read()
         print()

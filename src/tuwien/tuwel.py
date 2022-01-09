@@ -1,5 +1,5 @@
 
-from typing import Optional, Dict
+from typing import Optional, Dict, List, Tuple
 import requests
 import re
 import json
@@ -21,6 +21,10 @@ SESS_KEY = re.compile(r'"sesskey":"([^"]*)"')
 
 H1 = re.compile(r'<h1>([0-9]{3}\.[0-9A-Z]{3})\s*(.*?)\s*([0-9]{4}[SW])?</h1>')
 SPAN = re.compile(r'<span class="media-body font-weight-bold">\s*([^<>]*)\s*</span>')
+GROUP_OPTION = re.compile(r'<option value="([0-9]+)">([^<]*)</option>')
+GROUP_TOOL_LINK = re.compile(r'href="https://tuwel\.tuwien\.ac\.at/mod/grouptool/view\.php\?id=([0-9]+)"')
+GROUP_MEMBERS = re.compile(r'>Gruppenmitglieder anzeigen<')
+GROUP_NAME = re.compile(r'<h2 class="panel-title">\s*([^<]*)\s*</h2>')
 
 
 class Course:
@@ -122,6 +126,29 @@ class Session:
             f'{course[1].replace(".", "")}-{course[3]}': self._get_course(course[0])
             for course in courses
         }
+
+    def get_course_user_groups(self, course_id: int) -> List[Tuple[int, str]]:
+        r = self.get(f'/user/index.php?id={course_id}')
+        p1 = r.text.find('<select multiple="multiple" data-field-name="groups"')
+        if p1 != -1:
+            p2 = r.text.find('</select>', p1)
+            data = r.text[p1:p2]
+            groups = [(int(opt.group(1)), opt.group(2)) for opt in GROUP_OPTION.finditer(data)]
+            if '<option value="-1">Keine Gruppe</option>' not in data:
+                return groups
+            all_groups = {g[1]: g[0] for g in groups}
+        else:
+            return []
+
+        r = self.get(f'/course/view.php?id={course_id}')
+        groups = []
+        for link in GROUP_TOOL_LINK.finditer(r.text):
+            r = self.get(f'/mod/grouptool/view.php?id={link.group(1)}')
+            for member in GROUP_MEMBERS.finditer(r.text):
+                pos = r.text.rfind('<h2 class="panel-title">', 0, member.start())
+                group_name = html.unescape(GROUP_NAME.findall(r.text, pos)[0]).strip()
+                groups.append((all_groups[group_name], group_name))
+        return groups
 
     @property
     def courses(self) -> Dict[str, Course]:
