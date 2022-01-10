@@ -31,6 +31,7 @@ def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: da
         'lt': None,
         'url': None,
         'type': None,
+        'online': None,
     }
     # FIXME better event merge
     for ext in events:
@@ -55,16 +56,26 @@ def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: da
         desc = evt['tiss']['description']
         if desc and desc != '-':
             evt['summary'] = desc
+        if evt['summary']:
+            if 'VO' in evt['summary'].split(' ') or 'vorlesung' in evt['summary'].lower():
+                evt['type'] = 'lecture'
+        elif type_nr == 2:
+            evt['summary'] = 'Gruppe ...'  # TODO
+        if evt['summary'] and evt['summary'].startswith('SPK'):
+            evt['type'] = None
     if 'aurora' in evt:
         evt['summary'] = evt['aurora']['summary']
         url = evt['aurora'].get('url', None)
         if url is not None:
             evt['zoom'] = url
-        evt['type'] = 'course'
+        evt['type'] = evt['aurora']['type'] if 'type' in evt['aurora'] else 'course'
     if 'htu' in evt:
         evt['summary'] = evt['htu']['title']
     if start == end:
         evt['type'] = 'due'
+    print(room)
+    if room is None:
+        evt['online'] = True
     return evt
 
 

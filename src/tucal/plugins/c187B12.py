@@ -71,6 +71,7 @@ class Plugin(tucal.Plugin):
                     'aurora': {
                         'summary': evt.summary,
                         'url': evt.url,
+                        'type': 'lecture' if evt.summary.lower().startswith('intro') else 'course',
                     },
                 }),
             })
