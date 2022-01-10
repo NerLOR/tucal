@@ -301,9 +301,9 @@ div.calendar div.event-wrapper div.event {
     font-size: 0.75em;
     cursor: pointer;
     overflow: hidden;
-    border: 1px solid #C00000;
+    border: 1px solid var(--grey-40);
     border-radius: var(--border-radius);
-    background-color: #FFC0C0;
+    background-color: var(--grey-E0);
     margin: var(--margin);
     box-sizing: border-box;
     padding: 0.25em;
@@ -311,6 +311,16 @@ div.calendar div.event-wrapper div.event {
     left: calc(var(--part1) / var(--parts) * 100%);
     top: calc((var(--start) - var(--time-start)) / (var(--time-end) - var(--time-start)) * 100% + 1px);
     height: calc((var(--end) - var(--start)) / (var(--time-end) - var(--time-start)) * 100% - 1px - var(--margin) * 2);
+}
+
+div.calendar div.event-wrapper div.event.course {
+    border-color: #607080;
+    background-color: #C0E0FF;
+}
+
+div.calendar div.event-wrapper div.event.group {
+    border-color: #608060;
+    background-color: #C0FFC0;
 }
 
 div.calendar div.event-wrapper div.event:hover {

@@ -527,8 +527,10 @@ class WeekSchedule {
                 const wrapper = this.cal.getElementsByClassName("event-wrapper")[0];
                 const day = wrapper.getElementsByClassName("day")[(start.getDay() + 6) % 7];
                 const evt = document.createElement("div");
-                evt.classList.add("event");
                 evt.id = `event-${event.id}`;
+
+                evt.classList.add("event");
+                if (event.type) evt.classList.add(event.type);
 
                 const startMinute = start.getHours() * 60 + start.getMinutes();
                 const endMinute = end.getHours() * 60 + end.getMinutes();
@@ -595,6 +597,7 @@ class Event {
     zoom;
     lecture_tube;
     url;
+    type;
 
     constructor(json) {
         this.id = json.id;
@@ -609,6 +612,7 @@ class Event {
         this.zoom = json.data.zoom;
         this.lecture_tube = json.data.lt;
         this.url = json.data.url;
+        this.type = json.data.type;
     }
 
     getWeek() {

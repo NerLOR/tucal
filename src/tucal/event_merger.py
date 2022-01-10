@@ -10,6 +10,16 @@ import tucal.db
 
 
 ZOOM_LINK = re.compile(r'https?://([a-z]*\.zoom\.us[A-Za-z0-9/?=]*)')
+COURSE_NAME = re.compile(r'^[0-9]{3}\.[0-9A-Z]{3} .*? \([A-Z]{2} [0-9],[0-9]\) [0-9]{4}[WS]$')
+
+TYPES = {
+    0: 'general',
+    1: 'course',
+    2: 'group',
+    3: 'exam',
+    4: None,
+    5: 'roomTUlearn',
+}
 
 
 def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: datetime.datetime, room: int):
@@ -20,6 +30,7 @@ def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: da
         'zoom': None,
         'lt': None,
         'url': None,
+        'type': None,
     }
     # FIXME better event merge
     for ext in events:
@@ -32,18 +43,25 @@ def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: da
             else:
                 evt[k1] = v1
     if 'tuwel' in evt:
-        evt['summary'] = evt['tuwel']['name']
+        if not COURSE_NAME.match(evt['tuwel']['name']):
+            evt['summary'] = evt['tuwel']['name']
         for link in ZOOM_LINK.finditer(evt['tuwel'].get('desc', None) or evt['tuwel'].get('desc_html', None) or ''):
             evt['zoom'] = 'https://' + link.group(1)
         if 'url' in evt['tuwel']:
             evt['url'] = evt['tuwel']['url']
+    if 'tiss' in evt:
+        type_nr = evt['tiss']['type']
+        evt['type'] = TYPES[type_nr]
     if 'aurora' in evt:
         evt['summary'] = evt['aurora']['summary']
         url = evt['aurora'].get('url', None)
         if url is not None:
             evt['zoom'] = url
+        evt['type'] = 'course'
     if 'htu' in evt:
         evt['summary'] = evt['htu']['title']
+    if start == end:
+        evt['type'] = 'due'
     return evt
 
 
@@ -82,7 +100,7 @@ if __name__ == '__main__':
                 FROM tucal.event e
                 LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
                 WHERE e.group_nr = %s AND 
-                      (%s - e.start_ts <= INTERVAL '30' MINUTE AND e.end_ts - %s <= INTERVAL '30' MINUTE)
+                      (%s - e.start_ts <= INTERVAL '30' MINUTE AND e.end_ts - %s <= INTERVAL '60' MINUTE)
                 GROUP BY e.event_nr""", (group, start, end))
             event_rows = cur.fetch_all()
             event_rows = [(evt_nr, sources) for evt_nr, sources in event_rows if source not in sources]
