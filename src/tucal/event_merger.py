@@ -11,6 +11,7 @@ import tucal.db
 
 ZOOM_LINK = re.compile(r'https?://([a-z]*\.zoom\.us[A-Za-z0-9/?=]*)')
 COURSE_NAME = re.compile(r'^[0-9]{3}\.[0-9A-Z]{3} .*? \([A-Z]{2} [0-9],[0-9]\) [0-9]{4}[WS]$')
+COURSE_NR = re.compile(r'^[0-9]{3}\.[0-9A-Z]{3} ')
 
 TYPES = {
     0: 'general',
@@ -22,7 +23,8 @@ TYPES = {
 }
 
 
-def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: datetime.datetime, room: int):
+def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: datetime.datetime,
+                 room: int, group: str):
     evt = {
         'summary': None,
         'desc': None,
@@ -54,13 +56,17 @@ def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: da
         type_nr = evt['tiss']['type']
         evt['type'] = TYPES[type_nr]
         desc = evt['tiss']['description']
+
         if desc and desc != '-':
             evt['summary'] = desc
+
         if evt['summary']:
             if 'VO' in evt['summary'].split(' ') or 'vorlesung' in evt['summary'].lower():
                 evt['type'] = 'lecture'
-        elif type_nr == 2:
-            evt['summary'] = 'Gruppe ...'  # TODO
+
+        if type_nr == 2 and evt['summary'] and COURSE_NR.match(evt['summary']):
+            evt['summary'] = None
+
         if evt['summary'] and evt['summary'].startswith('SPK'):
             evt['type'] = None
     if 'aurora' in evt:
@@ -73,7 +79,6 @@ def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: da
         evt['summary'] = evt['htu']['title']
     if start == end:
         evt['type'] = 'due'
-    print(room)
     if room is None:
         evt['online'] = True
     return evt
@@ -87,13 +92,14 @@ if __name__ == '__main__':
     cur = tucal.db.cursor()
 
     cur.execute("""
-        SELECT e.event_nr, array_agg(x.data), e.start_ts, e.end_ts, e.room_nr
+        SELECT e.event_nr, array_agg(x.data), e.start_ts, e.end_ts, e.room_nr, l.name
         FROM tucal.event e
-        LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
-        GROUP BY e.event_nr""")
+            LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
+            LEFT JOIN tucal.group_link l ON l.group_nr = e.group_nr
+        GROUP BY e.event_nr, l.group_nr""")
     rows = cur.fetch_all()
-    for event_nr, datas, start_ts, end_ts, room_nr in rows:
-        data = update_event(datas, start_ts, end_ts, room_nr)
+    for event_nr, datas, start_ts, end_ts, room_nr, group_name in rows:
+        data = update_event(datas, start_ts, end_ts, room_nr, group_name)
         data_json = json.dumps(data)
         cur.execute("UPDATE tucal.event SET data = %s, updated = TRUE WHERE event_nr = %s", (data_json, event_nr))
     tucal.db.commit()
@@ -107,21 +113,22 @@ if __name__ == '__main__':
             FROM tucal.external_event
             WHERE event_nr IS NULL""")
         rows = cur.fetch_all()
-        for source, evt_id, start, end, group in rows:
+        for source, evt_id, start_ts, end_ts, group_nr in rows:
             # FIXME better equality check
             cur.execute("""
                 SELECT e.event_nr, array_agg(x.source)
                 FROM tucal.event e
-                LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
+                    LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
                 WHERE e.group_nr = %s AND 
                       (%s - e.start_ts <= INTERVAL '30' MINUTE AND e.end_ts - %s <= INTERVAL '60' MINUTE)
-                GROUP BY e.event_nr""", (group, start, end))
+                GROUP BY e.event_nr""", (group_nr, start_ts, end_ts))
             event_rows = cur.fetch_all()
             event_rows = [(evt_nr, sources) for evt_nr, sources in event_rows if source not in sources]
             if len(event_rows) == 0:
                 cur.execute("""
                     INSERT INTO tucal.event (start_ts, end_ts, room_nr, group_nr)
-                    VALUES (%s, %s, NULL, %s) RETURNING event_nr""", (start, end, group))
+                    VALUES (%s, %s, NULL, %s)
+                    RETURNING event_nr""", (start_ts, end_ts, group_nr))
                 evt_nr = cur.fetch_all()[0][0]
             else:
                 evt_nr = event_rows[0][0]
@@ -131,14 +138,15 @@ if __name__ == '__main__':
         tucal.db.commit()
 
         cur.execute("""
-            SELECT e.event_nr, array_agg(x.data), e.start_ts, e.end_ts, e.room_nr
+            SELECT e.event_nr, array_agg(x.data), e.start_ts, e.end_ts, e.room_nr, l.name
             FROM tucal.event e
-            LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
+                LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
+                LEFT JOIN tucal.group_link l ON l.group_nr = e.group_nr
             WHERE e.updated = FALSE
-            GROUP BY e.event_nr""")
+            GROUP BY e.event_nr, l.group_nr""")
         rows = cur.fetch_all()
-        for event_nr, datas, start_ts, end_ts, room_nr in rows:
-            data = update_event(datas, start_ts, end_ts, room_nr)
+        for event_nr, datas, start_ts, end_ts, room_nr, group_name in rows:
+            data = update_event(datas, start_ts, end_ts, room_nr, group_name)
             data_json = json.dumps(data)
             cur.execute("UPDATE tucal.event SET data = %s, updated = TRUE WHERE event_nr = %s", (data_json, event_nr))
         tucal.db.commit()

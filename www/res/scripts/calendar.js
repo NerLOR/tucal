@@ -555,12 +555,21 @@ class WeekSchedule {
                 const course = event.course && getCourseName(event.course.nr) || null;
                 const room = event.room_nr && getRoomName(event.room_nr) || null;
                 const ltLink = event.room_nr && getLectureTubeLink(event.room_nr) || null;
+
+                let group = event.course.group;
+                if (group === 'LVA') {
+                    group = null;
+                } else if (group !== null) {
+                    group = group.replace('Gruppe Gruppe', 'Gruppe').replace('Gruppe Kohorte', 'Kohorte');
+                }
+
                 evt.innerHTML =
                     (event.lecture_tube && ltLink ? `<a href="${ltLink}" target="_blank" class="live" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
                     (event.zoom !== null ? `<a href="${event.zoom}" target="_blank" class="live" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
                     `<div><span class="course">${course}</span>` +
-                    (room !== null ? ` - <span class="room">${room}</span></div>` : '') +
+                    (room !== null ? ` - <span class="room">${room}</span>` : '') + '</div><div>' +
+                    (group !== null ? `<span class="group">${group}</span>` : '') + '</div>' +
                     (event.summary !== null ? `<div class="summary">${event.summary}</div>` : '');
                 day.appendChild(evt);
             }
