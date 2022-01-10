@@ -17,10 +17,6 @@ require ".php/main.php";
 
 $query = $_GET['q'] ?? '';
 
-if (strlen($query) < 3) {
-    $STATUS = 400;
-}
-
 require ".php/header.php";
 ?>
 <main class="w3 search">
@@ -29,6 +25,7 @@ require ".php/header.php";
             <input type="text" name="q" placeholder="<?php echo _('Search (for)');?>" value="<?php echo htmlspecialchars($query)?>" minlength="3" required/>
             <button type="submit"><?php echo _('Search (for)');?></button>
         </form>
+<?php if (strlen($query) >= 3) { ?>
         <hr/>
         <h2><?php echo _('Students');?></h2>
 <?php
@@ -64,6 +61,7 @@ while ($row = $stmt->fetch()) {
     echo "</div></div>\n";
 }
 
+}
 ?>
     </section>
 </main>
