@@ -82,9 +82,8 @@ if ($subject === $USER['mnr']) {
     } else {
         $TITLE[] = $rows[0]['username'];
     }
+    $TITLE[] = _('Calendar');
 }
-
-$TITLE[] = _('Calendar');
 
 require "../.php/header.php";
 ?>
