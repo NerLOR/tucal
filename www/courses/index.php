@@ -61,7 +61,7 @@ require "../.php/header.php";
 
         ?>
     </section>
-    <section>
+    <section class="group-list">
         <h1><?php echo _('Groups');?></h1>
         <?php
 
@@ -89,7 +89,7 @@ require "../.php/header.php";
                     WHERE gl.course_nr IS NULL");
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             echo "<hr/><div>";
-            echo "<h2><span class='course-name'>$row[name]</span></h2>";
+            echo "<h2><span class='course-name'>$row[group_name]</span></h2>";
             echo "</div>\n";
         }
 

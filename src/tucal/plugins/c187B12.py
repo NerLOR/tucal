@@ -33,9 +33,17 @@ def get_group_nr(semester: tucal.Semester) -> Optional[int]:
     cur.execute("SELECT group_nr FROM tucal.group_link WHERE (course_nr, semester, name) = ('187B12', %s, 'LVA')",
                 (str(semester),))
     rows = cur.fetch_all()
-    if len(rows) == 0:
-        return None
-    return rows[0][0]
+    if len(rows) > 0:
+        cur.close()
+        return rows[0][0]
+
+    cur.execute("INSERT INTO tucal.group (group_name) VALUES (%s) RETURNING group_nr", (f'187B12-{semester} LVA',))
+    rows = cur.fetch_all()
+    group_nr = rows[0][0]
+    cur.execute("INSERT INTO tucal.group_link (group_nr, course_nr, semester, name) VALUES (%s, '187B12', %s, 'LVA')",
+                (group_nr, str(semester)))
+    cur.close()
+    return group_nr
 
 
 class Plugin(tucal.Plugin):
