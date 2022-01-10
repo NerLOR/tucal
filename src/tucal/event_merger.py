@@ -52,6 +52,9 @@ def update_event(events: List[Dict[str, Any]], start: datetime.datetime, end: da
     if 'tiss' in evt:
         type_nr = evt['tiss']['type']
         evt['type'] = TYPES[type_nr]
+        desc = evt['tiss']['description']
+        if desc and desc != '-':
+            evt['summary'] = desc
     if 'aurora' in evt:
         evt['summary'] = evt['aurora']['summary']
         url = evt['aurora'].get('url', None)
