@@ -336,7 +336,7 @@ div.calendar div.event-wrapper div.event.online {
 }
 
 div.calendar div.event-wrapper div.event.course {
-   --hue: 220deg;
+    --hue: 270deg;
 }
 
 div.calendar div.event-wrapper div.event.group {
@@ -344,7 +344,7 @@ div.calendar div.event-wrapper div.event.group {
 }
 
 div.calendar div.event-wrapper div.event.lecture {
-    --hue: 270deg;
+    --hue: 220deg;
 }
 
 div.calendar div.event-wrapper div.event:hover {
