@@ -531,6 +531,7 @@ class WeekSchedule {
 
                 evt.classList.add("event");
                 if (event.type) evt.classList.add(event.type);
+                if (event.online) evt.classList.add("online");
 
                 const startMinute = start.getHours() * 60 + start.getMinutes();
                 const endMinute = end.getHours() * 60 + end.getMinutes();
@@ -598,6 +599,7 @@ class Event {
     lecture_tube;
     url;
     type;
+    online;
 
     constructor(json) {
         this.id = json.id;
@@ -613,6 +615,7 @@ class Event {
         this.lecture_tube = json.data.lt;
         this.url = json.data.url;
         this.type = json.data.type;
+        this.online = json.data.online;
     }
 
     getWeek() {

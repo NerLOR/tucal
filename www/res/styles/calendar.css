@@ -296,14 +296,17 @@ div.calendar div.event-wrapper div.event {
     --parts: 1;
     --part1: 0;
     --part2: 1;
+    --evt-color: var(--grey-E0);
+    --evt-border: var(--grey-60);
+    --evt-light: var(--grey-F0);
     position: absolute;
     display: block;
     font-size: 0.75em;
     cursor: pointer;
     overflow: hidden;
-    border: 1px solid var(--grey-40);
+    border: 1px solid var(--evt-border);
     border-radius: var(--border-radius);
-    background-color: var(--grey-E0);
+    background-color: var(--evt-color);
     margin: var(--margin);
     box-sizing: border-box;
     padding: 0.25em;
@@ -313,14 +316,35 @@ div.calendar div.event-wrapper div.event {
     height: calc((var(--end) - var(--start)) / (var(--time-end) - var(--time-start)) * 100% - 1px - var(--margin) * 2);
 }
 
+div.calendar div.event-wrapper div.event.group,
+div.calendar div.event-wrapper div.event.lecture,
 div.calendar div.event-wrapper div.event.course {
-    border-color: #607080;
-    background-color: #C0E0FF;
+    --hue: 0deg;
+    --evt-color: hsl(var(--hue), 100%, 87.5%);
+    --evt-light: hsl(var(--hue), 100%, 93.75%);
+    --evt-border: hsl(var(--hue), 50%, 50%);
+}
+
+div.calendar div.event-wrapper div.event.online {
+    background: repeating-linear-gradient(
+            45deg,
+            var(--evt-color),
+            var(--evt-color) 5px,
+            var(--evt-light) 5px,
+            var(--evt-light) 10px
+    );
+}
+
+div.calendar div.event-wrapper div.event.course {
+   --hue: 220deg;
 }
 
 div.calendar div.event-wrapper div.event.group {
-    border-color: #608060;
-    background-color: #C0FFC0;
+    --hue: 120deg;
+}
+
+div.calendar div.event-wrapper div.event.lecture {
+    --hue: 270deg;
 }
 
 div.calendar div.event-wrapper div.event:hover {
