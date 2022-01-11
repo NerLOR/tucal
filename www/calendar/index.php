@@ -89,7 +89,7 @@ require "../.php/header.php";
 ?>
 <main class="wcal">
     <!--Calendar-->
-    <section class="calendar-support">
+    <section class="calendar-legend">
         <div class="legend lecture">
             <div></div>
             <span class="color-name"><?php echo _('Blue');?></span>
@@ -115,7 +115,8 @@ require "../.php/header.php";
             <span class="color-name"><?php echo _('Striped');?></span>
             <span><?php echo _('Online-only event');?></span>
         </div>
-        <hr/>
+    </section>
+    <section>
         <h2>Export</h2>
         <table class="calendar-exports">
             <thead>

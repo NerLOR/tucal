@@ -314,7 +314,7 @@ div.calendar div.event-wrapper div.event {
 }
 
 div.calendar div.event-wrapper div.event,
-section.calendar-support div.legend {
+section.calendar-legend div.legend {
     --evt-color: var(--grey-D8);
     --evt-border: var(--grey-60);
     --evt-light: var(--grey-F0);
@@ -323,9 +323,9 @@ section.calendar-support div.legend {
 div.calendar div.event-wrapper div.event.group,
 div.calendar div.event-wrapper div.event.lecture,
 div.calendar div.event-wrapper div.event.course,
-section.calendar-support div.legend.group,
-section.calendar-support div.legend.lecture,
-section.calendar-support div.legend.course {
+section.calendar-legend div.legend.group,
+section.calendar-legend div.legend.lecture,
+section.calendar-legend div.legend.course {
     --hue: 0deg;
     --evt-color: hsl(var(--hue), 100%, 87.5%);
     --evt-light: hsl(var(--hue), 100%, 93.75%);
@@ -333,7 +333,7 @@ section.calendar-support div.legend.course {
 }
 
 div.calendar div.event-wrapper div.event.online,
-section.calendar-support div.legend.online > div {
+section.calendar-legend div.legend.online > div {
     background: repeating-linear-gradient(
             45deg,
             var(--evt-color),
@@ -344,17 +344,17 @@ section.calendar-support div.legend.online > div {
 }
 
 div.calendar div.event-wrapper div.event.course,
-section.calendar-support div.legend.course {
+section.calendar-legend div.legend.course {
     --hue: 270deg;
 }
 
 div.calendar div.event-wrapper div.event.group,
-section.calendar-support div.legend.group {
+section.calendar-legend div.legend.group {
     --hue: 120deg;
 }
 
 div.calendar div.event-wrapper div.event.lecture,
-section.calendar-support div.legend.lecture {
+section.calendar-legend div.legend.lecture {
     --hue: 220deg;
 }
 
@@ -410,18 +410,18 @@ div.calendar div.event-details {
     padding: 1em;
 }
 
-section.calendar-support {
+section.calendar-legend {
 
 }
 
-section.calendar-support div.legend {
+section.calendar-legend div.legend {
     display: flex;
     margin: 0.5em;
     gap: 0.5em;
     align-items: center;
 }
 
-section.calendar-support div.legend > div {
+section.calendar-legend div.legend > div {
     display: inline-block;
     width: 24px;
     height: 24px;
@@ -429,14 +429,18 @@ section.calendar-support div.legend > div {
     box-sizing: border-box;
     border: 1px solid var(--evt-border);
     background-color: var(--evt-color);
+    flex-shrink: 0;
 }
 
-section.calendar-support div.legend > span {
+section.calendar-legend div.legend > span {
     color: var(--evt-border);
+    hyphens: auto;
+    -moz-hyphens: auto;
 }
 
-section.calendar-support div.legend > span.color-name {
-    width: 120px;
+section.calendar-legend div.legend > span.color-name {
+    width: 100px;
+    flex-shrink: 0;
 }
 
 @media screen and (max-width: 616px) {
