@@ -331,8 +331,9 @@ section.calendar-legend div.legend.group,
 section.calendar-legend div.legend.lecture,
 section.calendar-legend div.legend.course {
     --hue: 0deg;
-    --evt-color: hsl(var(--hue), 100%, 87.5%);
-    --evt-light: hsl(var(--hue), 100%, 93.75%);
+    --l: 87.5%;
+    --evt-color: hsl(var(--hue), calc(100% - (87.5% - var(--l)) * 2), var(--l));
+    --evt-light: hsl(var(--hue), calc(100% - (87.5% - var(--l)) * 2), calc(var(--l) + 6.25%));
     --evt-border: hsl(var(--hue), 50%, 50%);
 }
 
@@ -354,6 +355,7 @@ section.calendar-legend div.legend.course {
 
 div.calendar div.event-wrapper div.event.group,
 section.calendar-legend div.legend.group {
+    --l: 84.375%;
     --hue: 120deg;
 }
 
