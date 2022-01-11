@@ -564,6 +564,8 @@ class WeekSchedule {
                 }
 
                 evt.innerHTML =
+                    '<div class="pre"></div>' +
+                    '<div class="post"></div>' +
                     (event.lecture_tube && ltLink ? `<a href="${ltLink}" target="_blank" class="live" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
                     (event.zoom !== null ? `<a href="${event.zoom}" target="_blank" class="live" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
@@ -571,6 +573,14 @@ class WeekSchedule {
                     (room !== null ? ` - <span class="room">${room}</span>` : '') + '</div><div>' +
                     (group !== null ? `<span class="group">${group}</span>` : '') + '</div>' +
                     (event.summary !== null ? `<div class="summary">${event.summary}</div>` : '');
+
+                const evtMinutes = (end - start) / 60_000;
+                const pre = evt.getElementsByClassName("pre")[0];
+                const post = evt.getElementsByClassName("post")[0];
+                // TODO add planned_start/end_ts and real_start/end_ts
+                pre.style.height =`${0 / evtMinutes * 100}%`;
+                post.style.height = `${0 / evtMinutes * 100}%`;
+
                 day.appendChild(evt);
             }
         }

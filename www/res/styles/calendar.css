@@ -41,7 +41,7 @@ div.calendar > table {
 div.calendar > table thead {
     position: sticky;
     top: var(--nav-height);
-    z-index: 5;
+    z-index: 20;
 }
 
 div.calendar > table th,
@@ -313,6 +313,10 @@ div.calendar div.event-wrapper div.event {
     height: calc((var(--end) - var(--start)) / (var(--time-end) - var(--time-start)) * 100% - 1px - var(--margin) * 2);
 }
 
+div.calendar div.event-wrapper div.event > * {
+    position: relative;
+}
+
 div.calendar div.event-wrapper div.event,
 section.calendar-legend div.legend {
     --evt-color: var(--grey-D8);
@@ -359,7 +363,7 @@ section.calendar-legend div.legend.lecture {
 }
 
 div.calendar div.event-wrapper div.event:hover {
-    z-index: 1;
+    z-index: 5;
 }
 
 div.calendar div.event-wrapper div.event.now {
@@ -368,6 +372,24 @@ div.calendar div.event-wrapper div.event.now {
 
 div.calendar div.event > div {
     display: block;
+}
+
+div.calendar div.event > div.pre,
+div.calendar div.event > div.post {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+div.calendar div.event > div.pre {
+    top: 0;
+    background: linear-gradient(var(--white), var(--evt-light));
+}
+
+div.calendar div.event > div.post {
+    bottom: 0;
+    background: linear-gradient(var(--evt-light), var(--white));
 }
 
 div.calendar div.event div.time {
@@ -405,7 +427,7 @@ div.calendar div.event-details {
     min-height: 300px;
     top: 20vmin;
     left: calc(50% - 300px);
-    z-index: 6;
+    z-index: 25;
     box-sizing: border-box;
     padding: 1em;
 }
