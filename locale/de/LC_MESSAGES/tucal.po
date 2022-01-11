@@ -157,7 +157,7 @@ msgid "Other event"
 msgstr "Sonstiger Termin"
 
 msgid "Online-only event"
-msgstr "Termin findet ausschließlich Online statt"
+msgstr "Termin findet ausschließlich online statt"
 
 msgid "Striped"
 msgstr "Gestreift"
