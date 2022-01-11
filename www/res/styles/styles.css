@@ -66,6 +66,7 @@ html {
     --tl-grey-B0: #B0B0B0;
     --tl-grey-C0: #C0C0C0;
     --tl-grey-D0: #D0D0D0;
+    --tl-grey-D8: #D8D8D8;
     --tl-grey-E0: #E0E0E0;
     --tl-grey-E8: #E8E8E8;
     --tl-grey-F0: #F0F0F0;
@@ -77,6 +78,7 @@ html {
     --td-grey-B0: #505050;
     --td-grey-C0: #404040;
     --td-grey-D0: #303030;
+    --td-grey-D8: #282828;
     --td-grey-E0: #202020;
     --td-grey-E8: #202020;
     --td-grey-F0: #181818;
@@ -115,6 +117,7 @@ html:not(.theme-light):not(.theme-dark):not(.theme-black) {
     --grey-B0: var(--tl-grey-B0);
     --grey-C0: var(--tl-grey-C0);
     --grey-D0: var(--tl-grey-D0);
+    --grey-D8: var(--tl-grey-D8);
     --grey-E0: var(--tl-grey-E0);
     --grey-E8: var(--tl-grey-E8);
     --grey-F0: var(--tl-grey-F0);
@@ -148,6 +151,7 @@ html.theme-black {
     --grey-B0: var(--td-grey-B0);
     --grey-C0: var(--td-grey-C0);
     --grey-D0: var(--td-grey-D0);
+    --grey-D8: var(--td-grey-D8);
     --grey-E0: var(--td-grey-E0);
     --grey-E8: var(--td-grey-E8);
     --grey-F0: var(--td-grey-F0);

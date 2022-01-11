@@ -26,6 +26,9 @@ msgstr "Courses"
 msgid "Groups"
 msgstr "Groups"
 
+msgid "Join Groups"
+msgstr "Join Groups"
+
 msgid "Search"
 msgstr "Search"
 
@@ -106,6 +109,36 @@ msgstr "Does not exist"
 
 msgid "Wrong"
 msgstr "Wrong"
+
+msgid "Lecture"
+msgstr "Lecture"
+
+msgid "General course event"
+msgstr "General course event"
+
+msgid "Group event"
+msgstr "Group event"
+
+msgid "Other event"
+msgstr "Other event"
+
+msgid "Online-only event"
+msgstr "Online-only event"
+
+msgid "Striped"
+msgstr "Striped"
+
+msgid "Blue"
+msgstr "Blue"
+
+msgid "Purple"
+msgstr "Purple"
+
+msgid "Green"
+msgstr "Green"
+
+msgid "Grey"
+msgstr "Grey"
 
 
 msgctxt "http"

@@ -89,7 +89,33 @@ require "../.php/header.php";
 ?>
 <main class="wcal">
     <!--Calendar-->
-    <section>
+    <section class="calendar-support">
+        <div class="legend lecture">
+            <div></div>
+            <span class="color-name"><?php echo _('Blue');?></span>
+            <span><?php echo _('Lecture');?></span>
+        </div>
+        <div class="legend course">
+            <div></div>
+            <span class="color-name"><?php echo _('Purple');?></span>
+            <span><?php echo _('General course event');?></span>
+        </div>
+        <div class="legend group">
+            <div></div>
+            <span class="color-name"><?php echo _('Green');?></span>
+            <span><?php echo _('Group event');?></span>
+        </div>
+        <div class="legend other">
+            <div></div>
+            <span class="color-name"><?php echo _('Grey');?></span>
+            <span><?php echo _('Other event');?></span>
+        </div>
+        <div class="legend online">
+            <div></div>
+            <span class="color-name"><?php echo _('Striped');?></span>
+            <span><?php echo _('Online-only event');?></span>
+        </div>
+        <hr/>
         <h2>Export</h2>
         <table class="calendar-exports">
             <thead>

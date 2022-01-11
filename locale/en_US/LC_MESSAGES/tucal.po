@@ -1,0 +1,3 @@
+
+msgid "Grey"
+msgstr "Gray"

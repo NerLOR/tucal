@@ -26,6 +26,9 @@ msgstr "LVAs"
 msgid "Groups"
 msgstr "Gruppen"
 
+msgid "Join Groups"
+msgstr "Gruppen beitreten"
+
 msgid "Search"
 msgstr "Suche"
 
@@ -140,6 +143,36 @@ msgid "SSO password storage warning"
 msgstr "Mir ist bewusst, welche Risiken das Speichern meines Passwortes auf einem fremden Server birgt. "
        "Weiters nehme ich zur Kenntnis, dass das Passwort auf dem Server so gespeichert werden muss, dass es im "
        "Endeffekt lesbar bleibt. Daher ist kein „sicheres“ Verschlüsseln des Passworts möglich."
+
+msgid "Lecture"
+msgstr "Vorlesung"
+
+msgid "General course event"
+msgstr "Allgemeiner LVA-Termin"
+
+msgid "Group event"
+msgstr "Gruppentermin"
+
+msgid "Other event"
+msgstr "Sonstiger Termin"
+
+msgid "Online-only event"
+msgstr "Termin findet ausschließlich Online statt"
+
+msgid "Striped"
+msgstr "Gestreift"
+
+msgid "Blue"
+msgstr "Blau"
+
+msgid "Purple"
+msgstr "Violett"
+
+msgid "Green"
+msgstr "Grün"
+
+msgid "Grey"
+msgstr "Grau"
 
 msgctxt "http"
 msgid "Bad Request"
