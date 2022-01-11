@@ -337,6 +337,24 @@ section.calendar-legend div.legend.course {
     --evt-border: hsl(var(--hue), 50%, 50%);
 }
 
+html.theme-dark div.calendar div.event-wrapper div.event.group,
+html.theme-dark div.calendar div.event-wrapper div.event.lecture,
+html.theme-dark div.calendar div.event-wrapper div.event.course,
+html.theme-dark section.calendar-legend div.legend.group,
+html.theme-dark section.calendar-legend div.legend.lecture,
+html.theme-dark section.calendar-legend div.legend.course,
+html.theme-black div.calendar div.event-wrapper div.event.group,
+html.theme-black div.calendar div.event-wrapper div.event.lecture,
+html.theme-black div.calendar div.event-wrapper div.event.course,
+html.theme-black section.calendar-legend div.legend.group,
+html.theme-black section.calendar-legend div.legend.lecture,
+html.theme-black section.calendar-legend div.legend.course {
+    --l: 12.5% !important;
+    --evt-color: hsl(var(--hue), calc(100% - (12.5% - var(--l)) * 2), var(--l));
+    --evt-light: hsl(var(--hue), calc(100% - (12.5% - var(--l)) * 2), calc(var(--l) + 3.125%));
+    --evt-border: hsl(var(--hue), 50%, 50%);
+}
+
 div.calendar div.event-wrapper div.event.online,
 section.calendar-legend div.legend.online > div {
     background: repeating-linear-gradient(
