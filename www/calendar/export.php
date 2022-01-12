@@ -94,7 +94,7 @@ $stmt = db_exec("
               (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
         GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data,
                  l.course_nr, l.semester, l.name, g.group_id
-        ORDER BY e.start_ts, e.data -> 'summary'", ["mnr" => 12102620]);
+        ORDER BY e.start_ts, length(l.name), e.data -> 'summary'", ["mnr" => 12102620]);
 
 header("Cache-Control: private, no-cache");
 if ($ext === 'ics') {
