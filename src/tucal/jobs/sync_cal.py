@@ -52,10 +52,12 @@ if __name__ == '__main__':
             cal = tiss.get_room_schedule_ical(room_code)
             for evt in cal.events:
                 tucal.db.tiss.insert_event_ical(evt, room_code)
+            tucal.db.commit()
 
             cal = tiss.get_room_schedule(room_code)
             for evt in cal['events']:
                 tucal.db.tiss.insert_event(evt, access, room_code)
+            tucal.db.commit()
             job.end(1)
         job.end(0)
 
@@ -81,6 +83,7 @@ if __name__ == '__main__':
 
         for evt in cal.events:
             tucal.db.tiss.insert_event_ical(evt, mnr=mnr)
+        tucal.db.commit()
         job.end(1)
     job.end(0)
 
@@ -108,9 +111,9 @@ if __name__ == '__main__':
 
         for evt in cal.events:
             tucal.db.tuwel.insert_event_ical(evt, user_id)
+        tucal.db.commit()
         job.end(1)
     job.end(0)
 
     cur.close()
-    tucal.db.commit()
     job.end(0)
