@@ -4,7 +4,6 @@ DROP TRIGGER IF EXISTS t_insert ON tiss.exam;
 DROP TRIGGER IF EXISTS t_insert ON tiss.course_user;
 DROP TRIGGER IF EXISTS t_insert ON tiss.group_user;
 DROP TRIGGER IF EXISTS t_insert ON tiss.exam_user;
-DROP TRIGGER IF EXISTS t_delete ON tiss.course_user;
 DROP TRIGGER IF EXISTS t_delete ON tiss.group_user;
 DROP TRIGGER IF EXISTS t_delete ON tiss.exam_user;
 
@@ -96,24 +95,6 @@ CREATE TRIGGER t_insert
     ON tiss.course_user
     FOR EACH ROW
 EXECUTE PROCEDURE tiss.course_user_to_member();
-
-
-CREATE OR REPLACE FUNCTION tiss.course_user_del_member()
-    RETURNS TRIGGER AS
-$$
-BEGIN
-    DELETE
-    FROM tucal.group_member
-    WHERE (account_nr, group_nr) = ((SELECT account_nr FROM tucal.account WHERE mnr = OLD.mnr),
-                                    tucal.get_group(OLD.course_nr, OLD.semester, 'LVA'));
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-CREATE TRIGGER t_delete
-    AFTER DELETE
-    ON tiss.course_user
-    FOR EACH ROW
-EXECUTE PROCEDURE tiss.course_user_del_member();
 
 
 CREATE OR REPLACE FUNCTION tiss.group_user_to_member()
