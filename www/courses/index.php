@@ -49,6 +49,43 @@ require "../.php/header.php";
 
                 echo "</h2>\n";
                 echo "<h3>$fullName ($row[ects] ECTS)</h3>\n";
+
+                $ignFrom = $row['ignore_from'];
+                $ignUntil = $row['ignore_until'];
+                if ($ignFrom !== null) {
+                    $ignFrom = substr($ignFrom, 0, 10);
+                }
+                if ($ignUntil !== null) {
+                    $ignUntil = substr($ignUntil, 0, 10);
+                }
+
+                error_log($ignFrom);
+
+                if ($ignFrom === null && $ignUntil === null) {
+                    $mode = 'never';
+                } elseif ($ignFrom === '0001-01-01') {
+                    $mode = 'fully';
+                    $ignFrom = null;
+                    $ignUntil = null;
+                } else {
+                    $mode = 'partly';
+                }
+
+                ?>
+<form method="post" action="/courses/update">
+    <div class="ignore-mode">
+        <label><input type="radio" name="ignore" value="never"<?php echo $mode === 'never' ? ' checked': '';?>/> <?php echo _('Never ignored');?></label>
+        <label><input type="radio" name="ignore" value="partly"<?php echo $mode === 'partly' ? ' checked': '';?>/> <?php echo _('Partly ignored');?></label>
+        <label><input type="radio" name="ignore" value="fully"<?php echo $mode === 'fully' ? ' checked': '';?>/> <?php echo _('Fully ignored');?></label>
+    </div>
+    <div class="ignore-dates<?php echo $mode === 'partly' ? ' show' : '';?>">
+        <label><span><?php echo _('Ignore until');?></span> <input type="date" name="ignore-until" value="<?php echo $ignUntil;?>"/></label>
+        <label><span><?php echo _('Ignore from');?></span> <input type="date" name="ignore-from" value="<?php echo $ignFrom;?>"/></label>
+    </div>
+    <input type="hidden" name="course" value="<?php echo "$row[course_nr]-$row[semester]";?>"/>
+    <button type="submit"><?php echo _('Save');?></button>
+</form>
+<?php
             }
 
             if ($row['name'] !== 'LVA') {

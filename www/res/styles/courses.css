@@ -27,3 +27,46 @@ section.course-list a.link {
     margin: 0.125em 0.25em;
     font-size: 0.75em;
 }
+
+section.course-list form {
+    margin: 1em auto;
+}
+
+section.course-list form div {
+    margin: 1em auto;
+}
+
+section.course-list form div.ignore-mode {
+    font-size: 0.875em;
+}
+
+section.course-list form div.ignore-dates {
+    font-size: 0.875em;
+    display: none;
+    margin-left: 1em;
+}
+
+section.course-list form div.ignore-dates.show {
+    display: block;
+}
+
+section.course-list form div.ignore-dates label {
+    display: block;
+    margin: 0.5em 0;
+}
+
+section.course-list form div.ignore-dates span {
+    width: 100px;
+    display: inline-block;
+}
+
+section.course-list form div.ignore-mode label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 0 0.5em;
+}
+
+section.course-list form div.ignore-mode input {
+    margin: 0;
+}

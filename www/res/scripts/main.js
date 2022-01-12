@@ -17,8 +17,13 @@ window.addEventListener("DOMContentLoaded", () => {
     initNav();
     initJobs();
 
-    if (window.location.pathname.startsWith('/calendar/') && STATUS === 200) {
-        initCalendar();
+    const path = window.location.pathname;
+    if (STATUS === 200) {
+        if (path.startsWith('/calendar/')) {
+            initCalendar();
+        } else if (path === '/courses/') {
+            initCourseForms();
+        }
     }
 });
 
@@ -135,6 +140,21 @@ function initData() {
             CALENDAR.reloadEvents(true);
         }
     });
+}
+
+function initCourseForms() {
+    const forms = document.getElementsByTagName("form");
+    for (const form of forms) {
+        if (!form.ignore) continue;
+        const dates = form.getElementsByClassName("ignore-dates")[0];
+        form.addEventListener("input", (evt) => {
+            if (form.ignore.value === "partly") {
+                dates.classList.add("show");
+            } else {
+                dates.classList.remove("show");
+            }
+        });
+    }
 }
 
 async function api(endpoint, data = null) {

@@ -29,6 +29,21 @@ msgstr "Gruppen"
 msgid "Join Groups"
 msgstr "Gruppen beitreten"
 
+msgid "Never ignored"
+msgstr "Immer anzeigen"
+
+msgid "Partly ignored"
+msgstr "Teilweise verbergen"
+
+msgid "Fully ignored"
+msgstr "Vollständig verbergen"
+
+msgid "Ignore from"
+msgstr "Verbergen ab"
+
+msgid "Ignore until"
+msgstr "Verbergen bis"
+
 msgid "Search"
 msgstr "Suche"
 
