@@ -73,7 +73,7 @@ function calendar() {
                   (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
             GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data,
                      l.course_nr, l.semester, l.name, g.group_id
-            ORDER BY e.start_ts, e.event_nr", [
+            ORDER BY e.start_ts, e.data -> 'summary'", [
         'mnr' => $subject,
         'start' => date('c', $start),
         'end' => date('c', $end),
