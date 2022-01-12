@@ -16,6 +16,7 @@ require "../.php/header.php";
         <h1><?php echo _('My Friends');?></h1>
         <form action="/search" method="get" class="search">
             <input type="text" name="q" placeholder="<?php echo _('Add friend');?>" minlength="3" required/>
+            <input type="hidden" name="r" value="users"/>
             <button type="submit"><?php echo _('Search (for)');?></button>
         </form>
         <div class="friend-container">
