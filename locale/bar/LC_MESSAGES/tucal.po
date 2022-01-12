@@ -51,7 +51,7 @@ msgid "Repeat password"
 msgstr "Basswoad wiedahoin"
 
 msgid "SSO password"
-msgstr "SSO-Basswoad"
+msgstr "TU-Basswoad"
 
 msgid "Verify account"
 msgstr "Account verifizian"

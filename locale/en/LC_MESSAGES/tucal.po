@@ -75,7 +75,7 @@ msgid "Repeat password"
 msgstr "Repeat password"
 
 msgid "SSO password"
-msgstr "SSO password"
+msgstr "TU password"
 
 msgid "Verify account"
 msgstr "Verify account"

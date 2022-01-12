@@ -75,7 +75,7 @@ msgid "Repeat password"
 msgstr "Passwort wiederholen"
 
 msgid "SSO password"
-msgstr "SSO-Passwort"
+msgstr "TU-Passwort"
 
 msgid "Verify account"
 msgstr "Account verifizieren"
@@ -128,10 +128,10 @@ msgstr "SSO-Zwei-Faktor-Authentifizierung Schlüssel"
 msgid "Account synchronization (description)"
 msgstr "Der TUcal-Server synchronisiert im Hintergrund Kalenderdaten mit den Systemen der TU Wien (TISS, TUWEL, etc.). "
        "Um eine personalisierung zu ermöglichen (z.B. Anmeldungen für LVAs) ist es dabei leider nötig, dass der "
-       "Benutzer sein TU-SSO-Passwort angibt."
+       "Benutzer sein TU-Passwort angibt."
 
 msgid "Automatic account synchronization (description)"
-msgstr "Empfohlen wird, dass das SSO-Passwort beim TUcal-Server hinterlegt wird. "
+msgstr "Empfohlen wird, dass das TU-Passwort beim TUcal-Server hinterlegt wird. "
        "So können die Kalenderdaten regelmäßig im Hintergrund snychronisiert werden."
 
 msgid "One-time account synchronization (description)"
