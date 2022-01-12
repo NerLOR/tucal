@@ -57,7 +57,7 @@ function calendar() {
 
     $stmt = db_exec("
             SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.data,
-                   l.course_nr, l.semester, l.name, g.group_id
+                   l.course_nr, l.semester, l.name, g.group_id, e.deleted
             FROM tucal.event e
                 JOIN tucal.external_event x ON x.event_nr = e.event_nr
                 JOIN tucal.group_member m ON m.group_nr = e.group_nr
@@ -65,7 +65,7 @@ function calendar() {
                 LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
                 LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
             WHERE e.start_ts >= :start AND e.start_ts < :end AND
-                  a.mnr = :mnr AND NOT e.deleted AND
+                  a.mnr = :mnr AND
                   (e.global OR (:mnr = ANY(SELECT u.mnr FROM tuwel.event_user eu
                                            JOIN tuwel.user u ON u.user_id = eu.user_id
                                            WHERE eu.event_id::text = x.event_id))) AND
@@ -98,6 +98,7 @@ function calendar() {
             'id' => $row['event_id'],
             'start' => date('c', $start),
             'end' => date('c', $end),
+            'deleted' => $row['deleted'],
             'room_nr' => $row['room_nr'],
             'course' => [
                 'nr' => $row['course_nr'],
