@@ -20,7 +20,10 @@ msgstr "Gesendete Freundschaftsanfragen"
 msgid "Students"
 msgstr "Studenten"
 
-msgid "LVAs"
+msgid "My Courses"
+msgstr "Meine LVAs"
+
+msgid "Courses"
 msgstr "LVAs"
 
 msgid "Groups"

@@ -6,14 +6,14 @@ global $USER;
 require "../.php/session.php";
 force_user_login();
 
-$TITLE = [_('LVAs')];
+$TITLE = [_('My Courses')];
 
 require "../.php/main.php";
 require "../.php/header.php";
 ?>
 <main class="w2">
     <section class="course-list">
-        <h1><?php echo _('LVAs');?></h1>
+        <h1><?php echo _('Courses');?></h1>
         <?php
 
         $stmt = db_exec("

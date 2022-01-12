@@ -8,7 +8,10 @@ msgstr "kalenda"
 msgid "My Friends"
 msgstr "Meine Freind"
 
-msgid "LVAs"
+msgid "My Courses"
+msgstr "Meine LVAs"
+
+msgid "Courses"
 msgstr "LVAs"
 
 msgid "Search"

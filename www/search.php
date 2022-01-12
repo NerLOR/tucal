@@ -56,7 +56,7 @@ if (strlen($query) >= 3) {
 
 ?>
         <hr/>
-        <h2><?php echo _('LVAs');?> (TISS)</h2>
+        <h2><?php echo _('Courses');?> (TISS)</h2>
 <?php
 
         $cnr = str_replace('.', '', $query);
