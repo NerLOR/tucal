@@ -13,7 +13,7 @@ require "../.php/header.php";
 ?>
 <main class="w2">
     <section class="course-list">
-        <h1><?php echo _('Courses');?></h1>
+        <h1><?php echo _('My Courses');?></h1>
         <?php
 
         $stmt = db_exec("
