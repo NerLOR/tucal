@@ -10,24 +10,29 @@ DROP TRIGGER IF EXISTS t_delete ON tuwel.event;
 
 CREATE TABLE tucal.event
 (
-    event_nr        BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
-    event_id        TEXT                                         DEFAULT NULL,
+    event_nr         BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    event_id         TEXT                                         DEFAULT NULL,
 
-    parent_event_nr BIGINT                                       DEFAULT NULL,
+    parent_event_nr  BIGINT                                       DEFAULT NULL,
 
-    start_ts        TIMESTAMP WITH TIME ZONE            NOT NULL,
-    end_ts          TIMESTAMP WITH TIME ZONE            NOT NULL,
-    create_ts       TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT now(),
-    update_ts       TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT now(),
-    update_seq      INT                                 NOT NULL DEFAULT 0,
+    start_ts         TIMESTAMP WITH TIME ZONE            NOT NULL,
+    end_ts           TIMESTAMP WITH TIME ZONE            NOT NULL,
+    planned_start_ts TIMESTAMP WITH TIME ZONE                     DEFAULT NULL,
+    planned_end_ts   TIMESTAMP WITH TIME ZONE                     DEFAULT NULL,
+    real_start_ts    TIMESTAMP WITH TIME ZONE                     DEFAULT NULL,
+    real_end_ts      TIMESTAMP WITH TIME ZONE                     DEFAULT NULL,
 
-    room_nr         INT                                          DEFAULT NULL,
-    group_nr        BIGINT,
+    create_ts        TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT now(),
+    update_ts        TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT now(),
+    update_seq       INT                                 NOT NULL DEFAULT 0,
 
-    deleted         BOOLEAN                                      DEFAULT FALSE,
-    updated         BOOLEAN                                      DEFAULT FALSE,
-    global          BOOLEAN                                      DEFAULT TRUE,
-    data            JSONB                               NOT NULL DEFAULT '{}'::jsonb,
+    room_nr          INT                                          DEFAULT NULL,
+    group_nr         BIGINT,
+
+    deleted          BOOLEAN                                      DEFAULT FALSE,
+    updated          BOOLEAN                                      DEFAULT FALSE,
+    global           BOOLEAN                                      DEFAULT TRUE,
+    data             JSONB                               NOT NULL DEFAULT '{}'::jsonb,
 
     CONSTRAINT pk_event PRIMARY KEY (event_nr),
     CONSTRAINT sk_event_id UNIQUE (event_id),
