@@ -56,7 +56,7 @@ CREATE TABLE tucal.group_member
     account_nr   BIGINT NOT NULL,
     group_nr     BIGINT NOT NULL,
 
-    ignore_until TIMEStAMP WITH TIME ZONE DEFAULT NULL,
+    ignore_until TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     ignore_from  TIMESTAMP WITH TIME ZONE DEFAULT NULL,
 
     CONSTRAINT pk_group_member PRIMARY KEY (account_nr, group_nr),
