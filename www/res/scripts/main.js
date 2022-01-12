@@ -147,12 +147,24 @@ function initCourseForms() {
     for (const form of forms) {
         if (!form.ignore) continue;
         const dates = form.getElementsByClassName("ignore-dates")[0];
+        const button = form.getElementsByTagName("button")[0];
+        button.style.display = 'none';
+
         form.addEventListener("input", (evt) => {
             if (form.ignore.value === "partly") {
                 dates.classList.add("show");
             } else {
                 dates.classList.remove("show");
             }
+
+            fetch('/courses/update', {
+                method: 'POST',
+                redirect: 'manual',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                },
+                body: `ignore=${form.ignore.value}&ignore-from=${form['ignore-from'].value}&ignore-until=${form['ignore-until'].value}&course=${form.course.value}`,
+            }).then();
         });
     }
 }
