@@ -192,6 +192,19 @@ msgstr "Grün"
 msgid "Grey"
 msgstr "Grau"
 
+msgid "Theme"
+msgstr "Design"
+
+msgid "Light theme"
+msgstr "Helles Design"
+
+msgid "Dark theme"
+msgstr "Dunkles Design"
+
+msgid "Black theme"
+msgstr "Schwarzes Design"
+
+
 msgctxt "http"
 msgid "Bad Request"
 msgstr "Ungültige Anfrage"

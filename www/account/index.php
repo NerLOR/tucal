@@ -17,10 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['lt-provider'])) {
         $USER['opts']['lt_provider'] = $_POST['lt-provider'];
     }
+    if (isset($_POST['theme'])) {
+        $_SESSION['opts']['theme'] = $_POST['theme'];
+    }
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     $STATUS = 405;
     header("Allow: GET, POST");
 }
+
+$theme = $_SESSION['opts']['theme'] ?? 'light';
 
 $TITLE = [_('Settings')];
 require "../.php/header.php";
@@ -44,6 +49,14 @@ require "../.php/header.php";
                 <select name="lt-provider" id="lt-provider">
                     <option value="live-video-tuwien"<?php echo $USER['opts']['lt_provider'] === "live-video-tuwien" ? " selected" : "";?>>live.video.tuwien.ac.at</option>
                     <option value="hs-streamer"<?php echo $USER['opts']['lt_provider'] === "hs-streamer" ? " selected" : "";?>>HS-Streamer</option>
+                </select>
+            </div>
+            <div class="text">
+                <label for="theme"><?php echo _('Theme');?></label>
+                <select name="theme" id="theme">
+                    <option value="light"<?php echo $theme === 'light' ? " selected" : "";?>><?php echo _('Light theme');?></option>
+                    <option value="dark"<?php echo $theme === 'dark' ? " selected" : "";?>><?php echo _('Dark theme');?></option>
+                    <option value="black"<?php echo $theme === 'black' ? " selected" : "";?>><?php echo _('Black theme');?></option>
                 </select>
             </div>
             <button type="submit"><?php echo _('Save');?></button>

@@ -158,6 +158,18 @@ msgstr "Green"
 msgid "Grey"
 msgstr "Grey"
 
+msgid "Theme"
+msgstr "Theme"
+
+msgid "Light theme"
+msgstr "Light theme"
+
+msgid "Dark theme"
+msgstr "Dark theme"
+
+msgid "Black theme"
+msgstr "Black theme"
+
 
 msgctxt "http"
 msgid "Bad Request"

@@ -36,7 +36,18 @@ if ($STATUS >= 400 && $STATUS < 600) {
 
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LOCALE;?>" data-status="<?php echo $STATUS;?>" data-mnr="<?php if (isset($USER)) echo $USER['mnr'];?>">
+<html lang="<?php
+    echo $LOCALE;
+?>" data-status="<?php
+    echo $STATUS;
+?>" data-mnr="<?php
+    if (isset($USER)) echo $USER['mnr'];
+?>" class="<?php
+    if (isset($_SESSION['opts']['theme'])) {
+        $theme = $_SESSION['opts']['theme'];
+        echo "theme-$theme";
+    }
+?>">
 <head>
     <title><?php
         $TITLE = $TITLE ?? [];
