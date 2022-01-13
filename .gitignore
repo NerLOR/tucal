@@ -3,3 +3,4 @@ __pycache__/
 *.pcy
 dest/
 /*.sh
+!/deploy.sh
