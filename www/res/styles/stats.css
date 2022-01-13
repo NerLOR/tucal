@@ -1,0 +1,33 @@
+
+section.stats {
+
+}
+
+section.stats > div {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+section.stats > div > div {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1em;
+    flex: 120px 0 0;
+}
+
+section.stats > div h2 {
+    font-weight: normal;
+    font-size: 2em;
+    margin: 0;
+    color: var(--color);
+}
+
+section.stats > div h3 {
+    font-weight: normal;
+    font-size: 0.75em;
+    margin: 0;
+    color: var(--grey-80);
+}

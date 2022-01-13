@@ -22,7 +22,7 @@ require ".php/header.php";
             bearbeiten können, um eventuell falsche Informationen zu korrigieren.
         </p>
     </section>
-    <section lang="de-AT">
+    <section lang="de-AT" class="stats">
         <h1>Benutzerzahlen</h1>
         <?php
         $stmt = db_exec("
@@ -37,10 +37,24 @@ require ".php/header.php";
         $weeklyNum = $row[2];
         $todayNum = $row[3];
         ?>
-        <h2>Heute aktiv: <?php echo $todayNum;?></h2>
-        <h2>In den letzten 7 Tagen aktiv: <?php echo $weeklyNum;?></h2>
-        <h2>SSO-Zugangsdaten hinterlegt: <?php echo $credNum;?></h2>
-        <h2>Insgesamt verifiziert: <?php echo $userNum;?></h2>
+        <div>
+            <div>
+                <h2><?php echo $todayNum;?></h2>
+                <h3>Heute aktiv</h3>
+            </div>
+            <div>
+                <h2><?php echo $weeklyNum;?></h2>
+                <h3>In den letzten 7 Tagen aktiv</h3>
+            </div>
+            <div>
+                <h2><?php echo $credNum;?></h2>
+                <h3>SSO-Zugangsdaten hinterlegt</h3>
+            </div>
+            <div>
+                <h2><?php echo $userNum;?></h2>
+                <h3>Insgesamt verifiziert</h3>
+            </div>
+        </div>
     </section>
 </main>
 <?php
