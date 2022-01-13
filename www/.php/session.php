@@ -83,7 +83,7 @@ header('Set-Cookie: ' . implode('; ', [
         "Path=/",
         "HttpOnly",
         "Secure",
-        "SameSite=Strict",
+        "SameSite=Lax",
         "MaxAge=$COOKIE_AGE",
         "Expires=$timefmt",
     ]), false);
