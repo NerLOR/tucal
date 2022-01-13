@@ -1,6 +1,7 @@
 
 @import "nav.css";
 @import "calendar.css";
+@import "calendar-event.css";
 @import "form.css";
 @import "status.css";
 @import "job.css";
@@ -237,6 +238,12 @@ body main > section {
 
 main a {
     color: var(--color);
+    text-decoration: none;
+}
+
+main a:hover,
+main a:focus {
+    text-decoration: underline;
 }
 
 main p.center {
@@ -314,6 +321,7 @@ a.account {
 
 a.account:hover {
     background-color: var(--grey-F0);
+    text-decoration: none;
 }
 
 a.account > div {

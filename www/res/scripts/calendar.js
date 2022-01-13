@@ -215,7 +215,7 @@ class WeekSchedule {
         element.insertBefore(this.cal, element.firstChild);
         window.addEventListener("click", (evt) => {
             const path = evt.composedPath();
-            const divs = document.getElementsByClassName("event-details");
+            const divs = document.getElementsByClassName("event-detail");
             const navs = document.getElementsByTagName("nav");
             if ((divs.length > 0 && path.includes(divs[0])) || (navs.length > 0 && path.includes(navs[0]))) {
                 return;
@@ -273,9 +273,9 @@ class WeekSchedule {
             week: this.week.week,
         }, '', `/calendar/${this.subject}/${this.week.year}/W${this.week.week}/${this.eventId ?? ''}`);
         if (eventId === null) {
-            this.clearEventDetails();
+            this.clearEventDetail();
         } else {
-            this.displayEventDetails(eventId);
+            this.displayEventDetail(eventId);
         }
     }
 
@@ -379,7 +379,7 @@ class WeekSchedule {
             const week = this.weeks[w];
             this.lastReload = week.date;
             this.drawEvents(week.events);
-            this.displayEventDetails();
+            this.displayEventDetail();
         }
 
         let upcoming = null;
@@ -588,19 +588,89 @@ class WeekSchedule {
         this.updateTime();
     }
 
-    displayEventDetails() {
-        this.clearEventDetails();
+    displayEventDetail() {
+        this.clearEventDetail();
         if (this.eventId === null) return;
 
+        const evt = this.weeks[this.week.toString()].events.find((evt) => evt.id === this.eventId);
+        const course = COURSE_DEF[evt.course.nr];
+        const room = ROOMS[evt.room_nr];
+        const courseName = LOCALE.startsWith('de-') ? course.name_de : course.name_en;
+
         const div = document.createElement("div");
-        div.classList.add("event-details");
+        div.classList.add("event-detail");
+
+        let html = '';
+
+        if (course) {
+            html += `<h2>` +
+                `<span class="course-name">${getCourseName(course.nr)}</span> ` +
+                `<span class="course-type">(${course.type})</span> ` +
+                `<span class="course-nr">${course.nr.substr(0, 3)}.${course.nr.substr(3)} (${evt.course.semester})</span>` +
+                `</h2><h3>${courseName}</h3>`;
+        } else {
+
+        }
+
+        const formatterDay = new Intl.DateTimeFormat(LOCALE, {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        });
+        const formatterTime = new Intl.DateTimeFormat(LOCALE, {
+            hour: "2-digit",
+            minute: "2-digit",
+        })
+
+        html += `<h4>` +
+            `<span class="time">${formatterTime.format(evt.start)}-${formatterTime.format(evt.end)}</span> ` +
+            `<span class="day">(${formatterDay.format(evt.start)})</span>` +
+            `</h4>`;
+
+        if (room) {
+            html += '<div><div>Raum:</div><div class="room">';
+            let name = room.name;
+            if (room.suffix) {
+                name += ` – ${room.suffix}`;
+            }
+            const codes = room.room_codes.map((code) => code.substr(0, 2) + '&nbsp;' + code.substr(2, 2) + '&nbsp;' + code.substr(4));
+            html += `<a href="https://tuw-maps.tuwien.ac.at/?q=${room.room_codes[0]}" target="_blank">` +
+                `<span class="room-name">${name}</span> <span class="room-codes">(${codes.join(', ')})</span></a>`;
+
+            let building = '';
+            if (room.building.name) {
+                building += room.building.name;
+                if (room.building.suffix) building += ' – ' + room.building.suffix;
+            }
+            const hasB = building.length > 0;
+
+            if (hasB) building += ' (';
+            building += room.building.area_name;
+            if (room.building.area_suffix) building += ' – ' + room.building.area_suffix;
+            if (hasB) building += ')';
+
+            let address = room.building.address ? `<br/><span class="address">${room.building.address}</span>` : '';
+            html += `<br/><span class="building">${building}</span>${address}`;
+            html += '</div></div>';
+        }
+
+        if (evt.course.group !== 'LVA') {
+            html += `<div><div>Gruppe:</div><div>${evt.course.group}</div></div>`;
+        }
+
+        if (evt.summary) {
+            html += `<div><div>Beschreibung: </div><div>${evt.summary}</div></div>`
+        }
+
+        div.innerHTML = html;
 
         this.cal.appendChild(div);
     }
 
-    clearEventDetails() {
-        const eventDetails = this.cal.getElementsByClassName("event-details");
-        while (eventDetails.length > 0) eventDetails[0].remove();
+    clearEventDetail() {
+        const eventDetail = this.cal.getElementsByClassName("event-detail");
+        while (eventDetail.length > 0) eventDetail[0].remove();
     }
 }
 
@@ -612,7 +682,6 @@ class Event {
     semester;
     summary;
     desc;
-    details;
     room_nr;
     zoom;
     lecture_tube;
@@ -628,7 +697,6 @@ class Event {
         this.semester = null;
         this.summary = json.data.summary;
         this.desc = json.data.desc;
-        this.details = json.data.details;
         this.room_nr = json.room_nr;
         this.zoom = json.data.zoom;
         this.lecture_tube = json.data.lt;

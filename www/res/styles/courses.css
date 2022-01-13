@@ -23,7 +23,6 @@ section.course-list span.course-nr {
 section.course-list a.link {
     float: right;
     font-weight: normal;
-    text-decoration: none;
     margin: 0.125em 0.25em;
     font-size: 0.75em;
 }

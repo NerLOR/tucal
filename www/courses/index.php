@@ -2,6 +2,7 @@
 
 global $TITLE;
 global $USER;
+global $LOCALE;
 
 require "../.php/session.php";
 force_user_login();
@@ -17,7 +18,7 @@ require "../.php/header.php";
         <?php
 
         $stmt = db_exec("
-                    SELECT c.course_nr, c.semester, c.ects, cd.name_de, cd.type, ca.acronym_1, ca.acronym_2,
+                    SELECT c.course_nr, c.semester, c.ects, cd.name_de, cd.name_en, cd.type, ca.acronym_1, ca.acronym_2,
                            ca.short, m.name, m.ignore_until, m.ignore_from, m.group_id, tc.course_id
                     FROM tucal.v_account_group m
                         JOIN tiss.course c ON (c.course_nr, c.semester) = (m.course_nr, m.semester)
@@ -35,8 +36,9 @@ require "../.php/header.php";
                 echo "<hr/><div>";
 
                 $cnr = substr($row['course_nr'], 0, 3) . '.' . substr($row['course_nr'], 3);
-                $name = htmlspecialchars($row['acronym_1'] ?? $row['acronym_2'] ?? $row['short'] ?? $row['name_de']);
-                $fullName = htmlspecialchars($row['name_de']);
+                $fullName = in_array($LOCALE, ['bar-AT', 'de-AT', 'de-DE']) ? $row['name_de'] : $row['name_en'];
+                $name = htmlspecialchars($row['acronym_1'] ?? $row['acronym_2'] ?? $row['short'] ?? $fullName);
+                $fullName = htmlspecialchars($fullName);
 
                 echo "<h2><span class='course-name'>$name</span> " .
                      "<span class='course-type'>($row[type])</span> " .

@@ -1,0 +1,73 @@
+
+div.calendar div.event-detail {
+    position: fixed;
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    width: 600px;
+    margin: auto;
+    min-height: 300px;
+    top: 20vmin;
+    left: calc(50% - 300px);
+    z-index: 25;
+    box-sizing: border-box;
+    padding: 1em 1.5em;
+}
+
+div.calendar div.event-detail h2 {
+    color: var(--black);
+    text-align: left;
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0.5em 0 0 0;
+}
+
+div.calendar div.event-detail h2 span.course-nr {
+    font-size: 0.75em;
+    font-weight: normal;
+}
+
+div.calendar div.event-detail h3 {
+    color: var(--black);
+    font-size: 0.75em;
+    text-align: left;
+    font-weight: normal;
+    margin: 0;
+}
+
+div.calendar div.event-detail h4 {
+    color: var(--black);
+    font-size: 1em;
+    text-align: left;
+    font-weight: bold;
+    margin: 1em 0;
+}
+
+div.calendar div.event-detail h4 .day {
+    font-weight: normal;
+    font-size: 0.75em;
+}
+
+div.calendar div.event-detail > div {
+    display: flex;
+    margin: 0.5em 0;
+}
+
+div.calendar div.event-detail > div > div:nth-child(1) {
+    flex: 120px 0 0;
+}
+
+div.calendar div.event-detail .room {
+    font-size: 0.75em;
+}
+
+div.calendar div.event-detail .room-name {
+    font-size: 1.333333em;
+}
+
+@media screen and (max-width: 616px) {
+    div.calendar div.event-detail {
+        width: calc(100% - 16px);
+        left: 8px;
+    }
+}

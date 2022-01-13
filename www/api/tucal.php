@@ -36,9 +36,11 @@ function rooms() {
 
     $res = db_exec("
                 SELECT r.room_nr, r.room_code, r.tiss_code, r.room_name, r.room_suffix, r.room_name_short,
-                       r.room_alt_name, r.room_name_normal, lt.room_code AS lt_room_code, lt.lt_name
+                       r.room_alt_name, r.room_name_normal, lt.room_code AS lt_room_code, lt.lt_name,
+                       b.building_name, b.building_suffix, b.area_name, b.area_suffix, b.address
                 FROM tucal.v_room r
-                    LEFT JOIN tucal.v_lecture_tube lt ON lt.room_nr = r.room_nr");
+                    LEFT JOIN tucal.v_lecture_tube lt ON lt.room_nr = r.room_nr
+                    LEFT JOIN tucal.v_building b ON b.building_id = r.building_id");
     $arr = $res->fetchAll();
 
     $content = '{"status":"success","message":null,"data":{"rooms":[' . "\n";
@@ -55,6 +57,13 @@ function rooms() {
             "name_normalized" => $row["room_name_normal"],
             "lt_room_code" => $row["lt_room_code"],
             "lt_name" => $row["lt_name"],
+            "building" => [
+                "name" => $row['building_name'],
+                'suffix' => $row['building_suffix'],
+                'area_name' => $row['area_name'],
+                'area_suffix' => $row['area_suffix'],
+                'address' => $row['address'],
+            ],
         ];
         $content .= json_encode($data, JSON_FLAGS);
         if ($i !== sizeof($arr) - 1) $content .= ",";
