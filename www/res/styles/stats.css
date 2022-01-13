@@ -8,6 +8,7 @@ section.stats > div {
     justify-content: center;
     align-items: stretch;
     gap: 1em;
+    flex-direction: row-reverse;
     flex-wrap: wrap;
 }
 
