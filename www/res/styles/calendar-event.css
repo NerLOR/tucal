@@ -6,7 +6,6 @@ div.calendar div.event-detail {
     border-radius: var(--border-radius);
     width: 600px;
     margin: auto;
-    min-height: 300px;
     top: 20vmin;
     left: calc(50% - 300px);
     z-index: 25;
@@ -78,6 +77,67 @@ div.calendar div.event-detail a.live img {
 
 div.calendar div.event-detail a.live:hover img {
     filter: drop-shadow(0 0 1px var(--black-alpha));
+}
+
+div.calendar div.event-detail hr {
+    position: relative;
+    width: calc(100% + 2em);
+    left: -1em;
+}
+
+div.calendar div.event-detail hr ~ button {
+    position: absolute;
+    background-color: var(--sec-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    left: calc(50% - 12px);
+    bottom: -12px;
+    cursor: pointer;
+    padding-bottom: 2px;
+    color: var(--grey-C0);
+}
+
+div.calendar div.event-detail hr ~ button:hover {
+    background-color: var(--grey-F0);
+}
+
+div.calendar div.event-detail form.save {
+    width: fit-content;
+    margin: 0.5em auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+div.calendar div.event-detail form.save.hidden {
+    display: none;
+}
+
+div.calendar div.event-detail form.save label {
+    display: block;
+}
+
+div.calendar div.event-detail form.save button {
+    width: 50%;
+    margin: 0.5em auto 0 auto;
+    box-sizing: border-box;
+    height: 2.5em;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    padding: 0.5em 1em;
+    border: 1px solid var(--color);
+    background-color: var(--input-bg-color);
+    color: var(--color);
+    cursor: pointer;
+}
+
+div.calendar div.event-detail form.save button:hover,
+div.calendar div.event-detail form.save button:focus {
+    background-color: var(--color);
+    border-color: var(--color);
+    color: var(--color-comp);
 }
 
 @media screen and (max-width: 616px) {

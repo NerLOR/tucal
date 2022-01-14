@@ -691,7 +691,29 @@ class WeekSchedule {
             html += `<div><div>${_('Description')}:</div><div>${evt.desc}</div></div>`;
         }
 
+        html += '<hr/><button>&blacktriangledown;</button>';
+        html += `<form class="save hidden">` +
+            `<label><input type="checkbox" name="all-previous"/> ${_('Apply for all previous events')}</label>` +
+            `<label><input type="checkbox" name="all-following"/> ${_('Apply for all following events')}</label>` +
+            `<button>${_('Save')}</button></form>`;
+
         div.innerHTML = html;
+
+        const button = div.getElementsByTagName("button")[0];
+        const form = div.getElementsByTagName("form")[0];
+        button.addEventListener('click', (e) => {
+            if (form.classList.contains('hidden')) {
+                button.innerHTML = '&blacktriangle;';
+                form.classList.remove('hidden');
+            } else {
+                button.innerHTML = '&blacktriangledown;';
+                form.classList.add('hidden');
+            }
+        });
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            console.log(form);
+        });
 
         this.cal.appendChild(div);
     }

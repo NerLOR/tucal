@@ -19,7 +19,7 @@ form.search button {
     font-size: 1em;
     padding: 0.5em 1em;
     background-color: var(--input-bg-color);
-    color: var(--black)
+    color: var(--black);
 }
 
 form.search input {
