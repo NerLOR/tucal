@@ -337,18 +337,18 @@ section.calendar-legend div.legend.course {
     --evt-border: hsl(var(--hue), 50%, 50%);
 }
 
-html.theme-dark div.calendar div.event.group,
-html.theme-dark div.calendar div.event.lecture,
-html.theme-dark div.calendar div.event.course,
-html.theme-dark section.calendar-legend div.legend.group,
-html.theme-dark section.calendar-legend div.legend.lecture,
-html.theme-dark section.calendar-legend div.legend.course,
-html.theme-black div.calendar div.event.group,
-html.theme-black div.calendar div.event.lecture,
-html.theme-black div.calendar div.event.course,
-html.theme-black section.calendar-legend div.legend.group,
-html.theme-black section.calendar-legend div.legend.lecture,
-html.theme-black section.calendar-legend div.legend.course {
+.theme-dark div.calendar div.event.group,
+.theme-dark div.calendar div.event.lecture,
+.theme-dark div.calendar div.event.course,
+.theme-dark section.calendar-legend div.legend.group,
+.theme-dark section.calendar-legend div.legend.lecture,
+.theme-dark section.calendar-legend div.legend.course,
+.theme-black div.calendar div.event.group,
+.theme-black div.calendar div.event.lecture,
+.theme-black div.calendar div.event.course,
+.theme-black section.calendar-legend div.legend.group,
+.theme-black section.calendar-legend div.legend.lecture,
+.theme-black section.calendar-legend div.legend.course {
     --l: 12.5% !important;
     --evt-color: hsl(var(--hue), calc(100% - (12.5% - var(--l)) * 2), var(--l));
     --evt-light: hsl(var(--hue), calc(100% - (12.5% - var(--l)) * 2), calc(var(--l) + 3.125%));

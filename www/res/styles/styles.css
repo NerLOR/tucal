@@ -21,19 +21,19 @@ html {
     --tb-bg-color: #000000;
 
     --tl-sec-bg-color: #FFFFFF;
-    --td-sec-bg-color: #000000;
+    --td-sec-bg-color: #181818;
     --tb-sec-bg-color: #000000;
 
     --tl-nav-bg-color: #FFFFFF;
-    --td-nav-bg-color: #000000;
+    --td-nav-bg-color: #202020;
     --tb-nav-bg-color: #000000;
 
     --tl-footer-bg-color: #FFFFFF;
-    --td-footer-bg-color: #000000;
+    --td-footer-bg-color: #181818;
     --tb-footer-bg-color: #000000;
 
     --tl-input-bg-color: #FFFFFF;
-    --td-input-bg-color: #000000;
+    --td-input-bg-color: #181818;
     --tb-input-bg-color: #000000;
 
     --tl-border-color: #C0C0C0;
@@ -45,7 +45,7 @@ html {
     --tl-color: #4080C0;
     --td-color: #4080C0;
     --tl-color-comp: #FFFFFF;
-    --td-color-comp: #FFFFFF;
+    --td-color-comp: #181818;
 
     --tl-color-dark: #204060;
     --td-color-dark: #A0C0E0;
@@ -328,6 +328,10 @@ a.account:hover {
     text-decoration: none;
 }
 
+.theme-dark a.account:hover {
+    background-color: var(--grey-E0);
+}
+
 a.account > div {
     display: flex;
     gap: 0.5em;
@@ -354,19 +358,18 @@ a.account span.verified {
     color: var(--green);
 }
 
-*::-webkit-scrollbar {
-    width: 15px;
-}
-
-*::-webkit-scrollbar-track {
-    background-color: var(--grey-F0);
-}
-
-*::-webkit-scrollbar-thumb {
-    background-color: var(--grey-C0);
-    border: 2px solid var(--grey-F0);
-}
-
-*::-webkit-scrollbar-thumb:hover {
-    background-color: var(--grey-A0);
+@media screen and (min-device-width: 480px) {
+    *::-webkit-scrollbar {
+        width: 15px;
+    }
+    *::-webkit-scrollbar-track {
+        background-color: var(--grey-F0);
+    }
+    *::-webkit-scrollbar-thumb {
+        background-color: var(--grey-C0);
+        border: 2px solid var(--grey-F0);
+    }
+    *::-webkit-scrollbar-thumb:hover {
+        background-color: var(--grey-A0);
+    }
 }

@@ -2,3 +2,42 @@
 main.search section > div {
     margin: 0.5em 0;
 }
+
+form.search {
+    width: 100%;
+    max-width: 400px;
+    margin: 1em auto;
+    display: flex;
+    gap: 10px;
+}
+
+form.search input,
+form.search button {
+    box-sizing: border-box;
+    height: 2.5rem;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    padding: 0.5em 1em;
+    background-color: var(--input-bg-color);
+    color: var(--black)
+}
+
+form.search input {
+    flex: 100px 1 1;
+    border: 1px solid var(--color);
+}
+
+form.search button {
+    flex: 50px 0 0;
+    border: 1px solid var(--color);
+    background-color: var(--input-bg-color);
+    color: var(--color);
+    cursor: pointer;
+}
+
+form.search button:hover,
+form.search button:focus {
+    background-color: var(--color);
+    border-color: var(--color);
+    color: var(--color-comp);
+}

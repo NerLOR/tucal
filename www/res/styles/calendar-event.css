@@ -1,7 +1,7 @@
 
 div.calendar div.event-detail {
     position: fixed;
-    background-color: var(--white);
+    background-color: var(--sec-bg-color);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     width: 600px;

@@ -11,7 +11,7 @@ body > nav {
     height: var(--nav-height);
     box-sizing: content-box;
     border-bottom: 1px solid var(--border-color);
-    background-color: var(--sec-bg-color);
+    background-color: var(--nav-bg-color);
     position: fixed;
     top: 0;
     left: 0;
@@ -149,11 +149,12 @@ body > nav > div.link {
     margin: 0.375em 0;
     height: 2.25em;
     background-color: var(--input-bg-color);
+    color: var(--black);
 }
 
 #user-menu {
-    background-color: var(--sec-bg-color);
-    border: 1px solid var(--sec-bg-color);
+    background-color: var(--nav-bg-color);
+    border: 1px solid var(--nav-bg-color);
     border-radius: var(--border-radius);
     text-align: left;
     height: fit-content;

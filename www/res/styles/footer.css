@@ -7,7 +7,7 @@ body > footer {
     height: var(--footer-height);
     box-sizing: border-box;
     border-top: 1px solid var(--border-color);
-    background-color: var(--sec-bg-color);
+    background-color: var(--footer-bg-color);
     display: flex;
     justify-content: center;
     align-items: center;
