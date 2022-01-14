@@ -576,8 +576,8 @@ class WeekSchedule {
                 evt.innerHTML =
                     '<div class="pre"></div>' +
                     '<div class="post"></div>' +
-                    (event.lecture_tube && ltLink ? `<a href="${ltLink}" target="_blank" class="live" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
-                    (event.zoom !== null ? `<a href="${event.zoom}" target="_blank" class="live" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
+                    (event.lecture_tube && ltLink ? `<a class="live" href="${ltLink}" target="_blank" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
+                    (event.zoom !== null ? `<a class="live" href="${event.zoom}" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
                     `<div class="course"><span class="course">${course}</span>` +
                     (room !== null ? ` - <span class="room">${room}</span>` : '') + '</div><div class="group">' +
@@ -611,6 +611,17 @@ class WeekSchedule {
         div.classList.add("event-detail");
 
         let html = '';
+
+        const ltLink = evt.room_nr && getLectureTubeLink(evt.room_nr) || null;
+        if (evt.lecture_tube && ltLink) {
+            html += `<a class="live" href="${ltLink}" target="_blank" title="LectureTube">` +
+                `<img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>`;
+        }
+
+        if (evt.zoom) {
+            html += `<a class="live" href="${evt.zoom}" target="_blank" title="Zoom">` +
+                `<img src="/res/icons/zoom.png" alt="Zoom"/></a>`;
+        }
 
         if (course) {
             html += `<h2>` +
@@ -672,6 +683,10 @@ class WeekSchedule {
 
         if (evt.summary) {
             html += `<div><div>${_('Summary')}:</div><div>${evt.summary}</div></div>`
+        }
+
+        if (evt.desc) {
+            html += `<div><div>${_('Description')}:</div><div>${evt.desc}</div></div>`;
         }
 
         div.innerHTML = html;

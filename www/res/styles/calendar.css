@@ -427,6 +427,7 @@ div.calendar div.event span.room {
 div.calendar div.event a.live {
     float: right;
     z-index: 2;
+    height: 16px;
 }
 
 div.calendar div.event a.live img {
