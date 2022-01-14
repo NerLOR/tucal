@@ -271,10 +271,10 @@ function detectSwipe(elem, cb) {
     const MAX_Y = 400;
 
     const swipe = {
-        start_x: 0,
-        start_y: 0,
-        end_x: 0,
-        end_y: 0,
+        start_x: null,
+        start_y: null,
+        end_x: null,
+        end_y: null,
     };
 
     elem.addEventListener('touchstart', (evt) => {
@@ -295,6 +295,8 @@ function detectSwipe(elem, cb) {
         const sy = swipe.start_y;
         const ey = swipe.end_y;
 
+        if (sx === null || ex === null || sy === null || ey === null) return;
+
         if (Math.abs(ey - sy) < MIN_Y && Math.abs(ex - sx) >= MIN_X && Math.abs(ex - sx) <= MAX_X) {
             if (ex > sx) cb('left');
             else cb('right');
@@ -302,5 +304,10 @@ function detectSwipe(elem, cb) {
             if (ey > sy) cb('down');
             else cb('up');
         }
+
+        swipe.start_x = null;
+        swipe.start_y = null;
+        swipe.end_x = null;
+        swipe.end_y = null;
     });
 }
