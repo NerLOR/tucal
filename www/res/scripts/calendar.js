@@ -693,9 +693,9 @@ class WeekSchedule {
 
         html += '<hr/><button>&blacktriangledown;</button>';
         html += `<form class="save hidden">` +
-            `<label><input type="checkbox" name="all-previous"/> ${_('Apply for all previous events')}</label>` +
-            `<label><input type="checkbox" name="all-following"/> ${_('Apply for all following events')}</label>` +
-            `<button>${_('Save')}</button></form>`;
+            `<label><input type="checkbox" name="all-previous"/> ${_('Apply changes for all previous events')}</label>` +
+            `<label><input type="checkbox" name="all-following"/> ${_('Apply changes for all following events')}</label>` +
+            `<button>${_('Apply')}</button></form>`;
 
         div.innerHTML = html;
 

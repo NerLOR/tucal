@@ -12,6 +12,7 @@ div.calendar div.event-detail {
     box-sizing: border-box;
     padding: 1em;
     font-size: 1rem;
+    box-shadow: 0 0 8px var(--black-alpha);
 }
 
 div.calendar div.event-detail h2 {
@@ -109,14 +110,19 @@ div.calendar div.event-detail form.save {
     display: flex;
     flex-direction: column;
     gap: 0.5em;
+    height: 120px;
+    transition: height 0.25s;
+    overflow: hidden;
+    justify-content: center;
 }
 
 div.calendar div.event-detail form.save.hidden {
-    display: none;
+    height: 0;
 }
 
 div.calendar div.event-detail form.save label {
     display: block;
+    font-size: 0.75em;
 }
 
 div.calendar div.event-detail form.save button {
