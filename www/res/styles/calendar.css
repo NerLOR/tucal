@@ -510,4 +510,7 @@ section.calendar-legend div.legend > span.color-name {
     div.calendar div.event div.group {
         font-size: 0.75em;
     }
+    div.calendar > table thead {
+        position: unset;
+    }
 }
