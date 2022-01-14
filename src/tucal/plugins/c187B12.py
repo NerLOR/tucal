@@ -86,6 +86,19 @@ class Plugin(tucal.Plugin):
             'data': 'data'
         }
         tucal.db.upsert_values('tucal.external_event', rows, fields, ('source', 'event_id'), {'data': 'jsonb'})
+
+        ids_now = set(row['id'] for row in rows)
+
+        cur = tucal.db.cursor()
+        cur.execute("LOCK TABLE tucal.external_event IN SHARE ROW EXCLUSIVE MODE")
+        cur.execute("SELECT event_id FROM tucal.external_event WHERE source = '187B12-aurora' AND NOT deleted")
+        ids_db = set(row[0] for row in cur.fetch_all())
+        ids_del = ids_db - ids_now
+        cur.execute("""
+            UPDATE tucal.external_event
+            SET deleted = true
+            WHERE source = '187B12-aurora' AND event_id = ANY(%s)""", (list(ids_del),))
+
         tucal.db.commit()
 
     @staticmethod
