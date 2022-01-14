@@ -46,6 +46,8 @@ if ($STATUS >= 400 && $STATUS < 600) {
     if (isset($_SESSION['opts']['theme'])) {
         $theme = $_SESSION['opts']['theme'];
         echo "theme-$theme";
+    } else {
+        echo "theme-browser";
     }
 ?>">
 <head>

@@ -17,19 +17,23 @@ html {
     --border-radius: 4px;
 
     --tl-bg-color: #F0F0F0;
-    --td-bg-color: #101010;
+    --td-bg-color: #181818;
     --tb-bg-color: #000000;
 
     --tl-sec-bg-color: #FFFFFF;
-    --td-sec-bg-color: #181818;
+    --td-sec-bg-color: #202020;
     --tb-sec-bg-color: #000000;
+
+    --tl-sec-bg-color-2: #FFFFFF;
+    --td-sec-bg-color-2: #101010;
+    --tb-sec-bg-color-2: #000000;
 
     --tl-nav-bg-color: #FFFFFF;
     --td-nav-bg-color: #202020;
     --tb-nav-bg-color: #000000;
 
     --tl-footer-bg-color: #FFFFFF;
-    --td-footer-bg-color: #181818;
+    --td-footer-bg-color: #202020;
     --tb-footer-bg-color: #000000;
 
     --tl-input-bg-color: #FFFFFF;
@@ -102,6 +106,7 @@ html.theme-light,
 html:not(.theme-light):not(.theme-dark):not(.theme-black) {
     --bg-color: var(--tl-bg-color);
     --sec-bg-color: var(--tl-sec-bg-color);
+    --sec-bg-color-2: var(--tl-sec-bg-color-2);
     --nav-bg-color: var(--tl-nav-bg-color);
     --footer-bg-color: var(--tl-footer-bg-color);
     --input-bg-color: var(--tl-input-bg-color);
@@ -137,6 +142,7 @@ html.theme-dark,
 html.theme-black {
     --bg-color: var(--td-bg-color);
     --sec-bg-color: var(--td-sec-bg-color);
+    --sec-bg-color-2: var(--td-sec-bg-color-2);
     --nav-bg-color: var(--td-nav-bg-color);
     --footer-bg-color: var(--td-footer-bg-color);
     --input-bg-color: var(--td-input-bg-color);
@@ -171,6 +177,7 @@ html.theme-black {
 html.theme-black {
     --bg-color: var(--tb-bg-color);
     --sec-bg-color: var(--tb-sec-bg-color);
+    --sec-bg-color-2: var(--tb-sec-bg-color-2);
     --nav-bg-color: var(--tb-nav-bg-color);
     --footer-bg-color: var(--tb-footer-bg-color);
     --input-bg-color: var(--tb-input-bg-color);
@@ -323,7 +330,7 @@ a.account:hover {
 }
 
 .theme-dark a.account:hover {
-    background-color: var(--grey-E0);
+    background-color: var(--grey-D0);
 }
 
 a.account > div {

@@ -14,7 +14,7 @@ div.calendar {
     position: relative;
     width: 100%;
     margin: 0;
-    background-color: var(--sec-bg-color);
+    background-color: var(--sec-bg-color-2);
     box-sizing: border-box;
     --left-size: 50px;
     --header-size: calc(var(--row-size) * 5);
