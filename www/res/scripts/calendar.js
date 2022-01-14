@@ -678,7 +678,9 @@ class WeekSchedule {
         }
 
         if (evt.course.group !== 'LVA') {
-            html += `<div><div>${_('Group')}:</div><div>${evt.course.group}</div></div>`;
+            let group = evt.course.group;
+            while (group.startsWith('Gruppe ')) group = group.substr(7);
+            html += `<div><div>${_('Group')}:</div><div>${group}</div></div>`;
         }
 
         if (evt.summary) {
