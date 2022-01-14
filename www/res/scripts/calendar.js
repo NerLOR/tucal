@@ -639,7 +639,7 @@ class WeekSchedule {
             `</h4>`;
 
         if (room) {
-            html += '<div><div>Raum:</div><div class="room">';
+            html += `<div><div>${_('Room')}:</div><div class="room">`;
             let name = room.name;
             if (room.suffix) {
                 name += ` – ${room.suffix}`;
@@ -667,11 +667,11 @@ class WeekSchedule {
         }
 
         if (evt.course.group !== 'LVA') {
-            html += `<div><div>Gruppe:</div><div>${evt.course.group}</div></div>`;
+            html += `<div><div>${_('Group')}:</div><div>${evt.course.group}</div></div>`;
         }
 
         if (evt.summary) {
-            html += `<div><div>Beschreibung: </div><div>${evt.summary}</div></div>`
+            html += `<div><div>${_('Summary')}:</div><div>${evt.summary}</div></div>`
         }
 
         div.innerHTML = html;
