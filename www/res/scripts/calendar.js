@@ -569,8 +569,8 @@ class WeekSchedule {
                     (event.lecture_tube && ltLink ? `<a href="${ltLink}" target="_blank" class="live" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
                     (event.zoom !== null ? `<a href="${event.zoom}" target="_blank" class="live" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
-                    `<div><span class="course">${course}</span>` +
-                    (room !== null ? ` - <span class="room">${room}</span>` : '') + '</div><div>' +
+                    `<div class="course"><span class="course">${course}</span>` +
+                    (room !== null ? ` - <span class="room">${room}</span>` : '') + '</div><div class="group">' +
                     (group !== null ? `<span class="group">${group}</span>` : '') + '</div>' +
                     (event.summary !== null ? `<div class="summary">${event.summary}</div>` : '');
 

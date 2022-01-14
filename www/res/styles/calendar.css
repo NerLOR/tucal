@@ -507,7 +507,7 @@ section.calendar-legend div.legend > span.color-name {
 
 @media screen and (max-width: 500px) {
     div.calendar div.event div.summary,
-    div.calendar div.event span.group {
+    div.calendar div.event div.group {
         font-size: 0.75em;
     }
 }
