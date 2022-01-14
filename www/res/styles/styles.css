@@ -319,14 +319,13 @@ a.account {
     padding: 0.25em 0.5em;
     box-sizing: border-box;
     border-radius: var(--border-radius);
-    text-decoration: none;
+    text-decoration: none !important;
     color: var(--black);
     cursor: pointer;
 }
 
 a.account:hover {
     background-color: var(--grey-F0);
-    text-decoration: none;
 }
 
 .theme-dark a.account:hover {
