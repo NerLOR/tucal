@@ -204,6 +204,9 @@ msgstr "Dunkles Design"
 msgid "Black theme"
 msgstr "Schwarzes Design"
 
+msgid "Browser theme"
+msgstr "Browser Design"
+
 
 msgctxt "http"
 msgid "Bad Request"

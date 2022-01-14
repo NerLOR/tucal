@@ -170,6 +170,9 @@ msgstr "Dark theme"
 msgid "Black theme"
 msgstr "Black theme"
 
+msgid "Browser theme"
+msgstr "Browser theme"
+
 
 msgctxt "http"
 msgid "Bad Request"

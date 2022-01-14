@@ -176,12 +176,6 @@ html.theme-black {
     --input-bg-color: var(--tb-input-bg-color);
 }
 
-@media (prefers-color-scheme: dark) {
-    html:not(.theme-light):not(.theme-dark):not(.theme-black) {
-
-    }
-}
-
 body {
     margin: 0;
     padding: 0;

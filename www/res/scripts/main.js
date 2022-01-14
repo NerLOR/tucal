@@ -11,6 +11,7 @@ let ROOMS = null;
 let CALENDAR = null;
 
 
+initBrowserTheme();
 initData();
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -166,6 +167,24 @@ function initCourseForms() {
                 body: `ignore=${form.ignore.value}&ignore-from=${form['ignore-from'].value}&ignore-until=${form['ignore-until'].value}&course=${form.course.value}`,
             }).then();
         });
+    }
+}
+
+function initBrowserTheme() {
+    const classes = document.documentElement.classList;
+    if (classes.contains("theme-browser")) {
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+        const mediaHandler = (evt) => {
+            if (evt.matches) {
+                classes.remove("theme-light");
+                classes.add("theme-dark");
+            } else {
+                classes.remove("theme-dark");
+                classes.add("theme-light");
+            }
+        }
+        media.addEventListener('change', mediaHandler);
+        mediaHandler(media);
     }
 }
 
