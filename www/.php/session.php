@@ -72,6 +72,7 @@ if (!isset($_SESSION)) {
         'nr' => $stmt->fetch()[0],
         'token' => $token,
         'opts' => json_decode('{}', true),
+        'theme' => 'browser',
     ];
 }
 
