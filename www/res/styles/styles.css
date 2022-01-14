@@ -65,6 +65,7 @@ html {
     --tl-grey-40: #404040;
     --tl-grey-60: #606060;
     --tl-grey-80: #808080;
+    --tl-grey-A0: #A0A0A0;
     --tl-grey-B0: #B0B0B0;
     --tl-grey-C0: #C0C0C0;
     --tl-grey-D0: #D0D0D0;
@@ -77,6 +78,7 @@ html {
     --td-grey-40: #C0C0C0;
     --td-grey-60: #A0A0A0;
     --td-grey-80: #808080;
+    --td-grey-A0: #606060;
     --td-grey-B0: #505050;
     --td-grey-C0: #404040;
     --td-grey-D0: #303030;
@@ -116,6 +118,7 @@ html:not(.theme-light):not(.theme-dark):not(.theme-black) {
     --grey-40: var(--tl-grey-40);
     --grey-60: var(--tl-grey-60);
     --grey-80: var(--tl-grey-80);
+    --grey-A0: var(--tl-grey-A0);
     --grey-B0: var(--tl-grey-B0);
     --grey-C0: var(--tl-grey-C0);
     --grey-D0: var(--tl-grey-D0);
@@ -150,6 +153,7 @@ html.theme-black {
     --grey-40: var(--td-grey-40);
     --grey-60: var(--td-grey-60);
     --grey-80: var(--td-grey-80);
+    --grey-A0: var(--td-grey-A0);
     --grey-B0: var(--td-grey-B0);
     --grey-C0: var(--td-grey-C0);
     --grey-D0: var(--td-grey-D0);
@@ -348,4 +352,21 @@ a.account span.mnr {
 a.account span.verified {
     font-size: 1rem;
     color: var(--green);
+}
+
+*::-webkit-scrollbar {
+    width: 15px;
+}
+
+*::-webkit-scrollbar-track {
+    background-color: var(--grey-F0);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--grey-C0);
+    border: 2px solid var(--grey-F0);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--grey-A0);
 }
