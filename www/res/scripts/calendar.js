@@ -640,8 +640,9 @@ class WeekSchedule {
 
             let building = '';
             if (room.building.name) {
-                building += room.building.name;
-                if (room.building.suffix) building += ' – ' + room.building.suffix;
+                if (room.building.name !== room.building.address) building += room.building.name;
+                if (room.building.name !== room.building.address && room.building.suffix) building += ' – ';
+                if (room.building.suffix) building += room.building.suffix;
             }
             const hasB = building.length > 0;
 
