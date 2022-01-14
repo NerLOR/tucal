@@ -70,7 +70,7 @@ class Plugin(tucal.Plugin):
                 'data': json.dumps({
                     'aurora': {
                         'summary': evt.summary,
-                        'url': evt.url,
+                        'conference': evt.url,
                         'type': 'lecture' if evt.summary.lower().startswith('intro') else 'course',
                     },
                 }),
@@ -178,7 +178,12 @@ class Plugin(tucal.Plugin):
                              .lower() + '-' + sub.replace('_', '-')
 
                 suffix = 'Reviewing' if sub == 'reviewing_end' else 'Reflection' if sub == 'reflection' else None
-                data = {'aurora': {'summary': name + ((' - ' + suffix) if suffix else '')}}
+                data = {
+                    'aurora': {
+                        'summary': name + ((' - ' + suffix) if suffix else ''),
+                        'url': f'{LITTLE_AURORA}/course/overview',
+                    }
+                }
                 if 'challenges' in event:
                     data['aurora']['challenges'] = event['challenges']
                 rows.append({

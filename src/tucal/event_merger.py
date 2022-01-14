@@ -82,9 +82,12 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
 
     if aurora:
         data['summary'] = aurora['summary']
+        conference = aurora.get('conference', None)
+        if conference is not None:
+            data['zoom'] = conference
         url = aurora.get('url', None)
         if url is not None:
-            data['zoom'] = url
+            data['url'] = url
         data['type'] = aurora['type'] if 'type' in aurora else 'course'
 
     if htu:
