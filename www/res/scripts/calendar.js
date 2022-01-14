@@ -213,6 +213,16 @@ class WeekSchedule {
         this.cal.appendChild(wrapper);
 
         element.insertBefore(this.cal, element.firstChild);
+
+        detectSwipe(this.cal, (direction) => {
+            console.log(direction);
+            if (direction === 'left') {
+                this.previous();
+            } else if (direction === 'right') {
+                this.next();
+            }
+        });
+
         window.addEventListener("click", (evt) => {
             const path = evt.composedPath();
             const divs = document.getElementsByClassName("event-detail");

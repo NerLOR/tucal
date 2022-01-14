@@ -263,3 +263,44 @@ function getLectureTubeLink(room_nr) {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
+
+function detectSwipe(elem, cb) {
+    const MIN_X = 30;
+    const MIN_Y = 30;
+    const MAX_X = 400;
+    const MAX_Y = 400;
+
+    const swipe = {
+        start_x: 0,
+        start_y: 0,
+        end_x: 0,
+        end_y: 0,
+    };
+
+    elem.addEventListener('touchstart', (evt) => {
+        const t = evt.touches[0];
+        swipe.start_x = t.screenX;
+        swipe.start_y = t.screenY;
+    });
+
+    elem.addEventListener('touchmove', (evt) => {
+        const t = evt.touches[0];
+        swipe.end_x = t.screenX;
+        swipe.end_y = t.screenY;
+    });
+
+    elem.addEventListener('touchend', (evt) => {
+        const sx = swipe.start_x;
+        const ex = swipe.end_x;
+        const sy = swipe.start_y;
+        const ey = swipe.end_y;
+
+        if (Math.abs(ey - sy) < MIN_Y && Math.abs(ex - sx) >= MIN_X && Math.abs(ex - sx) <= MAX_X) {
+            if (ex > sx) cb('left');
+            else cb('right');
+        } else if (Math.abs(ex - sx) < MIN_X && Math.abs(ey - sy) >= MIN_Y && Math.abs(ey - sy) <= MAX_Y) {
+            if (ey > sy) cb('down');
+            else cb('up');
+        }
+    });
+}
