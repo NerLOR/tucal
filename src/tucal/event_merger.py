@@ -121,7 +121,6 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         data['source_url'] = htu['url']
         data['source_name'] = 'HTU Events'
         data['summary'] = htu['title']
-        data['desc'] = htu['description']
 
         if 'attributedTo' in htu and htu['attributedTo'] is not None:
             data['organizer'] = htu['attributedTo']['name']
@@ -129,8 +128,10 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         if 'options' in htu and htu['options'] is not None:
             data['online'] = htu['options']['isOnline']
 
-        for link in ZOOM_LINK.finditer(htu.get('description', '')):
-            data['zoom'] = 'https://' + link.group(1)
+        if htu['description']:
+            data['desc'] = htu['description']
+            for link in ZOOM_LINK.finditer(htu['description']):
+                data['zoom'] = 'https://' + link.group(1)
 
         if data['online'] is None:
             data['online'] = (data['zoom'] is not None)

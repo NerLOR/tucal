@@ -1,4 +1,5 @@
 # https://events.htu.at/
+import datetime
 
 import requests
 import json
@@ -7,14 +8,26 @@ import tucal
 import tucal.db
 
 QUERY = {
-    'operationName': 'FetchEvents',
+    'operationName': 'SearchEventsAndGroups',
     'variables': {
-        'page': 1,
-        'limit': 99,
+        'eventPage': 1,
+        'limit': 10000,
+        'beginsOn': None,
+        'endsOn': None,
     },
     'query': """
-        query FetchEvents($orderBy: EventOrderBy, $direction: SortDirection, $page: Int, $limit: Int) {
-          events(orderBy: $orderBy, direction: $direction, page: $page, limit: $limit) {
+        query SearchEventsAndGroups($location: String, $radius: Float, $tags: String, $term: String, $type: EventType, $beginsOn: DateTime, $endsOn: DateTime, $eventPage: Int, $limit: Int) {
+          searchEvents(
+            location: $location
+            radius: $radius
+            tags: $tags
+            term: $term
+            type: $type
+            beginsOn: $beginsOn
+            endsOn: $endsOn
+            page: $eventPage
+            limit: $limit
+          ) {
             total
             elements {
               id
@@ -61,27 +74,6 @@ QUERY = {
             __typename
           }
         }
-        fragment AdressFragment on Address {
-          id
-          description
-          geom
-          street
-          locality
-          postalCode
-          region
-          country
-          type
-          url
-          originId
-          timezone
-          __typename
-        }
-        fragment TagFragment on Tag {
-          id
-          slug
-          title
-          __typename
-        }
         fragment EventOptions on EventOptions {
           maximumAttendeeCapacity
           remainingAttendeeCapacity
@@ -108,6 +100,27 @@ QUERY = {
           showParticipationPrice
           hideOrganizerWhenGroupEvent
           isOnline
+          __typename
+        }
+        fragment TagFragment on Tag {
+          id
+          slug
+          title
+          __typename
+        }
+        fragment AdressFragment on Address {
+          id
+          description
+          geom
+          street
+          locality
+          postalCode
+          region
+          country
+          type
+          url
+          originId
+          timezone
           __typename
         }
         fragment ActorFragment on Actor {
@@ -153,7 +166,7 @@ class Plugin(tucal.Plugin):
             raise RuntimeError()
 
         raw_events = r.json()
-        events = raw_events['data']['events']['elements']
+        events = raw_events['data']['searchEvents']['elements']
         group_nr = get_group_nr()
 
         rows = [{
@@ -175,3 +188,118 @@ class Plugin(tucal.Plugin):
         }
         tucal.db.upsert_values('tucal.external_event', rows, fields, ('source', 'event_id'), {'data': 'jsonb'})
         tucal.db.commit()
+
+
+"""
+query FetchEvents($orderBy: EventOrderBy, $direction: SortDirection, $page: Int, $limit: Int) {
+  events(orderBy: $orderBy, direction: $direction, page: $page, limit: $limit) {
+    total
+    elements {
+      id
+      uuid
+      url
+      local
+      title
+      description
+      beginsOn
+      endsOn
+      status
+      visibility
+      insertedAt
+      language
+      picture {
+        id
+        url
+        __typename
+      }
+      publishAt
+      physicalAddress {
+        ...AdressFragment
+        __typename
+      }
+      organizerActor {
+        ...ActorFragment
+        __typename
+      }
+      attributedTo {
+        ...ActorFragment
+        __typename
+      }
+      category
+      tags {
+        ...TagFragment
+        __typename
+      }
+      options {
+        ...EventOptions
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}
+fragment AdressFragment on Address {
+  id
+  description
+  geom
+  street
+  locality
+  postalCode
+  region
+  country
+  type
+  url
+  originId
+  timezone
+  __typename
+}
+fragment TagFragment on Tag {
+  id
+  slug
+  title
+  __typename
+}
+fragment EventOptions on EventOptions {
+  maximumAttendeeCapacity
+  remainingAttendeeCapacity
+  showRemainingAttendeeCapacity
+  anonymousParticipation
+  showStartTime
+  showEndTime
+  timezone
+  offers {
+    price
+    priceCurrency
+    url
+    __typename
+  }
+  participationConditions {
+    title
+    content
+    url
+    __typename
+  }
+  attendees
+  program
+  commentModeration
+  showParticipationPrice
+  hideOrganizerWhenGroupEvent
+  isOnline
+  __typename
+}
+fragment ActorFragment on Actor {
+  id
+  avatar {
+    id
+    url
+    __typename
+  }
+  type
+  preferredUsername
+  name
+  domain
+  summary
+  url
+  __typename
+"""
