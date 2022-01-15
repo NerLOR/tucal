@@ -38,6 +38,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         'tuwel_url': None,
         'source_url': None,
         'source_name': None,
+        'organizer': None,
     })
     if 'user' not in data:
         data['user'] = {}
@@ -122,6 +123,12 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         data['source_name'] = 'HTU Events'
         data['summary'] = htu['title']
         data['details'] = htu['description']
+
+        if 'attributedTo' in htu and htu['attributedTo'] is not None:
+            data['organizer'] = htu['attributedTo']['name']
+
+        if 'options' in htu and htu['options'] is not None:
+            data['online'] = htu['options']['isOnline']
 
         for link in ZOOM_LINK.finditer(htu.get('description', '')):
             data['zoom'] = 'https://' + link.group(1)

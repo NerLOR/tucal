@@ -67,6 +67,7 @@ interface TucalEventJSON {
         tuwel_url: string | null,
         source_url: string | null,
         source_name: string | null,
+        organizer: string | null,
     },
 }
 
@@ -276,6 +277,7 @@ class TucalEvent {
     tuwelUrl: string | null;
     sourceUrl: string | null;
     sourceName: string | null;
+    organizer: string | null;
     type: string | null;
     online: boolean | null;
 
@@ -308,6 +310,7 @@ class TucalEvent {
         this.tuwelUrl = event.data.tuwel_url;
         this.sourceUrl = event.data.source_url;
         this.sourceName = event.data.source_name;
+        this.organizer = event.data.organizer;
         this.type = event.data.type;
         this.online = event.data.online;
     }

@@ -583,6 +583,9 @@ class WeekSchedule {
                 `</h2><h3>${courseName}</h3>`;
         } else {
             html += `<h2><span class="course-name">${evt.groupName}</span></h2>`;
+            if (evt.organizer) {
+                html += `<h3>${evt.organizer}</h3>`;
+            }
         }
 
         const formatterDay = new Intl.DateTimeFormat(LOCALE, {

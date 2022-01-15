@@ -7,16 +7,124 @@ import tucal
 import tucal.db
 
 QUERY = {
-  "operationName": "FetchEvents",
-  "variables": {
-    "page": 1,
-    "limit": 50
-  },
-  "query": """query FetchEvents($orderBy: EventOrderBy, $direction: SortDirection, $page: Int, $limit: Int)
-  { events(orderBy: $orderBy, direction: $direction, page: $page, limit: $limit)
-  { total elements { id url title description beginsOn endsOn status picture { id url }
-  physicalAddress { id description locality } tags { ...TagFragment } } }}
-  fragment TagFragment on Tag { id title}"""
+    'operationName': 'FetchEvents',
+    'variables': {
+        'page': 1,
+        'limit': 99,
+    },
+    'query': """
+        query FetchEvents($orderBy: EventOrderBy, $direction: SortDirection, $page: Int, $limit: Int) {
+          events(orderBy: $orderBy, direction: $direction, page: $page, limit: $limit) {
+            total
+            elements {
+              id
+              uuid
+              url
+              local
+              title
+              description
+              beginsOn
+              endsOn
+              status
+              visibility
+              insertedAt
+              language
+              picture {
+                id
+                url
+                __typename
+              }
+              publishAt
+              physicalAddress {
+                ...AdressFragment
+                __typename
+              }
+              organizerActor {
+                ...ActorFragment
+                __typename
+              }
+              attributedTo {
+                ...ActorFragment
+                __typename
+              }
+              category
+              tags {
+                ...TagFragment
+                __typename
+              }
+              options {
+                ...EventOptions
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+        }
+        fragment AdressFragment on Address {
+          id
+          description
+          geom
+          street
+          locality
+          postalCode
+          region
+          country
+          type
+          url
+          originId
+          timezone
+          __typename
+        }
+        fragment TagFragment on Tag {
+          id
+          slug
+          title
+          __typename
+        }
+        fragment EventOptions on EventOptions {
+          maximumAttendeeCapacity
+          remainingAttendeeCapacity
+          showRemainingAttendeeCapacity
+          anonymousParticipation
+          showStartTime
+          showEndTime
+          timezone
+          offers {
+            price
+            priceCurrency
+            url
+            __typename
+          }
+          participationConditions {
+            title
+            content
+            url
+            __typename
+          }
+          attendees
+          program
+          commentModeration
+          showParticipationPrice
+          hideOrganizerWhenGroupEvent
+          isOnline
+          __typename
+        }
+        fragment ActorFragment on Actor {
+          id
+          avatar {
+            id
+            url
+            __typename
+          }
+          type
+          preferredUsername
+          name
+          domain
+          summary
+          url
+          __typename
+        }""",
 }
 
 EVENTS_HTU_HOST = 'events.htu.at'
