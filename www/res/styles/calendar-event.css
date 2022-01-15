@@ -110,7 +110,7 @@ div.calendar div.event-detail form.save {
     display: flex;
     flex-direction: column;
     gap: 0.5em;
-    height: 7.5em;
+    height: 8em;
     transition: height 0.25s;
     overflow: hidden;
     justify-content: center;
