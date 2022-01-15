@@ -534,6 +534,8 @@ class WeekSchedule {
                 const start = event.start;
                 const end = event.end;
 
+                if (event.deleted) continue;
+
                 const wrapper = this.cal.getElementsByClassName("event-wrapper")[0];
                 const day = wrapper.getElementsByClassName("day")[(start.getDay() + 6) % 7];
                 const evt = document.createElement("div");
@@ -725,9 +727,10 @@ class WeekSchedule {
 }
 
 class Event {
+    id;
+    deleted;
     start;
     end;
-    id;
     course;
     semester;
     summary;
@@ -741,6 +744,7 @@ class Event {
 
     constructor(json) {
         this.id = json.id;
+        this.deleted = json.deleted;
         this.start = asTimezone(new Date(Date.parse(json.start)), TIMEZONE);
         this.end = asTimezone(new Date(Date.parse(json.end)), TIMEZONE);
         this.course = json.course;
