@@ -220,11 +220,8 @@ class WeekSchedule {
             const week = this.weeks[w];
             if (week) {
                 for (const evt of week.events) {
-                    const preStart = new Date(evt.start);
                     const evtElem = document.getElementById(`event-${evt.id}`);
-                    preStart.setMinutes(preStart.getMinutes() - EVENT_PRE_LIVE);
-
-                    if (evtElem !== null && dt >= evt.start && dt < evt.end) {
+                    if (evtElem && dt >= evt.start && dt < evt.end) {
                         evtElem.classList.add("now");
                     }
                 }
@@ -425,6 +422,7 @@ class WeekSchedule {
         });
 
         const deadlines = [];
+        const special = [];
         const events: TucalEvent[][] = [[], [], [], [], [], [], []];
         for (const event of all_events) {
             const weekDay = (event.start.getDay() + 6) % 7;
@@ -433,6 +431,8 @@ class WeekSchedule {
 
             if (event.start.getTime() === event.end.getTime()) {
                 deadlines.push(event);
+            } else if (event.end.valueOf() - event.start.valueOf() > 43_200_000) {
+                special.push(event);
             } else {
                 day.push(event);
             }
