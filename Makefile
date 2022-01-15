@@ -1,8 +1,9 @@
 
 build-www:
+	mkdir -p dest/
 	rm -rf dest/www
 	cp -pr www dest/www
-	tsc
+	tsc -p typescript/
 	sed -i 's|"\(/res/[^"]*\)"|"\1?v=$(shell date -u +%Y%m%d-%H%M%S)"|g' dest/www/.php/header.php dest/www/.php/footer.php
 	tools/minify-css.sh
 	sed -i 's|/res/styles/styles.css|/res/styles/min.css|g' dest/www/.php/header.php
