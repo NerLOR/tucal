@@ -2,9 +2,9 @@
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
     "target": "ES2020",
-    "module": "ES2020",
-    "outDir": "dest/www/res/scripts",
-    "rootDir": "src-js/",
+    "module": "system",
+    "outFile": "dest/www/res/scripts/min.js",
+    "rootDir": "typescript/",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
