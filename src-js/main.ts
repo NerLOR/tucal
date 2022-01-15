@@ -303,3 +303,38 @@ function detectSwipe(elem: HTMLElement, cb: Function) {
         swipe["end_y"] = null;
     });
 }
+
+function isoWeekFromDate(date: Date): Week {
+    const dayOfWeek = (date.getDay() + 6) % 7;
+    const refThursday = new Date(date);
+    refThursday.setDate(refThursday.getDate() - dayOfWeek + 3);
+
+    const firstThursday = new Date(refThursday.getFullYear(), 0, 1);
+    if (firstThursday.getDay() !== 4) {
+        firstThursday.setMonth(0, 1 + (4 - firstThursday.getDay() + 7) % 7);
+    }
+
+    return new Week(
+        refThursday.getFullYear(),
+        1 + Math.round((refThursday.valueOf() - firstThursday.valueOf()) / 604_800_000)
+    );
+}
+
+function isoWeekToDate(year: number, week: number): Date {
+    const date = new Date(year, 0, 1);
+    if (date.getDay() !== 4) {
+        date.setMonth(0, 1 + (4 - date.getDay() + 7) % 7);
+    }
+
+    const dayOfWeek = (date.getDay() + 6) % 7;
+    date.setDate(date.getDate() - dayOfWeek + (week - 1) * 7);
+    return date;
+}
+
+function asTimezone(date: Date, timezone: string): Date {
+    const updated = new Date(date.toLocaleString('en-US', {
+        timeZone: timezone,
+    }));
+    const diff = date.getTime() - updated.getTime();
+    return new Date(date.getTime() - diff);
+}
