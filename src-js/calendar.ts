@@ -685,28 +685,6 @@ class WeekSchedule {
     }
 }
 
-interface TucalEventJSON {
-    id: string,
-    deleted: boolean | null,
-    start: string,
-    end: string,
-    course: {
-        nr: string,
-        group: string,
-        semester: string,
-    },
-    room_nr: number | null,
-    data: {
-        summary: string | null,
-        desc: string | null,
-        zoom: string | null,
-        lt: boolean | null,
-        url: string | null,
-        type: string | null,
-        online: boolean | null,
-    },
-}
-
 function placeDayEvents(dayEvents: TucalEvent[]) {
     const parsed: {
         event: TucalEvent,

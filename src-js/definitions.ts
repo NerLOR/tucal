@@ -26,7 +26,7 @@ interface RoomJSON {
     lt_name: string | null,
 }
 
-interface CourseDefJSON {
+interface CourseJSON {
     nr: string,
     semester: string,
     ects: number,
@@ -39,8 +39,26 @@ interface CourseDefJSON {
     program: string | null,
 }
 
-interface CourseJSON {
-
+interface TucalEventJSON {
+    id: string,
+    deleted: boolean | null,
+    start: string,
+    end: string,
+    course: {
+        nr: string,
+        group: string,
+        semester: string,
+    },
+    room_nr: number | null,
+    data: {
+        summary: string | null,
+        desc: string | null,
+        zoom: string | null,
+        lt: boolean | null,
+        url: string | null,
+        type: string | null,
+        online: boolean | null,
+    },
 }
 
 class Building {
@@ -134,7 +152,7 @@ class CourseDef {
     short: string | null;
     program: string | null;
 
-    constructor(course: CourseDefJSON) {
+    constructor(course: CourseJSON) {
         this.nr = course.nr;
         this.semester = course.semester;
         this.ects = course.ects;
@@ -253,7 +271,7 @@ class TucalEvent {
         this.end = asTimezone(new Date(Date.parse(event.end)), TIMEZONE);
         this.courseNr = event.course.nr;
         this.courseGroup = event.course.group;
-        this.semester = null;
+        this.semester = event.course.semester;
         this.summary = event.data.summary;
         this.desc = event.data.desc;
         this.zoom = event.data.zoom;
