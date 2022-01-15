@@ -659,10 +659,6 @@ class WeekSchedule {
             html += `<div><div>${_('Description')}:</div><div>${evt.desc}</div></div>`;
         }
 
-        if (evt.details) {
-            html += `<div><div>${_('Details')}:</div><div>${evt.details}</div></div>`;
-        }
-
         html += '<hr/><button>&blacktriangledown;</button>';
         html += `<form class="save hidden">` +
             `<label><input type="checkbox" name="all-previous"/> ${_('Apply changes for all previous events')}</label>` +

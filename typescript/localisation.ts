@@ -16,7 +16,6 @@ const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} =
         "Apply": "Übernehmen",
         "Apply changes for all previous events": "Änderungen für alle vorhergehenden Termine übernehmen",
         "Apply changes for all following events": "Änderungen für alle nachfolgenden Termine übernehmen",
-        "Details": "Details",
     },
     "en": {
         "Today": "Today",
@@ -29,7 +28,6 @@ const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} =
         "Apply": "Apply",
         "Apply changes for all previous events": "Apply changes for all previous events",
         "Apply changes for all following events": "Apply changes for all following events",
-        "Details": "Details",
     },
     "bar-AT": {
         "Today": "Haid",
@@ -42,7 +40,6 @@ const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} =
         "Apply": "Übanemma",
         "Apply changes for all previous events": "Ändarungen fia olle voahearign Teamine übanemma",
         "Apply changes for all following events": "Ändarungen fia olle nochfoigendn Teamine übanemma",
-        "Details": "Dedais",
     },
 };
 

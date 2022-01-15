@@ -28,7 +28,6 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
     data.update({
         'summary': None,
         'desc': None,
-        'details': None,
         'zoom': None,
         'lt': None,
         'url': None,
@@ -74,9 +73,9 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             data['url'] = tuwel['url']
 
         if 'desc_html' in tuwel:
-            data['details'] = tuwel['desc_html']
+            data['desc'] = tuwel['desc_html']
         elif 'desc' in tuwel:
-            data['details'] = tuwel['desc']
+            data['desc'] = tuwel['desc']
 
     if tiss:
         initial_date = start_ts.strftime('%Y%m%d')
@@ -122,7 +121,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         data['source_url'] = htu['url']
         data['source_name'] = 'HTU Events'
         data['summary'] = htu['title']
-        data['details'] = htu['description']
+        data['desc'] = htu['description']
 
         if 'attributedTo' in htu and htu['attributedTo'] is not None:
             data['organizer'] = htu['attributedTo']['name']

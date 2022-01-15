@@ -57,7 +57,6 @@ interface TucalEventJSON {
     data: {
         summary: string | null,
         desc: string | null,
-        details: string | null,
         zoom: string | null,
         lt: boolean | null,
         url: string | null,
@@ -268,7 +267,6 @@ class TucalEvent {
     groupName: string;
     summary: string | null;
     desc: string | null;
-    details: string | null;
     roomNr: number | null;
     zoom: string | null;
     lecture_tube: boolean | null;
@@ -302,7 +300,6 @@ class TucalEvent {
         this.groupName = event.group.name;
         this.summary = event.data.summary;
         this.desc = event.data.desc;
-        this.details = event.data.details;
         this.zoom = event.data.zoom;
         this.lecture_tube = event.data.lt;
         this.url = event.data.url;
