@@ -10,6 +10,7 @@ try {
 
     switch ($info) {
         case '/calendar': calendar(); break;
+        case '/update': update(); break;
         default: error(404);
     }
 } catch (Exception $e) {
@@ -28,6 +29,7 @@ function error(int $status, string $message = null, bool $db_error = false) {
 function calendar() {
     global $USER;
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        header("Allow: GET");
         error(405);
     }
 
@@ -112,5 +114,16 @@ function calendar() {
     }
 
     echo "\n]}}\n";
+    tucal_exit();
+}
+
+function update() {
+    global $USER;
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header("Allow: POST");
+        error(405);
+    }
+
+    echo '{"status":"success","message":"work in progress","data":{}}' . "\n";
     tucal_exit();
 }

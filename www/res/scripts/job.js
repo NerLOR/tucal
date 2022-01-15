@@ -45,7 +45,7 @@ class Job {
     async fetch() {
         let job;
         try {
-            const json = await api(`/tucal/job?id=${this.id}`);
+            const json = await api('/tucal/job', {'id': this.id});
             if (json.data) {
                 job = json.data;
             } else {

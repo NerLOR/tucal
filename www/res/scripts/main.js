@@ -126,7 +126,7 @@ function initData() {
         }
     });
     if (MNR === null) return;
-    api(`/tucal/courses?mnr=${MNR}`).then((res) => {
+    api('/tucal/courses', {'mnr': MNR}).then((res) => {
         COURSES = res.data.personal;
         COURSE_DEF = {};
         for (const course of COURSES) {
@@ -188,7 +188,7 @@ function initBrowserTheme() {
     }
 }
 
-async function api(endpoint, data = null) {
+async function api(endpoint, urlData = null, data = null) {
     let info = {};
     if (data !== null) {
         info = {
@@ -200,7 +200,15 @@ async function api(endpoint, data = null) {
         }
     }
 
-    const req = await fetch(`/api${endpoint}`, info);
+    let suffix = '';
+    if (urlData !== null) {
+        const query = Object.keys(urlData).map((k) =>
+            encodeURIComponent(k) + '=' + encodeURIComponent(urlData[k])
+        ).join('&');
+        suffix = (endpoint.includes('?') ? '&' : '?' ) + query;
+    }
+
+    const req = await fetch(`/api${endpoint}${suffix}`, info);
     const json = await req.json();
 
     if (json.message !== null) {

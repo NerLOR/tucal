@@ -441,9 +441,11 @@ class WeekSchedule {
     }
 
     async fetch(start, end, weeks = []) {
-        start = `start=${start.toISOString()}`;
-        end = `end=${end.toISOString()}`;
-        const json = await api(`/calendar/calendar?subject=${this.subject}&${start}&${end}`)
+        const json = await api('/calendar/calendar', {
+            'subject': this.subject,
+            'start': start.toISOString(),
+            'end': end.toISOString(),
+        })
 
         const ts = new Date(Date.parse(json.data.timestamp));
         for (const week of weeks) {
@@ -715,6 +717,11 @@ class WeekSchedule {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             console.log(form);
+            const data = {};
+            api('/calendar/update', {'id': this.eventId}, data).then(() => {
+                this.weeks = {};
+                this.reloadEvents();
+            });
         });
 
         this.cal.appendChild(div);
