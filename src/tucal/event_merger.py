@@ -59,7 +59,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             htu = xdata['htu']
 
     if tuwel:
-        unix_ts = time.mktime(start_ts.timetuple())
+        unix_ts = int(time.mktime(start_ts.timetuple()))
         data['tuwel_url'] = f'https://tuwel.tuwien.ac.at/calendar/view.php?view=day&time={unix_ts}'
 
         if not COURSE_NAME.match(tuwel['name']):
