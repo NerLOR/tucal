@@ -507,11 +507,11 @@ class WeekSchedule {
                 const room = event.getRoom();
                 const ltLink = room && room.getLectureTubeLink() || null;
 
-                let group = event.courseGroup;
-                if (group === 'LVA') {
-                    group = null;
-                } else if (group !== null) {
-                    group = group.replace('Gruppe Gruppe', 'Gruppe').replace('Gruppe Kohorte', 'Kohorte');
+                let cGroup = event.courseGroup;
+                if (cGroup === 'LVA') {
+                    cGroup = null;
+                } else if (cGroup !== null) {
+                    cGroup = cGroup.replace('Gruppe Gruppe', 'Gruppe').replace('Gruppe Kohorte', 'Kohorte');
                 }
 
                 evt.innerHTML =
@@ -520,9 +520,9 @@ class WeekSchedule {
                     (event.lecture_tube && ltLink ? `<a class="live" href="${ltLink}" target="_blank" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
                     (event.zoom !== null ? `<a class="live" href="${event.zoom}" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
-                    `<div class="course"><span class="course">${course?.getName()}</span>` +
+                    `<div class="course"><span class="course">${course?.getName() || event.groupName}</span>` +
                     (room !== null ? ` - <span class="room">${room.getName()}</span>` : '') + '</div><div class="group">' +
-                    (group !== null ? `<span class="group">${group}</span>` : '') + '</div>' +
+                    (cGroup !== null ? `<span class="group">${cGroup}</span>` : '') + '</div>' +
                     (event.summary !== null ? `<div class="summary">${event.summary}</div>` : '');
 
                 const evtMinutes = (end.valueOf() - start.valueOf()) / 60_000;
@@ -582,7 +582,7 @@ class WeekSchedule {
                 `<span class="course-nr">${course.getCourseNr()} (${evt.semester})</span>` +
                 `</h2><h3>${courseName}</h3>`;
         } else {
-
+            html += `<h2><span class="course-name">${evt.groupName}</span></h2>`;
         }
 
         const formatterDay = new Intl.DateTimeFormat(LOCALE, {
@@ -598,8 +598,19 @@ class WeekSchedule {
 
         html += `<h4>` +
             `<span class="time">${formatterTime.format(evt.start)}-${formatterTime.format(evt.end)}</span> ` +
-            `<span class="day">(${formatterDay.format(evt.start)})</span>` +
-            `</h4>`;
+            `<span class="day">(${formatterDay.format(evt.start)})</span>`;
+
+        if (evt.tissUrl) {
+            html += `<a class="link" href="${evt.tissUrl}" target="_blank">TISS</a>`;
+        }
+        if (evt.tuwelUrl) {
+            html += `<a class="link" href="${evt.tuwelUrl}" target="_blank">TUWEL</a>`;
+        }
+        if (evt.sourceUrl) {
+            html += `<a class="link" href="${evt.sourceUrl}" target="_blank">${evt.sourceName || evt.groupName}</a>`;
+        }
+
+        html += `</h4>`;
 
         if (room) {
             html += `<div><div>${_('Room')}:</div><div class="room">`;
@@ -643,6 +654,10 @@ class WeekSchedule {
 
         if (evt.desc) {
             html += `<div><div>${_('Description')}:</div><div>${evt.desc}</div></div>`;
+        }
+
+        if (evt.details) {
+            html += `<div><div>${_('Details')}:</div><div>${evt.details}</div></div>`;
         }
 
         html += '<hr/><button>&blacktriangledown;</button>';

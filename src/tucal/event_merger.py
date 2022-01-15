@@ -34,6 +34,10 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         'url': None,
         'type': None,
         'online': None,
+        'tiss_url': None,
+        'tuwel_url': None,
+        'source_url': None,
+        'source_name': None,
     })
     if 'user' not in data:
         data['user'] = {}
@@ -55,14 +59,28 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             htu = xdata['htu']
 
     if tuwel:
+        unix_ts = time.mktime(start_ts.timetuple())
+        data['tuwel_url'] = f'https://tuwel.tuwien.ac.at/calendar/view.php?view=day&time={unix_ts}'
+
         if not COURSE_NAME.match(tuwel['name']):
             data['summary'] = tuwel['name']
+
         for link in ZOOM_LINK.finditer(tuwel.get('desc', None) or tuwel.get('desc_html', None) or ''):
             data['zoom'] = 'https://' + link.group(1)
+            data['online'] = True
+
         if 'url' in tuwel:
             data['url'] = tuwel['url']
 
+        if 'desc_html' in tuwel:
+            data['details'] = tuwel['desc_html']
+        elif 'desc' in tuwel:
+            data['details'] = tuwel['desc']
+
     if tiss:
+        initial_date = start_ts.strftime('%Y%m%d')
+        data['tiss_url'] = f'https://tiss.tuwien.ac.at/events/personSchedule.xhtml?initialDate={initial_date}'
+
         type_nr = tiss['type']
         data['type'] = TISS_TYPES[type_nr]
         desc = tiss['description']
@@ -80,23 +98,39 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         if data['summary'] and data['summary'].startswith('SPK'):
             data['type'] = None
 
+        if room_nr is None:
+            data['online'] = True
+
     if aurora:
+        data['source_url'] = 'https://aurora.iguw.tuwien.ac.at/course/dwi/'
+        data['source_name'] = 'Aurora'
         data['summary'] = aurora['summary']
+
         conference = aurora.get('conference', None)
         if conference is not None:
             data['zoom'] = conference
+
         url = aurora.get('url', None)
         if url is not None:
             data['url'] = url
+
         data['type'] = aurora['type'] if 'type' in aurora else 'course'
+        data['online'] = True
 
     if htu:
+        data['source_url'] = htu['url']
+        data['source_name'] = 'HTU Events'
         data['summary'] = htu['title']
+        data['details'] = htu['description']
+
+        for link in ZOOM_LINK.finditer(htu.get('description', '')):
+            data['zoom'] = 'https://' + link.group(1)
+
+        if data['online'] is None:
+            data['online'] = (data['zoom'] is not None)
 
     if start_ts == end_ts:
         data['type'] = 'due'
-    if room_nr is None:
-        data['online'] = True
 
     data.update(data['user'])
 

@@ -59,7 +59,7 @@ function calendar() {
 
     $stmt = db_exec("
             SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.data,
-                   l.course_nr, l.semester, l.name, g.group_id, e.deleted
+                   l.course_nr, l.semester, l.name, g.group_id, g.group_name, e.deleted
             FROM tucal.event e
                 JOIN tucal.external_event x ON x.event_nr = e.event_nr
                 JOIN tucal.group_member m ON m.group_nr = e.group_nr
@@ -74,7 +74,7 @@ function calendar() {
                   (m.ignore_from IS NULL OR e.start_ts < m.ignore_from) AND
                   (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
             GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data,
-                     l.course_nr, l.semester, l.name, g.group_id
+                     l.course_nr, l.semester, l.name, g.group_id, g.group_name
             ORDER BY e.start_ts, length(l.name), e.data -> 'summary'", [
         'mnr' => $subject,
         'start' => date('c', $start),
@@ -96,18 +96,27 @@ function calendar() {
         }
         $start = strtotime($row['start_ts']);
         $end = strtotime($row['end_ts']);
+
+        $course = null;
+        if ($row['course_nr'] !== null) {
+            $course = [
+                'nr' => $row['course_nr'],
+                'semester' => $row['semester'],
+                'group' => $row['name'],
+            ];
+        }
+
         $data = [
             'id' => $row['event_id'],
             'start' => date('c', $start),
             'end' => date('c', $end),
             'deleted' => $row['deleted'],
             'room_nr' => $row['room_nr'],
-            'course' => [
-                'nr' => $row['course_nr'],
-                'semester' => $row['semester'],
-                'group' => $row['name'],
+            'course' => $course,
+            'group' => [
+                'id' => $row['group_id'],
+                'name' => $row['group_name'],
             ],
-            'group_id' => $row['group_id'],
             'data' => json_decode($row['data']),
         ];
         echo json_encode($data, JSON_FLAGS);

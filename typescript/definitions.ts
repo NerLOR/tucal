@@ -48,16 +48,25 @@ interface TucalEventJSON {
         nr: string,
         group: string,
         semester: string,
-    },
+    } | null,
+    group: {
+        id: string,
+        name: string,
+    }
     room_nr: number | null,
     data: {
         summary: string | null,
         desc: string | null,
+        details: string | null,
         zoom: string | null,
         lt: boolean | null,
         url: string | null,
         type: string | null,
         online: boolean | null,
+        tiss_url: string | null,
+        tuwel_url: string | null,
+        source_url: string | null,
+        source_name: string | null,
     },
 }
 
@@ -254,29 +263,51 @@ class TucalEvent {
     courseNr: string | null;
     semester: string | null;
     courseGroup: string | null;
+    groupId: string;
+    groupName: string;
     summary: string | null;
     desc: string | null;
+    details: string | null;
     roomNr: number | null;
     zoom: string | null;
     lecture_tube: boolean | null;
     url: string | null;
+    tissUrl: string | null;
+    tuwelUrl: string | null;
+    sourceUrl: string | null;
+    sourceName: string | null;
     type: string | null;
     online: boolean | null;
 
     constructor(event: TucalEventJSON) {
-        this.roomNr = event.room_nr;
         this.id = event.id;
+        this.roomNr = event.room_nr;
         this.deleted = event.deleted;
         this.start = asTimezone(new Date(Date.parse(event.start)), TIMEZONE);
         this.end = asTimezone(new Date(Date.parse(event.end)), TIMEZONE);
-        this.courseNr = event.course.nr;
-        this.courseGroup = event.course.group;
-        this.semester = event.course.semester;
+
+        if (event.course) {
+            this.courseNr = event.course.nr;
+            this.courseGroup = event.course.group;
+            this.semester = event.course.semester;
+        } else {
+            this.courseNr = null;
+            this.courseGroup = null;
+            this.semester = null;
+        }
+
+        this.groupId = event.group.id;
+        this.groupName = event.group.name;
         this.summary = event.data.summary;
         this.desc = event.data.desc;
+        this.details = event.data.details;
         this.zoom = event.data.zoom;
         this.lecture_tube = event.data.lt;
         this.url = event.data.url;
+        this.tissUrl = event.data.tiss_url;
+        this.tuwelUrl = event.data.tuwel_url;
+        this.sourceUrl = event.data.source_url;
+        this.sourceName = event.data.source_name;
         this.type = event.data.type;
         this.online = event.data.online;
     }

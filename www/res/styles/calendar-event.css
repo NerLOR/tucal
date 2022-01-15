@@ -58,6 +58,11 @@ div.calendar div.event-detail > div > div:nth-child(1) {
     flex: 7.5em 0 0;
 }
 
+div.calendar div.event-detail > div > div:nth-child(2) {
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
 div.calendar div.event-detail .room {
     font-size: 0.75em;
 }
@@ -144,6 +149,13 @@ div.calendar div.event-detail form.save button:focus {
     background-color: var(--color);
     border-color: var(--color);
     color: var(--color-comp);
+}
+
+div.calendar div.event-detail a.link {
+    float: right;
+    font-weight: normal;
+    margin: 0.125em 0.25em;
+    font-size: 0.75em;
 }
 
 @media screen and (max-width: 616px) {
