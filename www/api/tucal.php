@@ -34,6 +34,27 @@ function rooms() {
 
     header("Cache-Control: public, max-age=86400");
 
+    $content = '{"status":"success","message":null,"data":{"buildings":[' . "\n";
+
+    $res = db_exec("
+                SELECT building_id, building_name, building_suffix, building_alt_name, area_name, area_suffix, address
+                FROM tucal.v_building");
+    $first = true;
+    foreach ($res as $row) {
+        $data = [
+            "id" => $row["building_id"],
+            "name" => $row["building_name"],
+            "suffix" => $row["building_suffix"],
+            "alt_name" => $row["building_alt_name"],
+            "area_name" => $row["area_name"],
+            "area_suffix" => $row["area_suffix"],
+            "address" => $row["address"],
+        ];
+        if (!$first) $content .= ",\n";
+        $content .= json_encode($data, JSON_FLAGS);
+        $first = false;
+    }
+
     $res = db_exec("
                 SELECT r.room_nr, r.room_code, r.tiss_code, r.room_name, r.room_suffix, r.room_name_short,
                        r.room_alt_name, r.room_name_normal, lt.room_code AS lt_room_code, lt.lt_name,
@@ -41,11 +62,10 @@ function rooms() {
                 FROM tucal.v_room r
                     LEFT JOIN tucal.v_lecture_tube lt ON lt.room_nr = r.room_nr
                     LEFT JOIN tucal.v_building b ON b.building_id = r.building_id");
-    $arr = $res->fetchAll();
 
-    $content = '{"status":"success","message":null,"data":{"rooms":[' . "\n";
-    for ($i = 0; $i < sizeof($arr); $i++) {
-        $row = $arr[$i];
+    $content .= "\n" . '],"rooms":[' . "\n";
+    $first = true;
+    foreach ($res as $row) {
         $data = [
             "nr" => (int) $row["room_nr"],
             "room_codes" => explode('/', $row["room_code"]),
@@ -57,19 +77,12 @@ function rooms() {
             "name_normalized" => $row["room_name_normal"],
             "lt_room_code" => $row["lt_room_code"],
             "lt_name" => $row["lt_name"],
-            "building" => [
-                "name" => $row['building_name'],
-                'suffix' => $row['building_suffix'],
-                'area_name' => $row['area_name'],
-                'area_suffix' => $row['area_suffix'],
-                'address' => $row['address'],
-            ],
         ];
+        if (!$first) $content .= ",\n";
         $content .= json_encode($data, JSON_FLAGS);
-        if ($i !== sizeof($arr) - 1) $content .= ",";
-        $content .= "\n";
+        $first = false;
     }
-    $content .= "]}}\n";
+    $content .= "\n]}}\n";
     header("Content-Length: " . strlen($content));
     echo $content;
     tucal_exit();

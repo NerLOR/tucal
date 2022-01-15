@@ -8,7 +8,7 @@ const EVENT_PRE_LIVE = 15;  // 15 [min]
 const LOOK_AHEAD = 8;  // 8 [week]
 
 
-function isoWeekFromDate(date) {
+function isoWeekFromDate(date: Date): Week {
     const dayOfWeek = (date.getDay() + 6) % 7;
     const refThursday = new Date(date);
     refThursday.setDate(refThursday.getDate() - dayOfWeek + 3);
@@ -18,10 +18,13 @@ function isoWeekFromDate(date) {
         firstThursday.setMonth(0, 1 + (4 - firstThursday.getDay() + 7) % 7);
     }
 
-    return new Week(refThursday.getFullYear(), 1 + Math.round((refThursday - firstThursday) / 604800000));
+    return new Week(
+        refThursday.getFullYear(),
+        1 + Math.round((refThursday.valueOf() - firstThursday.valueOf()) / 604_800_000)
+    );
 }
 
-function isoWeekToDate(year, week) {
+function isoWeekToDate(year: number, week: number): Date {
     const date = new Date(year, 0, 1);
     if (date.getDay() !== 4) {
         date.setMonth(0, 1 + (4 - date.getDay() + 7) % 7);
@@ -32,7 +35,7 @@ function isoWeekToDate(year, week) {
     return date;
 }
 
-function asTimezone(date, timezone) {
+function asTimezone(date: Date, timezone: string): Date {
     const updated = new Date(date.toLocaleString('en-US', {
         timeZone: timezone,
     }));
@@ -41,53 +44,53 @@ function asTimezone(date, timezone) {
 }
 
 class Week {
-    year;
-    week;
+    year: number;
+    week: number;
 
-    constructor(year, week) {
+    constructor(year: number, week: number) {
         this.year = year;
         this.week = week;
     }
 
-    static fromDate(date) {
+    static fromDate(date: Date): Week {
         return isoWeekFromDate(date);
     }
 
-    toString() {
+    toString(): string {
         return `${this.year}/W${this.week}`;
     }
 
-    valueOf() {
+    valueOf(): number {
         return this.year * 100 + this.week;
     }
 
-    startDate() {
+    startDate(): Date {
         return asTimezone(isoWeekToDate(this.year, this.week), TIMEZONE);
     }
 
-    endDate() {
+    endDate(): Date {
         const ref = this.startDate();
         ref.setDate(ref.getDate() + 7);
         return ref;
     }
 
-    add(n) {
+    add(n: number): Week {
         const ref = this.startDate();
         ref.setDate(ref.getDate() + 7 * n);
         return isoWeekFromDate(ref);
     }
 
-    next() {
+    next(): Week {
         return this.add(1);
     }
 
-    last() {
+    last(): Week {
         return this.add(-1);
     }
 
-    iterate(n, step = 1) {
-        let i;
-        let end;
+    iterate(n: number | Week, step: number = 1) {
+        let i: Week;
+        let end: Week;
         if (n instanceof Week) {
             i = this.add(0);
             end = n.add(0);
@@ -113,19 +116,25 @@ class Week {
 }
 
 class WeekSchedule {
-    cal;
-    week = null;
-    subject;
-    eventId;
-    timer = null;
-    lastReload = null;
-    weeks = {};
-    currentEvents = [];
-    currentEventCb = null;
+    cal: HTMLElement;
+    week: Week | null;
+    subject: string;
+    eventId: string | null;
+    timer: number | null = null;
+    lastReload: Date | null = null;
+    weeks: {
+        [index: string]: {
+            promise: Promise<void> | null,
+            date: Date | null,
+            week: Week,
+            events: TucalEvent[],
+        },
+    } = {};
 
-    constructor(element, subject, eventId = null) {
+    constructor(element: Element, subject: string, eventId: string | null = null) {
         this.subject = subject;
         this.eventId = eventId;
+        this.week = null;
         this.cal = document.createElement("div");
         this.cal.classList.add("calendar");
 
@@ -179,6 +188,7 @@ class WeekSchedule {
         }
 
         const buttons = table.getElementsByTagName("button");
+        if (!buttons[0] || !buttons[1] || !buttons[2]) throw new Error();
         buttons[0].addEventListener("click", (evt) => {
             this.now();
         });
@@ -189,7 +199,8 @@ class WeekSchedule {
             this.next();
         });
         document.addEventListener("keydown", (evt) => {
-            if (evt.composedPath()[0].tagName !== 'BODY') return;
+            const path = evt.composedPath();
+            if (!path[0] || (<HTMLElement> path[0]).tagName !== 'BODY') return;
             switch (evt.code) {
                 case 'ArrowLeft': this.previous(); break;
                 case 'ArrowRight': this.next(); break;
@@ -214,8 +225,7 @@ class WeekSchedule {
 
         element.insertBefore(this.cal, element.firstChild);
 
-        detectSwipe(this.cal, (direction) => {
-            console.log(direction);
+        detectSwipe(this.cal, (direction: string) => {
             if (direction === 'left') {
                 this.previous();
             } else if (direction === 'right') {
@@ -225,16 +235,16 @@ class WeekSchedule {
 
         window.addEventListener("click", (evt) => {
             const path = evt.composedPath();
-            const divs = document.getElementsByClassName("event-detail");
-            const navs = document.getElementsByTagName("nav");
-            if ((divs.length > 0 && path.includes(divs[0])) || (navs.length > 0 && path.includes(navs[0]))) {
+            const div = document.getElementsByClassName("event-detail")[0];
+            const nav = document.getElementsByTagName("nav")[0];
+            if ((div && path.includes(div)) || (nav && path.includes(nav))) {
                 return;
             }
             this.setEventId(null);
         });
     }
 
-    setWeek(week, keep = false) {
+    setWeek(week: Week, keep = false) {
         if (this.timer !== null) {
             clearInterval(this.timer);
             this.timer = null;
@@ -249,12 +259,17 @@ class WeekSchedule {
         this.lastReload = null;
         this.reloadEvents();
 
-        this.cal.getElementsByClassName("year-header")[0].innerText = `${this.week.year}`;
-        this.cal.getElementsByClassName("week-header")[0].innerText = `W${this.week.week}`;
+        const yearHeader = this.cal.getElementsByClassName("year-header")[0];
+        if (!yearHeader) throw new Error();
+        yearHeader.innerHTML = `${this.week.year}`;
+
+        const weekHeader = this.cal.getElementsByClassName("week-header")[0];
+        if (!weekHeader) throw new Error();
+        weekHeader.innerHTML = `W${this.week.week}`;
 
         const ref = this.startDate();
         for (let th of this.cal.getElementsByClassName("day-header")) {
-            th.innerText = ref.toLocaleDateString(LOCALE, {
+            th.innerHTML = ref.toLocaleDateString(LOCALE, {
                 weekday: "short",
                 day: "2-digit",
                 month: "2-digit"
@@ -275,127 +290,125 @@ class WeekSchedule {
         }, 1000);
     }
 
-    setEventId(eventId) {
+    setEventId(eventId: string | null) {
+        if (!this.week) return;
         if (eventId === this.eventId) return;
         this.eventId = eventId;
         history.replaceState({
             year: this.week.year,
             week: this.week.week,
         }, '', `/calendar/${this.subject}/${this.week.year}/W${this.week.week}/${this.eventId ?? ''}`);
-        if (eventId === null) {
-            this.clearEventDetail();
-        } else {
-            this.displayEventDetail(eventId);
-        }
+        this.displayEventDetail();
     }
 
     updateTime() {
+        if (!this.week) return;
         const dt = asTimezone(new Date(), TIMEZONE);
 
         const tds = this.cal.getElementsByClassName("today");
-        while (tds.length > 0) {
-            tds[0].classList.remove("today");
-        }
+        while (tds[0]) tds[0].classList.remove("today");
+
 
         const now = this.cal.getElementsByClassName("now");
-        while (now.length > 0) {
-            now[0].classList.remove("now");
-        }
-        const lastEvents = this.currentEvents;
-        this.currentEvents = [];
+        while (now[0]) now[0].classList.remove("now");
 
         if (dt >= this.startDate() && dt < this.endDate()) {
             const weekDay = (dt.getDay() + 6) % 7;
             const tbody = this.cal.getElementsByTagName("tbody")[0];
+            if (!tbody) throw new Error();
+
             for (const tr of tbody.getElementsByTagName("tr")) {
-                tr.children[weekDay + 1].classList.add("today");
+                const ch = tr.children[weekDay + 1];
+                if (!ch) throw new Error();
+                ch.classList.add("today");
             }
 
             const w = this.week.toString();
-            if (w in this.weeks) {
-                for (const evt of this.weeks[w].events) {
+            const week = this.weeks[w];
+            if (week) {
+                for (const evt of week.events) {
                     const preStart = new Date(evt.start);
                     const evtElem = document.getElementById(`event-${evt.id}`);
                     preStart.setMinutes(preStart.getMinutes() - EVENT_PRE_LIVE);
-                    if (dt >= preStart && dt < evt.end) {
-                        this.currentEvents.push(evt);
-                    }
+
                     if (evtElem !== null && dt >= evt.start && dt < evt.end) {
                         evtElem.classList.add("now");
                     }
                 }
             }
-
-            if (this.currentEventCb !== null && !(lastEvents.every(item => this.currentEvents.includes(item)) &&
-                    this.currentEvents.every(item => lastEvents.includes(item)))) {
-                this.currentEventCb(this.currentEvents);
-            }
         }
 
         const minutes = dt.getHours() * 60 + dt.getMinutes();
         const hr = this.cal.getElementsByTagName("hr")[0];
+        if (!hr) throw new Error();
+
         if (minutes >= START_TIME && minutes <= END_TIME) {
             hr.style.setProperty("--time", `${minutes}`);
-            hr.style.display = null;
+            hr.style.display = "";
         } else {
             hr.style.display = "none";
         }
     }
 
-    setCurrentEventCb(cb) {
-        this.currentEventCb = cb;
-    }
-
     now() {
-        this.setWeek(Week.fromDate(asTimezone(new Date())));
+        this.setWeek(Week.fromDate(asTimezone(new Date(), TIMEZONE)));
     }
 
     next() {
+        if (!this.week) throw new Error();
         this.setWeek(this.week.next());
     }
 
     previous() {
+        if (!this.week) throw new Error();
         this.setWeek(this.week.last());
     }
 
-    startDate() {
+    startDate(): Date {
+        if (!this.week) throw new Error();
         return this.week.startDate();
     }
 
-    endDate() {
+    endDate(): Date {
+        if (!this.week) throw new Error();
         return this.week.endDate();
     }
 
-    weekIsValid(week) {
-        const ref = asTimezone(new Date());
+    weekIsValid(week: Week) {
+        const ref = asTimezone(new Date(), TIMEZONE);
         ref.setMinutes(ref.getMinutes() - CACHE_EVENTS);
         const w = week.toString();
-        return w in this.weeks && this.weeks[w].date !== null && this.weeks[w].date > ref;
+        const weekData = this.weeks[w];
+        return weekData && weekData.date !== null && weekData.date > ref;
     }
 
     reloadEvents(forceRedraw = false) {
+        if (!this.week) throw new Error();
         const w = this.week.toString();
+        const weekData = this.weeks[w];
         let fetchCurrent = false;
         if (!this.weekIsValid(this.week)) {
             if (this.lastReload === null) {
                 this.clearEvents(true);
             }
-            if (!(w in this.weeks) || !this.weeks[w].promise) {
+            if (!weekData || !weekData.promise) {
                 fetchCurrent = true;
                 this.fetchWeeks(this.week, this.week);
             }
-        } else if (forceRedraw || this.lastReload === null || this.lastReload !== this.weeks[w].date)  {
+        } else if (!weekData) {
+            return;
+        } else if (forceRedraw || this.lastReload === null || this.lastReload !== weekData.date)  {
             this.clearEvents();
-            const week = this.weeks[w];
-            this.lastReload = week.date;
-            this.drawEvents(week.events);
+            this.lastReload = weekData.date;
+            this.drawEvents(weekData.events);
             this.displayEventDetail();
         }
 
         let upcoming = null;
         for (const week of this.week.iterate(LOOK_AHEAD)) {
             const w = week.toString();
-            if (!this.weekIsValid(week) && (!(w in this.weeks) || !this.weeks[w].promise)) {
+            const weekData = this.weeks[w];
+            if (!this.weekIsValid(week) && (!weekData || !weekData.promise)) {
                 upcoming = week;
                 break;
             }
@@ -407,7 +420,8 @@ class WeekSchedule {
         let past = null;
         for (const week of this.week.iterate(-LOOK_AHEAD, -1)) {
             const w = week.toString();
-            if (!this.weekIsValid(week) && (!(w in this.weeks) || !this.weeks[w].promise)) {
+            const weekData = this.weeks[w];
+            if (!this.weekIsValid(week) && (!weekData || !weekData.promise)) {
                 past = week;
                 break;
             }
@@ -417,9 +431,9 @@ class WeekSchedule {
         }
     }
 
-    fetchWeeks(startWeek, endWeek, wait = 0) {
+    fetchWeeks(startWeek: Week, endWeek: Week, wait: number = 0) {
         console.log("fetch", startWeek.toString(), endWeek.toString());
-        const weekStrings = [];
+        const weekStrings: string[] = [];
         for (const week of startWeek.iterate(endWeek)) {
             const w = week.toString();
             weekStrings.push(w);
@@ -436,11 +450,15 @@ class WeekSchedule {
         const promise = sleep(wait).then(() => this.fetch(startWeek.startDate(), endWeek.endDate(), weekStrings));
 
         for (const week of startWeek.iterate(endWeek)) {
-            this.weeks[week.toString()].promise = promise;
+            const weekData = this.weeks[week.toString()];
+            if (!weekData) throw new Error();
+            weekData.promise = promise;
         }
     }
 
-    async fetch(start, end, weeks = []) {
+    async fetch(start: Date, end: Date, weeks: string[] = []) {
+        if (!this.week) throw new Error();
+
         const json = await api('/calendar/calendar', {
             'subject': this.subject,
             'start': start.toISOString(),
@@ -450,6 +468,7 @@ class WeekSchedule {
         const ts = new Date(Date.parse(json.data.timestamp));
         for (const week of weeks) {
             const w = this.weeks[week];
+            if (!w) throw new Error();
             if (w.date === null || w.date !== ts) {
                 w.date = ts;
                 w.events = [];
@@ -458,8 +477,9 @@ class WeekSchedule {
         }
 
         for (const evtJson of json.data.events) {
-            const evt = new Event(evtJson);
+            const evt = new TucalEvent(evtJson);
             const w = this.weeks[evt.getWeek().toString()];
+            if (!w) throw new Error();
             w.events.push(evt);
         }
 
@@ -470,12 +490,19 @@ class WeekSchedule {
 
     clearEvents(loading = false) {
         const wrapper = this.cal.getElementsByClassName("event-wrapper")[0];
-        const events = wrapper.getElementsByClassName("event");
-        while (events.length > 0) events[0].remove();
+        if (!wrapper) throw new Error();
 
-        const theadTr = this.cal.getElementsByTagName("thead")[0].getElementsByTagName("tr")[1];
+        const events = wrapper.getElementsByClassName("event");
+        while (events[0]) events[0].remove();
+
+        const thead = this.cal.getElementsByTagName("thead")[0];
+        if (!thead) throw new Error();
+
+        const theadTr = thead.getElementsByTagName("tr")[1];
+        if (!theadTr) throw new Error();
+
         const lis = theadTr.getElementsByTagName("li");
-        while (lis.length > 0) lis[0].remove();
+        while (lis[0]) lis[0].remove();
 
         const elem = wrapper.getElementsByClassName("loading");
         if (loading) {
@@ -486,15 +513,15 @@ class WeekSchedule {
                 wrapper.appendChild(loading);
             }
         } else {
-            while (elem.length > 0) elem[0].remove();
+            while (elem[0]) elem[0].remove();
         }
     }
 
-    drawEvents(all_events) {
+    drawEvents(all_events: TucalEvent[]) {
         all_events.sort((a, b) => {
-            const diff = a.start - b.start;
+            const diff = a.start.valueOf() - b.start.valueOf();
             if (diff === 0) {
-                return a.end - b.end;
+                return a.end.valueOf() - b.end.valueOf();
             }
             return diff;
         });
@@ -505,23 +532,36 @@ class WeekSchedule {
         });
 
         const deadlines = [];
-        const events = [[], [], [], [], [], [], []];
+        const events: TucalEvent[][] = [[], [], [], [], [], [], []];
         for (const event of all_events) {
             const weekDay = (event.start.getDay() + 6) % 7;
+            const day = events[weekDay];
+            if (!day) throw new Error();
+
             if (event.start.getTime() === event.end.getTime()) {
                 deadlines.push(event);
             } else {
-                events[weekDay].push(event);
+                day.push(event);
             }
         }
 
-        const theadTr = this.cal.getElementsByTagName("thead")[0].getElementsByTagName("tr")[1];
+        const thead = this.cal.getElementsByTagName("thead")[0];
+        if (!thead) throw new Error();
+
+        const theadTr = thead.getElementsByTagName("tr")[1];
+        if (!theadTr) throw new Error();
+
         for (const deadline of deadlines) {
             const time = deadline.start;
-            const day = theadTr.getElementsByTagName("th")[(time.getDay() + 6) % 7].getElementsByTagName("ul")[0];
+            const theadTh = theadTr.getElementsByTagName("th")[(time.getDay() + 6) % 7];
+            if (!theadTh) throw new Error();
+
+            const day = theadTh.getElementsByTagName("ul")[0];
+            if (!day) throw new Error();
 
             const el = document.createElement("li");
-            const short = getCourseName(deadline.course.nr);
+            const course = deadline.getCourse();
+            const short = course && course.getName();
             let str = `<span class="time">${formatter.format(time)}</span> <span class="course">${short}</span> ${deadline.summary}`;
             if (deadline.url && MNR === this.subject) {
                 str = `<a href="${deadline.url}" target="_blank">${str}</a>`;
@@ -539,7 +579,11 @@ class WeekSchedule {
                 if (event.deleted) continue;
 
                 const wrapper = this.cal.getElementsByClassName("event-wrapper")[0];
+                if (!wrapper) throw new Error();
+
                 const day = wrapper.getElementsByClassName("day")[(start.getDay() + 6) % 7];
+                if (!day) throw new Error();
+
                 const evt = document.createElement("div");
                 evt.id = `event-${event.id}`;
 
@@ -558,7 +602,7 @@ class WeekSchedule {
 
                 evt.addEventListener("click", (evt) => {
                     for (const elem of evt.composedPath()) {
-                        if (elem.tagName === 'A') return;
+                        if ((<HTMLElement> elem).tagName === 'A') return;
                     }
                     evt.stopImmediatePropagation();
                     this.setEventId(event.id);
@@ -566,11 +610,11 @@ class WeekSchedule {
 
                 const startFmt = formatter.format(start);
                 const endFmt = formatter.format(end);
-                const course = event.course && getCourseName(event.course.nr) || null;
-                const room = event.room_nr && getRoomName(event.room_nr) || null;
-                const ltLink = event.room_nr && getLectureTubeLink(event.room_nr) || null;
+                const course = event.getCourse();
+                const room = event.getRoom();
+                const ltLink = room && room.getLectureTubeLink() || null;
 
-                let group = event.course.group;
+                let group = event.courseGroup;
                 if (group === 'LVA') {
                     group = null;
                 } else if (group !== null) {
@@ -583,14 +627,16 @@ class WeekSchedule {
                     (event.lecture_tube && ltLink ? `<a class="live" href="${ltLink}" target="_blank" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
                     (event.zoom !== null ? `<a class="live" href="${event.zoom}" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
-                    `<div class="course"><span class="course">${course}</span>` +
-                    (room !== null ? ` - <span class="room">${room}</span>` : '') + '</div><div class="group">' +
+                    `<div class="course"><span class="course">${course?.getName()}</span>` +
+                    (room !== null ? ` - <span class="room">${room.getName()}</span>` : '') + '</div><div class="group">' +
                     (group !== null ? `<span class="group">${group}</span>` : '') + '</div>' +
                     (event.summary !== null ? `<div class="summary">${event.summary}</div>` : '');
 
-                const evtMinutes = (end - start) / 60_000;
-                const pre = evt.getElementsByClassName("pre")[0];
-                const post = evt.getElementsByClassName("post")[0];
+                const evtMinutes = (end.valueOf() - start.valueOf()) / 60_000;
+                const pre = <HTMLElement> evt.getElementsByClassName("pre")[0];
+                const post = <HTMLElement> evt.getElementsByClassName("post")[0];
+                if (!pre || !post) throw new Error();
+
                 // TODO add planned_start/end_ts and real_start/end_ts
                 pre.style.height =`${0 / evtMinutes * 100}%`;
                 post.style.height = `${0 / evtMinutes * 100}%`;
@@ -603,20 +649,29 @@ class WeekSchedule {
     }
 
     displayEventDetail() {
-        this.clearEventDetail();
-        if (this.eventId === null) return;
+        const eventId = this.eventId;
+        if (!this.week) throw new Error();
+        if (!COURSE_DEF || ! ROOMS) throw new Error();
 
-        const evt = this.weeks[this.week.toString()].events.find((evt) => evt.id === this.eventId);
-        const course = COURSE_DEF[evt.course.nr];
-        const room = ROOMS[evt.room_nr];
-        const courseName = LOCALE.startsWith('de-') ? course.name_de : course.name_en;
+        this.clearEventDetail();
+        if (eventId === null) return;
+
+        const week = this.weeks[this.week.toString()];
+        if (!week) throw new Error();
+
+        const evt = week.events.find((evt) => evt.id === this.eventId);
+        if (!evt) throw new Error();
+        const course = evt.getCourse();
+        const room = evt.getRoom();
+
+        const courseName = course && (LOCALE.startsWith('de-') ? course.name_de : course.name_en);
 
         const div = document.createElement("div");
         div.classList.add("event-detail");
 
         let html = '';
 
-        const ltLink = evt.room_nr && getLectureTubeLink(evt.room_nr) || null;
+        const ltLink = room && room.getLectureTubeLink() || null;
         if (evt.lecture_tube && ltLink) {
             html += `<a class="live" href="${ltLink}" target="_blank" title="LectureTube">` +
                 `<img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>`;
@@ -629,9 +684,9 @@ class WeekSchedule {
 
         if (course) {
             html += `<h2>` +
-                `<span class="course-name">${getCourseName(course.nr)}</span> ` +
+                `<span class="course-name">${course.getName()}</span> ` +
                 `<span class="course-type">(${course.type})</span> ` +
-                `<span class="course-nr">${course.nr.substr(0, 3)}.${course.nr.substr(3)} (${evt.course.semester})</span>` +
+                `<span class="course-nr">${course.getCourseNr()} (${evt.semester})</span>` +
                 `</h2><h3>${courseName}</h3>`;
         } else {
 
@@ -659,30 +714,32 @@ class WeekSchedule {
             if (room.suffix) {
                 name += ` – ${room.suffix}`;
             }
-            const codes = room.room_codes.map((code) => code.substr(0, 2) + '&nbsp;' + code.substr(2, 2) + '&nbsp;' + code.substr(4));
-            html += `<a href="https://tuw-maps.tuwien.ac.at/?q=${room.room_codes[0]}" target="_blank">` +
+            const codes = room.roomCodes.map((code) => code.substr(0, 2) + '&nbsp;' + code.substr(2, 2) + '&nbsp;' + code.substr(4));
+            html += `<a href="https://tuw-maps.tuwien.ac.at/?q=${room.roomCodes[0]}" target="_blank">` +
                 `<span class="room-name">${name}</span> <span class="room-codes">(${codes.join(', ')})</span></a>`;
 
             let building = '';
-            if (room.building.name) {
-                if (room.building.name !== room.building.address) building += room.building.name;
-                if (room.building.name !== room.building.address && room.building.suffix) building += ' – ';
-                if (room.building.suffix) building += room.building.suffix;
+            const b = room.getBuilding();
+            if (b) {
+                if (b.name !== b.address) building += b.name;
+                if (b.name !== b.address && b.suffix) building += ' – ';
+                if (b.suffix) building += b.suffix;
+                const hasB = building.length > 0;
+
+                if (hasB) building += ' (';
+                building += b.areaName;
+                if (b.areaSuffix) building += ' – ' + b.areaSuffix;
+                if (hasB) building += ')';
+
+                let address = b.address ? `<br/><span class="address">${b.address}</span>` : '';
+                html += `<br/><span class="building">${building}</span>${address}`;
             }
-            const hasB = building.length > 0;
 
-            if (hasB) building += ' (';
-            building += room.building.area_name;
-            if (room.building.area_suffix) building += ' – ' + room.building.area_suffix;
-            if (hasB) building += ')';
-
-            let address = room.building.address ? `<br/><span class="address">${room.building.address}</span>` : '';
-            html += `<br/><span class="building">${building}</span>${address}`;
             html += '</div></div>';
         }
 
-        if (evt.course.group !== 'LVA') {
-            let group = evt.course.group;
+        if (evt.courseGroup && evt.courseGroup !== 'LVA') {
+            let group = evt.courseGroup;
             while (group.startsWith('Gruppe ')) group = group.substr(7);
             html += `<div><div>${_('Group')}:</div><div>${group}</div></div>`;
         }
@@ -705,6 +762,8 @@ class WeekSchedule {
 
         const button = div.getElementsByTagName("button")[0];
         const form = div.getElementsByTagName("form")[0];
+        if (!button || !form) throw new Error();
+
         button.addEventListener('click', (e) => {
             if (form.classList.contains('hidden')) {
                 button.innerHTML = '&blacktriangle;';
@@ -718,7 +777,7 @@ class WeekSchedule {
             e.preventDefault();
             console.log(form);
             const data = {};
-            api('/calendar/update', {'id': this.eventId}, data).then(() => {
+            api('/calendar/update', {'id': eventId}, data).then(() => {
                 this.weeks = {};
                 this.reloadEvents();
             });
@@ -729,63 +788,105 @@ class WeekSchedule {
 
     clearEventDetail() {
         const eventDetail = this.cal.getElementsByClassName("event-detail");
-        while (eventDetail.length > 0) eventDetail[0].remove();
+        while (eventDetail[0]) eventDetail[0].remove();
     }
 }
 
-class Event {
-    id;
-    deleted;
-    start;
-    end;
-    course;
-    semester;
-    summary;
-    desc;
-    room_nr;
-    zoom;
-    lecture_tube;
-    url;
-    type;
-    online;
+interface TucalEventJSON {
+    id: string,
+    deleted: boolean | null,
+    start: string,
+    end: string,
+    course: {
+        nr: string,
+        group: string,
+        semester: string,
+    },
+    room_nr: number | null,
+    data: {
+        summary: string | null,
+        desc: string | null,
+        zoom: string | null,
+        lt: boolean | null,
+        url: string | null,
+        type: string | null,
+        online: boolean | null,
+    },
+}
 
-    constructor(json) {
-        this.id = json.id;
-        this.deleted = json.deleted;
-        this.start = asTimezone(new Date(Date.parse(json.start)), TIMEZONE);
-        this.end = asTimezone(new Date(Date.parse(json.end)), TIMEZONE);
-        this.course = json.course;
+class TucalEvent {
+    id: string;
+    deleted: boolean | null;
+    start: Date;
+    end: Date;
+    courseNr: string | null;
+    semester: string | null;
+    courseGroup: string | null;
+    summary: string | null;
+    desc: string | null;
+    roomNr: number | null;
+    zoom: string | null;
+    lecture_tube: boolean | null;
+    url: string | null;
+    type: string | null;
+    online: boolean | null;
+
+    constructor(event: TucalEventJSON) {
+        this.roomNr = event.room_nr;
+        this.id = event.id;
+        this.deleted = event.deleted;
+        this.start = asTimezone(new Date(Date.parse(event.start)), TIMEZONE);
+        this.end = asTimezone(new Date(Date.parse(event.end)), TIMEZONE);
+        this.courseNr = event.course.nr;
+        this.courseGroup = event.course.group;
         this.semester = null;
-        this.summary = json.data.summary;
-        this.desc = json.data.desc;
-        this.room_nr = json.room_nr;
-        this.zoom = json.data.zoom;
-        this.lecture_tube = json.data.lt;
-        this.url = json.data.url;
-        this.type = json.data.type;
-        this.online = json.data.online;
+        this.summary = event.data.summary;
+        this.desc = event.data.desc;
+        this.zoom = event.data.zoom;
+        this.lecture_tube = event.data.lt;
+        this.url = event.data.url;
+        this.type = event.data.type;
+        this.online = event.data.online;
     }
 
-    getWeek() {
+    getRoom(): Room | null {
+        if (this.roomNr === null) return null;
+        if (!ROOMS) return Room.pseudo(this.roomNr);
+        return ROOMS[this.roomNr] || null;
+    }
+
+    getCourse(): CourseDef | null {
+        if (!COURSE_DEF) throw new Error();
+        return this.courseNr && COURSE_DEF[this.courseNr] || null;
+    }
+
+    getWeek(): Week {
         return Week.fromDate(this.start);
     }
 
-    getStartMinutes() {
+    getStartMinutes(): number {
         return this.start.getHours() * 60 + this.start.getMinutes();
     }
 
-    getEndMinutes() {
+    getEndMinutes(): number {
         return this.end.getHours() * 60 + this.end.getMinutes();
     }
 
-    isNow() {
-        const dt = asTimezone(new Date());
+    isNow(): boolean {
+        const dt = asTimezone(new Date(), TIMEZONE);
         return dt >= this.start && dt < this.end;
     }
 }
 
-function placeDayEvents(dayEvents) {
-    const parsed = [];
+function placeDayEvents(dayEvents: TucalEvent[]) {
+    const parsed: {
+        event: TucalEvent,
+        parts: number,
+        part1: number,
+        part2: number,
+        concurrent: any,
+        placed: boolean,
+    }[] = [];
     for (const evt1 of dayEvents) {
         parsed.push({
             event: evt1,
@@ -818,7 +919,8 @@ function placeDayEvents(dayEvents) {
             continue;
         }
         for (let i = 0; i < cur.length; i++) {
-            if (cur[i].event.end <= evt.event.start) {
+            const p = cur[i];
+            if (p && p.event.end <= evt.event.start) {
                 cur.splice(i);
             }
         }

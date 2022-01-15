@@ -1,19 +1,25 @@
 "use strict";
 
-class Job {
-    elem;
-    id;
-    timerFetch;
-    timerUpdate;
-    onSuccess;
-    onError;
-    lastEtas;
-    data;
-    progress;
+interface Callback {
+    (): void;
+}
 
-    constructor(element, success = null, error = null) {
+class Job {
+    elem: Element;
+    id: string;
+    timerFetch: number | null;
+    timerUpdate: number | null;
+    onSuccess: Function | null;
+    onError: Function | null;
+    lastEtas: number[];
+    data: any;
+    progress: number;
+
+    constructor(element: Element, success: Function | null = null, error: Function | null = null) {
         this.elem = element;
-        this.id = this.elem.getAttribute('data-job');
+        const id = this.elem.getAttribute('data-job');
+        if (!id) throw new Error();
+        this.id = id;
         this.onSuccess = success;
         this.onError = error;
         this.lastEtas = [];
@@ -54,13 +60,13 @@ class Job {
                     'error': json.message,
                 }
             }
-        } catch (e) {
+        } catch (e: any) {
             job = {
                 'status': 'error',
                 'error': e.message,
             }
         }
-        if (job.status !== 'running') {
+        if (job.status !== 'running' && this.timerFetch) {
             clearInterval(this.timerFetch);
         }
         if (job.remaining) {
@@ -78,8 +84,11 @@ class Job {
         if (!job.status) return;
 
         const container = this.elem.getElementsByClassName("progress-bar")[0];
+        if (!container) throw new Error();
+
         const progBar = container.getElementsByTagName("div")[0];
         const statusText = container.getElementsByTagName("span")[0];
+        if (!progBar || !statusText) throw new Error();
 
         if (job.status === 'error') {
             this.elem.classList.add('error');
@@ -99,7 +108,7 @@ class Job {
 
         if (job.remaining) {
             const start = new Date(Date.parse(job.start_ts));
-            const elapsed = (now - start) / 1000;
+            const elapsed = (now.getUTCMilliseconds() - start.getUTCMilliseconds()) / 1000;
 
             const max = Math.max(...this.lastEtas);
             const average = (this.lastEtas.reduce((a, b) => a + b)) / this.lastEtas.length;
@@ -112,7 +121,7 @@ class Job {
 
         if (progress >= 1 || job.status !== 'running') {
             progress = 1;
-            clearInterval(this.timerUpdate);
+            if (this.timerUpdate) clearInterval(this.timerUpdate);
         }
 
 

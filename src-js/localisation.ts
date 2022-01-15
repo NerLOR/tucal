@@ -1,10 +1,10 @@
 "use strict";
 
-const LANG = document.documentElement.lang;
-const LANG_GROUP = LANG.split('-')[0]
-const LOCALE = LANG.startsWith("bar") ? "de" + LANG.substr(3) : LANG;
+const LANG: string = document.documentElement.lang;
+const LANG_GROUP: string = LANG.split("-")[0] || "de";
+const LOCALE: string = LANG.startsWith("bar") ? "de" + LANG.substr(3) : LANG;
 
-const MESSAGES = {
+const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} = {
     "de": {
         "Today": "Heute",
         "Loading...": "Laden...",
@@ -43,6 +43,8 @@ const MESSAGES = {
     },
 };
 
-function _(msgId) {
-    return MESSAGES[LANG] && MESSAGES[LANG][msgId] || MESSAGES[LANG_GROUP][msgId] || msgId;
+function _(msgId: string): string {
+    const msgLang = MESSAGES[LANG];
+    const msgLangGroup = MESSAGES[LANG_GROUP];
+    return (msgLang && msgLang[msgId]) || (msgLangGroup && msgLangGroup[msgId]) || msgId;
 }

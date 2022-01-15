@@ -1,14 +1,19 @@
 "use strict";
 
-const STATUS = parseInt(document.documentElement.getAttribute("data-status"));
-const MNR = (document.documentElement.getAttribute("data-mnr").length > 0) ? document.documentElement.getAttribute("data-mnr") : null;
-const USER_OPTS = JSON.parse(document.getElementsByName("user-options")[0].getAttribute("content"));
-const LT_PROVIDER = USER_OPTS['lt_provider'] || 'live-video-tuwien';
+const STATUS: number = parseInt(document.documentElement.getAttribute("data-status") || '0');
 
-let COURSE_DEF = null;
-let COURSES = null;
-let ROOMS = null;
-let CALENDAR = null;
+const _MNR: string | null = document.documentElement.getAttribute("data-mnr");
+const MNR: string | null = (_MNR && _MNR.length > 0) ? _MNR : null;
+
+const _USER_OPTS = document.getElementsByName("user-options")[0];
+const USER_OPTS: {[index: string]: string} | null = _USER_OPTS && JSON.parse(_USER_OPTS.getAttribute("content") || 'null') || null;
+const LT_PROVIDER: string = USER_OPTS && USER_OPTS['lt_provider'] || 'live-video-tuwien';
+
+let COURSE_DEF: {[index: string]: CourseDef} | null = null;
+let COURSES: {[index: string]: CourseDef} | null = null;
+let BUILDINGS: {[index: string]: Building} | null = null;
+let ROOMS: {[index: number]: Room} | null = null;
+let CALENDAR: WeekSchedule | null = null;
 
 
 initBrowserTheme();
@@ -30,17 +35,19 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function initCalendar() {
     const main = document.getElementsByTagName("main")[0];
+    if (!main) throw new Error();
 
     const uri = window.location.pathname;
     const parts = uri.split('/');
+    if (!parts[1] || !parts[2] || !parts[3] || !parts[4]) throw new Error();
 
     const subject = parts[2];
     const year = parseInt(parts[3]);
     const week = parseInt(parts[4].substr(1));
-    const eventId = parts[5].length === 0 ? null : parts[5];
+    const eventId = (!parts[5] || parts[5].length === 0) ? null : parts[5];
 
     CALENDAR = new WeekSchedule(main, subject, eventId);
-    CALENDAR.setCurrentEventCb((events) => {
+    /*CALENDAR.setCurrentEventCb((events) => {
         const navLive = document.getElementById("nav-live");
         const liveButtons = navLive.getElementsByClassName("live");
         for (const btn of liveButtons) btn.href = '';
@@ -54,19 +61,26 @@ function initCalendar() {
                 btn.getElementsByTagName("span")[0].innerText = evt.courseShort || evt.courseNr;
             }
         }
-    });
+    });*/
     CALENDAR.setWeek(new Week(year, week));
 }
 
 function initNav() {
     const userMenu = document.getElementById("user-menu");
-    const menu = document.getElementById("nav-home").getElementsByTagName("a")[0];
+    if (!userMenu) throw new Error();
+    const home = document.getElementById("nav-home");
+    if (!home) throw new Error();
+    const menu = home.getElementsByTagName("a")[0];
+    if (!menu) throw new Error();
     const nav = document.getElementsByTagName("nav")[0];
+    if (!nav) throw new Error();
     //const testElem = document.getElementById("nav-search").getElementsByTagName("form")[0];
     const testElem = document.getElementById("nav-live");
+    if (!testElem) throw new Error();
 
     if (userMenu) {
         const navUser = userMenu.getElementsByTagName("div")[0];
+        if (!navUser) throw new Error();
         navUser.addEventListener("click", (evt) => {
             if (userMenu.classList.contains("active")) {
                 userMenu.classList.remove("active");
@@ -75,7 +89,9 @@ function initNav() {
             }
         });
 
-        const form = document.forms.logout;
+        const form = document.forms.namedItem('logout');
+        if (!form) throw new Error();
+
         const links = userMenu.getElementsByTagName("a");
         for (const a of links) {
             if (a.href.endsWith('/account/logout')) {
@@ -117,9 +133,13 @@ function initJobs() {
 
 function initData() {
     api(`/tucal/rooms`).then((res) => {
+        BUILDINGS = {};
         ROOMS = {};
+        for (const building of res.data.buildings) {
+            BUILDINGS[building['id']] = new Building(building);
+        }
         for (const room of res.data.rooms) {
-            ROOMS[room['nr']] = room;
+            ROOMS[room['nr']] = new Room(room);
         }
         if (CALENDAR) {
             CALENDAR.reloadEvents(true);
@@ -127,15 +147,14 @@ function initData() {
     });
     if (MNR === null) return;
     api('/tucal/courses', {'mnr': MNR}).then((res) => {
-        COURSES = res.data.personal;
+        COURSES = {};
         COURSE_DEF = {};
-        for (const course of COURSES) {
-            COURSE_DEF[course['nr']] = {...course};
-            delete COURSE_DEF[course['nr']].semester;
+        for (const course of res.data.personal) {
+            COURSE_DEF[course['nr']] = new CourseDef(course);
+            COURSES[course['nr']] = new CourseDef(course);
         }
         for (const course of res.data.friends) {
-            COURSE_DEF[course['nr']] = {...course};
-            delete COURSE_DEF[course['nr']].semester;
+            COURSE_DEF[course['nr']] = new CourseDef(course);
         }
         if (CALENDAR) {
             CALENDAR.reloadEvents(true);
@@ -146,13 +165,15 @@ function initData() {
 function initCourseForms() {
     const forms = document.getElementsByTagName("form");
     for (const form of forms) {
-        if (!form.ignore) continue;
+        if (!form['ignore']) continue;
         const dates = form.getElementsByClassName("ignore-dates")[0];
         const button = form.getElementsByTagName("button")[0];
+        if (!dates || !button) throw new Error();
+
         button.style.display = 'none';
 
         form.addEventListener("input", (evt) => {
-            if (form.ignore.value === "partly") {
+            if (form['ignore'].value === "partly") {
                 dates.classList.add("show");
             } else {
                 dates.classList.remove("show");
@@ -164,7 +185,7 @@ function initCourseForms() {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 },
-                body: `ignore=${form.ignore.value}&ignore-from=${form['ignore-from'].value}&ignore-until=${form['ignore-until'].value}&course=${form.course.value}`,
+                body: `ignore=${form['ignore'].value}&ignore-from=${form['ignore-from'].value}&ignore-until=${form['ignore-until'].value}&course=${form['course'].value}`,
             }).then();
         });
     }
@@ -174,7 +195,7 @@ function initBrowserTheme() {
     const classes = document.documentElement.classList;
     if (classes.contains("theme-browser")) {
         const media = window.matchMedia('(prefers-color-scheme: dark)');
-        const mediaHandler = (evt) => {
+        const mediaHandler = (evt: MediaQueryListEvent) => {
             if (evt.matches) {
                 classes.remove("theme-light");
                 classes.add("theme-dark");
@@ -184,11 +205,13 @@ function initBrowserTheme() {
             }
         }
         media.addEventListener('change', mediaHandler);
-        mediaHandler(media);
+        mediaHandler(new MediaQueryListEvent('', media));
     }
 }
 
-async function api(endpoint, urlData = null, data = null) {
+async function api(endpoint: string,
+                   urlData: {[index: string]: string} | null = null,
+                   data: {[index: string]: string} | null = null) {
     let info = {};
     if (data !== null) {
         info = {
@@ -196,14 +219,14 @@ async function api(endpoint, urlData = null, data = null) {
             headers: {
                 'Content-Type': 'application/json; charset=utf-8'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         }
     }
 
     let suffix = '';
     if (urlData !== null) {
         const query = Object.keys(urlData).map((k) =>
-            encodeURIComponent(k) + '=' + encodeURIComponent(urlData[k])
+            encodeURIComponent(k) + '=' + encodeURIComponent(urlData[k] || '')
         ).join('&');
         suffix = (endpoint.includes('?') ? '&' : '?' ) + query;
     }
@@ -226,59 +249,17 @@ async function api(endpoint, urlData = null, data = null) {
     }
 }
 
-function getCourseName(courseNr) {
-    const fallback = courseNr.slice(0, 3) + '.' + courseNr.slice(3);
-    if (COURSE_DEF === null) return fallback;
-
-    const course = COURSE_DEF[courseNr];
-    if (!course) return fallback;
-
-    return course.acronym_1 || course.acronym_2 || course.short || course.name_de;
-}
-
-function getRoomName(roomNr) {
-    const fallback = `#${roomNr}`;
-    if (ROOMS === null) return fallback
-
-    const room = ROOMS[roomNr];
-    return room && (room.name_short || room.name) || fallback;
-}
-
-function getRoomNameLong(roomNr) {
-    const fallback = `#${roomNr}`;
-    if (ROOMS === null) return fallback
-
-    const room = ROOMS[roomNr];
-    if (!room) return fallback;
-
-    let str = room.name;
-    if (room.suffix) str += ' ' + room.suffix;
-    if (room.alt_name) str += ' (' + room.alt_name + ')';
-    return str;
-}
-
-function getLectureTubeLink(room_nr) {
-    const room = ROOMS[room_nr];
-    if (!room || !room.lt_room_code || !room.lt_name) return null;
-
-    switch (LT_PROVIDER) {
-        case 'hs-streamer': return `https://hs-streamer.fsbu.at/?hs=${room.lt_room_code}`;
-        case 'live-video-tuwien': return `https://live.video.tuwien.ac.at/room/${room.lt_room_code.toLowerCase()}/player.html`;
-        default: throw new Error(`Unknown LectureTube provider '${LT_PROVIDER}'`);
-    }
-}
-
-function sleep(ms) {
+function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-function detectSwipe(elem, cb) {
+function detectSwipe(elem: HTMLElement, cb: Function) {
     const MIN_X = 30;
     const MIN_Y = 30;
     const MAX_X = 400;
     const MAX_Y = 400;
 
-    const swipe = {
+    const swipe: {[index: string]: number | null} = {
         start_x: null,
         start_y: null,
         end_x: null,
@@ -287,22 +268,25 @@ function detectSwipe(elem, cb) {
 
     elem.addEventListener('touchstart', (evt) => {
         const t = evt.touches[0];
-        swipe.start_x = t.screenX;
-        swipe.start_y = t.screenY;
+        if (!t) return;
+        swipe["start_x"] = t.screenX;
+        swipe["start_y"] = t.screenY;
     });
 
     elem.addEventListener('touchmove', (evt) => {
         const t = evt.touches[0];
-        swipe.end_x = t.screenX;
-        swipe.end_y = t.screenY;
+        if (!t) return;
+        swipe["end_x"] = t.screenX;
+        swipe["end_y"] = t.screenY;
     });
 
     elem.addEventListener('touchend', (evt) => {
-        const sx = swipe.start_x;
-        const ex = swipe.end_x;
-        const sy = swipe.start_y;
-        const ey = swipe.end_y;
+        const sx = swipe["start_x"];
+        const ex = swipe["end_x"];
+        const sy = swipe["start_y"];
+        const ey = swipe["end_y"];
 
+        if (sx === undefined || ex === undefined || sy === undefined || ey === undefined) return;
         if (sx === null || ex === null || sy === null || ey === null) return;
 
         if (Math.abs(ey - sy) < MIN_Y && Math.abs(ex - sx) >= MIN_X && Math.abs(ex - sx) <= MAX_X) {
@@ -313,9 +297,9 @@ function detectSwipe(elem, cb) {
             else cb('up');
         }
 
-        swipe.start_x = null;
-        swipe.start_y = null;
-        swipe.end_x = null;
-        swipe.end_y = null;
+        swipe["start_x"] = null;
+        swipe["start_y"] = null;
+        swipe["end_x"] = null;
+        swipe["end_y"] = null;
     });
 }
