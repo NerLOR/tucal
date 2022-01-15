@@ -55,7 +55,7 @@ div.calendar div.event-detail > div {
 }
 
 div.calendar div.event-detail > div > div:nth-child(1) {
-    flex: 120px 0 0;
+    flex: 7.5em 0 0;
 }
 
 div.calendar div.event-detail .room {
@@ -110,7 +110,7 @@ div.calendar div.event-detail form.save {
     display: flex;
     flex-direction: column;
     gap: 0.5em;
-    height: 120px;
+    height: 7.5em;
     transition: height 0.25s;
     overflow: hidden;
     justify-content: center;
@@ -150,5 +150,11 @@ div.calendar div.event-detail form.save button:focus {
     div.calendar div.event-detail {
         width: calc(100% - 16px);
         left: 8px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    div.calendar div.event-detail {
+        font-size: 0.75rem;
     }
 }
