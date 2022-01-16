@@ -259,48 +259,56 @@ function detectSwipe(elem: HTMLElement, cb: Function) {
     const MAX_X = 400;
     const MAX_Y = 400;
 
-    const swipe: {[index: string]: number | null} = {
-        start_x: null,
-        start_y: null,
-        end_x: null,
-        end_y: null,
-    };
+    let dir: string | null = null;
+    let sx = 0;
+    let sy = 0;
+    let ex = 0;
+    let ey = 0;
 
     elem.addEventListener('touchstart', (evt) => {
+        if (evt.touches.length !== 1) {
+            dir = null;
+            return;
+        }
+
         const t = evt.touches[0];
         if (!t) return;
-        swipe["start_x"] = t.screenX;
-        swipe["start_y"] = t.screenY;
+        sx = t.clientX;
+        sy = t.clientY;
     });
 
     elem.addEventListener('touchmove', (evt) => {
-        const t = evt.touches[0];
-        if (!t) return;
-        swipe["end_x"] = t.screenX;
-        swipe["end_y"] = t.screenY;
-    });
-
-    elem.addEventListener('touchend', (evt) => {
-        const sx = swipe["start_x"];
-        const ex = swipe["end_x"];
-        const sy = swipe["start_y"];
-        const ey = swipe["end_y"];
-
-        if (sx === undefined || ex === undefined || sy === undefined || ey === undefined) return;
-        if (sx === null || ex === null || sy === null || ey === null) return;
-
-        if (Math.abs(ey - sy) < MIN_Y && Math.abs(ex - sx) >= MIN_X && Math.abs(ex - sx) <= MAX_X) {
-            if (ex > sx) cb('left');
-            else cb('right');
-        } else if (Math.abs(ex - sx) < MIN_X && Math.abs(ey - sy) >= MIN_Y && Math.abs(ey - sy) <= MAX_Y) {
-            if (ey > sy) cb('down');
-            else cb('up');
+        if (evt.touches.length !== 1) {
+            dir = null;
+            return;
         }
 
-        swipe["start_x"] = null;
-        swipe["start_y"] = null;
-        swipe["end_x"] = null;
-        swipe["end_y"] = null;
+        const t = evt.touches[0];
+        if (!t) return;
+        ex = t.clientX;
+        ey = t.clientY;
+
+        if (Math.abs(ey - sy) < MIN_Y && Math.abs(ex - sx) >= MIN_X && Math.abs(ex - sx) <= MAX_X) {
+            if (ex > sx) {
+                if (dir && dir !== 'left') dir = null;
+                else dir = 'left'
+            } else {
+                if (dir && dir !== 'right') dir = null;
+                else dir = 'right';
+            }
+        } else if (Math.abs(ex - sx) < MIN_X && Math.abs(ey - sy) >= MIN_Y && Math.abs(ey - sy) <= MAX_Y) {
+            if (ey > sy) {
+                if (dir && dir !== 'down') dir = null;
+                else dir = 'down';
+            } else {
+                if (dir && dir !== 'up') dir = null;
+                dir = 'up';
+            }
+        }
+    });
+
+    elem.addEventListener('touchend', () => {
+        if (dir) cb(dir);
     });
 }
 
