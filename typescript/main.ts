@@ -254,8 +254,8 @@ function sleep(ms: number) {
 }
 
 function detectSwipe(elem: HTMLElement, cb: Function) {
-    const MIN_X = 30;
-    const MIN_Y = 30;
+    const MIN_X = 50;
+    const MIN_Y = 50;
     const MAX_X = 400;
     const MAX_Y = 400;
 
@@ -309,6 +309,7 @@ function detectSwipe(elem: HTMLElement, cb: Function) {
 
     elem.addEventListener('touchend', () => {
         if (dir) cb(dir);
+        dir = null;
     });
 }
 
