@@ -603,10 +603,10 @@ class WeekSchedule {
             `<span class="time">${formatterTime.format(evt.start)}-${formatterTime.format(evt.end)}</span> ` +
             `<span class="day">(${formatterDay.format(evt.start)})</span>`;
 
-        if (evt.tissUrl) {
+        if (this.subject === MNR && evt.tissUrl) {
             html += `<a class="link" href="${evt.tissUrl}" target="_blank">TISS</a>`;
         }
-        if (evt.tuwelUrl) {
+        if (this.subject === MNR && evt.tuwelUrl) {
             html += `<a class="link" href="${evt.tuwelUrl}" target="_blank">TUWEL</a>`;
         }
         if (evt.sourceUrl) {
