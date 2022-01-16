@@ -81,7 +81,7 @@ function initNav() {
     if (userMenu) {
         const navUser = userMenu.getElementsByTagName("div")[0];
         if (!navUser) throw new Error();
-        navUser.addEventListener("click", (evt) => {
+        navUser.addEventListener("click", () => {
             if (userMenu.classList.contains("active")) {
                 userMenu.classList.remove("active");
             } else {
@@ -96,7 +96,7 @@ function initNav() {
         for (const a of links) {
             if (a.href.endsWith('/account/logout')) {
                 a.removeAttribute("href");
-                a.addEventListener("click", (evt) => {
+                a.addEventListener("click", () => {
                     form.submit();
                 });
             }
@@ -172,7 +172,7 @@ function initCourseForms() {
 
         button.style.display = 'none';
 
-        form.addEventListener("input", (evt) => {
+        form.addEventListener("input", () => {
             if (form['ignore'].value === "partly") {
                 dates.classList.add("show");
             } else {
