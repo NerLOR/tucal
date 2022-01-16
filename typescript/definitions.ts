@@ -1,9 +1,5 @@
 "use strict";
 
-interface ApiJSON {
-
-}
-
 interface BuildingJSON {
     id: string,
     name: string | null,

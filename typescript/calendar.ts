@@ -4,7 +4,6 @@ const TIMEZONE = "Europe/Vienna";
 const START_TIME = 7 * 60;  // 07:00 [min]
 const END_TIME = 22 * 60;  // 22:00 [min]
 const CACHE_EVENTS = 15;  // 15 [min]
-const EVENT_PRE_LIVE = 15;  // 15 [min]
 const LOOK_AHEAD = 8;  // 8 [week]
 
 
@@ -82,13 +81,13 @@ class WeekSchedule {
 
         const buttons = table.getElementsByTagName("button");
         if (!buttons[0] || !buttons[1] || !buttons[2]) throw new Error();
-        buttons[0].addEventListener("click", (evt) => {
+        buttons[0].addEventListener("click", () => {
             this.now();
         });
-        buttons[1].addEventListener("click", (evt) => {
+        buttons[1].addEventListener("click", () => {
             this.previous();
         });
-        buttons[2].addEventListener("click", (evt) => {
+        buttons[2].addEventListener("click", () => {
             this.next();
         });
         document.addEventListener("keydown", (evt) => {
@@ -671,7 +670,7 @@ class WeekSchedule {
         const form = div.getElementsByTagName("form")[0];
         if (!button || !form) throw new Error();
 
-        button.addEventListener('click', (e) => {
+        button.addEventListener('click', () => {
             if (form.classList.contains('hidden')) {
                 button.innerHTML = '&blacktriangle;';
                 form.classList.remove('hidden');
@@ -722,11 +721,10 @@ function placeDayEvents(dayEvents: TucalEvent[]) {
     const hour = 60 * 60 * 1000;
     for (const evt1 of parsed) {
         const start1 = evt1.event.start.getTime();
-        const end1 = evt1.event.end.getTime();
+
         for (const evt2 of parsed) {
             if (evt2 === evt1) continue;
             const start2 = evt2.event.start.getTime();
-            const end2 = evt2.event.end.getTime();
 
             if (Math.abs(start1 - start2) < hour) {
                 evt1.concurrent.push(evt2);

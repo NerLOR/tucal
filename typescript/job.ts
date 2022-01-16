@@ -1,9 +1,5 @@
 "use strict";
 
-interface Callback {
-    (): void;
-}
-
 class Job {
     elem: Element;
     id: string;
@@ -28,18 +24,20 @@ class Job {
 
         const container = document.createElement("div");
         container.classList.add('progress-bar');
-        const progBar = document.createElement("div");
-        progBar.style.display = 'none';
-        container.appendChild(progBar);
-        const progStatus = document.createElement("span");
-        progStatus.innerText = '0%';
-        container.appendChild(progStatus);
+
+        const progressBar = document.createElement("div");
+        progressBar.style.display = 'none';
+        container.appendChild(progressBar);
+
+        const progressStatus = document.createElement("span");
+        progressStatus.innerText = '0%';
+        container.appendChild(progressStatus);
 
         this.elem.appendChild(container);
 
-        this.fetch();
+        this.fetch().then();
         this.timerFetch = setInterval(() => {
-            this.fetch();
+            this.fetch().then();
         }, 500);
 
         this.update();
@@ -86,9 +84,9 @@ class Job {
         const container = this.elem.getElementsByClassName("progress-bar")[0];
         if (!container) throw new Error();
 
-        const progBar = container.getElementsByTagName("div")[0];
+        const progressBar = container.getElementsByTagName("div")[0];
         const statusText = container.getElementsByTagName("span")[0];
-        if (!progBar || !statusText) throw new Error();
+        if (!progressBar || !statusText) throw new Error();
 
         if (job.status === 'error') {
             this.elem.classList.add('error');
@@ -138,8 +136,8 @@ class Job {
         }
 
         let status = `${(this.progress * 100).toFixed(0)}%`;
-        progBar.style.width = `${this.progress * 100}%`;
-        progBar.style.display = 'unset';
+        progressBar.style.width = `${this.progress * 100}%`;
+        progressBar.style.display = 'unset';
 
         if (job.status === 'error' && job.error) {
             const line = job.error.split('\n').splice(-2)[0];
