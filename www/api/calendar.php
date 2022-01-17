@@ -133,6 +133,77 @@ function update() {
         error(405);
     }
 
+    $evtId = $_GET['id'] ?? null;
+    $previous = ($_GET['previous'] ?? null) === 'true';
+    $following = ($_GET['following'] ?? null) === 'true';
+
+    if ($evtId === null) {
+        error(400);
+    } else if (!isset($USER)) {
+        error(401);
+    }
+
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
+    if ($data === null) {
+        error(400, json_last_error_msg());
+    }
+
+    db_transaction();
+
+    try {
+        db_exec("LOCK TABLE tucal.event IN SHARE ROW EXCLUSIVE MODE");
+
+        $stmt = db_exec("SELECT event_nr, group_nr, start_ts, end_ts FROM tucal.event WHERE event_id = :id", [
+            'id' => $evtId,
+        ]);
+        $rows = $stmt->fetchAll();
+        if (sizeof($rows) === 0) {
+            db_rollback();
+            error(404);
+        }
+
+        $row = $rows[0];
+        $eventNr = $row['event_nr'];
+        $start = new DateTime($row['start_ts']);
+        $end = new DateTime($row['end_ts']);
+        $group = $row['group_nr'];
+
+        $dataStr = '{}';
+        if ($data['user']) {
+            $dataStr = json_encode($data['user']);
+        }
+
+        // postgres DOW - sunday (0), saturday (6)
+        db_exec("
+                UPDATE tucal.event
+                SET data = jsonb_set(data, '{\"user\"}', data -> 'user' || :data::jsonb),
+                    updated = FALSE,
+                    update_ts = now(),
+                    update_seq = update_seq + 1
+                WHERE event_nr = :enr OR (
+                          group_nr = :group AND
+                          start_ts::date = end_ts::date AND
+                          start_ts::time = :stime AND
+                          EXTRACT(DOW FROM start_ts) = :dow AND
+                          ((:prev::bool AND start_ts < :start) OR (:foll::bool AND start_ts > :start))
+                    )", [
+            'enr' => $eventNr,
+            'group' => $group,
+            'start' => $row['start_ts'],
+            'stime' => $start->format('H:i:s'),
+            'dow' => $start->format('w'),
+            'data' => $dataStr,
+            'prev' => $previous ? 'TRUE' : 'FALSE',
+            'foll' => $following ? 'TRUE' : 'FALSE',
+        ]);
+    } catch (Exception $e) {
+        db_rollback();
+        error(500, $e->getMessage());
+    }
+
+    db_commit();
+
     echo '{"status":"success","message":"work in progress","data":{}}' . "\n";
     tucal_exit();
 }

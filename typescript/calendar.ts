@@ -612,10 +612,10 @@ class WeekSchedule {
             html += `<a class="link" href="${evt.sourceUrl}" target="_blank">${evt.sourceName || evt.groupName}</a>`;
         }
 
-        html += `</h4>`;
+        html += `</h4><form name="event-detail">`;
 
         if (room) {
-            html += `<div><div>${_('Room')}:</div><div class="room">`;
+            html += `<div class="container"><div>${_('Room')}:</div><div class="room">`;
             let name = room.name;
             if (room.suffix) {
                 name += ` – ${room.suffix}`;
@@ -647,45 +647,139 @@ class WeekSchedule {
         if (evt.courseGroup && evt.courseGroup !== 'LVA') {
             let group = evt.courseGroup;
             while (group.startsWith('Gruppe ')) group = group.substr(7);
-            html += `<div><div>${_('Group')}:</div><div>${group}</div></div>`;
+            html += `<div class="container"><div>${_('Group')}:</div><div>${group}</div></div>`;
         }
 
         if (evt.summary) {
-            html += `<div><div>${_('Summary')}:</div><div>${evt.summary}</div></div>`
+            html += `<div class="container"><div>${_('Summary')}:</div><div>${evt.summary}</div></div>`
         }
 
         if (evt.desc) {
-            html += `<div><div>${_('Description')}:</div><div>${evt.desc}</div></div>`;
+            html += `<div class="container"><div>${_('Description')}:</div><div>${evt.desc}</div></div>`;
         }
 
-        html += '<hr/><button>&blacktriangledown;</button>';
-        html += `<form class="save hidden">` +
+        html += `<div class="container"><div>${_('Live')}:</div><div>` +
+            `<label class="radio"><input type="radio" name="live" value="" checked/> ${_('Not live')}</label>` +
+            `<label class="radio"><input type="radio" name="live" value="lt"/> LectureTube</label>` +
+            `<label class="radio"><input type="radio" name="live" value="zoom"/> Zoom</label>` +
+            `<div class="url hidden"><input type="url" name="live-url" placeholder="URL" required/></div>` +
+            `</div></div>`;
+
+        html += '<hr/><button type="button">&blacktriangledown;</button>';
+        html += `<div class="save hidden">` +
             `<label><input type="checkbox" name="all-previous"/> ${_('Apply changes for all previous events')}</label>` +
             `<label><input type="checkbox" name="all-following"/> ${_('Apply changes for all following events')}</label>` +
-            `<button>${_('Apply')}</button></form>`;
+            `<button type="submit">${_('Apply')}</button></div>`;
+
+        html += '</form>';
 
         div.innerHTML = html;
 
         const button = div.getElementsByTagName("button")[0];
+        const submitButton = div.getElementsByTagName("button")[1];
         const form = div.getElementsByTagName("form")[0];
-        if (!button || !form) throw new Error();
+        const formDiv = div.getElementsByClassName("save")[0];
+        if (!button || !submitButton || !form || !formDiv) throw new Error();
+
+        const live = form['live'];
+        const liveUrl = form['live-url'];
+        const liveUrlDiv = liveUrl.parentElement;
+        let manual = false;
 
         button.addEventListener('click', () => {
-            if (form.classList.contains('hidden')) {
+            if (formDiv.classList.contains('hidden')) {
                 button.innerHTML = '&blacktriangle;';
-                form.classList.remove('hidden');
+                formDiv.classList.remove('hidden');
+                manual = true;
             } else {
                 button.innerHTML = '&blacktriangledown;';
-                form.classList.add('hidden');
+                formDiv.classList.add('hidden');
+                manual = false;
             }
         });
+
+        const hasLiveChanged = () => {
+            return (evt.zoom && live.value !== 'zoom') ||
+                (evt.lecture_tube && live.value !== 'lt') ||
+                (!evt.zoom && !evt.lecture_tube && live.value !== '');
+        }
+
+        const hasLiveUrlChange = () => {
+            return evt.zoom && (evt.zoom !== liveUrl.value);
+        }
+
+        const hasChanged = () => {
+            console.log( hasLiveChanged(), hasLiveUrlChange());
+            return hasLiveChanged() || hasLiveUrlChange();
+        }
+
+        const onChange = () => {
+            if (live.value === 'zoom') {
+                if (liveUrlDiv.classList.contains('hidden')) liveUrlDiv.classList.remove('hidden');
+                liveUrl.required = 'required';
+            } else {
+                if (!liveUrlDiv.classList.contains('hidden')) liveUrlDiv.classList.add('hidden');
+                liveUrl.required = undefined;
+            }
+
+            if (!manual) {
+                if (hasChanged()) {
+                    button.innerHTML = '&blacktriangle;';
+                    formDiv.classList.remove('hidden');
+                } else {
+                    button.innerHTML = '&blacktriangledown;';
+                    formDiv.classList.add('hidden');
+                }
+            }
+
+            submitButton.disabled = !hasChanged();
+        }
+
+        if (evt.zoom) {
+            live.value = 'zoom';
+            liveUrl.value = evt.zoom;
+        } else if (evt.lecture_tube) {
+            live.value = 'lt';
+        } else {
+            form['live'].value = '';
+        }
+
+        if (!room || !room.ltName) {
+            // disable LectureTube
+            form['live'][1].disabled = true;
+        }
+
+        form.addEventListener('input', onChange);
+        onChange();
+
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            console.log(form);
-            const data = {};
-            api('/calendar/update', {'id': eventId}, data).then(() => {
-                this.weeks = {};
-                this.reloadEvents();
+
+            const urlData: {[index: string]: any} = {id: eventId};
+            if (form['all-previous'].checked) urlData['previous'] = 'true';
+            if (form['all-following'].checked) urlData['following'] = 'true';
+
+            const data: {[index: string]: any} = {};
+
+            if (hasLiveChanged() || hasLiveUrlChange()) {
+                if (live.value === 'lt') {
+                    data['lt'] = true;
+                    data['zoom'] = null;
+                } else if (live.value === 'zoom') {
+                    data['lt'] = false;
+                    data['zoom'] = liveUrl.value.trim();
+                } else {
+                    data['lt'] = false;
+                    data['zoom'] = null;
+                }
+            }
+
+            api('/calendar/update', urlData, {'user': data}).then(() => {
+                // wait for event merger to update events
+                sleep(1000).then(() => {
+                    this.weeks = {};
+                    this.reloadEvents();
+                });
             });
         });
 

@@ -41,6 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 400;
     }
 
+    db_transaction();
+
     try {
         db_exec("LOCK TABLE tucal.account IN EXCLUSIVE MODE");
 
@@ -90,6 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errorMsg = $e->getMessage();
         goto doc;
     }
+
+    db_commit();
 
     header("Status: 303");
     header("Location: /account/verify");

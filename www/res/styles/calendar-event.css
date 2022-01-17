@@ -49,18 +49,19 @@ div.calendar div.event-detail > h4 .day {
     font-size: 0.75em;
 }
 
-div.calendar div.event-detail > div {
+div.calendar div.event-detail div.container {
     display: flex;
     margin: 0.5em 0;
 }
 
-div.calendar div.event-detail > div > div:nth-child(1) {
+div.calendar div.event-detail div.container > div:nth-child(1) {
     flex: 7.5em 0 0;
 }
 
-div.calendar div.event-detail > div > div:nth-child(2) {
+div.calendar div.event-detail div.container > div:nth-child(2) {
     max-height: 200px;
     overflow-x: hidden;
+    width: 100%;
 }
 
 div.calendar div.event-detail .room {
@@ -109,7 +110,7 @@ div.calendar div.event-detail hr ~ button:hover {
     background-color: var(--grey-F0);
 }
 
-div.calendar div.event-detail form.save {
+div.calendar div.event-detail .save {
     width: fit-content;
     margin: 0.5em auto;
     display: flex;
@@ -121,16 +122,16 @@ div.calendar div.event-detail form.save {
     justify-content: center;
 }
 
-div.calendar div.event-detail form.save.hidden {
+div.calendar div.event-detail .save.hidden {
     height: 0;
 }
 
-div.calendar div.event-detail form.save label {
+div.calendar div.event-detail .save label {
     display: block;
     font-size: 0.75em;
 }
 
-div.calendar div.event-detail form.save button {
+div.calendar div.event-detail .save button {
     width: 50%;
     margin: 0.5em auto 0 auto;
     box-sizing: border-box;
@@ -144,11 +145,45 @@ div.calendar div.event-detail form.save button {
     cursor: pointer;
 }
 
-div.calendar div.event-detail form.save button:hover,
-div.calendar div.event-detail form.save button:focus {
+div.calendar div.event-detail .save button:hover,
+div.calendar div.event-detail .save button:focus {
     background-color: var(--color);
     border-color: var(--color);
     color: var(--color-comp);
+}
+
+div.calendar div.event-detail .save button:disabled {
+    background-color: var(--grey-C0);
+    color: var(--grey-40);
+    border-color: var(--grey-C0);
+}
+
+div.calendar div.event-detail label.radio {
+    margin-right: 1em;
+}
+
+div.calendar div.event-detail .url {
+    overflow: hidden;
+    transition: height 0.25s;
+    height: 3em;
+    font-size: 0.75em;
+}
+
+div.calendar div.event-detail .url input {
+    display: block;
+    margin: 0.5em 0.25em 0.5em 0.25em;
+    height: 2em;
+    width: calc(100% - 0.5em);
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--color);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    padding: 0.5em 1em;
+    color: var(--black);
+}
+
+div.calendar div.event-detail .url.hidden {
+    height: 0;
 }
 
 div.calendar div.event-detail a.link {

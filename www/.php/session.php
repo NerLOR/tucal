@@ -1,4 +1,8 @@
 <?php
+
+global $CONFIG;
+$CONFIG = parse_ini_file("tucal.ini", true);
+
 require "database.php";
 require "utils.php";
 require "locale.php";
@@ -8,35 +12,33 @@ global $LOCALE;
 
 $COOKIE_AGE = 15768000;  // 6 months
 
-function tucal_exit(bool $db_error = false) {
+function tucal_exit() {
     global $USER;
-    if (!$db_error) {
-        db_exec("UPDATE tucal.session SET account_nr = :acc_nr, options = :opts WHERE session_nr = :nr", [
-            'nr' => $_SESSION['nr'],
-            'acc_nr' => isset($USER) ? $USER['nr'] : null,
-            'opts' => json_encode($_SESSION['opts']),
+    _db_exec("UPDATE tucal.session SET account_nr = :acc_nr, options = :opts WHERE session_nr = :nr", [
+        'nr' => $_SESSION['nr'],
+        'acc_nr' => isset($USER) ? $USER['nr'] : null,
+        'opts' => json_encode($_SESSION['opts']),
+    ]);
+    if (isset($USER) && isset($USER['opts'])) {
+        _db_exec("UPDATE tucal.account SET options = :opts WHERE account_nr = :nr", [
+            'nr' => $USER['nr'],
+            'opts' => json_encode($USER['opts']),
         ]);
-        if (isset($USER) && isset($USER['opts'])) {
-            db_exec("UPDATE tucal.account SET options = :opts WHERE account_nr = :nr", [
-                'nr' => $USER['nr'],
-                'opts' => json_encode($USER['opts']),
-            ]);
-        }
-        try {
-            db_commit();
-        } catch (Exception $e) {}
     }
+    try {
+        _db_commit();
+    } catch (Exception $e) {}
     exit();
 }
 
-db_transaction();
-db_exec("LOCK TABLE tucal.session IN SHARE ROW EXCLUSIVE MODE");
-db_exec("LOCK TABLE tucal.account IN SHARE ROW EXCLUSIVE MODE");
+_db_transaction();
+_db_exec("LOCK TABLE tucal.session IN SHARE ROW EXCLUSIVE MODE");
+_db_exec("LOCK TABLE tucal.account IN SHARE ROW EXCLUSIVE MODE");
 
 unset($_SESSION);
 unset($USER);
 if (isset($_COOKIE['tucal_session'])) {
-    $stmt = db_exec("SELECT * FROM tucal.v_session WHERE token = ?", [$_COOKIE['tucal_session']]);
+    $stmt = _db_exec("SELECT * FROM tucal.v_session WHERE token = ?", [$_COOKIE['tucal_session']]);
     $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (sizeof($sessions) > 0) {
@@ -66,7 +68,7 @@ if (isset($_COOKIE['tucal_session'])) {
 
 if (!isset($_SESSION)) {
     $token = generate_token(64, 'tucal.session');
-    $stmt = db_exec("INSERT INTO tucal.session (token) VALUES (?) RETURNING session_nr", [$token]);
+    $stmt = _db_exec("INSERT INTO tucal.session (token) VALUES (?) RETURNING session_nr", [$token]);
 
     $_SESSION = [
         'nr' => $stmt->fetch()[0],

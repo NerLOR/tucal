@@ -210,8 +210,8 @@ function initBrowserTheme() {
 }
 
 async function api(endpoint: string,
-                   urlData: {[index: string]: string} | null = null,
-                   data: {[index: string]: string} | null = null) {
+                   urlData: {[index: string]: any} | null = null,
+                   data: {[index: string]: any} | null = null) {
     let info = {};
     if (data !== null) {
         info = {
