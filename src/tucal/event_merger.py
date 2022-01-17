@@ -136,6 +136,10 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         if data['online'] is None:
             data['online'] = (data['zoom'] is not None)
 
+    if tuwel:
+        if data['type'] is None:
+            data['type'] = 'course'
+
     if start_ts == end_ts:
         data['type'] = 'due'
 
