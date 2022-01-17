@@ -658,6 +658,8 @@ class WeekSchedule {
             html += `<div class="container"><div>${_('Description')}:</div><div>${evt.desc}</div></div>`;
         }
 
+        html += '<hr/>';
+
         html += `<div class="container"><div>${_('Live')}:</div><div>` +
             `<label class="radio"><input type="radio" name="live" value="" checked/> ${_('Not live')}</label>` +
             `<label class="radio"><input type="radio" name="live" value="lt"/> LectureTube</label>` +
