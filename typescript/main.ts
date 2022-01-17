@@ -258,12 +258,15 @@ function detectSwipe(elem: HTMLElement, cb: Function) {
     const MIN_Y = 50;
     const MAX_X = 400;
     const MAX_Y = 400;
+    const MAX_DIFF = 25;
 
     let dir: string | null = null;
-    let sx = 0;
-    let sy = 0;
-    let ex = 0;
-    let ey = 0;
+    let sx: number = 0;
+    let sy: number = 0;
+    let lx: number | null = null;
+    let ly: number | null = null;
+    let ex: number = 0;
+    let ey: number = 0;
 
     elem.addEventListener('touchstart', (evt) => {
         if (evt.touches.length !== 1) {
@@ -288,28 +291,57 @@ function detectSwipe(elem: HTMLElement, cb: Function) {
         ex = t.clientX;
         ey = t.clientY;
 
+        if (lx && ly) {
+            switch (dir) {
+                case 'left':
+                    if (ex < lx) dir = 'invalid'; break;
+                case 'right':
+                    if (ex > lx) dir ='invalid'; break;
+                case 'down':
+                    if (ey < ly) dir = 'invalid'; break;
+                case 'up':
+                    if (ey > ly) dir = 'invalid'; break;
+                default: break;
+            }
+        }
+
+        if (dir === 'left' || dir === 'right') {
+            if (Math.abs(ey - sy) > MAX_DIFF) {
+                dir = 'invalid';
+            }
+        } else if (dir === 'down' || dir === 'up') {
+            if (Math.abs(ex - sx) > MAX_DIFF) {
+                dir = 'invalid';
+            }
+        }
+
         if (Math.abs(ey - sy) < MIN_Y && Math.abs(ex - sx) >= MIN_X && Math.abs(ex - sx) <= MAX_X) {
             if (ex > sx) {
-                if (dir && dir !== 'left') dir = null;
+                if (dir && dir !== 'left') dir = 'invalid';
                 else dir = 'left'
             } else {
-                if (dir && dir !== 'right') dir = null;
+                if (dir && dir !== 'right') dir = 'invalid';
                 else dir = 'right';
             }
         } else if (Math.abs(ex - sx) < MIN_X && Math.abs(ey - sy) >= MIN_Y && Math.abs(ey - sy) <= MAX_Y) {
             if (ey > sy) {
-                if (dir && dir !== 'down') dir = null;
+                if (dir && dir !== 'down') dir = 'invalid';
                 else dir = 'down';
             } else {
-                if (dir && dir !== 'up') dir = null;
+                if (dir && dir !== 'up') dir = 'invalid';
                 dir = 'up';
             }
         }
+
+        lx = ex;
+        ly = ey;
     });
 
     elem.addEventListener('touchend', () => {
-        if (dir) cb(dir);
+        if (dir && dir !== 'invalid') cb(dir);
         dir = null;
+        lx = null;
+        ly = null;
     });
 }
 
