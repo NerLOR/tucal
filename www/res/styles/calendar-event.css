@@ -110,28 +110,50 @@ div.calendar div.event-detail hr ~ button:hover {
     background-color: var(--grey-F0);
 }
 
-div.calendar div.event-detail .save {
+div.calendar div.event-detail .form-save {
     width: fit-content;
     margin: 0.5em auto;
     display: flex;
     flex-direction: column;
     gap: 0.5em;
     height: 8em;
-    transition: height 0.25s;
+    transition: height 0.25s, margin 0.25s;
     overflow: hidden;
     justify-content: center;
 }
 
-div.calendar div.event-detail .save.hidden {
-    height: 0;
+div.calendar div.event-detail div.form-pre {
+    max-height: 200px;
+    transition: max-height 0.25s;
+    overflow: hidden;
 }
 
-div.calendar div.event-detail .save label {
+div.calendar div.event-detail hr.form-pre {
+    transition: margin 0.25s, border-top-width 0.25s;
+}
+
+div.calendar div.event-detail .form-save.hidden {
+    height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+div.calendar div.event-detail div.form-pre.hidden {
+    max-height: 0;
+}
+
+div.calendar div.event-detail hr.form-pre.hidden {
+    margin-top: 0;
+    margin-bottom: 0;
+    border-width: 0;
+}
+
+div.calendar div.event-detail .form-save label {
     display: block;
     font-size: 0.75em;
 }
 
-div.calendar div.event-detail .save button {
+div.calendar div.event-detail .form-save button {
     width: 50%;
     margin: 0.5em auto 0 auto;
     box-sizing: border-box;
@@ -145,14 +167,14 @@ div.calendar div.event-detail .save button {
     cursor: pointer;
 }
 
-div.calendar div.event-detail .save button:hover,
-div.calendar div.event-detail .save button:focus {
+div.calendar div.event-detail .form-save button:hover,
+div.calendar div.event-detail .form-save button:focus {
     background-color: var(--color);
     border-color: var(--color);
     color: var(--color-comp);
 }
 
-div.calendar div.event-detail .save button:disabled {
+div.calendar div.event-detail .form-save button:disabled {
     background-color: var(--grey-C0);
     color: var(--grey-40);
     border-color: var(--grey-C0);

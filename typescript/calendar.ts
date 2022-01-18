@@ -658,7 +658,7 @@ class WeekSchedule {
             html += `<div class="container"><div>${_('Description')}:</div><div>${evt.desc}</div></div>`;
         }
 
-        html += '<hr/>';
+        html += '<hr/><div class="form-pre hidden">';
 
         html += `<div class="container"><div>${_('Live')}:</div><div>` +
             `<label class="radio"><input type="radio" name="live" value="" checked/> ${_('Not live')}</label>` +
@@ -667,8 +667,8 @@ class WeekSchedule {
             `<div class="url hidden"><input type="url" name="live-url" placeholder="URL" required/></div>` +
             `</div></div>`;
 
-        html += '<hr/><button type="button">&blacktriangledown;</button>';
-        html += `<div class="save hidden">` +
+        html += '</div><hr class="form-pre hidden"/><button type="button">&blacktriangledown;</button>';
+        html += `<div class="form-save hidden">` +
             `<label><input type="checkbox" name="all-previous"/> ${_('Apply changes for all previous events')}</label>` +
             `<label><input type="checkbox" name="all-following"/> ${_('Apply changes for all following events')}</label>` +
             `<button type="submit">${_('Apply')}</button></div>`;
@@ -680,7 +680,8 @@ class WeekSchedule {
         const button = div.getElementsByTagName("button")[0];
         const submitButton = div.getElementsByTagName("button")[1];
         const form = div.getElementsByTagName("form")[0];
-        const formDiv = div.getElementsByClassName("save")[0];
+        const formDiv = div.getElementsByClassName("form-save")[0];
+        const formPre = div.getElementsByClassName("form-pre");
         if (!button || !submitButton || !form || !formDiv) throw new Error();
 
         const live = form['live'];
@@ -689,13 +690,15 @@ class WeekSchedule {
         let manual = false;
 
         button.addEventListener('click', () => {
-            if (formDiv.classList.contains('hidden')) {
+            if (!manual) {
                 button.innerHTML = '&blacktriangle;';
-                formDiv.classList.remove('hidden');
+                if (hasChanged()) formDiv.classList.remove('hidden');
+                for (const f of formPre) f.classList.remove('hidden');
                 manual = true;
             } else {
                 button.innerHTML = '&blacktriangledown;';
                 formDiv.classList.add('hidden');
+                for (const f of formPre) f.classList.add('hidden');
                 manual = false;
             }
         });
@@ -724,14 +727,10 @@ class WeekSchedule {
                 liveUrl.required = undefined;
             }
 
-            if (!manual) {
-                if (hasChanged()) {
-                    button.innerHTML = '&blacktriangle;';
-                    formDiv.classList.remove('hidden');
-                } else {
-                    button.innerHTML = '&blacktriangledown;';
-                    formDiv.classList.add('hidden');
-                }
+            if (hasChanged() && manual) {
+                formDiv.classList.remove('hidden');
+            } else {
+                formDiv.classList.add('hidden');
             }
 
             submitButton.disabled = !hasChanged();
