@@ -122,7 +122,7 @@ div.calendar div.event-detail .form-save {
     justify-content: center;
 }
 
-div.calendar div.event-detail div.form-pre {
+div.calendar div.event-detail div.form-pre > div {
     max-height: 200px;
     transition: max-height 0.25s;
     overflow: hidden;
@@ -138,7 +138,7 @@ div.calendar div.event-detail .form-save.hidden {
     margin-bottom: 0;
 }
 
-div.calendar div.event-detail div.form-pre.hidden {
+div.calendar div.event-detail div.form-pre.hidden > div {
     max-height: 0;
 }
 
@@ -203,6 +203,7 @@ div.calendar div.event-detail .url input {
     box-sizing: border-box;
     padding: 0.5em 1em;
     color: var(--black);
+    font-size: 1em;
 }
 
 div.calendar div.event-detail .url.hidden {
