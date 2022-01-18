@@ -160,8 +160,6 @@ class Room {
             if (building.areaSuffix) address += ' – ' + building.areaSuffix;
         }
 
-        console.log(address);
-
         return address;
     }
 

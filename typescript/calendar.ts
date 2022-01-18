@@ -517,12 +517,15 @@ class WeekSchedule {
                     '<div class="pre"></div>' +
                     '<div class="post"></div>' +
                     (event.lecture_tube && ltLink ? `<a class="live" href="${ltLink}" target="_blank" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
-                    (event.zoom !== null ? `<a class="live" href="${event.zoom}" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
+                    (event.zoom !== null ? `<a class="live" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
                     `<div class="course"><span class="course">${course?.getName() || event.groupName}</span>` +
                     (room !== null ? ` - <span class="room">${room.getName()}</span>` : '') + '</div><div class="group">' +
                     (cGroup !== null ? `<span class="group">${cGroup}</span>` : '') + '</div>' +
                     (event.summary !== null ? `<div class="summary">${event.summary}</div>` : '');
+
+                const aLive = evt.getElementsByClassName('live')[0];
+                if (aLive && event.zoom) aLive.setAttribute('href', event.zoom);
 
                 const evtMinutes = (end.valueOf() - start.valueOf()) / 60_000;
                 const pre = <HTMLElement> evt.getElementsByClassName("pre")[0];
@@ -570,8 +573,7 @@ class WeekSchedule {
         }
 
         if (evt.zoom) {
-            html += `<a class="live" href="${evt.zoom}" target="_blank" title="Zoom">` +
-                `<img src="/res/icons/zoom.png" alt="Zoom"/></a>`;
+            html += `<a class="live" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>`;
         }
 
         if (course) {
@@ -657,6 +659,9 @@ class WeekSchedule {
         html += '</form>';
 
         div.innerHTML = html;
+
+        const aLive = div.getElementsByClassName("live")[0];
+        if (aLive && evt.zoom) aLive.setAttribute('href', evt.zoom.toString());
 
         const button = div.getElementsByTagName("button")[0];
         const submitButton = div.getElementsByTagName("button")[1];
