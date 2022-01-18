@@ -7,12 +7,18 @@ global $DB2;
 $DB_CONFIG = $CONFIG['database'];
 
 if (!isset($DB1) || !isset($DB2)) {
-    $DB1 = new PDO("pgsql:host=$DB_CONFIG[host];dbname=$DB_CONFIG[name]", $DB_CONFIG['user'], $DB_CONFIG['password'], [
+    $DB1 = new PDO(
+        "pgsql:host=$DB_CONFIG[host];port=$DB_CONFIG[port];dbname=$DB_CONFIG[name]",
+        $DB_CONFIG['user'],
+        $DB_CONFIG['password'], [
         PDO::ATTR_PERSISTENT => true,
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ]);
-    // Add "." to create new persistent connection
-    $DB2 = new PDO("pgsql:host=$DB_CONFIG[host].;dbname=$DB_CONFIG[name]", $DB_CONFIG['user'], $DB_CONFIG['password'], [
+    // Add " " to create second persistent connection
+    $DB2 = new PDO(
+        "pgsql:host=$DB_CONFIG[host];port=$DB_CONFIG[port];dbname=$DB_CONFIG[name] ",
+        $DB_CONFIG['user'],
+        $DB_CONFIG['password'], [
         PDO::ATTR_PERSISTENT => true,
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ]);

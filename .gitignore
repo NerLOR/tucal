@@ -4,3 +4,4 @@ __pycache__/
 dest/
 /*.sh
 /tucal.ini
+!/setup.sh

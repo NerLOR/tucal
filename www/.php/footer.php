@@ -1,6 +1,11 @@
+<?php
+
+global $CONFIG;
+
+?>
 </div>
 <footer>
-    <a href="https://tucal.necronda.net/"><img src="/res/svgs/tucal.svg"/></a>
+    <a href="https://<?php echo $CONFIG['host'];?>/"><img src="/res/svgs/tucal.svg"/></a>
     <a href="/impressum"><?php echo _('Imprint');?></a>
     <a href="/contact"><?php echo _('Contact');?></a>
     <a href="https://github.com/NerLOR/tucal">GitHub</a>
