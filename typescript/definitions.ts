@@ -138,6 +138,33 @@ class Room {
         }
     }
 
+    getAddress(): string {
+        const roomCode = this.roomCodes[0];
+        if (!roomCode) return '';
+
+        const floorStr = formatFloor(roomCode.substr(2, 2));
+        const building = this.getBuilding();
+
+        let address = floorStr;
+        if (building) {
+            if (building.name || building.address) address += '\n';
+            if (building.name) {
+                address += building.name;
+                if (building.suffix) address += ' – ' + building.suffix;
+                address += ' (';
+            }
+            if (building.address) address += building.address;
+            if (building.name) address += ')';
+
+            if (building.areaName) address += '\n' + building.areaName;
+            if (building.areaSuffix) address += ' – ' + building.areaSuffix;
+        }
+
+        console.log(address);
+
+        return address;
+    }
+
     static pseudo(nr: number): Room {
         return new Room(<RoomJSON>{
             nr: nr

@@ -617,31 +617,12 @@ class WeekSchedule {
         if (room) {
             html += `<div class="container"><div>${_('Room')}:</div><div class="room">`;
             let name = room.name;
-            if (room.suffix) {
-                name += ` – ${room.suffix}`;
-            }
+            if (room.suffix) name += ` – ${room.suffix}`;
+
             const codes = room.roomCodes.map((code) => code.substr(0, 2) + '&nbsp;' + code.substr(2, 2) + '&nbsp;' + code.substr(4));
             html += `<a href="https://tuw-maps.tuwien.ac.at/?q=${room.roomCodes[0]}" target="_blank">` +
-                `<span class="room-name">${name}</span> <span class="room-codes">(${codes.join(', ')})</span></a>`;
-
-            let building = '';
-            const b = room.getBuilding();
-            if (b) {
-                if (b.name !== b.address) building += b.name;
-                if (b.name !== b.address && b.suffix) building += ' – ';
-                if (b.suffix) building += b.suffix;
-                const hasB = building.length > 0;
-
-                if (hasB) building += ' (';
-                building += b.areaName;
-                if (b.areaSuffix) building += ' – ' + b.areaSuffix;
-                if (hasB) building += ')';
-
-                let address = b.address ? `<br/><span class="address">${b.address}</span>` : '';
-                html += `<br/><span class="building">${building}</span>${address}`;
-            }
-
-            html += '</div></div>';
+                `<span class="room-name">${name}</span> <span class="room-codes">(${codes.join(', ')})</span></a><br/>` +
+                `${room.getAddress().replace(/\n/g, '<br/>')}</div></div>`;
         }
 
         if (evt.courseGroup && evt.courseGroup !== 'LVA') {
@@ -714,7 +695,6 @@ class WeekSchedule {
         }
 
         const hasChanged = () => {
-            console.log( hasLiveChanged(), hasLiveUrlChange());
             return hasLiveChanged() || hasLiveUrlChange();
         }
 
