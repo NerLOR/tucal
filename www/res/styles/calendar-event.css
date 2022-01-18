@@ -182,6 +182,7 @@ div.calendar div.event-detail .form-save button:disabled {
 
 div.calendar div.event-detail label.radio {
     margin-right: 1em;
+    white-space: pre;
 }
 
 div.calendar div.event-detail .url {
