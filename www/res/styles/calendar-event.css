@@ -128,6 +128,10 @@ div.calendar div.event-detail div.form-pre > div {
     overflow: hidden;
 }
 
+div.calendar div.event-detail div.form-pre > div > div {
+    overflow: hidden;
+}
+
 div.calendar div.event-detail hr.form-pre {
     transition: margin 0.25s, border-top-width 0.25s;
 }
