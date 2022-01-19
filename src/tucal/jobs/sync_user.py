@@ -325,7 +325,7 @@ if __name__ == '__main__':
     cur.execute("""
         DELETE FROM tuwel.event_user
         WHERE user_id = (SELECT user_id FROM tuwel.user WHERE mnr = %s) AND
-              event_id = ANY(SELECT event_id FROM tuwel.event WHERE start_ts >= current_date)""", (mnr,))
+              event_id = ANY(SELECT event_id FROM tuwel.event WHERE start_ts >= now())""", (mnr,))
     for evt in events:
         tucal.db.tuwel.insert_event(evt, acc, user_id)
     job.end(0)
