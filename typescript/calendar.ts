@@ -97,6 +97,7 @@ class WeekSchedule {
                 case 'ArrowLeft': this.previous(); break;
                 case 'ArrowRight': this.next(); break;
                 case 'Numpad0': this.now(); break;
+                case 'Escape': this.setEventId(null); break;
                 default: return;
             }
         });
