@@ -124,7 +124,7 @@ div.calendar div.event-detail .form-save {
 
 div.calendar div.event-detail div.form-pre > div {
     max-height: 200px;
-    transition: max-height 0.25s;
+    transition: max-height 0.25s, margin-top 0.25s, margin-bottom 0.25s;
     overflow: hidden;
 }
 
@@ -144,6 +144,8 @@ div.calendar div.event-detail .form-save.hidden {
 
 div.calendar div.event-detail div.form-pre.hidden > div {
     max-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 div.calendar div.event-detail hr.form-pre.hidden {

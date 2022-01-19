@@ -123,7 +123,7 @@ class Room {
 
     getNameLong(): string {
         let str = this.name || `#${this.nr}`;
-        if (this.suffix) str += ' ' + this.suffix;
+        if (this.suffix) str += ' – ' + this.suffix;
         if (this.altName) str += ' (' + this.altName + ')';
         return str;
     }
@@ -136,6 +136,12 @@ class Room {
             case 'live-video-tuwien': return `https://live.video.tuwien.ac.at/room/${this.ltRoomCode.toLowerCase()}/player.html`;
             default: throw new Error(`Unknown LectureTube provider '${LT_PROVIDER}'`);
         }
+    }
+
+    getCodeFormat(): string {
+        return this.roomCodes.map(
+            (c) => `${c.substr(0, 2)} ${c.substr(2, 2)} ${c.substr(4)}`
+        ).join(', ');
     }
 
     getAddress(): string {

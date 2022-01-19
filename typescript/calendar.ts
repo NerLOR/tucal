@@ -619,12 +619,10 @@ class WeekSchedule {
 
         if (room) {
             html += `<div class="container"><div>${_('Room')}:</div><div class="room">`;
-            let name = room.name;
-            if (room.suffix) name += ` – ${room.suffix}`;
 
-            const codes = room.roomCodes.map((code) => code.substr(0, 2) + '&nbsp;' + code.substr(2, 2) + '&nbsp;' + code.substr(4));
+            const codes = room.getCodeFormat().replace(/ /g, '&nbsp;');
             html += `<a href="https://tuw-maps.tuwien.ac.at/?q=${room.roomCodes[0]}" target="_blank">` +
-                `<span class="room-name">${name}</span> <span class="room-codes">(${codes.join(', ')})</span></a><br/>` +
+                `<span class="room-name">${room.getNameLong()}</span> <span class="room-codes">(${codes})</span></a><br/>` +
                 `${room.getAddress().replace(/\n/g, '<br/>')}</div></div>`;
         }
 
@@ -645,14 +643,24 @@ class WeekSchedule {
         html += '<hr/><div class="form-pre hidden">';
 
         html += `<div class="container"><div>${_('Live')}:</div><div>` +
-            `<label class="radio"><input type="radio" name="live" value="" checked/> ${_('Not live')}</label>` +
+            `<label class="radio"><input type="radio" name="live" value="false" checked/> ${_('Not live')}</label>` +
             `<label class="radio"><input type="radio" name="live" value="lt"/> LectureTube</label>` +
             `<label class="radio"><input type="radio" name="live" value="zoom"/> Zoom</label>` +
             `<div class="url hidden"><input type="url" name="live-url" placeholder="URL" required/></div>` +
             `</div></div>`;
 
-        html += '</div><hr class="form-pre hidden"/><button type="button">&blacktriangledown;</button>';
-        html += `<div class="form-save hidden">` +
+        html += `<div class="container"><div>${_('Status')}:</div><div>` +
+            `<label class="radio"><input type="radio" name="status" value="confirmed"/> ${_('Confirmed')}</label>` +
+            `<label class="radio"><input type="radio" name="status" value="tentative"/> ${_('Tentative')}</label>` +
+            `<label class="radio"><input type="radio" name="status" value="cancelled"/> ${_('Cancelled')}</label>` +
+            `</div></div>`;
+
+        html += `<div class="container"><div>${_('Room')}:</div><div>` +
+            `<select name="room"><option value="none">${_('No room')}</option></select>` +
+            `</div></div>`;
+
+        html += '</div><hr class="form-pre hidden"/><button type="button">&blacktriangledown;</button>' +
+            `<div class="form-save hidden">` +
             `<label><input type="checkbox" name="all-previous"/> ${_('Apply changes for all previous events')}</label>` +
             `<label><input type="checkbox" name="all-following"/> ${_('Apply changes for all following events')}</label>` +
             `<button type="submit">${_('Apply')}</button></div>`;
@@ -674,7 +682,18 @@ class WeekSchedule {
         const live = form['live'];
         const liveUrl = form['live-url'];
         const liveUrlDiv = liveUrl.parentElement;
+        const roomSelect = form['room'];
         let manual = false;
+
+        for (const roomNr in ROOMS) {
+            const r = ROOMS[roomNr];
+            if (!r) continue;
+            const opt = document.createElement("option");
+            opt.innerText = `${r.getNameLong()} (${r.getCodeFormat()})`;
+            opt.value = `${r.nr}`;
+            roomSelect.appendChild(opt);
+        }
+        if (room) roomSelect.value = `${room.nr}`;
 
         button.addEventListener('click', () => {
             if (!manual) {
@@ -696,15 +715,31 @@ class WeekSchedule {
                 (!evt.zoom && !evt.lecture_tube && live.value !== '');
         }
 
-        const hasLiveUrlChange = () => {
+        const hasLiveUrlChanged = () => {
             return evt.zoom && (evt.zoom !== liveUrl.value);
         }
 
+        const hasRoomChanged = () => {
+            return evt.roomNr !== (parseInt(roomSelect.value) || null);
+        }
+
         const hasChanged = () => {
-            return hasLiveChanged() || hasLiveUrlChange();
+            return hasLiveChanged() || hasLiveUrlChanged() || hasRoomChanged();
         }
 
         const onChange = () => {
+            // disable LectureTube
+            if (roomSelect.value && ROOMS) {
+                const room = ROOMS[parseInt(roomSelect.value)];
+                form['live'][1].disabled = (!room || !room.ltName);
+            } else {
+                form['live'][1].disabled = true;
+            }
+
+            if (form['live'][1].disabled && form['live'].value === 'lt') {
+                form['live'].value = 'false';
+            }
+
             if (live.value === 'zoom') {
                 if (liveUrlDiv.classList.contains('hidden')) liveUrlDiv.classList.remove('hidden');
                 liveUrl.required = 'required';
@@ -728,12 +763,7 @@ class WeekSchedule {
         } else if (evt.lecture_tube) {
             live.value = 'lt';
         } else {
-            form['live'].value = '';
-        }
-
-        if (!room || !room.ltName) {
-            // disable LectureTube
-            form['live'][1].disabled = true;
+            form['live'].value = 'false';
         }
 
         form.addEventListener('input', onChange);
@@ -748,7 +778,7 @@ class WeekSchedule {
 
             const data: {[index: string]: any} = {};
 
-            if (hasLiveChanged() || hasLiveUrlChange()) {
+            if (hasLiveChanged() || hasLiveUrlChanged()) {
                 if (live.value === 'lt') {
                     data['lt'] = true;
                     data['zoom'] = null;
@@ -764,7 +794,11 @@ class WeekSchedule {
             api('/calendar/update', urlData, {'user': data}).then(() => {
                 // wait for event merger to update events
                 sleep(1000).then(() => {
-                    this.weeks = {};
+                    if (urlData['previous'] || urlData['following']) {
+                        this.weeks = {};
+                    } else if (this.week) {
+                        delete this.weeks[this.week.toString()];
+                    }
                     this.reloadEvents();
                 });
             });
