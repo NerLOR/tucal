@@ -26,11 +26,10 @@ require ".php/header.php";
         <h1>Benutzerzahlen</h1>
         <?php
         $stmt = db_exec("
-            SELECT COUNT(*),
-                   SUM(sso_credentials::int),
-                   SUM((active_ts >= current_date - INTERVAL '7' DAY)::int),
-                   SUM((active_ts >= current_date)::int)
-            FROM tucal.v_account WHERE verified = TRUE");
+            SELECT users_v, users_v_sso, users_v_week, users_v_day
+            FROM tucal.dau
+            ORDER BY date DESC, hour_utc DESC
+            LIMIT 1");
         $row = $stmt->fetchAll()[0];
         $userNum = $row[0];
         $credNum = $row[1];
