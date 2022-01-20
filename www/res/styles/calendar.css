@@ -131,6 +131,7 @@ div.calendar thead button {
     padding: 0;
     box-sizing: border-box;
     color: var(--black);
+    border-radius: 0;
 }
 
 div.calendar thead button:hover {
@@ -364,6 +365,10 @@ section.calendar-legend div.legend.online > div {
             var(--evt-light) 5px,
             var(--evt-light) 10px
     );
+}
+
+div.calendar div.event.cancelled {
+    opacity: 0.25;
 }
 
 div.calendar div.event.course,

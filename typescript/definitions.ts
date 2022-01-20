@@ -51,18 +51,19 @@ interface TucalEventJSON {
     }
     room_nr: number | null,
     data: {
-        summary: string | null,
-        desc: string | null,
-        zoom: string | null,
-        lt: boolean | null,
-        url: string | null,
-        type: string | null,
-        online: boolean | null,
-        tiss_url: string | null,
-        tuwel_url: string | null,
-        source_url: string | null,
-        source_name: string | null,
-        organizer: string | null,
+        summary: string | null | undefined,
+        desc: string | null | undefined,
+        status: string | null | undefined,
+        zoom: string | null | undefined,
+        lt: boolean | null | undefined,
+        url: string | null | undefined,
+        type: string | null | undefined,
+        online: boolean | null | undefined,
+        tiss_url: string | null | undefined,
+        tuwel_url: string | null | undefined,
+        source_url: string | null | undefined,
+        source_name: string | null | undefined,
+        organizer: string | null | undefined,
     },
 }
 
@@ -99,7 +100,7 @@ class Room {
 
     constructor(room: RoomJSON) {
         this.nr = room.nr;
-        this.roomCodes = room.room_codes;
+        this.roomCodes = room.room_codes || [];
         this.tissCode = room.tiss_code;
         this.name = room.name;
         this.suffix = room.suffix;
@@ -285,6 +286,7 @@ class Week {
 class TucalEvent {
     id: string;
     deleted: boolean | null;
+    status: string | null;
     start: Date;
     end: Date;
     courseNr: string | null;
@@ -310,6 +312,7 @@ class TucalEvent {
         this.id = event.id;
         this.roomNr = event.room_nr;
         this.deleted = event.deleted;
+        this.status = event.data.status || null;
         this.start = asTimezone(new Date(Date.parse(event.start)), TIMEZONE);
         this.end = asTimezone(new Date(Date.parse(event.end)), TIMEZONE);
 
@@ -325,18 +328,18 @@ class TucalEvent {
 
         this.groupId = event.group.id;
         this.groupName = event.group.name;
-        this.summary = event.data.summary;
-        this.desc = event.data.desc;
-        this.zoom = event.data.zoom;
-        this.lecture_tube = event.data.lt;
-        this.url = event.data.url;
-        this.tissUrl = event.data.tiss_url;
-        this.tuwelUrl = event.data.tuwel_url;
-        this.sourceUrl = event.data.source_url;
-        this.sourceName = event.data.source_name;
-        this.organizer = event.data.organizer;
-        this.type = event.data.type;
-        this.online = event.data.online;
+        this.summary = event.data.summary || null;
+        this.desc = event.data.desc || null;
+        this.zoom = event.data.zoom || null;
+        this.lecture_tube = event.data.lt || null;
+        this.url = event.data.url || null;
+        this.tissUrl = event.data.tiss_url || null;
+        this.tuwelUrl = event.data.tuwel_url || null;
+        this.sourceUrl = event.data.source_url || null;
+        this.sourceName = event.data.source_name || null;
+        this.organizer = event.data.organizer || null;
+        this.type = event.data.type || null;
+        this.online = event.data.online || null;
     }
 
     getRoom(): Room | null {

@@ -26,6 +26,7 @@ TISS_TYPES = {
 def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_nr: int, group_nr: int, group_name: str,
                      start_ts: datetime.datetime, end_ts: datetime.datetime):
     data.update({
+        'status': None,
         'summary': None,
         'desc': None,
         'zoom': None,

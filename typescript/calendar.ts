@@ -483,6 +483,7 @@ class WeekSchedule {
                 evt.classList.add("event");
                 if (event.type) evt.classList.add(event.type);
                 if (event.online) evt.classList.add("online");
+                if (event.status === 'cancelled') evt.classList.add("cancelled");
 
                 const startMinute = start.getHours() * 60 + start.getMinutes();
                 const endMinute = end.getHours() * 60 + end.getMinutes();
@@ -523,10 +524,13 @@ class WeekSchedule {
                     `<div class="course"><span class="course">${course?.getName() || event.groupName}</span>` +
                     (room !== null ? ` - <span class="room">${room.getName()}</span>` : '') + '</div><div class="group">' +
                     (cGroup !== null ? `<span class="group">${cGroup}</span>` : '') + '</div>' +
-                    (event.summary !== null ? `<div class="summary">${event.summary}</div>` : '');
+                    (event.summary !== null ? `<div class="summary"></div>` : '');
 
                 const aLive = evt.getElementsByClassName('live')[0];
                 if (aLive && event.zoom) aLive.setAttribute('href', event.zoom);
+
+                const divSummary = <HTMLElement> evt.getElementsByClassName('summary')[0];
+                if (divSummary && event.summary !== null) divSummary.innerText = event.summary;
 
                 const evtMinutes = (end.valueOf() - start.valueOf()) / 60_000;
                 const pre = <HTMLElement> evt.getElementsByClassName("pre")[0];
@@ -547,7 +551,6 @@ class WeekSchedule {
     displayEventDetail() {
         const eventId = this.eventId;
         if (!this.week) throw new Error();
-        if (!COURSE_DEF || ! ROOMS) throw new Error();
 
         this.clearEventDetail();
         if (eventId === null) return;
@@ -626,6 +629,11 @@ class WeekSchedule {
                 `${room.getAddress().replace(/\n/g, '<br/>')}</div></div>`;
         }
 
+        if (evt.status) {
+            const status = evt.status.substr(0, 1).toUpperCase() + evt.status.substr(1).toLowerCase();
+            html += `<div class="container"><div>${_('Status')}:</div><div>${_(status)}</div></div>`;
+        }
+
         if (evt.courseGroup && evt.courseGroup !== 'LVA') {
             let group = evt.courseGroup;
             while (group.startsWith('Gruppe ')) group = group.substr(7);
@@ -633,7 +641,7 @@ class WeekSchedule {
         }
 
         if (evt.summary) {
-            html += `<div class="container"><div>${_('Summary')}:</div><div>${evt.summary}</div></div>`
+            html += `<div class="container"><div>${_('Summary')}:</div><div class="evt-detail-summary"></div></div>`
         }
 
         if (evt.desc) {
@@ -646,17 +654,22 @@ class WeekSchedule {
             `<label class="radio"><input type="radio" name="live" value="false" checked/> ${_('Not live')}</label>` +
             `<label class="radio"><input type="radio" name="live" value="lt"/> LectureTube</label>` +
             `<label class="radio"><input type="radio" name="live" value="zoom"/> Zoom</label>` +
-            `<div class="url hidden"><input type="url" name="live-url" placeholder="URL" required/></div>` +
+            `<div class="url hidden"><input type="url" name="live-url" placeholder="URL" class="line" required/></div>` +
             `</div></div>`;
 
         html += `<div class="container"><div>${_('Status')}:</div><div>` +
             `<label class="radio"><input type="radio" name="status" value="confirmed"/> ${_('Confirmed')}</label>` +
             `<label class="radio"><input type="radio" name="status" value="tentative"/> ${_('Tentative')}</label>` +
             `<label class="radio"><input type="radio" name="status" value="cancelled"/> ${_('Cancelled')}</label>` +
+            `<label class="radio"><input type="radio" name="status" value="unknown" checked/> ${_('Unknown')}</label>` +
             `</div></div>`;
 
         html += `<div class="container"><div>${_('Room')}:</div><div>` +
             `<select name="room"><option value="none">${_('No room')}</option></select>` +
+            `</div></div>`;
+
+        html += `<div class="container"><div>${_('Summary')}:</div><div>` +
+            `<input type="text" name="summary" class="line" placeholder="${_('Summary')}"/>` +
             `</div></div>`;
 
         html += '</div><hr class="form-pre hidden"/><button type="button">&blacktriangledown;</button>' +
@@ -672,6 +685,9 @@ class WeekSchedule {
         const aLive = div.getElementsByClassName("live")[0];
         if (aLive && evt.zoom) aLive.setAttribute('href', evt.zoom.toString());
 
+        const divSummary = <HTMLElement> div.getElementsByClassName("evt-detail-summary")[0];
+        if (divSummary && evt.summary) divSummary.innerText = evt.summary;
+
         const button = div.getElementsByTagName("button")[0];
         const submitButton = div.getElementsByTagName("button")[1];
         const form = div.getElementsByTagName("form")[0];
@@ -683,17 +699,20 @@ class WeekSchedule {
         const liveUrl = form['live-url'];
         const liveUrlDiv = liveUrl.parentElement;
         const roomSelect = form['room'];
+        const summary = form['summary'];
+        const status = form['status'];
         let manual = false;
 
-        for (const roomNr in ROOMS) {
-            const r = ROOMS[roomNr];
-            if (!r) continue;
-            const opt = document.createElement("option");
-            opt.innerText = `${r.getNameLong()} (${r.getCodeFormat()})`;
-            opt.value = `${r.nr}`;
-            roomSelect.appendChild(opt);
+        if (ROOMS) {
+            for (const roomNr in ROOMS) {
+                const r = ROOMS[roomNr];
+                if (!r) continue;
+                const opt = document.createElement("option");
+                opt.innerText = `${r.getNameLong()} (${r.getCodeFormat()})`;
+                opt.value = `${r.nr}`;
+                roomSelect.appendChild(opt);
+            }
         }
-        if (room) roomSelect.value = `${room.nr}`;
 
         button.addEventListener('click', () => {
             if (!manual) {
@@ -709,35 +728,47 @@ class WeekSchedule {
             }
         });
 
-        const hasLiveChanged = () => {
+        const hasLiveChanged = (): boolean => {
             return (evt.zoom && live.value !== 'zoom') ||
                 (evt.lecture_tube && live.value !== 'lt') ||
-                (!evt.zoom && !evt.lecture_tube && live.value !== '');
+                (!evt.zoom && !evt.lecture_tube && live.value !== 'false');
         }
 
-        const hasLiveUrlChanged = () => {
-            return evt.zoom && (evt.zoom !== liveUrl.value);
+        const hasLiveUrlChanged = (): boolean => {
+            return evt.zoom && (evt.zoom !== liveUrl.value) || false;
         }
 
-        const hasRoomChanged = () => {
+        const hasRoomChanged = (): boolean => {
             return evt.roomNr !== (parseInt(roomSelect.value) || null);
         }
 
-        const hasChanged = () => {
-            return hasLiveChanged() || hasLiveUrlChanged() || hasRoomChanged();
+        const hasStatusChanged = (): boolean => {
+            return evt.status !== ((status.value !== 'unknown') ? status.value : null);
+        }
+
+        const hasSummaryChanged = (): boolean => {
+            return evt.summary !== (summary.value !== '' ? summary.value : null);
+        }
+
+        const hasChanged = (): boolean => {
+            return hasLiveChanged() ||
+                hasLiveUrlChanged() ||
+                hasRoomChanged() ||
+                hasStatusChanged() ||
+                hasSummaryChanged();
         }
 
         const onChange = () => {
             // disable LectureTube
             if (roomSelect.value && ROOMS) {
                 const room = ROOMS[parseInt(roomSelect.value)];
-                form['live'][1].disabled = (!room || !room.ltName);
+                live[1].disabled = (!room || !room.ltName);
             } else {
-                form['live'][1].disabled = true;
+                live[1].disabled = true;
             }
 
-            if (form['live'][1].disabled && form['live'].value === 'lt') {
-                form['live'].value = 'false';
+            if (live[1].disabled && live.value === 'lt') {
+                live.value = 'false';
             }
 
             if (live.value === 'zoom') {
@@ -766,6 +797,10 @@ class WeekSchedule {
             form['live'].value = 'false';
         }
 
+        if (room) roomSelect.value = `${room.nr}`;
+        if (evt.summary) summary.value = evt.summary;
+        if (evt.status) status.value = evt.status;
+
         form.addEventListener('input', onChange);
         onChange();
 
@@ -789,6 +824,14 @@ class WeekSchedule {
                     data['lt'] = false;
                     data['zoom'] = null;
                 }
+            }
+
+            if (hasStatusChanged()) {
+                data['status'] = (status.value !== 'unknown') ? status.value : null;
+            }
+
+            if (hasSummaryChanged()) {
+                data['summary'] = (summary.value !== '') ? summary.value.trim() : null;
             }
 
             api('/calendar/update', urlData, {'user': data}).then(() => {
