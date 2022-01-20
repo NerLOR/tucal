@@ -1,4 +1,43 @@
 
+input:not([type=radio]),
+select {
+    border: 1px solid var(--color);
+    border-radius: var(--border-radius);
+    background-color: var(--input-bg-color);
+    color: var(--black);
+    box-sizing: border-box;
+}
+
+input:not([type=radio]) {
+    padding: 0.5em;
+}
+
+select {
+    padding: 0.25em;
+}
+
+button {
+    cursor: pointer;
+    border: 1px solid var(--color);
+    background-color: var(--input-bg-color);
+    color: var(--color);
+    border-radius: var(--border-radius);
+    padding: 0.5em 1em;
+}
+
+button:hover,
+button:focus {
+    background-color: var(--color);
+    border-color: var(--color);
+    color: var(--color-comp);
+}
+
+button:disabled {
+    background-color: var(--grey-C0);
+    border-color: var(--grey-C0);
+    color: var(--grey-40);
+}
+
 main section > form.panel {
     max-width: 400px;
     margin: auto;

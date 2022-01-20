@@ -102,6 +102,7 @@ div.calendar div.event-detail hr ~ button {
     left: calc(50% - 12px);
     bottom: -12px;
     cursor: pointer;
+    padding: initial;
     padding-bottom: 2px;
     color: var(--grey-C0);
 }
@@ -164,26 +165,8 @@ div.calendar div.event-detail .form-save button {
     margin: 0.5em auto 0 auto;
     box-sizing: border-box;
     height: 2.5em;
-    border-radius: var(--border-radius);
     font-size: 1em;
     padding: 0.5em 1em;
-    border: 1px solid var(--color);
-    background-color: var(--input-bg-color);
-    color: var(--color);
-    cursor: pointer;
-}
-
-div.calendar div.event-detail .form-save button:hover,
-div.calendar div.event-detail .form-save button:focus {
-    background-color: var(--color);
-    border-color: var(--color);
-    color: var(--color-comp);
-}
-
-div.calendar div.event-detail .form-save button:disabled {
-    background-color: var(--grey-C0);
-    color: var(--grey-40);
-    border-color: var(--grey-C0);
 }
 
 div.calendar div.event-detail label.radio {
@@ -198,18 +181,16 @@ div.calendar div.event-detail .url {
     font-size: 0.75em;
 }
 
-div.calendar div.event-detail .url input {
+div.calendar div.event-detail input.line {
     display: block;
-    margin: 0.5em 0.25em 0.5em 0.25em;
+    margin: 0.25rem;
     height: 2em;
     width: calc(100% - 0.5em);
-    background-color: var(--input-bg-color);
-    border: 1px solid var(--color);
-    border-radius: var(--border-radius);
-    box-sizing: border-box;
-    padding: 0.5em 1em;
-    color: var(--black);
     font-size: 1em;
+}
+
+div.calendar div.event-detail select {
+    margin: 0.25rem;
 }
 
 div.calendar div.event-detail .url.hidden {
