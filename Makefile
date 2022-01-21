@@ -25,6 +25,8 @@ build-www:
 	done
 
 database:
+	@read -p "Are you sure, you want to reset the specified database? [y/N] " -r ;\
+		if [[ ! "$$REPLY" =~ ^[yY]$  ]]; then echo "aborting!"; exit 1; fi
 	for file in $(shell find sql/ -name "*.sql" -type f); do \
 		./db.sh -f "$$file" ;\
 	done
