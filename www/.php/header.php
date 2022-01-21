@@ -10,7 +10,7 @@ if (!isset($STATUS)) {
 }
 
 header("Cache-Control: private, no-cache");
-header("Content-Security-Policy: default-src https://$CONFIG[host]");
+header("Content-Security-Policy: default-src https://$CONFIG[hostname]");
 header("Referrer-Policy: same-origin");
 header("Strict-Transport-Security: max-age=15768000");  // 6 months
 header("X-Content-Type-Options: nosniff");

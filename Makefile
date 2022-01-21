@@ -24,5 +24,10 @@ build-www:
 		msgfmt "locale/$$locale/LC_MESSAGES/tucal.po" -o "dest/www/.php/locale/$$locale/LC_MESSAGES/tucal.mo" ;\
 	done
 
+database:
+	for file in $(shell find sql/ -name "*.sql" -type f); do \
+		./db.sh -f "$$file" ;\
+	done
+
 clean:
 	rm -rf dest/

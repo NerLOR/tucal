@@ -210,10 +210,35 @@ CREATE OR REPLACE FUNCTION tucal.update_dau()
 $$
 DECLARE
     today  DATE        = current_date;
-    cur_h  INT         = EXTRACT(HOUR FROM current_time);
-    time_h TIMESTAMPTZ = today::timestamptz + ((cur_h || ':00')::interval);
+    cur_h  INT         = EXTRACT(HOUR FROM current_time AT TIME ZONE 'UTC');
+    time_h TIMESTAMPTZ = today::timestamp AT TIME ZONE 'UTC' + ((cur_h || ':00')::interval);
 BEGIN
-    INSERT INTO tucal.dau (date, hour_utc) VALUES (today, cur_h) ON CONFLICT DO NOTHING;
+    INSERT INTO tucal.dau (date, hour_utc)
+    VALUES (today, 0),
+           (today, 1),
+           (today, 2),
+           (today, 3),
+           (today, 4),
+           (today, 5),
+           (today, 6),
+           (today, 7),
+           (today, 8),
+           (today, 9),
+           (today, 10),
+           (today, 11),
+           (today, 12),
+           (today, 13),
+           (today, 14),
+           (today, 15),
+           (today, 16),
+           (today, 17),
+           (today, 18),
+           (today, 19),
+           (today, 20),
+           (today, 21),
+           (today, 22),
+           (today, 23)
+    ON CONFLICT DO NOTHING;
     UPDATE tucal.dau
     SET (users,
          users_new,

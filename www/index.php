@@ -28,6 +28,7 @@ require ".php/header.php";
         $stmt = db_exec("
             SELECT users_v, users_v_sso, users_v_week, users_v_day
             FROM tucal.dau
+            WHERE users_v IS NOT NULL
             ORDER BY date DESC, hour_utc DESC
             LIMIT 1");
         $row = $stmt->fetchAll()[0];
