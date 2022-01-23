@@ -209,9 +209,9 @@ CREATE OR REPLACE FUNCTION tucal.update_dau()
     RETURNS TRIGGER AS
 $$
 DECLARE
-    today  DATE        = current_date;
+    today  DATE        = current_date AT TIME ZONE 'UTC';
     cur_h  INT         = EXTRACT(HOUR FROM current_time AT TIME ZONE 'UTC');
-    time_h TIMESTAMPTZ = today::timestamp AT TIME ZONE 'UTC' + ((cur_h || ':00')::interval);
+    time_h TIMESTAMPTZ = today::timestamptz + ((cur_h || ':00')::interval);
 BEGIN
     INSERT INTO tucal.dau (date, hour_utc)
     VALUES (today, 0),
