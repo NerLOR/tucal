@@ -593,11 +593,11 @@ class WeekSchedule {
         }
 
         if (course) {
-            html += `<h2>` +
+            html += `<h2><a href="/courses/#${course.nr}-${course.semester}">` +
                 `<span class="course-name">${course.getName()}</span> ` +
                 `<span class="course-type">(${course.type})</span> ` +
                 `<span class="course-nr">${course.getCourseNr()} (${evt.semester})</span>` +
-                `</h2><h3>${courseName}</h3>`;
+                `</h2></a><h3>${courseName}</h3>`;
         } else {
             html += `<h2><span class="course-name">${evt.groupName}</span></h2>`;
             if (evt.organizer) {

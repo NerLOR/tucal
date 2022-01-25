@@ -33,12 +33,13 @@ require "../.php/header.php";
             $new = ($row['course_nr'] . '-' . $row['semester'] !== $last);
             if ($new) {
                 if ($last !== null) echo "</div>\n";
-                echo "<hr/><div>";
 
                 $cnr = substr($row['course_nr'], 0, 3) . '.' . substr($row['course_nr'], 3);
                 $fullName = in_array($LOCALE, ['bar-AT', 'de-AT', 'de-DE']) ? $row['name_de'] : $row['name_en'];
                 $name = htmlspecialchars($row['acronym_1'] ?? $row['acronym_2'] ?? $row['short'] ?? $fullName);
                 $fullName = htmlspecialchars($fullName);
+
+                echo "<hr/><a id='$row[course_nr]-$row[semester]' class='anchor'></a><div>";
 
                 echo "<h2><span class='course-name'>$name</span> " .
                      "<span class='course-type'>($row[type])</span> " .

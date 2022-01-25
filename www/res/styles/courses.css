@@ -1,4 +1,17 @@
 
+section.course-list {
+    padding-bottom: 2em;
+}
+
+section.course-list > div {
+    margin: -2em;
+    padding: 1em 2em 2em 2em;
+}
+
+section.course-list > a.anchor:target + div {
+    box-shadow: 0 0 8px var(--black);
+}
+
 section.course-list h2 {
     font-size: 1em;
     text-align: left;
@@ -13,6 +26,12 @@ section.course-list h3 {
     margin-top: 0;
     font-weight: normal;
     color: var(--black);
+}
+
+section.course-list .anchor {
+    position: relative;
+    top: -12em;
+    visibility: hidden;
 }
 
 section.course-list span.course-nr {
