@@ -641,16 +641,6 @@ class WeekSchedule {
                 `${room.getAddress().replace(/\n/g, '<br/>')}</div></div>`;
         }
 
-        if (evt.status) {
-            const status = EVENT_STATUSES[evt.status] || 'Unknown';
-            html += `<div class="container"><div>${_('Status')}:</div><div>${_(status)}</div></div>`;
-        }
-
-        if (evt.mode) {
-            const mode = EVENT_MODES[evt.mode] || 'Unknown';
-            html += `<div class="container"><div>${_('Mode')}:</div><div>${_(mode)}</div></div>`;
-        }
-
         if (evt.courseGroup && evt.courseGroup !== 'LVA') {
             let group = evt.courseGroup;
             while (group.startsWith('Gruppe ')) group = group.substr(7);
@@ -659,6 +649,16 @@ class WeekSchedule {
 
         if (evt.summary) {
             html += `<div class="container"><div>${_('Summary')}:</div><div class="evt-detail-summary"></div></div>`
+        }
+
+        if (evt.status) {
+            const status = EVENT_STATUSES[evt.status] || 'Unknown';
+            html += `<div class="container"><div>${_('Status')}:</div><div>${_(status)}</div></div>`;
+        }
+
+        if (evt.mode) {
+            const mode = EVENT_MODES[evt.mode] || 'Unknown';
+            html += `<div class="container"><div>${_('Mode')}:</div><div>${_(mode)}</div></div>`;
         }
 
         if (evt.desc) {
@@ -772,7 +772,7 @@ class WeekSchedule {
         }
 
         const hasModeChanged = (): boolean => {
-            return evt.mode !== ((mode.value !== 'unknown') ? mode.value : null);
+            return evt.mode !== ((mode.value !== 'unknown') ? mode.value.replace(/-/g, '_') : null);
         }
 
         const hasSummaryChanged = (): boolean => {
@@ -830,7 +830,7 @@ class WeekSchedule {
         if (room) roomSelect.value = `${room.nr}`;
         if (evt.summary) summary.value = evt.summary;
         if (evt.status) status.value = evt.status;
-        if (evt.mode) mode.value = evt.mode;
+        if (evt.mode) mode.value = evt.mode.replace(/_/g, '-');
 
         form.addEventListener('input', onChange);
         onChange();
