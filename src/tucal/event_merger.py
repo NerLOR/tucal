@@ -33,7 +33,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         'lt': None,
         'url': None,
         'type': None,
-        'online': None,
+        'mode': None,
         'tiss_url': None,
         'tuwel_url': None,
         'source_url': None,
@@ -68,7 +68,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
 
         for link in ZOOM_LINK.finditer(tuwel.get('desc', None) or tuwel.get('desc_html', None) or ''):
             data['zoom'] = 'https://' + link.group(1)
-            data['online'] = True
+            data['mode'] = 'online_only'
 
         if 'url' in tuwel:
             data['url'] = tuwel['url']
@@ -100,7 +100,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             data['type'] = None
 
         if room_nr is None:
-            data['online'] = True
+            data['mode'] = 'online_only'
 
     if aurora:
         data['source_url'] = 'https://aurora.iguw.tuwien.ac.at/course/dwi/'
@@ -116,7 +116,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             data['url'] = url
 
         data['type'] = aurora['type'] if 'type' in aurora else 'course'
-        data['online'] = True
+        data['mode'] = 'online_only'
 
     if htu:
         data['source_url'] = htu['url']
@@ -127,15 +127,13 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             data['organizer'] = htu['attributedTo']['name']
 
         if 'options' in htu and htu['options'] is not None:
-            data['online'] = htu['options']['isOnline']
+            if htu['options']['isOnline']:
+                data['mode'] = 'online_only'
 
         if htu['description']:
             data['desc'] = htu['description']
             for link in ZOOM_LINK.finditer(htu['description']):
                 data['zoom'] = 'https://' + link.group(1)
-
-        if data['online'] is None:
-            data['online'] = (data['zoom'] is not None)
 
     if tuwel:
         if data['type'] is None:

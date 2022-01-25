@@ -6,6 +6,18 @@ const END_TIME = 22 * 60;  // 22:00 [min]
 const CACHE_EVENTS = 15;  // 15 [min]
 const LOOK_AHEAD = 8;  // 8 [week]
 
+const EVENT_STATUSES: {[index: string]: string} = {
+    "confirmed": "Confirmed",
+    "tentative": "Tentative",
+    "cancelled": "Cancelled",
+}
+
+const EVENT_MODES: {[index: string]: string} = {
+    "on_site_only": "On-site-only",
+    "hybrid": "Hybrid",
+    "online_only": "Online-only",
+}
+
 
 class WeekSchedule {
     cal: HTMLElement;
@@ -482,7 +494,7 @@ class WeekSchedule {
 
                 evt.classList.add("event");
                 if (event.type) evt.classList.add(event.type);
-                if (event.online) evt.classList.add("online");
+                if (event.mode === 'online_only') evt.classList.add("online");
                 if (event.status === 'cancelled') evt.classList.add("cancelled");
 
                 const startMinute = start.getHours() * 60 + start.getMinutes();
@@ -630,8 +642,13 @@ class WeekSchedule {
         }
 
         if (evt.status) {
-            const status = evt.status.substr(0, 1).toUpperCase() + evt.status.substr(1).toLowerCase();
+            const status = EVENT_STATUSES[evt.status] || 'Unknown';
             html += `<div class="container"><div>${_('Status')}:</div><div>${_(status)}</div></div>`;
+        }
+
+        if (evt.mode) {
+            const mode = EVENT_MODES[evt.mode] || 'Unknown';
+            html += `<div class="container"><div>${_('Mode')}:</div><div>${_(mode)}</div></div>`;
         }
 
         if (evt.courseGroup && evt.courseGroup !== 'LVA') {
@@ -662,6 +679,13 @@ class WeekSchedule {
             `<label class="radio"><input type="radio" name="status" value="tentative"/> ${_('Tentative')}</label>` +
             `<label class="radio"><input type="radio" name="status" value="cancelled"/> ${_('Cancelled')}</label>` +
             `<label class="radio"><input type="radio" name="status" value="unknown" checked/> ${_('Unknown')}</label>` +
+            `</div></div>`;
+
+        html += `<div class="container"><div>${_('Mode')}:</div><div>` +
+            `<label class="radio"><input type="radio" name="mode" value="on-site-only"/> ${_('On-site-only')}</label>` +
+            `<label class="radio"><input type="radio" name="mode" value="hybrid"/> ${_('Hybrid')}</label>` +
+            `<label class="radio"><input type="radio" name="mode" value="online-only"/> ${_('Online-only')}</label>` +
+            `<label class="radio"><input type="radio" name="mode" value="unknown" checked/> ${_('Unknown')}</label>` +
             `</div></div>`;
 
         html += `<div class="container"><div>${_('Room')}:</div><div>` +
@@ -701,6 +725,7 @@ class WeekSchedule {
         const roomSelect = form['room'];
         const summary = form['summary'];
         const status = form['status'];
+        const mode = form['mode'];
         let manual = false;
 
         if (ROOMS) {
@@ -746,6 +771,10 @@ class WeekSchedule {
             return evt.status !== ((status.value !== 'unknown') ? status.value : null);
         }
 
+        const hasModeChanged = (): boolean => {
+            return evt.mode !== ((mode.value !== 'unknown') ? mode.value : null);
+        }
+
         const hasSummaryChanged = (): boolean => {
             return evt.summary !== (summary.value !== '' ? summary.value : null);
         }
@@ -755,6 +784,7 @@ class WeekSchedule {
                 hasLiveUrlChanged() ||
                 hasRoomChanged() ||
                 hasStatusChanged() ||
+                hasModeChanged() ||
                 hasSummaryChanged();
         }
 
@@ -800,6 +830,7 @@ class WeekSchedule {
         if (room) roomSelect.value = `${room.nr}`;
         if (evt.summary) summary.value = evt.summary;
         if (evt.status) status.value = evt.status;
+        if (evt.mode) mode.value = evt.mode;
 
         form.addEventListener('input', onChange);
         onChange();
@@ -828,6 +859,10 @@ class WeekSchedule {
 
             if (hasStatusChanged()) {
                 data['status'] = (status.value !== 'unknown') ? status.value : null;
+            }
+
+            if (hasModeChanged()) {
+                data['mode'] = (mode.value !== 'unknown') ? mode.value.replace(/-/g, '_') : null;
             }
 
             if (hasSummaryChanged()) {

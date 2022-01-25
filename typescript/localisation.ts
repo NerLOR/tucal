@@ -28,6 +28,10 @@ const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} =
         "Tentative": "Vorläufig",
         "Cancelled": "Abgesagt",
         "Unknown": "Unbekannt",
+        "Mode": "Modus",
+        "On-site-only": "Nur vor Ort",
+        "Hybrid": "Hybrid",
+        "Online-only": "Nur online",
     },
     "de-AT": {
         "ground floor": "Erdgeschoß",
@@ -55,6 +59,10 @@ const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} =
         "Tentative": "Tentative",
         "Cancelled": "Cancelled",
         "Unknown": "Unknown",
+        "Mode": "Mode",
+        "On-site-only": "On-site-only",
+        "Hybrid": "Hybrid",
+        "Online-only": "Online-only",
     },
     "bar-AT": {
         "Today": "Haid",
@@ -78,6 +86,10 @@ const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} =
         "Tentative": "Voaläffig",
         "Cancelled": "Ogsogt",
         "Unknown": "Was ma ned",
+        "Mode": "Modus",
+        "On-site-only": "Nua vua Uat",
+        "Hybrid": "Hübrid",
+        "Online-only": "Nua onlein",
     },
 };
 

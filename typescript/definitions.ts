@@ -58,7 +58,7 @@ interface TucalEventJSON {
         lt: boolean | null | undefined,
         url: string | null | undefined,
         type: string | null | undefined,
-        online: boolean | null | undefined,
+        mode: string | null | undefined,
         tiss_url: string | null | undefined,
         tuwel_url: string | null | undefined,
         source_url: string | null | undefined,
@@ -306,7 +306,7 @@ class TucalEvent {
     sourceName: string | null;
     organizer: string | null;
     type: string | null;
-    online: boolean | null;
+    mode: string | null;
 
     constructor(event: TucalEventJSON) {
         this.id = event.id;
@@ -339,7 +339,7 @@ class TucalEvent {
         this.sourceName = event.data.source_name || null;
         this.organizer = event.data.organizer || null;
         this.type = event.data.type || null;
-        this.online = event.data.online || null;
+        this.mode = event.data.mode || null;
     }
 
     getRoom(): Room | null {
