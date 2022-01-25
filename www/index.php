@@ -1,6 +1,27 @@
 <?php
+
+global $STATUS;
+
 require ".php/session.php";
 require ".php/main.php";
+
+try {
+    $stmt = db_exec("
+            SELECT users_v, users_v_sso, users_v_week, users_v_day
+            FROM tucal.dau
+            WHERE users_v IS NOT NULL
+            ORDER BY date DESC, hour_utc DESC
+            LIMIT 1");
+    $row = $stmt->fetchAll()[0];
+    $userNum = $row[0];
+    $credNum = $row[1];
+    $weeklyNum = $row[2];
+    $todayNum = $row[3];
+} catch (Exception $e) {
+    $STATUS = 500;
+    $ERROR = $e->getMessage();
+}
+
 require ".php/header.php";
 ?>
 <main class="w3">
@@ -24,19 +45,6 @@ require ".php/header.php";
     </section>
     <section lang="de-AT" class="stats">
         <h1>Benutzerzahlen</h1>
-        <?php
-        $stmt = db_exec("
-            SELECT users_v, users_v_sso, users_v_week, users_v_day
-            FROM tucal.dau
-            WHERE users_v IS NOT NULL
-            ORDER BY date DESC, hour_utc DESC
-            LIMIT 1");
-        $row = $stmt->fetchAll()[0];
-        $userNum = $row[0];
-        $credNum = $row[1];
-        $weeklyNum = $row[2];
-        $todayNum = $row[3];
-        ?>
         <div>
             <div>
                 <h2><?php echo $todayNum;?></h2>

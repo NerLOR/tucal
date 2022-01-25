@@ -1,6 +1,7 @@
 <?php
 
 global $STATUS;
+global $ERROR;
 global $TITLE;
 global $LOCALE;
 global $CONFIG;
@@ -122,6 +123,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
             <h1><?php echo $STATUS;?></h1>
             <h2><?php echo _ctx('http', $msg)?> :&#xFEFF;(</h2>
             <p><?php echo _ctx('http', "${msg} (description)")?></p>
+            <p><?php echo htmlspecialchars($ERROR)?></p>
         </section>
     </main>
 <?php
