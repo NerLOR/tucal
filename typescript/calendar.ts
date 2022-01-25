@@ -624,7 +624,7 @@ class WeekSchedule {
             html += `<div class="container"><div>${_('Room')}:</div><div class="room">`;
 
             const codes = room.getCodeFormat().replace(/ /g, '&nbsp;');
-            html += `<a href="https://tuw-maps.tuwien.ac.at/?q=${room.roomCodes[0]}" target="_blank">` +
+            html += `<a href="https://toss.fsinf.at/?q=${room.roomCodes[0]}" target="_blank">` +
                 `<span class="room-name">${room.getNameLong()}</span> <span class="room-codes">(${codes})</span></a><br/>` +
                 `${room.getAddress().replace(/\n/g, '<br/>')}</div></div>`;
         }
