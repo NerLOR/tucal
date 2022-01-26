@@ -103,6 +103,7 @@ function _(msgId: string): string {
 }
 
 function formatFloor(floor: string): string {
+    // TODO DG/EG/SO/ZE
     const nr = (floor === 'EG') ? 0 : (floor[0] === 'U') ? -parseInt(floor.substr(1)) : parseInt(floor);
 
     if (LOCALE_GROUP === 'de') {
