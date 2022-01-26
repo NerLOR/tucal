@@ -5,10 +5,6 @@ const LANG_GROUP: string = LANG.split("-")[0] || "de";
 const LOCALE: string = LANG.startsWith("bar") ? "de" + LANG.substr(3) : LANG;
 const LOCALE_GROUP: string = LOCALE.split("-")[0] || "de";
 
-// Localisation strings will be inserted after the following line
-const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} = {
-};
-
 function _(msgId: string): string {
     const msgLang = MESSAGES[LANG];
     const msgLangGroup = MESSAGES[LANG_GROUP];
@@ -49,3 +45,7 @@ function formatFloor(floor: string): string {
         throw new Error();
     }
 }
+
+// Localisation strings will be inserted after the following line
+const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} = {
+};
