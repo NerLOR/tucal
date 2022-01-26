@@ -207,6 +207,9 @@ msgstr "Schwarzes Design"
 msgid "Browser theme"
 msgstr "Browser Design"
 
+msgid "Open link"
+msgstr "Link öffnen"
+
 
 msgctxt "http"
 msgid "Bad Request"

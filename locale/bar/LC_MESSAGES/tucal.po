@@ -89,6 +89,9 @@ msgstr "Gibt's ned"
 msgid "Wrong"
 msgstr "Foisch"
 
+msgid "Open link"
+msgstr "Link aufmochn"
+
 
 
 msgctxt "http"

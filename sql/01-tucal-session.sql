@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS tucal.account CASCADE;
 CREATE TABLE tucal.account
 (
     account_nr    BIGINT                   NOT NULL GENERATED ALWAYS AS IDENTITY,
-    account_id    TEXT                              DEFAULT NULL,
+    account_id    TEXT                     NOT NULL DEFAULT NULL,
 
     mnr           INT                      NOT NULL,
     username      CITEXT                   NOT NULL CHECK (username ~ '[[:alpha:]][[:alnum:]_ -]{1,30}[[:alnum:]]'),
@@ -41,8 +41,7 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER t_insert
+CREATE TRIGGER t_insert_id
     BEFORE INSERT
     ON tucal.account
     FOR EACH ROW

@@ -32,6 +32,7 @@ const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} =
         "On-site-only": "Nur vor Ort",
         "Hybrid": "Hybrid",
         "Online-only": "Nur online",
+        "Copy link": "Link kopieren",
     },
     "de-AT": {
         "ground floor": "Erdgeschoß",
@@ -63,6 +64,7 @@ const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} =
         "On-site-only": "On-site-only",
         "Hybrid": "Hybrid",
         "Online-only": "Online-only",
+        "Copy link": "Copy link",
     },
     "bar-AT": {
         "Today": "Haid",
@@ -90,6 +92,7 @@ const MESSAGES: {readonly [index: string]: {readonly [index: string]: string}} =
         "On-site-only": "Nua vua Uat",
         "Hybrid": "Hübrid",
         "Online-only": "Nua onlein",
+        "Copy link": "Link kopian",
     },
 };
 

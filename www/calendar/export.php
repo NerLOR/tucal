@@ -2,7 +2,8 @@
 
 global $CONFIG;
 
-require "../.php/session.php";
+require "../.php/default.php";
+
 
 $info = explode('/', $_SERVER['PATH_INFO'] ?? '');
 
@@ -34,15 +35,40 @@ if ($file !== '' && (sizeof($file_parts) !== 2 || !in_array($file_parts[1], ['ic
 }
 $ext = ($file !== '') ? $file_parts[1] : null;
 
-if ($token !== 'Test123') {
+$stmt = db_exec("SELECT * FROM tucal.calendar_export WHERE token = :t", ['t' => $token]);
+$rows = $stmt->fetchAll();
+if (sizeof($rows) === 0) {
     header("Status: 404");
     header("Content-Length: 0");
     exit();
 }
+$exp = $rows[0];
+$mnr = $exp['subject_mnr'];
+$opts = json_decode($exp['options']);
 
 if ($ext !== null && $file_parts[0] !== 'personal') {
     header("Status: 307");
     header("Location: /calendar/export/$token/personal.$ext");
+    header("Content-Length: 0");
+    exit();
+}
+
+$stmt = db_exec("
+            SELECT SUM((account_nr_1 = :nr)::int)
+            FROM tucal.friend f
+                JOIN tucal.account a ON a.account_nr = f.account_nr_2
+            WHERE mnr = :mnr
+            GROUP BY account_nr_2", [
+        'nr' => $exp['account_nr'],
+        'mnr' => $mnr,
+]);
+$rows = $stmt->fetchAll();
+if (sizeof($rows) === 0) {
+    header("Status: 410");
+    header("Content-Length: 0");
+    exit();
+} elseif ($rows[0][0] !== 1) {
+    header("Status: 403");
     header("Content-Length: 0");
     exit();
 }
@@ -96,7 +122,7 @@ $stmt = db_exec("
               (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
         GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data,
                  l.course_nr, l.semester, l.name, g.group_id
-        ORDER BY e.start_ts, length(l.name), e.data -> 'summary'", ["mnr" => 12102620]);
+        ORDER BY e.start_ts, length(l.name), e.data -> 'summary'", ["mnr" => $mnr]);
 
 header("Cache-Control: private, no-cache");
 if ($ext === 'ics') {

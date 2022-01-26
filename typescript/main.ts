@@ -22,6 +22,7 @@ initData();
 window.addEventListener("DOMContentLoaded", () => {
     initNav();
     initJobs();
+    initCopyLink();
 
     const path = window.location.pathname;
     if (STATUS === 200) {
@@ -206,6 +207,20 @@ function initBrowserTheme() {
         }
         media.addEventListener('change', mediaHandler);
         mediaHandler(new MediaQueryListEvent('', media));
+    }
+}
+
+function initCopyLink() {
+    const links = document.getElementsByTagName("a");
+    for (const a of links) {
+        if (!a.classList.contains("copy-link")) continue;
+        const link = a.href;
+        a.innerText = _("Copy link");
+
+        a.addEventListener('click', (evt) => {
+            evt.preventDefault();
+            navigator.clipboard.writeText(link).then();
+        });
     }
 }
 

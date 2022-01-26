@@ -2,6 +2,7 @@
 
 global $TITLE;
 global $USER;
+global $CONFIG;
 global $USE_PATH_INFO;
 
 require "../.php/session.php";
@@ -85,6 +86,11 @@ if ($subject === $USER['mnr']) {
     $TITLE[] = _('Calendar');
 }
 
+
+if (!isset($STATUS) || $STATUS === 200) {
+    $stmt = db_exec("SELECT * FROM tucal.calendar_export WHERE account_nr = :nr", ['nr' => $USER['nr']]);
+}
+
 require "../.php/header.php";
 ?>
 <main class="wcal">
@@ -120,12 +126,18 @@ require "../.php/header.php";
         <h2>Export</h2>
         <table class="calendar-exports">
             <thead>
-                <tr><th>Name</th><th>URL</th><th>Settings</th></tr>
+                <tr><th>Name</th><th>Link</th><th>Settings</th></tr>
             </thead>
             <tbody>
 <?php
 
-//$stmt = db_exec("");
+while ($row = $stmt->fetch()) {
+    echo "<tr>";
+    echo "<td>$row[subject_mnr]</td>";
+    $path = "/calendar/export/$row[token]/personal.ics";
+    echo "<td><a href='$path' class='copy-link'>" . _("Open link") . "</a></td>";
+    echo "</tr>\n";
+}
 
 ?>
             </tbody>

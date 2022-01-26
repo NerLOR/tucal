@@ -11,7 +11,7 @@ DROP TRIGGER IF EXISTS t_delete ON tuwel.event;
 CREATE TABLE tucal.event
 (
     event_nr         BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
-    event_id         TEXT                                         DEFAULT NULL,
+    event_id         TEXT                                NOT NULL DEFAULT NULL,
 
     parent_event_nr  BIGINT                                       DEFAULT NULL,
 
@@ -60,7 +60,7 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-CREATE TRIGGER t_insert
+CREATE TRIGGER t_insert_id
     BEFORE INSERT
     ON tucal.event
     FOR EACH ROW
