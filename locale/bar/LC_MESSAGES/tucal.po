@@ -1,3 +1,9 @@
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2022-01-26 18:50+01\n"
+"Last-Translator: Lorenz Stechauner <lorenz.stechauner@necronda.net>\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
 
 msgid "My Calendar"
 msgstr "Mẽi Kalenda"
@@ -92,6 +98,83 @@ msgstr "Foisch"
 msgid "Open link"
 msgstr "Link aufmochn"
 
+msgid "Today"
+msgstr "Haid"
+
+msgid "Loading..."
+msgstr "Lona..."
+
+msgid "Error"
+msgstr "Föhla"
+
+msgid "Room"
+msgstr "Raum"
+
+msgid "Group"
+msgstr "Gruppn"
+
+msgid "Summary"
+msgstr "Kuazinfo"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Apply"
+msgstr "Übanemma"
+
+msgid "Apply changes for all previous events"
+msgstr "Ändarungen fia olle voahearign Teamine übanemma"
+
+msgid "Apply changes for all following events"
+msgstr "Ändarungen fia olle nochfoigendn Teamine übanemma"
+
+msgid "floor"
+msgstr "Stook"
+
+msgid "ground floor"
+msgstr "Eadgschoss"
+
+msgid "basement floor"
+msgstr "Untagschoss"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Live"
+msgstr "Leif"
+
+msgid "Not live"
+msgstr "Ned Leif"
+
+msgid "No room"
+msgstr "Ka Raum"
+
+msgid "Confirmed"
+msgstr "Bestätigt"
+
+msgid "Tentative"
+msgstr "Voaläffig"
+
+msgid "Cancelled"
+msgstr "Ogsogt"
+
+msgid "Unknown"
+msgstr "Was ma ned"
+
+msgid "Mode"
+msgstr "Modus"
+
+msgid "On-site-only"
+msgstr "Nua vua Uat"
+
+msgid "Hybrid"
+msgstr "Hübrid"
+
+msgid "Online-only"
+msgstr "Nua onlein"
+
+msgid "Copy link"
+msgstr "Link kopian"
 
 
 msgctxt "http"

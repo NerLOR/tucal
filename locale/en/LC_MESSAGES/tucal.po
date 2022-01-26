@@ -1,3 +1,9 @@
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2022-01-26 18:50+01\n"
+"Last-Translator: Lorenz Stechauner <lorenz.stechauner@necronda.net>\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
 
 msgid "My Calendar"
 msgstr "My Calendar"
@@ -175,6 +181,84 @@ msgstr "Browser theme"
 
 msgid "Open link"
 msgstr "Open link"
+
+msgid "Today"
+msgstr "Today"
+
+msgid "Loading..."
+msgstr "Loading..."
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Room"
+msgstr "Room"
+
+msgid "Group"
+msgstr "Group"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Apply"
+msgstr "Apply"
+
+msgid "Apply changes for all previous events"
+msgstr "Apply changes for all previous events"
+
+msgid "Apply changes for all following events"
+msgstr "Apply changes for all following events"
+
+msgid "floor"
+msgstr "floor"
+
+msgid "ground floor"
+msgstr "ground floor"
+
+msgid "basement floor"
+msgstr "basement"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Live"
+msgstr "Live"
+
+msgid "Not live"
+msgstr "Not Live"
+
+msgid "No room"
+msgstr "No room"
+
+msgid "Confirmed"
+msgstr "Confirmed"
+
+msgid "Tentative"
+msgstr "Tentative"
+
+msgid "Cancelled"
+msgstr "Cancelled"
+
+msgid "Unknown"
+msgstr "Unknown"
+
+msgid "Mode"
+msgstr "Mode"
+
+msgid "On-site-only"
+msgstr "On-site-only"
+
+msgid "Hybrid"
+msgstr "Hybrid"
+
+msgid "Online-only"
+msgstr "Online-only"
+
+msgid "Copy link"
+msgstr "Copy link"
 
 
 msgctxt "http"

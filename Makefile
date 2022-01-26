@@ -1,7 +1,7 @@
 
 build-www:
 	mkdir -p dest/
-	rm -rf dest/www
+	rm -rf dest/www dest/typescript
 
 	for file in $(shell find www/ -name "*.php" -type f); do \
 		php -l "$$file" ;\
@@ -11,7 +11,9 @@ build-www:
 	cp -pr www dest/www
 	cp -pr tucal.ini dest/www/.php/
 
-	tsc -p typescript/
+	cp -pr typescript dest/typescript
+	tools/msgfmtjs.sh locale dest/typescript/localisation.ts dest/typescript/localisation.ts
+	tsc -p dest/typescript/
 
 	sed -i 's|"\(/res/[^"]*\)"|"\1?v=$(shell date -u +%Y%m%d-%H%M%S)"|g' dest/www/.php/header.php dest/www/.php/footer.php
 	tools/minify-css.sh
@@ -19,7 +21,7 @@ build-www:
 
 	convert -background none dest/www/res/svgs/tucal.svg -alpha set -define icon:auto-resize=256,128,64,32,24,16 dest/www/favicon.ico
 
-	for locale in de de_AT de_DE en en_US en_GB bar; do \
+	for locale in $$(ls locale); do \
 		mkdir -p "dest/www/.php/locale/$$locale/LC_MESSAGES/" ;\
 		msgfmt "locale/$$locale/LC_MESSAGES/tucal.po" -o "dest/www/.php/locale/$$locale/LC_MESSAGES/tucal.mo" ;\
 	done

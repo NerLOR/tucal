@@ -1,0 +1,11 @@
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2022-01-26 18:50+01\n"
+"Last-Translator: Lorenz Stechauner <lorenz.stechauner@necronda.net>\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "ground floor"
+msgstr "Erdgeschoß"
+
+msgid "basement floor"
+msgstr "Untergeschoß"

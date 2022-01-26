@@ -3,7 +3,7 @@
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
     "target": "ES2020",
     "module": "system",
-    "outFile": "../dest/www/res/scripts/min.js",
+    "outFile": "../www/res/scripts/min.js",
     "rootDir": "./",
     "strict": true,
     "noImplicitAny": true,
@@ -19,6 +19,6 @@
     "noPropertyAccessFromIndexSignature": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-  }
+    "forceConsistentCasingInFileNames": true,
+  },
 }
