@@ -575,7 +575,7 @@ class WeekSchedule {
         const course = evt.getCourse();
         const room = evt.getRoom();
 
-        const courseName = course && (LOCALE.startsWith('de-') ? course.name_de : course.name_en);
+        const courseName = course && (LOCALE_GROUP === 'de' ? course.name_de : course.name_en);
 
         const div = document.createElement("div");
         div.classList.add("event-detail");
