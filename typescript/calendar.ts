@@ -651,14 +651,10 @@ class WeekSchedule {
             html += `<div class="container"><div>${_('Summary')}:</div><div class="evt-detail-summary"></div></div>`
         }
 
-        if (evt.status) {
-            const status = EVENT_STATUSES[evt.status] || 'Unknown';
-            html += `<div class="container"><div>${_('Status')}:</div><div>${_(status)}</div></div>`;
-        }
-
-        if (evt.mode) {
-            const mode = EVENT_MODES[evt.mode] || 'Unknown';
-            html += `<div class="container"><div>${_('Mode')}:</div><div>${_(mode)}</div></div>`;
+        if (evt.status || evt.mode) {
+            const status = evt.status && EVENT_STATUSES[evt.status] || 'Unknown';
+            const mode = evt.mode && EVENT_MODES[evt.mode] || 'Unknown';
+            html += `<div class="container"><div>${_('Status')}:</div><div>${_(status)} – ${_(mode)}</div></div>`;
         }
 
         if (evt.desc) {

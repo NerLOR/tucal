@@ -88,3 +88,10 @@ section.course-list form div.ignore-mode label {
 section.course-list form div.ignore-mode input {
     margin: 0;
 }
+
+@media screen and (max-width: 600px) {
+    section.course-list > div {
+        margin-left: -0.5em;
+        margin-right: -0.5em;
+    }
+}
