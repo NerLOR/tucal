@@ -30,7 +30,7 @@ function generate_token(int $len, string $table = null, string $column = 'token'
 
         if ($stmt !== null) {
             $stmt->execute([$token]);
-            if ($stmt->fetchColumn() === 0)
+            if ($stmt->fetchColumn() == 0)
                 break;
         }
     } while ($stmt !== null);
