@@ -144,7 +144,7 @@ if ($ext === 'ics') {
     $fn = fopen("europe-vienna.txt", "r");
     while ($fn && !feof($fn)) {
         $result = rtrim(fgets($fn), "\r\n");
-        echo "$result\r\n";
+        if (strlen($result) > 0) echo "$result\r\n";
     }
     fclose($fn);
 

@@ -10,6 +10,9 @@ build-www:
 
 	cp -pr www dest/www
 	cp -pr tucal.ini dest/www/.php/
+	wget "http://tzurl.org/zoneinfo/Europe/Vienna" -O "vienna.tmp.txt"
+	tail -n +4 "vienna.tmp.txt" | head -n -1 > "dest/www/calendar/export/europe-vienna.txt"
+	rm "vienna.tmp.txt"
 
 	cp -pr typescript dest/typescript
 	tools/msgfmtjs.sh locale dest/typescript/localisation.ts dest/typescript/localisation.ts
