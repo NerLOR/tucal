@@ -4,7 +4,7 @@ CREATE TABLE tucal.calendar_export
 (
     export_nr   BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
     export_id   TEXT                                NOT NULL DEFAULT NULL,
-    token       TEXT                                NOT NULL CHECK (token ~ '[0-9A-Za-z]{24}'),
+    token       TEXT                                NOT NULL CHECK (token ~ '[0-9A-Za-z]{16}'),
 
     account_nr  BIGINT                              NOT NULL,
 

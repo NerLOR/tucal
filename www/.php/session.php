@@ -63,7 +63,7 @@ if (isset($_COOKIE['tucal_session'])) {
 }
 
 if (!isset($_SESSION)) {
-    $token = generate_token(64, 'tucal.session');
+    $token = generate_token(64, 'tucal.session', 'token', true);
     $stmt = _db_exec("INSERT INTO tucal.session (token) VALUES (?) RETURNING session_nr", [$token]);
 
     $_SESSION = [

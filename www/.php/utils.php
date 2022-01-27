@@ -7,15 +7,20 @@ const JSON_FLAGS = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
  * @param int $len The length of the token to generate
  * @param null|string $table Optional name of the table to check against
  * @param string $column Optional name of the column to check against
+ * @param bool $db_mode If true, use _DB
  * @return string Returns a cryptographically secure token with length $len
  * @throws Exception If no appropriate source of randomness can be found
  */
-function generate_token(int $len, string $table = null, string $column = 'token'): string {
+function generate_token(int $len, string $table = null, string $column = 'token', bool $db_mode = false): string {
     $ALPHA = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
     $MIN = 0;
     $MAX = strlen($ALPHA) - 1;
 
-    $stmt = ($table !== null) ? db_prepare("SELECT COUNT(*) FROM $table WHERE $column = ?") : null;
+    if ($db_mode) {
+        $stmt = ($table !== null) ? _db_prepare("SELECT COUNT(*) FROM $table WHERE $column = ?") : null;
+    } else {
+        $stmt = ($table !== null) ? db_prepare("SELECT COUNT(*) FROM $table WHERE $column = ?") : null;
+    }
 
     do {
         $token = '';

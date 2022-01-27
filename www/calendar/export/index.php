@@ -2,16 +2,16 @@
 
 global $CONFIG;
 
-require "../.php/default.php";
+require "../../.php/default.php";
 
 
 $info = explode('/', $_SERVER['PATH_INFO'] ?? '');
 
 if (sizeof($info) < 2) {
-    header("Status: 403");
+    header("Status: 400");
     header("Content-Length: 0");
     exit();
-} if (sizeof($info) === 2) {
+} elseif (sizeof($info) === 2) {
     $token = $info[1];
     header("Status: 308");
     header("Location: /calendar/export/$token/");
@@ -58,7 +58,11 @@ $stmt = db_exec("
             FROM tucal.friend f
                 JOIN tucal.account a ON a.account_nr = f.account_nr_2
             WHERE mnr = :mnr
-            GROUP BY account_nr_2", [
+            GROUP BY account_nr_2
+            UNION ALL
+            SELECT (account_nr = :nr)::int
+            FROM tucal.account
+            WHERE mnr = :mnr", [
         'nr' => $exp['account_nr'],
         'mnr' => $mnr,
 ]);
@@ -67,7 +71,7 @@ if (sizeof($rows) === 0) {
     header("Status: 410");
     header("Content-Length: 0");
     exit();
-} elseif ($rows[0][0] !== 1) {
+} elseif ($rows[0][0] !== 1 && $rows[1][0] !== 1) {
     header("Status: 403");
     header("Content-Length: 0");
     exit();
@@ -138,7 +142,7 @@ if ($ext === 'ics') {
     ical_line("CALSCALE", ["GREGORIAN"]);
 
     $fn = fopen("europe-vienna.txt", "r");
-    while (!feof($fn)) {
+    while ($fn && !feof($fn)) {
         $result = rtrim(fgets($fn), "\r\n");
         echo "$result\r\n";
     }

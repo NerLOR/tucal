@@ -142,6 +142,9 @@ while ($row = $stmt->fetch()) {
 ?>
             </tbody>
         </table>
+        <form action="/calendar/export/add?subject=<?php echo htmlspecialchars($subject);?>" method="post">
+            <button type="submit"><?php echo _('Add new calendar export');?></button>
+        </form>
     </section>
 </main>
 <?php
