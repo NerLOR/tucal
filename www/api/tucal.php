@@ -10,7 +10,6 @@ try {
 
     switch ($info) {
         case '/rooms': rooms(); break;
-        case '/calendar': calendar(); break;
         case '/job': job(); break;
         case '/courses': courses(); break;
         default: error(404);
