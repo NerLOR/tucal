@@ -3,7 +3,7 @@
 const JSON_FLAGS = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
 
 /**
- * Uses random_int() to generate a cryptographically secure base58 token
+ * Uses random_bytes() to generate a cryptographically secure base58 token
  * @param int $len The length of the token to generate
  * @param null|string $table Optional name of the table to check against
  * @param string $column Optional name of the column to check against
@@ -24,8 +24,9 @@ function generate_token(int $len, string $table = null, string $column = 'token'
 
     do {
         $token = '';
+        $bytes = random_bytes($len);
         for ($i = 0; $i < $len; $i++)
-            $token .= $ALPHA[random_int($MIN, $MAX)];
+            $token .= $ALPHA[$MIN + (((int) $bytes[$i]) % $MAX - $MIN)];
 
         if ($stmt !== null) {
             $stmt->execute([$token]);
