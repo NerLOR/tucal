@@ -1,0 +1,15 @@
+[Unit]
+Description=TUcal scheduler
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/tucal/src/
+EnvironmentFile=/etc/environment
+ExecStart=/bin/python3 -m tucal.scheduler
+Restart=always
+RestartSec=10
+User=<USER>
+Group=<GROUP>
+
+[Install]
+WantedBy=multi-user.target
