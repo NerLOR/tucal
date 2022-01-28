@@ -64,7 +64,10 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         data['tuwel_url'] = f'https://tuwel.tuwien.ac.at/calendar/view.php?view=day&time={unix_ts}'
 
         if not COURSE_NAME.match(tuwel['name']):
-            data['summary'] = tuwel['name']
+            if tuwel.get('module', None) == 'organizer':
+                data['summary'] = tuwel['name'][:tuwel['name'].rfind('(')].strip()
+            else:
+                data['summary'] = tuwel['name']
 
         for link in ZOOM_LINK.finditer(tuwel.get('desc', None) or tuwel.get('desc_html', None) or ''):
             data['zoom'] = 'https://' + link.group(1)

@@ -105,7 +105,9 @@ if __name__ == '__main__':
         cur.execute("""
             DELETE FROM tuwel.event_user eu
             WHERE user_id = %s AND
-                  (SELECT start_ts >= %s AND NOT name ILIKE '%%Ankreuzen%%'
+                  (SELECT start_ts >= %s AND
+                          NOT name ILIKE '%%Ankreuzen%%' AND
+                          NOT name ILIKE '%%Anmeldedeadline%%'
                    FROM tuwel.event e
                    WHERE e.event_id = eu.event_id)""", (user_id, time))
 
