@@ -70,12 +70,19 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             data['zoom'] = 'https://' + link.group(1)
             data['mode'] = 'online_only'
 
-        if 'url' in tuwel:
+        if tuwel.get('url', None):
             data['url'] = tuwel['url']
 
-        if 'desc_html' in tuwel:
+        if tuwel.get('module', None):
+            mod = tuwel['module']
+            if mod == 'organizer':
+                data['type'] = 'deadline'
+            elif mod == 'quiz' or mod == 'assign':  # TODO add "Kreuzerlübung"
+                data['type'] = 'assignment'
+
+        if tuwel.get('desc_html', None):
             data['desc'] = tuwel['desc_html']
-        elif 'desc' in tuwel:
+        elif tuwel.get('desc', None):
             data['desc'] = tuwel['desc']
 
     if tiss:
@@ -111,12 +118,14 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         if conference is not None:
             data['zoom'] = conference
 
-        url = aurora.get('url', None)
-        if url is not None:
-            data['url'] = url
+        if aurora.get('url', None):
+            data['url'] = aurora['url']
 
         data['type'] = aurora['type'] if 'type' in aurora else 'course'
         data['mode'] = 'online_only'
+
+        if start_ts == end_ts:
+            data['type'] = 'assignment'
 
     if htu:
         data['source_url'] = htu['url']
@@ -138,9 +147,6 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
     if tuwel:
         if data['type'] is None:
             data['type'] = 'course'
-
-    if start_ts == end_ts:
-        data['type'] = 'due'
 
     data.update(data['user'])
 

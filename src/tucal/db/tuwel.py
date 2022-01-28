@@ -55,8 +55,11 @@ def insert_event(evt: Dict[str, Any], access_time: datetime.datetime, user_id: i
         'access': access_time,
         'user': user_id,
         'data': json.dumps({
-            'desc_html': evt['description'],
-            'url': evt['url'],
+            'desc_html': evt.get('description', None),
+            'url': evt.get('url', evt.get('viewurl', None)),
+            'module': evt.get('modulename', None),
+            'component': evt.get('componentname', None),
+            'type': evt.get('eventtype', None),
         }),
     }
 

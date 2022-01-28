@@ -320,6 +320,9 @@ if __name__ == '__main__':
             for evt in day['events']
         ]
         job.end(TUWEL_MONTH_VAL)
+    for evt in events:
+        if 'course' in evt:
+            evt['course'].pop('courseimage', None)
     job.end(0)
 
     cur.execute("""

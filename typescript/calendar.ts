@@ -472,6 +472,8 @@ class WeekSchedule {
                 str = `<a href="${deadline.url}" target="_blank">${str}</a>`;
             }
             el.innerHTML = str;
+            if (deadline.type) el.classList.add(deadline.type);
+
             day.appendChild(el);
         }
 

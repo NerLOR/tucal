@@ -190,14 +190,19 @@ div.calendar thead ul {
 
 div.calendar thead li {
     margin: 0.5em 0 0.5em 3em;
+    color: var(--black);
     hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
 }
 
+div.calendar thead li:not(.assignment):not(.deadline) {
+    color: var(--grey-80);
+}
+
 div.calendar thead li > a {
     text-decoration: none;
-    color: var(--black);
+    color: inherit;
 }
 
 div.calendar thead li > a:hover {
