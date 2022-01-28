@@ -1,6 +1,7 @@
 
 from __future__ import annotations
 from typing import Union, List, Tuple, Dict, Optional, Any
+from configparser import ConfigParser
 import re
 import psycopg2
 import psycopg2.extras
@@ -8,15 +9,29 @@ import psycopg2.extras
 
 DB_CONN: Optional[Connection] = None
 
-DB_HOST = 'data.necronda.net'
-DB_NAME = 'tucal'
-DB_USER = 'necronda'
-DB_PASS = 'Password123'
+CONFIG_PLACES = ['tucal.ini', '/etc/tucal/tucal.ini', '../tucal.ini']
 DB_TZ = 'Europe/Vienna'
+DB_CONFIG = {}
 
 VALUES = re.compile(r'VALUES\s+(\((\s*%(\(.*?\))?s\s*,?\s*)*\))')
 
 _VALS = Union[List[Any], Tuple, Dict[str, Any]]
+
+
+for file_name in CONFIG_PLACES:
+    try:
+        with open(file_name) as f:
+            parser = ConfigParser()
+            parser.read_file(f)
+            DB_CONFIG = {
+                'host': parser['database']['host'],
+                'port': int(parser['database']['port']),
+                'dbname': parser['database']['name'],
+                'user': parser['database']['user'],
+                'password': parser['database']['password']
+            }
+    except FileNotFoundError or PermissionError:
+        pass
 
 
 class Cursor:
@@ -55,7 +70,7 @@ class Connection(psycopg2._psycopg.connection):
 
 def connect() -> Connection:
     global DB_CONN
-    DB_CONN = psycopg2.connect(host=DB_HOST, dbname=DB_NAME, user=DB_USER, password=DB_PASS)
+    DB_CONN = psycopg2.connect(**DB_CONFIG)
     return DB_CONN
 
 

@@ -1,11 +1,11 @@
 <?php
 
-global $CONFIG;
+global $TUCAL;
 
 ?>
 </div>
 <footer>
-    <a href="https://<?php echo $CONFIG['hostname'];?>/"><img src="/res/svgs/tucal.svg"/></a>
+    <a href="https://<?php echo $TUCAL['hostname'];?>/"><img src="/res/svgs/tucal.svg"/></a>
     <a href="/impressum"><?php echo _('Imprint');?></a>
     <a href="/contact"><?php echo _('Contact');?></a>
     <a href="https://github.com/NerLOR/tucal">GitHub</a>

@@ -1,6 +1,6 @@
 <?php
 
-global $CONFIG;
+global $TUCAL;
 
 require "../../.php/default.php";
 
@@ -138,7 +138,7 @@ if ($ext === 'ics') {
     ical_line("X-WR-CALNAME", []);
     ical_line("X-WR-CALDESC", []);
     ical_line("X-WR-TIMEZONE", ["Europe/Vienna"]);
-    ical_line("X-FROM-URL", ["https://$CONFIG[hostname]/calendar/export/$token/$file"]);
+    ical_line("X-FROM-URL", ["https://$TUCAL[hostname]/calendar/export/$token/$file"]);
     ical_line("CALSCALE", ["GREGORIAN"]);
 
     $fn = fopen("europe-vienna.txt", "r");
@@ -286,7 +286,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
         $create->setTimezone($utcTz);
         $update->setTimezone($utcTz);
-        ical_line("UID", ["$row[event_id]@$CONFIG[hostname]"]);
+        ical_line("UID", ["$row[event_id]@$TUCAL[hostname]"]);
         ical_line("CREATE", [$create->format($formatZ)]);
         ical_line("DTSTAMP", [$create->format($formatZ)]);
         ical_line("LAST-MODIFIED", [$update->format($formatZ)]);

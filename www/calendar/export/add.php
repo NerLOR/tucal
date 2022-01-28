@@ -1,7 +1,7 @@
 <?php
 
 global $USER;
-global $CONFIG;
+global $TUCAL;
 
 require "../../.php/session.php";
 
@@ -44,7 +44,7 @@ try {
 db_commit();
 
 $ref = $_SERVER['HTTP_REFERER'] ?? '';
-$refQuery = "https://$CONFIG[hostname]/calendar/";
+$refQuery = "https://$TUCAL[hostname]/calendar/";
 if (substr($ref, 0, strlen($refQuery)) !== $refQuery) {
     $ref = '/calendar/';
 } else {
