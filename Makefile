@@ -16,7 +16,7 @@ build-www:
 	rm "vienna.tmp.txt"
 	# compile typescript
 	cp -pr typescript dest/typescript
-	tools/msgfmtjs.sh locale dest/typescript/localisation.ts dest/typescript/localisation.ts
+	tools/msgfmtjs.sh locale dest/typescript/messages.ts dest/typescript/messages.ts
 	tsc -p dest/typescript/
 	# replace css links in php/html
 	sed -i 's|"\(/res/[^"]*\)"|"\1?v=$(shell date -u +%Y%m%d-%H%M%S)"|g' dest/www/.php/header.php dest/www/.php/footer.php
