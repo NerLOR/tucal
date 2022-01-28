@@ -27,7 +27,7 @@ db_transaction();
 try {
     db_exec("LOCK TABLE tucal.calendar_export IN SHARE ROW EXCLUSIVE MODE");
 
-    $stmt = db_exec("SELECT account_nr FROM tucal.calendar_export WHERE export_id = :id");
+    $stmt = db_exec("SELECT account_nr FROM tucal.calendar_export WHERE export_id = :id", ['id' => $id]);
     $rows = $stmt->fetchAll();
     if (sizeof($rows) === 0) {
         db_rollback();

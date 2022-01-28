@@ -123,10 +123,10 @@ require "../.php/header.php";
         </div>
     </section>
     <section>
-        <h2>Export</h2>
+        <h2><?php echo _('Calendar exports');?></h2>
         <table class="calendar-exports">
             <thead>
-                <tr><th>Name</th><th>Link</th><th>Settings</th></tr>
+                <tr><th>Name</th><th>Link</th><th>Settings</th><th></th></tr>
             </thead>
             <tbody>
 <?php
@@ -136,6 +136,8 @@ while ($row = $stmt->fetch()) {
     echo "<td>$row[subject_mnr]</td>";
     $path = "/calendar/export/$row[token]/personal.ics";
     echo "<td><a href='$path' class='copy-link'>" . _("Open link") . "</a></td>";
+    echo "<td></td>";
+    echo "<td><form action='/calendar/export/remove?id=$row[export_id]' method='post'><button type='submit'>" . _('Remove') . "</button></form></td>";
     echo "</tr>\n";
 }
 
@@ -143,7 +145,7 @@ while ($row = $stmt->fetch()) {
             </tbody>
         </table>
         <form action="/calendar/export/add?subject=<?php echo htmlspecialchars($subject);?>" method="post">
-            <button type="submit"><?php echo _('Add new calendar export');?></button>
+            <button type="submit"><?php echo _('Export calendar');?></button>
         </form>
     </section>
 </main>
