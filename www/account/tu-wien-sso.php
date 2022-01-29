@@ -118,7 +118,7 @@ if ($jobId === null) { ?>
             <div class="text <?php echo $errors['2fa-gen'] ? " error" : "";?>">
                 <input name="2fa-generator" id="2fa-generator" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['2fa-generator'] ?? '');?>"/>
                 <label for="2fa-generator"><?php echo _('SSO 2FA generator');?></label>
-                <label for="2fa-generator"><?php echo _($errors['2fa-gen']);?></label>
+                <label for="2fa-generator"><?php if ($errors['2fa-gen']) echo _($errors['2fa-gen']);?></label>
             </div>
             <div class="container red">
                 <input name="sso-store" id="sso-store" type="checkbox" value="accept" required/>

@@ -122,22 +122,22 @@ require "../.php/header.php";
             <div class="text<?php echo $errors['mnr'] ? " error" : "";?>">
                 <input name="mnr" id="mnr" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['mnr'] ?? '');?>" pattern="[0-9]{7,8}" required/>
                 <label for="mnr"><?php echo _('Matriculation number');?></label>
-                <label for="mnr"><?php echo _($errors['mnr']);?></label>
+                <label for="mnr"><?php if ($errors['mnr']) echo _($errors['mnr']);?></label>
             </div>
             <div class="text<?php echo $errors['username'] ? " error" : "";?>">
                 <input name="username" id="username" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['username'] ?? '');?>" pattern="\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>
                 <label for="username"><?php echo _('Username');?></label>
-                <label for="username"><?php echo _($errors['username']);?></label>
+                <label for="username"><?php if ($errors['username']) echo _($errors['username']);?></label>
             </div>
             <div class="text<?php echo $errors['pw1'] ? " error" : "";?>">
                 <input name="password" id="password" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password'] ?? '');?>" required/>
                 <label for="password"><?php echo _('Password');?></label>
-                <label for="password"><?php echo _($errors['pw1']);?></label>
+                <label for="password"><?php if ($errors['pw1']) echo _($errors['pw1']);?></label>
             </div>
             <div class="text<?php echo $errors['pw2'] ? " error" : "";?>">
                 <input name="repeat-password" id="repeat-password" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['repeat-password'] ?? '');?>" required/>
                 <label for="repeat-password"><?php echo _('Repeat password');?></label>
-                <label for="repeat-password"><?php echo _($errors['pw2']);?></label>
+                <label for="repeat-password"><?php if ($errors['pw2']) echo _($errors['pw2']);?></label>
             </div>
             <button type="submit"><?php echo _('Sign up');?></button>
         </form>
