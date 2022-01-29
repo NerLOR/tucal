@@ -47,7 +47,7 @@ def get_course(name: str) -> Optional[str]:
     return None
 
 
-def insert_event_ical(evt: ical.Event, room_code: str = None, mnr: int = None) -> Optional[int]:
+def upsert_ical_event(evt: ical.Event, room_code: str = None, mnr: int = None) -> Optional[int]:
     if evt.categories[0] == 'HOLIDAY':
         return
 
@@ -114,7 +114,7 @@ def insert_event_ical(evt: ical.Event, room_code: str = None, mnr: int = None) -
     return data['nr']
 
 
-def insert_event(evt: Dict[str, Any], access_time: datetime.datetime, room_code: str = None,
+def upsert_event(evt: Dict[str, Any], access_time: datetime.datetime, room_code: str = None,
                  mnr: int = None) -> Optional[int]:
     classes = evt['className'].split(' ')
     if classes[0] == 'holiday':
@@ -169,7 +169,7 @@ def insert_event(evt: Dict[str, Any], access_time: datetime.datetime, room_code:
     return data['nr']
 
 
-def insert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], course: Course,
+def upsert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], course: Course,
                         access_time: datetime.datetime, mnr: int = None) -> Optional[int]:
     cur = tucal.db.cursor()
     rows_insert = []
@@ -230,7 +230,7 @@ def insert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], cou
     return None
 
 
-def insert_course_events(events: List[Dict[str, Any]], course: Course, access_time: datetime.datetime, mnr: int = None):
+def upsert_course_events(events: List[Dict[str, Any]], course: Course, access_time: datetime.datetime, mnr: int = None):
     cur = tucal.db.cursor()
     rows_insert = []
     rows_update = []

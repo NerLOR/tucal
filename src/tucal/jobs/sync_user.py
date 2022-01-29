@@ -1,5 +1,4 @@
 
-import datetime
 import argparse
 import base64
 import random
@@ -175,7 +174,7 @@ if __name__ == '__main__':
                        [(course.nr, str(course.semester), mnr) for course in favorites])
 
     for course, events in course_events.items():
-        tucal.db.tiss.insert_course_events(events, course, access_time=now, mnr=int(mnr))
+        tucal.db.tiss.upsert_course_events(events, course, access_time=now, mnr=int(mnr))
 
     for course, groups in course_groups.items():
         rows = [{
@@ -215,7 +214,7 @@ if __name__ == '__main__':
                     VALUES (%(nr)s, %(sem)s, %(name)s, %(mnr)s)
                     ON CONFLICT ON CONSTRAINT pk_group_user DO NOTHING""", data)
 
-            tucal.db.tiss.insert_group_events(group['events'], group, course=course, access_time=now, mnr=int(mnr))
+            tucal.db.tiss.upsert_group_events(group['events'], group, course=course, access_time=now, mnr=int(mnr))
 
     tucal.db.commit()
 
@@ -224,7 +223,7 @@ if __name__ == '__main__':
 
     data = tiss.get_personal_schedule()
     for evt in data['events']:
-        tucal.db.tiss.insert_event(evt, now, mnr=int(mnr))
+        tucal.db.tiss.upsert_event(evt, now, mnr=int(mnr))
 
     tucal.db.commit()
 
@@ -330,7 +329,7 @@ if __name__ == '__main__':
         WHERE user_id = (SELECT user_id FROM tuwel.user WHERE mnr = %s) AND
               event_id = ANY(SELECT event_id FROM tuwel.event WHERE start_ts >= now())""", (mnr,))
     for evt in events:
-        tucal.db.tuwel.insert_event(evt, acc, user_id)
+        tucal.db.tuwel.upsert_event(evt, acc, user_id)
     job.end(0)
 
     tucal.db.commit()

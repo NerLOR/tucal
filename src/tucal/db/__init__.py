@@ -90,26 +90,30 @@ def commit() -> bool:
 
 
 def upsert_values(table: str, data: List[Dict[str, Any]], fields: Dict[str, str], pk: Tuple,
-                  types: Dict[str, str] = None):
+                  types: Dict[str, str] = None) -> List[Tuple]:
     types = types or {}
     cur = cursor()
     cur.execute(f"SELECT {', '.join(pk)} FROM {table}")
     pks = cur.fetch_all()
     rows_insert = []
     rows_update = []
+    upserted = []
 
     for row in data:
         row_id = tuple([row[fields[d]] for d in pk])
         if row_id in pks:
             rows_update.append(row)
+            upserted.append(row_id)
         else:
             rows_insert.append(row)
 
     template = '(' + ', '.join([f'%({k})s' for k in fields.values()]) + ')'
 
     if len(rows_insert) > 0:
-        sql = f"INSERT INTO {table} ({', '.join(fields.keys())}) VALUES %s"
+        sql = f"INSERT INTO {table} ({', '.join(fields.keys())}) VALUES %s RETURNING {', '.join(pk)}"
         cur.execute_values(sql, rows_insert, template=template)
+        inserted = cur.fetch_all()
+        upserted += inserted
 
     if len(rows_update) > 0:
         var = ', '.join([
@@ -120,3 +124,5 @@ def upsert_values(table: str, data: List[Dict[str, Any]], fields: Dict[str, str]
                   FROM (VALUES %s) AS d ({', '.join(fields.keys())})
                   WHERE ({','.join(['t.' + k for k in pk])}) = ({', '.join(['d.' + k for k in pk])})"""
         cur.execute_values(sql, rows_update, template=template)
+
+    return upserted

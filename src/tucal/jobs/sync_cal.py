@@ -51,12 +51,12 @@ if __name__ == '__main__':
 
             cal = tiss.get_room_schedule_ical(room_code)
             for evt in cal.events:
-                tucal.db.tiss.insert_event_ical(evt, room_code)
+                tucal.db.tiss.upsert_ical_event(evt, room_code)
             tucal.db.commit()
 
             cal = tiss.get_room_schedule(room_code)
             for evt in cal['events']:
-                tucal.db.tiss.insert_event(evt, access, room_code)
+                tucal.db.tiss.upsert_event(evt, access, room_code)
             tucal.db.commit()
             job.end(1)
         job.end(0)
@@ -82,7 +82,7 @@ if __name__ == '__main__':
                    WHERE e.event_nr = eu.event_nr) >= %s""", (mnr, Semester.current().first_day))
 
         for evt in cal.events:
-            tucal.db.tiss.insert_event_ical(evt, mnr=mnr)
+            tucal.db.tiss.upsert_ical_event(evt, mnr=mnr)
         tucal.db.commit()
         job.end(1)
     job.end(0)
@@ -112,7 +112,7 @@ if __name__ == '__main__':
                    WHERE e.event_id = eu.event_id)""", (user_id, time))
 
         for evt in cal.events:
-            tucal.db.tuwel.insert_event_ical(evt, user_id)
+            tucal.db.tuwel.upsert_ical_event(evt, user_id)
         tucal.db.commit()
         job.end(1)
     job.end(0)

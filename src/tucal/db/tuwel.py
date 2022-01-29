@@ -7,7 +7,7 @@ import tucal.icalendar as ical
 import tucal.db as db
 
 
-def insert_event_ical(evt: ical.Event, user_id: int = None):
+def upsert_ical_event(evt: ical.Event, user_id: int = None):
     cur = db.cursor()
 
     data = {
@@ -41,7 +41,7 @@ def insert_event_ical(evt: ical.Event, user_id: int = None):
     cur.close()
 
 
-def insert_event(evt: Dict[str, Any], access_time: datetime.datetime, user_id: int = None):
+def upsert_event(evt: Dict[str, Any], access_time: datetime.datetime, user_id: int = None):
     cur = db.cursor()
 
     start = datetime.datetime.fromtimestamp(evt['timestart']).astimezone()
