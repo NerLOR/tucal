@@ -25,8 +25,11 @@ function generate_token(int $len, string $table = null, string $column = 'token'
     do {
         $token = '';
         $bytes = random_bytes($len);
-        for ($i = 0; $i < $len; $i++)
-            $token .= $ALPHA[$MIN + (((int) $bytes[$i]) % $MAX - $MIN)];
+        $all = 0;
+        for ($i = 0; $i < $len; $i++) {
+            $all += ord($bytes[$i]);
+            $token .= $ALPHA[$MIN + ($all % ($MAX - $MIN))];
+        }
 
         if ($stmt !== null) {
             $stmt->execute([$token]);
