@@ -59,16 +59,27 @@ CREATE TABLE tuwel.group_user
 
 CREATE TABLE tuwel.event
 (
-    event_id  BIGINT NOT NULL,
-    course_id BIGINT NOT NULL,
+    event_id         BIGINT NOT NULL,
+    course_id        BIGINT NOT NULL,
 
-    start_ts  TIMESTAMP WITH TIME ZONE,
-    end_ts    TIMESTAMP WITH TIME ZONE,
-    access_ts timestamp WITH TIME ZONE,
-    mod_ts    TIMESTAMP WITH TIME ZONE,
+    start_ts         TIMESTAMP WITH TIME ZONE,
+    end_ts           TIMESTAMP WITH TIME ZONE,
+    access_ts        timestamp WITH TIME ZONE,
+    mod_ts           TIMESTAMP WITH TIME ZONE,
 
-    name      TEXT   NOT NULL,
-    data      JSONB  NOT NULL DEFAULT '{}'::jsonb,
+    name             TEXT   NOT NULL,
+    description      TEXT DEFAULT NULL,
+    description_html TEXT DEFAULT NULL,
+    url              TEXT DEFAULT NULL,
+    location         TEXT DEFAULT NULL,
+
+    module_name      TEXT DEFAULT NULL,
+    component        TEXT DEFAULT NULL,
+    event_type       TEXT DEFAULT NULL,
+
+    f_action_event   BOOL DEFAULT NULL,
+    f_course_event   BOOL DEFAULT NULL,
+    f_category_event BOOL DEFAULT NULL,
 
     CONSTRAINT pk_event PRIMARY KEY (event_id),
     CONSTRAINT fk_event_course FOREIGN KEY (course_id) REFERENCES tuwel.course (course_id)

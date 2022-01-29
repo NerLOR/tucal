@@ -64,29 +64,28 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         data['tuwel_url'] = f'https://tuwel.tuwien.ac.at/calendar/view.php?view=day&time={unix_ts}'
 
         if not COURSE_NAME.match(tuwel['name']):
-            if tuwel.get('module', None) == 'organizer':
+            if tuwel['module_name'] == 'organizer':
                 data['summary'] = tuwel['name'][:tuwel['name'].rfind('(')].strip()
             else:
                 data['summary'] = tuwel['name']
 
-        for link in ZOOM_LINK.finditer(tuwel.get('desc', None) or tuwel.get('desc_html', None) or ''):
+        for link in ZOOM_LINK.finditer(tuwel['description'] or tuwel['description_html'] or ''):
             data['zoom'] = 'https://' + link.group(1)
             data['mode'] = 'online_only'
 
-        if tuwel.get('url', None):
+        if tuwel['url']:
             data['url'] = tuwel['url']
 
-        if tuwel.get('module', None):
-            mod = tuwel['module']
-            if mod == 'organizer':
-                data['type'] = 'deadline'
-            elif mod == 'quiz' or mod == 'assign':  # TODO add "Kreuzerlübung"
-                data['type'] = 'assignment'
+        mod = tuwel['module_name']
+        if mod == 'organizer':
+            data['type'] = 'deadline'
+        elif mod == 'quiz' or mod == 'assign':  # TODO add "Kreuzerlübung"
+            data['type'] = 'assignment'
 
-        if tuwel.get('desc_html', None):
-            data['desc'] = tuwel['desc_html']
-        elif tuwel.get('desc', None):
-            data['desc'] = tuwel['desc']
+        if tuwel['description_html']:
+            data['desc'] = tuwel['description_html']
+        elif tuwel['description']:
+            data['desc'] = tuwel['description']
 
     if tiss:
         initial_date = start_ts.strftime('%Y%m%d')

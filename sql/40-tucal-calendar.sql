@@ -247,11 +247,21 @@ $$
 DECLARE
     tuwel JSONB;
 BEGIN
-    tuwel = NEW.data || jsonb_build_object(
+    tuwel = jsonb_build_object(
             'name', NEW.name,
             'event_id', NEW.event_id,
             'course_id', NEW.course_id,
-            'event_id', NEW.event_id);
+            'event_id', NEW.event_id,
+            'description', NEW.description,
+            'description_html', NEW.description_html,
+            'url', NEW.url,
+            'location', NEW.url,
+            'module_name', NEW.module_name,
+            'component', NEW.component,
+            'event_type', NEW.event_type,
+            'action_event', NEW.f_action_event,
+            'course_event', NEW.f_course_event,
+            'category_event', NEW.f_category_event);
     INSERT INTO tucal.external_event (source, event_id, event_nr, start_ts, end_ts, room_nr, group_nr, global, data)
     VALUES ('tuwel', NEW.event_id::text, NULL, NEW.start_ts, NEW.end_ts, NULL,
             tucal.get_group((SELECT course_nr FROM tuwel.course WHERE course_id = NEW.course_id),
@@ -273,10 +283,21 @@ $$
 DECLARE
     tuwel JSONB;
 BEGIN
-    tuwel = NEW.data || jsonb_build_object(
+    tuwel = jsonb_build_object(
             'name', NEW.name,
             'event_id', NEW.event_id,
-            'course_id', NEW.course_id);
+            'course_id', NEW.course_id,
+            'event_id', NEW.event_id,
+            'description', NEW.description,
+            'description_html', NEW.description_html,
+            'url', NEW.url,
+            'location', NEW.url,
+            'module_name', NEW.module_name,
+            'component', NEW.component,
+            'event_type', NEW.event_type,
+            'action_event', NEW.f_action_event,
+            'course_event', NEW.f_course_event,
+            'category_event', NEW.f_category_event);
     UPDATE tucal.external_event
     SET start_ts = NEW.start_ts,
         end_ts   = NEW.end_ts,
