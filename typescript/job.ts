@@ -1,5 +1,13 @@
 "use strict";
 
+interface Step {
+    comments: string,
+    is_running: boolean,
+    name: string,
+    steps: [Step] | null,
+    time: number,
+}
+
 class Job {
     elem: Element;
     id: string;
@@ -8,7 +16,19 @@ class Job {
     onSuccess: Function | null;
     onError: Function | null;
     lastEtas: number[];
-    data: any;
+    data: {
+        comments: string,
+        eta_ts: string,
+        is_running: boolean,
+        name: string,
+        progress: number,
+        remaining: number,
+        start_ts: string,
+        status: string,
+        steps: [Step],
+        time: number,
+        error: string | undefined,
+    } | null;
     progress: number;
 
     constructor(element: Element, success: Function | null = null, error: Function | null = null) {
@@ -19,7 +39,7 @@ class Job {
         this.onSuccess = success;
         this.onError = error;
         this.lastEtas = [];
-        this.data = {};
+        this.data = null;
         this.progress = 0;
 
         const container = document.createElement("div");
@@ -67,7 +87,7 @@ class Job {
         if (job.status !== 'running' && this.timerFetch) {
             clearInterval(this.timerFetch);
         }
-        if (job.remaining) {
+        if (job.remaining && this.data) {
             const eta = job.time + job.remaining;
             if (this.lastEtas.length === 0 || job.time !== this.data.time) {
                 this.lastEtas.push(eta);
@@ -79,7 +99,7 @@ class Job {
 
     update() {
         const job = this.data;
-        if (!job.status) return;
+        if (!job || !job.status) return;
 
         const container = this.elem.getElementsByClassName("progress-bar")[0];
         if (!container) throw new Error();
@@ -90,11 +110,31 @@ class Job {
 
         if (job.status === 'error') {
             this.elem.classList.add('error');
+
+            const href = this.elem.getAttribute('data-error-href');
+            if (href) {
+                const btn = document.createElement('a');
+                btn.classList.add('button');
+                btn.innerText = _('Back');
+                btn.href = href;
+                this.elem.appendChild(btn);
+            }
+
             if (this.onError !== null) {
                 this.onError();
             }
         } else if (job.status === 'success') {
             this.elem.classList.add('success');
+
+            const href = this.elem.getAttribute('data-success-href');
+            if (href) {
+                const btn = document.createElement('a');
+                btn.classList.add('button');
+                btn.innerText = _('Next (step)');
+                btn.href = href;
+                this.elem.appendChild(btn);
+            }
+
             if (this.onSuccess !== null) {
                 this.onSuccess();
             }
@@ -108,12 +148,14 @@ class Job {
             const start = new Date(Date.parse(job.start_ts));
             const elapsed = (now.valueOf() - start.valueOf()) / 1000;
 
-            const max = Math.max(...this.lastEtas);
-            const average = (this.lastEtas.reduce((a, b) => a + b)) / this.lastEtas.length;
-            const conservativeEta = (max + average) / 2 + 1;
-            const progressEstimate = elapsed / conservativeEta;
-            if (progressEstimate <= 0.99 && progress < progressEstimate) {
-                progress = progressEstimate;
+            if (this.lastEtas.length > 0) {
+                const max = Math.max(...this.lastEtas);
+                const average = (this.lastEtas.reduce((a, b) => a + b)) / this.lastEtas.length;
+                const conservativeEta = ((this.lastEtas[0] || 0) + max + average) / 3 + 1;
+                const progressEstimate = elapsed / conservativeEta;
+                if (progressEstimate <= 0.99 && progress < progressEstimate) {
+                    progress = progressEstimate;
+                }
             }
         }
 
@@ -135,16 +177,43 @@ class Job {
             }
         }
 
+        const step = this.getCurrentStep();
+
         let status = `${(this.progress * 100).toFixed(0)}%`;
+        if (step && this.progress < 1) {
+            status += `<br/>${step.name}`;
+            statusText.style.marginTop = '';
+        } else {
+            statusText.style.marginTop = '10px';
+        }
         progressBar.style.width = `${this.progress * 100}%`;
         progressBar.style.display = 'unset';
 
         if (job.status === 'error' && job.error) {
             const line = job.error.split('\n').splice(-2)[0];
-            const err = line.split(':').splice(-1)[0].trim();
-            status = _('Error') + `: ${err}`;
+            if (!line) throw new Error();
+            const err = line.split(':').splice(-1)[0];
+            if (!err) throw new Error();
+            status = _('Error') + `: ${err.trim()}`;
         }
 
-        statusText.innerText = status;
+        statusText.innerHTML = status;
+    }
+
+    getCurrentStep(): Step | null {
+        if (!this.data || !this.data.steps) return null;
+        const helper = (steps: [Step]): Step | null => {
+            for (const s of steps) {
+                if (s.is_running) {
+                    if (s.steps) {
+                        return helper(s.steps) || s;
+                    } else {
+                        return s;
+                    }
+                }
+            }
+            return this.data;
+        }
+        return helper(this.data.steps);
     }
 }

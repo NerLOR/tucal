@@ -151,7 +151,7 @@ if ($jobId === null) { ?>
 <main class="w2">
     <section>
         <h1><?php echo _('TU Wien account synchronization');?></h1>
-        <div class="job-viewer" data-job="<?php echo $jobId;?>"></div>
+        <div class="job-viewer" data-job="<?php echo $jobId;?>" data-success-href="/calendar/<?php echo $USER['mnr'];?>/" data-error-href="/account/tu-wien-sso"></div>
     </section>
 </main>
 <?php }

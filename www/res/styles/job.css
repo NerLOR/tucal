@@ -1,15 +1,16 @@
 
 div.job-viewer {
-
+    margin: 1em 0;
 }
 
 div.job-viewer div.progress-bar {
-    height: 24px;
+    --height: 40px;
+    height: var(--height);
     width: 100%;
     box-sizing: border-box;
     border: 1px solid var(--grey-80);
     background-color: var(--grey-F8);
-    border-radius: 12px;
+    border-radius: calc(var(--height) / 2);
     text-align: center;
     position: relative;
 }
@@ -29,14 +30,14 @@ div.job-viewer.error div.progress-bar span {
 div.job-viewer div.progress-bar div {
     background-color: var(--color-light);
     border: 1px solid var(--color-dark);
-    border-radius: 12px;
+    border-radius: calc(var(--height) / 2);
     width: 0;
     height: 100%;
     position: absolute;
     top: -1px;
     left: -1px;
     transition: width 1s;
-    min-width: 24px;
+    min-width: var(--height);
 }
 
 div.job-viewer div.progress-bar span {
@@ -44,4 +45,10 @@ div.job-viewer div.progress-bar span {
     margin-top: 2px;
     display: block;
     color: var(--color-dark);
+}
+
+div.job-viewer a.button {
+    display: block;
+    margin: 1em auto;
+    font-size: 1em;
 }

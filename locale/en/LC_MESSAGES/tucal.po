@@ -260,6 +260,13 @@ msgstr "Online-only"
 msgid "Copy link"
 msgstr "Copy link"
 
+msgid "Next (step)"
+msgstr "Weiter"
+
+msgid "Back"
+msgstr "Zurück"
+
+
 
 msgctxt "http"
 msgid "Bad Request"

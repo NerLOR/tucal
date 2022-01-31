@@ -16,17 +16,23 @@ select {
     padding: 0.25em;
 }
 
-button {
+button,
+a.button {
     cursor: pointer;
     border: 1px solid var(--color);
     background-color: var(--input-bg-color);
     color: var(--color);
     border-radius: var(--border-radius);
     padding: 0.5em 1em;
+    width: fit-content;
+    width: -moz-fit-content;
+    text-decoration: none !important;
 }
 
 button:hover,
-button:focus {
+button:focus,
+a.button:hover,
+a.button:focus {
     background-color: var(--color);
     border-color: var(--color);
     color: var(--color-comp);

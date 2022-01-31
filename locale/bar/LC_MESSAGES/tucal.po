@@ -176,6 +176,12 @@ msgstr "Nua onlein"
 msgid "Copy link"
 msgstr "Link kopian"
 
+msgid "Next (step)"
+msgstr "Weida"
+
+msgid "Back"
+msgstr "Zruck"
+
 
 msgctxt "http"
 msgid "Unauthorized"

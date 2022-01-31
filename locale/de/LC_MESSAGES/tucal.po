@@ -294,6 +294,12 @@ msgstr "Nur online"
 msgid "Copy link"
 msgstr "Link kopieren"
 
+msgid "Next (step)"
+msgstr "Weiter"
+
+msgid "Back"
+msgstr "Zurück"
+
 
 msgctxt "http"
 msgid "Bad Request"
