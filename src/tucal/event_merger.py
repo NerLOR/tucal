@@ -77,9 +77,14 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             data['url'] = tuwel['url']
 
         mod = tuwel['module_name']
+        typ = tuwel['event_type']
         if mod == 'organizer':
             data['type'] = 'deadline'
-        elif mod == 'quiz' or mod == 'assign':  # TODO add "Kreuzerlübung"
+        elif mod == 'quiz' and typ == 'close':
+            data['type'] = 'assignment'
+        elif mod == 'assign' and typ == 'due':
+            data['type'] = 'assignment'
+        elif mod == 'checkmark' and typ == 'due':
             data['type'] = 'assignment'
 
         if tuwel['description_html']:

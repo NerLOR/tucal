@@ -88,7 +88,6 @@ if __name__ == '__main__':
     job.end(0)
 
     job.begin('sync tuwel personal calendars', tuwel_num)
-    time = datetime.date.today() - datetime.timedelta(days=5)
     for user_id, mnr, token in tuwel_users:
         if args.mnr is not None and mnr != args.mnr:
             continue
@@ -101,15 +100,12 @@ if __name__ == '__main__':
             job.end(1)
             continue
 
-        # TUWEL omits "Ankreuzen" events if no user is logged in to the current session
         cur.execute("""
             DELETE FROM tuwel.event_user eu
             WHERE user_id = %s AND
-                  (SELECT start_ts >= %s AND
-                          NOT name ILIKE '%%Ankreuzen%%' AND
-                          NOT name ILIKE '%%Anmeldedeadline%%'
+                  (SELECT start_ts >= now()
                    FROM tuwel.event e
-                   WHERE e.event_id = eu.event_id)""", (user_id, time))
+                   WHERE e.event_id = eu.event_id)""", (user_id,))
 
         for evt in cal.events:
             tucal.db.tuwel.upsert_ical_event(evt, user_id)
