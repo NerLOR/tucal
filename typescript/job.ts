@@ -106,7 +106,7 @@ class Job {
 
         if (job.remaining) {
             const start = new Date(Date.parse(job.start_ts));
-            const elapsed = (now.getUTCMilliseconds() - start.getUTCMilliseconds()) / 1000;
+            const elapsed = (now.valueOf() - start.valueOf()) / 1000;
 
             const max = Math.max(...this.lastEtas);
             const average = (this.lastEtas.reduce((a, b) => a + b)) / this.lastEtas.length;
