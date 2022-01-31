@@ -1,7 +1,6 @@
 
 import re
 import argparse
-import datetime
 import sys
 
 from tucal import Semester, Job
@@ -15,10 +14,8 @@ import tuwien.tuwel
 COURSE = re.compile(r'^([0-9]{3}\.[0-9A-Z]{3})')
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--mnr', '-m', type=int)
-    args = parser.parse_args()
+def sync_cal(mnr: int = None, job: Job = None):
+    job = job or Job()
 
     cur = tucal.db.cursor()
     tiss = tuwien.tiss.Session()
@@ -33,17 +30,17 @@ if __name__ == '__main__':
     tuwel_users = cur.fetch_all()
     tuwel_mnr = [u[1] for u in tuwel_users]
 
-    if args.mnr is not None:
-        tiss_num = 1 if args.mnr in tiss_mnr else 0
-        tuwel_num = 1 if args.mnr in tuwel_mnr else 0
-        job = Job('sync user calendars', 2, tiss_num + tuwel_num)
+    if mnr is not None:
+        tiss_num = 1 if mnr in tiss_mnr else 0
+        tuwel_num = 1 if mnr in tuwel_mnr else 0
+        job.init('sync user calendars', 2, tiss_num + tuwel_num)
     else:
         tiss_num = len(tiss_users)
         tuwel_num = len(tuwel_users)
-        job = Job('sync calendars', 3, len(rooms) + len(tiss_users) + len(tuwel_users))
+        job.init('sync calendars', 3, len(rooms) + len(tiss_users) + len(tuwel_users))
 
     # FIXME db.commit or db.rollback to stop blocking other connections
-    if args.mnr is None:
+    if mnr is None:
         job.begin('sync tiss room schedules', len(rooms))
         for room_code, room_name in rooms:
             job.begin(f'sync tiss room schedule {room_name} <{room_code}>')
@@ -62,15 +59,15 @@ if __name__ == '__main__':
         job.end(0)
 
     job.begin('sync tiss personal calendars', tiss_num)
-    for mnr, token in tiss_users:
-        if args.mnr is not None and mnr != args.mnr:
+    for t_mnr, token in tiss_users:
+        if mnr is not None and mnr != t_mnr:
             continue
-        job.begin(f'sync tiss personal calendar {mnr}')
+        job.begin(f'sync tiss personal calendar {t_mnr}')
 
         cal = tiss.get_personal_schedule_ical(token)
         if cal is None:
-            print(f'Invalid token for user {mnr}, deleting token', file=sys.stderr)
-            cur.execute("UPDATE tiss.user SET auth_token = NULL WHERE mnr = %s", (mnr,))
+            print(f'Invalid token for user {t_mnr}, deleting token', file=sys.stderr)
+            cur.execute("UPDATE tiss.user SET auth_token = NULL WHERE mnr = %s", (t_mnr,))
             job.end(1)
             continue
 
@@ -79,19 +76,19 @@ if __name__ == '__main__':
             WHERE mnr = %s AND
                   (SELECT start_ts
                    FROM tiss.event e
-                   WHERE e.event_nr = eu.event_nr) >= %s""", (mnr, Semester.current().first_day))
+                   WHERE e.event_nr = eu.event_nr) >= %s""", (t_mnr, Semester.current().first_day))
 
         for evt in cal.events:
-            tucal.db.tiss.upsert_ical_event(evt, mnr=mnr)
+            tucal.db.tiss.upsert_ical_event(evt, mnr=t_mnr)
         tucal.db.commit()
         job.end(1)
     job.end(0)
 
     job.begin('sync tuwel personal calendars', tuwel_num)
-    for user_id, mnr, token in tuwel_users:
-        if args.mnr is not None and mnr != args.mnr:
+    for user_id, t_mnr, token in tuwel_users:
+        if mnr is not None and mnr != t_mnr:
             continue
-        job.begin(f'sync tuwel personal calendar {mnr}')
+        job.begin(f'sync tuwel personal calendar {t_mnr}')
 
         cal = tuwel.get_personal_calendar(token, user_id=user_id)
         if cal is None:
@@ -115,3 +112,10 @@ if __name__ == '__main__':
 
     cur.close()
     job.end(0)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mnr', '-m', type=int)
+    args = parser.parse_args()
+    sync_cal(args.mnr)

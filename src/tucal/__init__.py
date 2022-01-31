@@ -179,17 +179,31 @@ class Semester:
 
 
 class Job:
-    perc_steps: int
-    _n: int
+    perc_steps: List[int]
+    initialized: bool
+    _perc: int
     _name: str
     _proc_start: float
     _clock_id: int
+    _step_mult: List[float]
 
-    def __init__(self, name: str, sub_steps: int, perc_steps: int = 1, estimate: int = None):
-        self.perc_steps = perc_steps
-        self._n = 0
+    def __init__(self, name: str = None, sub_steps: int = None, perc_steps: int = None, estimate: int = None):
+        self.initialized = False
+        if name or sub_steps or perc_steps or estimate:
+            self.init(name, sub_steps, perc_steps, estimate)
+
+    def init(self, name: str, sub_steps: int, perc_steps: int = 1, estimate: int = None):
+        if self.initialized:
+            self.perc_steps.append(perc_steps)
+            self.begin(name, sub_steps)
+            return
+
+        self.initialized = True
+        self.perc_steps = [perc_steps]
+        self._perc = 0
         self._name = name
         self._clock_id = time.CLOCK_MONOTONIC
+        self._step_mult = [1]
         self._proc_start = time.clock_gettime(self._clock_id)
         print(f'**{now().isoformat()}')
         if estimate:
@@ -198,16 +212,21 @@ class Job:
         sys.stdout.flush()
 
     def begin(self, name: str, sub_steps: int = 0):
-        print(f'*{self._format_time()}:{self._n / self.perc_steps:.4f}:START:{sub_steps}:{name}')
+        print(f'*{self._format_time()}:{self._perc:.4f}:START:{sub_steps}:{name}')
         sys.stdout.flush()
 
     def end(self, steps: int):
-        self._n += steps
-        print(f'*{self._format_time()}:{self._n / self.perc_steps:.4f}:STOP')
+        self._perc += steps / self.perc_steps[-1] * self._step_mult[-1]
+        print(f'*{self._format_time()}:{self._perc:.4f}:STOP')
         sys.stdout.flush()
 
     def sub_stop(self, steps: int):
-        self._n += steps
+        self._perc += steps / self.perc_steps[-1] * self._step_mult[-1]
+
+    def exec(self, steps: int, func, **kwargs):
+        self._step_mult.append(self._step_mult[-1] * steps / self.perc_steps[-1])
+        func(**kwargs, job=self)
+        self._step_mult.pop()
 
     def _format_time(self) -> str:
         return f'{time.clock_gettime(self._clock_id) - self._proc_start:7.4f}'

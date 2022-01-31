@@ -14,13 +14,15 @@ import tuwien.sso
 import tucal.db
 import tucal.db.tiss
 import tucal.db.tuwel
+from tucal.jobs.sync_cal import sync_cal
 
 
 TUWEL_INIT_VAL = 1
 TUWEL_GROUP_VAL = 10
 TUWEL_MONTHS = 12
 TUWEL_MONTH_VAL = 1
-TISS_VAL = 10
+TISS_VAL_1 = 1
+TISS_VAL_2 = 9
 SYNC_CAL_VAL = 5
 SYNC_PLUGIN_VAL = 5
 
@@ -54,30 +56,21 @@ def dec(cipher: str, key: int) -> bytes:
     return plain
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--mnr', '-m', required=True, type=int,
-                        help='Matriculation number')
-    parser.add_argument('--keep-calendar-settings', '-k', action='store_true', default=False,
-                        help='Do not alter any TISS calendar settings')
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument('--store', '-s', action='store_true', default=False,
-                       help='Store provided password (and 2fa generator) in database')
-    group.add_argument('--database', '-d', action='store_true', default=False,
-                       help='Fetch password (and 2fa token) from database')
-    args = parser.parse_args()
-
+def sync_user(mnr: int, use_db: bool = False, store_db: bool = False, keep_tiss_cal_settings: bool = False,
+              job: Job = None):
     cur = tucal.db.cursor()
 
     now = tucal.now()
-    val = TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TUWEL_GROUP_VAL + TISS_VAL + SYNC_CAL_VAL + SYNC_PLUGIN_VAL
-    job = Job('sync user', 4, val, estimate=50)
+    val = TUWEL_MONTHS * TUWEL_MONTH_VAL + TUWEL_INIT_VAL + TUWEL_GROUP_VAL + TISS_VAL_1 + TISS_VAL_2 + \
+        SYNC_CAL_VAL + SYNC_PLUGIN_VAL
 
-    mnr = f'{args.mnr:08}'
-    pwd = None
+    job = job or Job()
+    job.init('sync user', 4, val, estimate=50)
+
+    mnr = f'{mnr:08}'
     tfa_token = None
     tfa_gen = None
-    if not args.database:
+    if not use_db:
         pwd = input()
         try:
             tfa = input()
@@ -105,21 +98,24 @@ if __name__ == '__main__':
     sso = tuwien.sso.Session()
     sso.credentials(mnr, pwd, tfa_token)
 
-    job.begin('sync tiss')
+    job.begin('sync tiss', 2)
+    job.begin('login tiss')
     tiss = tuwien.tiss.Session(sso)
 
     try:
         tiss.sso_login()
     except tucal.InvalidCredentialsError as e:
-        if args.database:
+        if use_db:
             cur.execute("""
                 DELETE FROM tucal.sso_credential
                 WHERE account_nr = (SELECT account_nr FROM tucal.account WHERE mnr = %s)""", (mnr,))
             tucal.db.commit()
         raise e
+    job.end(TISS_VAL_1)
 
+    job.begin('sync tiss user courses')
     cur.execute("UPDATE tucal.account SET verified = TRUE, sync_ts = now() WHERE mnr = %s", (mnr,))
-    if args.store:
+    if store_db:
         acc_key = random.randint(10, 200)
         pwd_enc = enc(pwd.encode('utf8'), acc_key)
         tfa_gen_enc = enc(tfa_gen, acc_key) if tfa_gen is not None else None
@@ -218,7 +214,7 @@ if __name__ == '__main__':
 
     tucal.db.commit()
 
-    if not args.keep_calendar_settings:
+    if not keep_tiss_cal_settings:
         tiss.update_calendar_settings()
 
     data = tiss.get_personal_schedule()
@@ -226,8 +222,8 @@ if __name__ == '__main__':
         tucal.db.tiss.upsert_event(evt, now, mnr=int(mnr))
 
     tucal.db.commit()
-
-    job.end(TISS_VAL)
+    job.end(TISS_VAL_2)
+    job.end(0)
 
     job.begin('sync tuwel', 3)
     job.begin('init tuwel')
@@ -247,7 +243,6 @@ if __name__ == '__main__':
         job.begin(f'sync tuwel user groups course "{c.name[:30]}"')
         groups[c.id] = tuwel.get_course_user_groups(c.id)
         job.end(val)
-    job.end(TUWEL_GROUP_VAL - val * len(courses))
 
     data = {
         'mnr': mnr,
@@ -303,6 +298,7 @@ if __name__ == '__main__':
                 ON CONFLICT DO NOTHING""", data)
 
     tucal.db.commit()
+    job.end(TUWEL_GROUP_VAL - val * len(courses))
 
     job.begin('sync tuwel calendar months', TUWEL_MONTHS)
     acc = tucal.now()
@@ -330,9 +326,9 @@ if __name__ == '__main__':
               event_id = ANY(SELECT event_id FROM tuwel.event WHERE start_ts >= now())""", (mnr,))
     for evt in events:
         tucal.db.tuwel.upsert_event(evt, acc, user_id)
-    job.end(0)
 
     tucal.db.commit()
+    job.end(0)
 
     job.begin('sync plugin calendars')
     cur.execute("""
@@ -349,10 +345,23 @@ if __name__ == '__main__':
         p.sync_auth(sso)
     job.end(SYNC_PLUGIN_VAL)
 
-    job.begin('sync ical calendars')
-    for cal_job, fin in tucal.schedule_job('sync-cal', f'{mnr}'):
-        pass
-    job.end(SYNC_CAL_VAL)
+    job.exec(SYNC_CAL_VAL, sync_cal, mnr=int(mnr))
 
     cur.close()
     job.end(0)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mnr', '-m', required=True, type=int,
+                        help='Matriculation number')
+    parser.add_argument('--keep-calendar-settings', '-k', action='store_true', default=False,
+                        help='Do not alter any TISS calendar settings')
+    mx_group = parser.add_mutually_exclusive_group()
+    mx_group.add_argument('--store', '-s', action='store_true', default=False,
+                          help='Store provided password (and 2fa generator) in database')
+    mx_group.add_argument('--database', '-d', action='store_true', default=False,
+                          help='Fetch password (and 2fa token) from database')
+    args = parser.parse_args()
+
+    sync_user(args.mnr, use_db=args.database, store_db=args.store, keep_tiss_cal_settings=args.keep_calendar_settings)

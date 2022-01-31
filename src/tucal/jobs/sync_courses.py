@@ -13,12 +13,9 @@ TISS_INIT_VAL = 100
 DB_VAL = 10
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--keep', '-k', action='store_true', default=False)
-    args = parser.parse_args()
-
-    job = Job('sync courses', 3)
+def sync_courses(keep_file: bool = False, job: Job = None):
+    job = job or Job()
+    job.init('sync courses', 3)
 
     courses = []
     if os.path.isfile(TEMP_FILE):
@@ -36,7 +33,7 @@ if __name__ == '__main__':
         skip = {(c.nr, c.semester) for c in courses}
         gen = s.course_generator(Semester.current() - 2, Semester.current() + 1, skip=skip)
         n = next(gen) - len(skip)
-        job.perc_steps = TISS_INIT_VAL + n + DB_VAL
+        job.perc_steps[-1] = TISS_INIT_VAL + n + DB_VAL
         job.end(TISS_INIT_VAL)
         job.begin('get tiss courses', n)
         for c_nr, c_sem, cb in gen:
@@ -71,7 +68,14 @@ if __name__ == '__main__':
     tucal.db.commit()
     job.end(DB_VAL)
 
-    if not args.keep:
+    if not keep_file:
         os.remove(TEMP_FILE)
 
     job.end(0)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--keep', '-k', action='store_true', default=False)
+    args = parser.parse_args()
+    sync_courses(keep_file=args.keep)
