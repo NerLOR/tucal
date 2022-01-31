@@ -17,14 +17,14 @@ import tucal.db.tuwel
 from tucal.jobs.sync_cal import sync_cal
 
 
-TUWEL_INIT_VAL = 1
-TUWEL_GROUP_VAL = 10
+TUWEL_INIT_VAL = 2
+TUWEL_GROUP_VAL = 20
 TUWEL_MONTHS = 12
-TUWEL_MONTH_VAL = 1
+TUWEL_MONTH_VAL = 2
 TISS_VAL_1 = 1
-TISS_VAL_2 = 9
-SYNC_CAL_VAL = 5
-SYNC_PLUGIN_VAL = 5
+TISS_VAL_2 = 20
+SYNC_CAL_VAL = 10
+SYNC_PLUGIN_VAL = 10
 
 
 def totp_gen_token(gen: bytes, mode: str = 'sha1') -> str:
