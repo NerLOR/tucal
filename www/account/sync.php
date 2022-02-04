@@ -15,6 +15,13 @@ if (!$USER['sso_credentials']) {
     redirect('/account/tu-wien-sso');
 }
 
+$stmt = db_exec("SELECT job_id FROM tucal.v_job WHERE (mnr, status, name) = (?, 'running', 'sync user')", [$USER['mnr']]);
+$rows = $stmt->fetchAll();
+if (sizeof($rows) > 0) {
+    $jobId = $rows[0][0];
+    redirect("/account/tu-wien-sso?job=$jobId");
+}
+
 $sock = fsockopen('unix:///var/tucal/scheduler.sock', -1, $errno, $errstr);
 if (!$sock) {
     $STATUS = 500;

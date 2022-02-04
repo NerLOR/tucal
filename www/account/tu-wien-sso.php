@@ -15,6 +15,14 @@ $errors = [
     "2fa-gen" => null,
 ];
 
+if ($jobId === null) {
+    $stmt = db_exec("SELECT job_id FROM tucal.v_job WHERE (mnr, status, name) = (?, 'running', 'sync user')", [$USER['mnr']]);
+    $rows = $stmt->fetchAll();
+    if (sizeof($rows) > 0) {
+        $jobId = $rows[0][0];
+        redirect("/account/tu-wien-sso?job=$jobId");
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mode = $_POST['mode'] ?? null;
@@ -96,13 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     $STATUS = 405;
     header("Allow: GET, POST");
-} elseif ($jobId === null) {
-    $stmt = db_exec("SELECT job_id FROM tucal.v_job WHERE (mnr, status) = (?, 'running')", [$USER['mnr']]);
-    $rows = $stmt->fetchAll();
-    if (sizeof($rows) > 0) {
-        $jobId = $rows[0][0];
-        redirect("/account/tu-wien-sso?job=$jobId");
-    }
 }
 
 doc:
