@@ -112,7 +112,7 @@ class Job {
             this.elem.classList.add('error');
 
             const href = this.elem.getAttribute('data-error-href');
-            if (href) {
+            if (href && this.elem.getElementsByTagName("button").length === 0) {
                 const btn = document.createElement('a');
                 btn.classList.add('button');
                 btn.innerText = _('Back');
@@ -127,7 +127,7 @@ class Job {
             this.elem.classList.add('success');
 
             const href = this.elem.getAttribute('data-success-href');
-            if (href) {
+            if (href && this.elem.getElementsByTagName("button").length === 0) {
                 const btn = document.createElement('a');
                 btn.classList.add('button');
                 btn.innerText = _('Next (step)');
@@ -163,7 +163,6 @@ class Job {
             progress = 1;
             if (this.timerUpdate) clearInterval(this.timerUpdate);
         }
-
 
         if (progress >= this.progress) {
             this.progress = progress;
