@@ -28,8 +28,7 @@ function tucal_exit() {
 }
 
 _db_transaction();
-_db_exec("LOCK TABLE tucal.session IN SHARE ROW EXCLUSIVE MODE");
-_db_exec("LOCK TABLE tucal.account IN SHARE ROW EXCLUSIVE MODE");
+_db_exec("LOCK TABLE tucal.session IN ROW EXCLUSIVE MODE");
 
 unset($_SESSION);
 unset($USER);
@@ -45,6 +44,7 @@ if (isset($_COOKIE['tucal_session'])) {
             'opts' => json_decode($s['session_opts'], true),
         ];
         if ($s['mnr'] !== null) {
+            _db_exec("LOCK TABLE tucal.account IN ROW EXCLUSIVE MODE");
             $USER = [
                 'nr' => $s['account_nr'],
                 'id' => $s['account_id'],
