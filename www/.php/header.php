@@ -71,48 +71,49 @@ if ($STATUS >= 400 && $STATUS < 600) {
 </head>
 <body>
 <nav>
-    <div id="nav-home">
-        <a href="/" class="<?php echo uri_active('/', true);?>">
-            <img src="/res/svgs/<?php echo $icon;?>.svg" alt="<?php echo _('Home');?>"/>
-        </a>
-    </div>
-    <div id="nav-search">
-        <form action="/search" method="get">
-            <input type="text" name="q" placeholder="<?php echo _('Search (for)');?>" value="<?php echo htmlspecialchars($_GET['q'] ?? '');?>" minlength="3" required/>
-        </form>
-    </div>
-    <div class="link" id="nav-home-explicit"><a href="/" class="<?php echo uri_active('/', true);?>"><?php echo _('Home');?></a></div>
-    <div class="link"><a href="<?php echo $cal_uri;?>" class="<?php echo uri_active($cal_uri);?>"><?php echo _('My Calendar');?></a></div>
-    <div class="link"><a href="/friends/" class="<?php echo uri_active('/friends/', true);?>"><?php echo _('My Friends');?></a></div>
-    <div class="link"><a href="/courses/" class="<?php echo uri_active('/courses/');?>"><?php echo _('My Courses');?></a></div>
-    <div id="nav-live">
-        <a href="" class="button live" target="_blank">LIVE<span></span></a>
-        <a href="" class="button live" target="_blank">LIVE<span></span></a>
-        <a href="" class="button live" target="_blank">LIVE<span></span></a>
-    </div>
-    <div id="nav-user">
-<?php if (isset($USER)) { ?>
-        <div id="user-menu">
-            <div>
-                <img src="/res/avatars/default.png" alt="<?php echo _('Avatar');?>"/>
-                <a><?php echo $USER['username'];?></a>
-                <span class="arrow">▾</span>
-            </div>
-            <div><a href="/account/"><?php echo _('Settings');?></a></div>
-            <?php if (!$USER['verified']) {?><div><a href="/account/verify"><?php echo _('Verify account');?></a></div><?php } ?>
-
-            <hr/>
-            <div><a href="/search"><?php echo _('Search (for)');?></a></div>
-            <hr/>
-            <div>
-                <form action="/account/logout" method="post" name="logout"></form>
-                <a href="/account/logout"><?php echo _('Logout');?></a>
-            </div>
+    <div id="nav-left">
+        <div id="nav-home">
+            <a href="/" class="<?php echo uri_active('/', true);?>">
+                <img src="/res/svgs/<?php echo $icon;?>.svg" alt="<?php echo _('Home');?>"/>
+            </a>
         </div>
+    </div>
+    <div id="nav-center">
+        <div class="link" id="nav-home-explicit"><a href="/" class="<?php echo uri_active('/', true);?>"><?php echo _('Home');?></a></div>
+        <div class="link"><a href="<?php echo $cal_uri;?>" class="<?php echo uri_active($cal_uri);?>"><?php echo _('My Calendar');?></a></div>
+        <div class="link"><a href="/friends/" class="<?php echo uri_active('/friends/', true);?>"><?php echo _('My Friends');?></a></div>
+        <div class="link"><a href="/courses/" class="<?php echo uri_active('/courses/');?>"><?php echo _('My Courses');?></a></div>
+    </div>
+    <div id="nav-right">
+        <div id="nav-live">
+            <a href="" class="button live" target="_blank">LIVE<span></span></a>
+            <a href="" class="button live" target="_blank">LIVE<span></span></a>
+            <a href="" class="button live" target="_blank">LIVE<span></span></a>
+        </div>
+        <div id="nav-user">
+<?php if (isset($USER)) { ?>
+            <div id="user-menu">
+                <div>
+                    <img src="/res/avatars/default.png" alt="<?php echo _('Avatar');?>"/>
+                    <a><?php echo $USER['username'];?></a>
+                    <span class="arrow">▾</span>
+                </div>
+                <div><a href="/account/"><?php echo _('Settings');?></a></div>
+                <?php if (!$USER['verified']) {?><div><a href="/account/verify"><?php echo _('Verify account');?></a></div><?php } ?>
+
+                <hr/>
+                <div><a href="/search"><?php echo _('Search (for)');?></a></div>
+                <hr/>
+                <div>
+                    <form action="/account/logout" method="post" name="logout"></form>
+                    <a href="/account/logout"><?php echo _('Logout');?></a>
+                </div>
+            </div>
 <?php } else { ?>
-        <a href="/account/sign-up" class="button <?php echo uri_active('/account/sign-up', true);?>"><?php echo _('Sign up');?></a>
-        <a href="/account/login" class="button <?php echo uri_active('/account/login', true);?>"><?php echo _('Login');?></a>
+            <a href="/account/sign-up" class="button <?php echo uri_active('/account/sign-up', true);?>"><?php echo _('Sign up');?></a>
+            <a href="/account/login" class="button <?php echo uri_active('/account/login', true);?>"><?php echo _('Login');?></a>
 <?php } ?>
+        </div>
     </div>
 </nav>
 <div class="wrapper">

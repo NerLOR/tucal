@@ -26,7 +26,7 @@ require ".php/header.php";
 <main class="w3 search">
     <section>
         <form action="/search" method="get" class="search">
-            <input type="hidden" name="r" value="<?php echo htmlspecialchars($_GET['r']);?>"/>
+            <input type="hidden" name="r" value="<?php echo htmlspecialchars($r);?>"/>
             <input type="text" name="q" placeholder="<?php echo _('Search (for)');?>" value="<?php echo htmlspecialchars($query)?>" minlength="3" required/>
             <button type="submit"><?php echo _('Search (for)');?></button>
         </form>

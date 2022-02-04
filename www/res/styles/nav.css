@@ -7,20 +7,41 @@ body > nav {
     width: 100%;
     max-width: 100vw;
     z-index: 100;
-    display: flex;
     height: var(--nav-height);
     box-sizing: content-box;
     border-bottom: 1px solid var(--border-color);
     background-color: var(--nav-bg-color);
     position: fixed;
-    top: 0;
-    left: 0;
+    display: flex;
     justify-content: center;
     flex-wrap: nowrap;
+    top: 0;
+    left: 0;
 }
 
 body > nav > * {
     height: 100%;
+}
+
+#nav-left,
+#nav-right {
+    flex: 400px 1 1;
+    display: flex;
+}
+
+#nav-left {
+    order: 10;
+}
+
+#nav-right {
+    order: 30;
+}
+
+#nav-center {
+    flex: 75% 1 1;
+    display: flex;
+    justify-content: center;
+    order: 20;
 }
 
 body > nav a {
@@ -31,7 +52,7 @@ body > nav a {
     height: 100%;
 }
 
-body > nav > div.link a {
+body > nav div.link a {
     color: var(--grey-80);
     padding: 1em 2em 0 2em;
     text-align: center;
@@ -47,26 +68,25 @@ body > nav a.button {
     padding: 0.375em 1em;
 }
 
-body > nav > div.link a:hover,
-body > nav > div.link a:focus,
-body > nav a.button:hover,
-body > nav a.button:focus {
+body > nav a.button.active {
     color: var(--color);
     border-color: var(--color);
 }
 
-body > nav > div.link a.active,
-body > nav a.button.active {
-    color: var(--color);
+body > nav a.button:hover,
+body > nav a.button:focus {
+    color: var(--color-comp);
+    border-color: var(--color);
 }
 
-body > nav > div.link {
-    order: 50;
+body > nav div.link a:hover,
+body > nav div.link a:focus,
+body > nav div.link a.active {
+    color: var(--color);
 }
 
 #nav-home {
     width: var(--nav-height);
-    order: 10;
 }
 
 #nav-home a {
@@ -78,7 +98,7 @@ body > nav > div.link {
 #nav-home img {
     height: 48px;
     width: 48px;
-    padding: 2px;
+    padding: 4px;
     box-sizing: border-box;
 }
 
@@ -91,7 +111,6 @@ body > nav > div.link {
     text-align: right;
     padding: 0.5em;
     box-sizing: border-box;
-    order: 80;
 }
 
 #nav-live a.live {
@@ -106,7 +125,9 @@ body > nav > div.link {
     display: none;
 }
 
-#nav-live a.live:hover {
+#nav-live a.live:hover,
+#nav-live a.live:focus,
+#nav-live a.live:active {
     background-color: var(--red);
     color: var(--color-comp);
 }
@@ -126,30 +147,6 @@ body > nav > div.link {
     gap: 0.5em;
     padding: 0.5em;
     box-sizing: border-box;
-    order: 90;
-}
-
-#nav-search {
-    flex: 244px 1 1;
-    order: 20;
-}
-
-#nav-search form {
-    max-width: 250px;
-    margin-left: 0.5em;
-}
-
-#nav-search input {
-    border-radius: var(--border-radius);
-    font-size: 1em;
-    border: 1px solid var(--border-color);
-    padding: 0.5em 0.75em;
-    box-sizing: border-box;
-    width: 100%;
-    margin: 0.375em 0;
-    height: 2.25em;
-    background-color: var(--input-bg-color);
-    color: var(--black);
 }
 
 #user-menu {
@@ -239,9 +236,6 @@ body > nav > div.link {
 }
 
 @media screen and (max-width: 1000px) {
-    #nav-search form {
-        display: none;
-    }
     body > nav a {
         padding-left: 1em;
         padding-right: 1em;
@@ -253,35 +247,41 @@ body > nav > div.link {
         height: unset;
         flex-wrap: wrap;
     }
-    body > nav > * {
+    body > nav #nav-center {
+        height: unset;
+        flex-wrap: wrap;
+    }
+    body > nav > * > * {
         height: 3rem;
         flex: 100% 0 0;
     }
-    body > nav > div.link a {
+    body > nav div.link a {
         width: unset;
     }
-    #nav-user {
-        order: 12;
-        flex: 50% 100 0;
+    #nav-left {
+        position: fixed;
+        left: 0;
+        top: 0;
     }
-    #nav-home {
-        flex: 12.5% 100 0;
-    }
-    #nav-search {
-        flex: 100% 1 1;
-    }
-    #nav-search form {
-        margin: auto;
-        display: block;
+    #nav-right {
+        order: 15;
+        flex: 25% 1 1;
+        flex-wrap: wrap;
     }
     #nav-live {
-        order: 18;
+        order: 5;
         flex: 100% 1 1;
+        display: none;
     }
-    body > nav.active > #nav-home-explicit {
+    body > nav.active #nav-home-explicit {
         display: block;
     }
-    body > nav:not(.active) > *:not(:first-child):not(:last-child) {
+    body > nav.active #nav-live {
+        display: flex;
+        justify-content: center;
+        height: unset;
+    }
+    body > nav:not(.active) > #nav-center {
         display: none;
     }
 }

@@ -74,8 +74,7 @@ function initNav() {
     if (!menu) throw new Error();
     const nav = document.getElementsByTagName("nav")[0];
     if (!nav) throw new Error();
-    //const testElem = document.getElementById("nav-search").getElementsByTagName("form")[0];
-    const testElem = document.getElementById("nav-live");
+    const testElem = document.getElementById("nav-center");
     if (!testElem) throw new Error();
 
     if (userMenu) {
