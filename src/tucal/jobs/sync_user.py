@@ -19,7 +19,9 @@ from tucal.jobs.sync_cal import sync_cal
 
 TUWEL_INIT_VAL = 2
 TUWEL_GROUP_VAL = 20
-TUWEL_MONTHS = 12
+TUWEL_MONTHS_PRE = 12
+TUWEL_MONTHS_POST = 6
+TUWEL_MONTHS = TUWEL_MONTHS_PRE + TUWEL_MONTHS_POST
 TUWEL_MONTH_VAL = 2
 TISS_VAL_1 = 5
 TISS_VAL_2 = 15
@@ -238,7 +240,7 @@ def sync_user(mnr: int, use_db: bool = False, store_db: bool = False, keep_tiss_
     job.begin('sync tuwel user groups', len(courses))
 
     groups = {}
-    val = TUWEL_GROUP_VAL // len(courses)
+    val = TUWEL_GROUP_VAL // len(courses) if len(courses) != 0 else 0
     for c in courses.values():
         job.begin(f'sync tuwel user groups course "{c.name[:30]}"')
         groups[c.id] = tuwel.get_course_user_groups(c.id)
@@ -302,10 +304,11 @@ def sync_user(mnr: int, use_db: bool = False, store_db: bool = False, keep_tiss_
 
     job.begin('sync tuwel calendar months', TUWEL_MONTHS)
     acc = tucal.now()
-    months = [(acc.year + (acc.month - i - 1) // 12, (acc.month - i + 11) % 12 + 1) for i in range(0, TUWEL_MONTHS)]
+    mon_year = acc.year * 12 + acc.month - 1
+    months = [((mon_year + i) // 12, (mon_year + i) % 12 + 1) for i in range(-TUWEL_MONTHS_PRE, TUWEL_MONTHS_POST - 1)]
 
     events = []
-    for year, month in months[::-1]:
+    for year, month in months:
         job.begin(f'sync tuwel calendar month {month}/{year}')
         r = tuwel.ajax('core_calendar_get_calendar_monthly_view', year=year, month=month)
         events += [

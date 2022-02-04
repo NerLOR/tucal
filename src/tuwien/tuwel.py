@@ -12,14 +12,11 @@ import tuwien.sso
 TUWEL_DOMAIN = 'tuwel.tuwien.ac.at'
 TUWEL_URL = f'https://{TUWEL_DOMAIN}'
 
-LINK_COURSE = re.compile(rf'<a href="https://tuwel\.tuwien\.ac\.at/course/view\.php\?id=([0-9]+)" '
-                         r'title="([0-9]{3}\.[0-9A-Z]{3})\s*(.*?)\s*([0-9]{4}[SW])?">')
 AUTH_TOKEN = re.compile(r'authtoken=([^&]*)')
 INPUT_SESS_KEY = re.compile(r'<input name="sesskey" type="hidden" value="([^"]*)" */?>')
 USER_ID = re.compile(r'data-userid="([0-9]+)"')
 SESS_KEY = re.compile(r'"sesskey":"([^"]*)"')
 
-H1 = re.compile(r'<h1>([0-9]{3}\.[0-9A-Z]{3})\s*(.*?)\s*([0-9]{4}[SW])?</h1>')
 SPAN = re.compile(r'<span class="media-body font-weight-bold">\s*([^<>]*)\s*</span>')
 GROUP_OPTION = re.compile(r'<option value="([0-9]+)">([^<]*)</option>')
 GROUP_TOOL_LINK = re.compile(r'href="https://tuwel\.tuwien\.ac\.at/mod/grouptool/view\.php\?id=([0-9]+)"')
@@ -107,25 +104,21 @@ class Session:
         })
         return AUTH_TOKEN.findall(r.text)[0]
 
-    def _get_course(self, course_id: int) -> Course:
-        r = self.get(f'/course/view.php?id={course_id}')
-
-        groups = H1.findall(r.text)[0]
-        course_nr, name, semester = groups[0], groups[1], len(groups) > 2 and groups[2] or str(Semester.current())
-        short = html.unescape(SPAN.findall(r.text)[0])
-
-        return Course(course_id, Semester(semester), course_nr, html.unescape(name), short)
-
     def _get_courses(self) -> Dict[str, Course]:
-        r = self.get('/my/')
-        courses = {
-            (link.group(1), link.group(2), link.group(3), link.group(4))
-            for link in LINK_COURSE.finditer(r.text)
-        }
-        return {
-            f'{course[1].replace(".", "")}-{course[3]}': self._get_course(course[0])
-            for course in courses
-        }
+        data = self.ajax('core_course_get_enrolled_courses_by_timeline_classification',
+                         classification='all', customfieldname='semester', customfieldvalue='',
+                         limit=0, offset=0, sort='fullname')
+        courses = {}
+        for c in data['data']['courses']:
+            c.pop('courseimage', None)
+            part = c['idnumber'].split('-')
+            num = part[0]
+            if len(part) > 1:
+                sem = Semester(part[1])
+            else:
+                sem = Semester.current()
+            courses[c['idnumber']] = Course(c['id'], sem, num, c['fullname'], c['shortname'])
+        return courses
 
     def get_course_user_groups(self, course_id: int) -> List[Tuple[int, str]]:
         r = self.get(f'/user/index.php?id={course_id}')
