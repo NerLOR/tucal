@@ -72,6 +72,9 @@ require "../.php/header.php";
             </div>
             <button type="submit"><?php echo _('Save');?></button>
         </form>
+        <form action="/account/sync" method="get">
+            <button type="submit"><?php echo _('Synchronize TU account');?></button>
+        </form>
     </section>
     <section>
         <h1>Session</h1>

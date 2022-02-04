@@ -1,4 +1,5 @@
 <?php
+
 global $TITLE;
 global $USER;
 

@@ -107,6 +107,9 @@ msgstr "Verify account"
 msgid "SSO verification"
 msgstr "SSO verification"
 
+msgid "Synchronize TU account"
+msgstr "Syncrhonize TU account"
+
 msgid "Email verification"
 msgstr "Email verification"
 

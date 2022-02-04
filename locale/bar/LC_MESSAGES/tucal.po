@@ -68,6 +68,9 @@ msgstr "Account verifizian"
 msgid "SSO verification"
 msgstr "SSO-Verifiziarung"
 
+msgid "Synchronize TU account"
+msgstr "TU-Account synkronisian"
+
 msgid "Email verification"
 msgstr "E-Mail-Verifiziarung"
 

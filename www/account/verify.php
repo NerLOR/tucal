@@ -1,15 +1,16 @@
 <?php
+
 global $TITLE;
 global $USER;
 
 require "../.php/session.php";
 force_user_login(null, false);
 
+require "../.php/main.php";
+
 if ($USER['verified']) {
     redirect('/account/tu-wien-sso');
 }
-
-require "../.php/main.php";
 
 $TITLE = [_('Verify account')];
 require "../.php/header.php";
