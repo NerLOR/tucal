@@ -17,6 +17,7 @@ INPUT_SESS_KEY = re.compile(r'<input name="sesskey" type="hidden" value="([^"]*)
 USER_ID = re.compile(r'data-userid="([0-9]+)"')
 SESS_KEY = re.compile(r'"sesskey":"([^"]*)"')
 
+COURSE_NR = re.compile(r'^[A-z0-9]{3}\.[A-Z0-9]{3} (.*)$')
 SPAN = re.compile(r'<span class="media-body font-weight-bold">\s*([^<>]*)\s*</span>')
 GROUP_OPTION = re.compile(r'<option value="([0-9]+)">([^<]*)</option>')
 GROUP_TOOL_LINK = re.compile(r'href="https://tuwel\.tuwien\.ac\.at/mod/grouptool/view\.php\?id=([0-9]+)"')
@@ -113,11 +114,10 @@ class Session:
             c.pop('courseimage', None)
             part = c['idnumber'].split('-')
             num = part[0]
-            if len(part) > 1:
-                sem = Semester(part[1])
-            else:
-                sem = Semester.current()
-            courses[c['idnumber']] = Course(c['id'], sem, num, c['fullname'], c['shortname'])
+            sem = Semester(part[1]) if len(part) > 1 else Semester.current()
+            m = COURSE_NR.match(c['fullname'])
+            name = m.group(1) if m else c['fullname']
+            courses[c['idnumber']] = Course(c['id'], sem, num, name, c['shortname'])
         return courses
 
     def get_course_user_groups(self, course_id: int) -> List[Tuple[int, str]]:
