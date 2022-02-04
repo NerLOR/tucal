@@ -107,6 +107,9 @@ msgstr "Lona..."
 msgid "Error"
 msgstr "Föhla"
 
+msgid "Unknown error"
+msgstr "Unbekonnta Föhla"
+
 msgid "Room"
 msgstr "Raum"
 

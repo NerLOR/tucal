@@ -225,6 +225,9 @@ msgstr "Laden..."
 msgid "Error"
 msgstr "Fehler"
 
+msgid "Unknown error"
+msgstr "Unbekannter Fehler"
+
 msgid "Room"
 msgstr "Raum"
 

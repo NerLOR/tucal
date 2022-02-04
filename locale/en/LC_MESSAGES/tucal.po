@@ -191,6 +191,9 @@ msgstr "Loading..."
 msgid "Error"
 msgstr "Error"
 
+msgid "Unknown error"
+msgstr "Unknown error"
+
 msgid "Room"
 msgstr "Room"
 

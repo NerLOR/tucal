@@ -9,6 +9,7 @@ require "../.php/main.php";
 
 $jobId = $_GET['job'] ?? null;
 $errorMsg = null;
+$mode = null;
 $errors = [
     "2fa-gen" => null,
 ];
@@ -84,6 +85,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $res = explode(' ', $res);
+    if (sizeof($res) < 2) {
+        header("Status: 500");
+        $errorMsg = _('Unknown error');
+        goto doc;
+    }
 
    redirect("/account/tu-wien-sso?job=$res[1]");
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -127,6 +133,9 @@ if ($jobId === null) { ?>
             </div>
             <button type="submit" name="mode" value="store"><?php echo _('Automatic account synchronization');?></button>
         </form>
+<?php if ($errorMsg !== null && $mode === 'store') { ?>
+        <div class="container error"><?php echo $errorMsg;?></div>
+<?php } ?>
         <form name="sso-no-store" action="/account/tu-wien-sso" method="post" class="panel">
             <hr data-content="<?php echo strtoupper(_('or'));?>"/>
             <p><?php echo _('One-time account synchronization (description)');?></p>
@@ -142,7 +151,7 @@ if ($jobId === null) { ?>
             </div>
             <button type="submit" name="mode" value="no-store"><?php echo _('One-time account synchronization');?></button>
         </form>
-<?php if ($errorMsg !== null) { ?>
+<?php if ($errorMsg !== null && ($mode === 'no-store' || $mode === null)) { ?>
         <div class="container error"><?php echo $errorMsg;?></div>
 <?php } ?>
     </section>
