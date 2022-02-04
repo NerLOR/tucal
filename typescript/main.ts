@@ -68,7 +68,6 @@ function initCalendar() {
 
 function initNav() {
     const userMenu = document.getElementById("user-menu");
-    if (!userMenu) throw new Error();
     const home = document.getElementById("nav-home");
     if (!home) throw new Error();
     const menu = home.getElementsByTagName("a")[0];
