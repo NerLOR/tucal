@@ -10,6 +10,7 @@
    make database
    cd src/
    python3 -m tucal.init_db
+   python3 -m tucal.jobs.sync_courses
    ```
 
 3. To deploy run
