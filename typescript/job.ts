@@ -172,6 +172,7 @@ class Job {
                 console.warn(`Real progress at ${(progress * 100).toFixed(0)}%, but displaying ${(this.progress * 100).toFixed(0)}% - Diff: ${(diff * 100).toFixed(0)}`);
             }
             if (diff > 0.25) {
+                console.error(`Reverting progress from ${(this.progress * 100).toFixed((0))}% to ${(progress * 100).toFixed(0)}% - Diff: ${(diff * 100).toFixed(0)}`);
                 this.progress = progress;
             }
         }
@@ -189,11 +190,15 @@ class Job {
         progressBar.style.display = 'unset';
 
         if (job.status === 'error' && job.error) {
-            const line = job.error.split('\n').splice(-2)[0];
-            if (!line) throw new Error();
-            const err = line.split(':').splice(-1)[0];
-            if (!err) throw new Error();
-            status = _('Error') + `: ${err.trim()}`;
+            console.error(job.error);
+            if (job.error.startsWith('Traceback (most recent call last):')) {
+                const lines = job.error.split('\n');
+                const errDesc = lines.filter((line, idx) => idx > 0 && !line.startsWith(' '));
+                if (errDesc[0]) {
+                    const err = errDesc[0].substr(errDesc[0].indexOf(':') + 1).trim();
+                    status = _('Error') + `: ${err.trim()}`;
+                }
+            }
         }
 
         statusText.innerHTML = status;
