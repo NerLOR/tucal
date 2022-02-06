@@ -106,6 +106,7 @@ def upsert_values(table: str, data: List[Dict[str, Any]], fields: Dict[str, str]
             upserted.append(row_id)
         else:
             rows_insert.append(row)
+            pks.append(row_id)
 
     template = '(' + ', '.join([f'%({k})s' for k in fields.values()]) + ')'
 
