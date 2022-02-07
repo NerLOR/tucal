@@ -8,7 +8,7 @@
 2. To initialize database run
    ```shell
    make database
-   cd src/
+   cd python/src/
    python3 -m tucal.init_db
    python3 -m tucal.jobs.sync_courses
    ```
