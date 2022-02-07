@@ -33,13 +33,20 @@ class Job {
 
     constructor(element: Element, success: Function | null = null, error: Function | null = null) {
         this.elem = element;
-        const id = this.elem.getAttribute('data-job');
+        const id = this.elem.getAttribute('data-job-id');
+        const dataStr = this.elem.getAttribute('data-job');
         if (!id) throw new Error();
+
+        if (dataStr) {
+            this.data = JSON.parse(dataStr);
+        } else {
+            this.data = null;
+        }
+
         this.id = id;
         this.onSuccess = success;
         this.onError = error;
         this.lastEtas = [];
-        this.data = null;
         this.progress = 0;
 
         const container = document.createElement("div");
@@ -55,15 +62,21 @@ class Job {
 
         this.elem.appendChild(container);
 
-        this.fetch().then();
-        this.timerFetch = setInterval(() => {
+        if (!this.data || (this.data && this.data.status === 'running')) {
             this.fetch().then();
-        }, 500);
+            this.timerFetch = setInterval(() => {
+                this.fetch().then();
+            }, 500);
 
-        this.update();
-        this.timerUpdate = setInterval(() => {
             this.update();
-        }, 125);
+            this.timerUpdate = setInterval(() => {
+                this.update();
+            }, 125);
+        } else {
+            this.timerFetch = null;
+            this.timerUpdate = null;
+            this.update();
+        }
     }
 
     async fetch() {

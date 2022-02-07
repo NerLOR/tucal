@@ -123,3 +123,23 @@ function echo_account($row, $mnr = false, $uri = null) {
     }
     echo "</span></div></a>";
 }
+
+function echo_job(string $jobId, string $successUrl, string $errorUrl) {
+    echo "<div class='job-viewer' data-job-id='$jobId'";
+
+    $stmt = db_exec("SELECT data, status FROM tucal.v_job WHERE job_id = ?", [$jobId]);
+    $rows = $stmt->fetchAll();
+    if (sizeof($rows) === 0) {
+        echo ' data-job-invalid="1"';
+    } else {
+        $data = json_decode($rows[0]['data'], true);
+        $data['status'] = $rows[0]['status'];
+    }
+
+    echo ' data-success-href="' . htmlspecialchars($successUrl) . '"';
+    echo ' data-error-href="' . htmlspecialchars($errorUrl) . '"';
+    if (isset($data)) {
+        echo ' data-job="' . htmlspecialchars(json_encode($data, JSON_FLAGS)) . '"';
+    }
+    echo '></div>';
+}
