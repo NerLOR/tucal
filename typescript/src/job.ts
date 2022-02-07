@@ -11,8 +11,6 @@ interface Step {
 class Job {
     elem: Element;
     id: string;
-    timerFetch: number | null;
-    timerUpdate: number | null;
     onSuccess: Function | null;
     onError: Function | null;
     lastEtas: number[];
@@ -30,6 +28,8 @@ class Job {
         error: string | undefined,
     } | null;
     progress: number;
+    timerUpdate: number | null;
+    ws: WebSocket | null;
 
     constructor(element: Element, success: Function | null = null, error: Function | null = null) {
         this.elem = element;
@@ -49,6 +49,9 @@ class Job {
         this.lastEtas = [];
         this.progress = 0;
 
+        this.ws = null;
+        this.timerUpdate = null;
+
         const container = document.createElement("div");
         container.classList.add('progress-bar');
 
@@ -62,20 +65,11 @@ class Job {
 
         this.elem.appendChild(container);
 
+        this.update();
         if (!this.data || (this.data && this.data.status === 'running')) {
-            this.fetch().then();
-            this.timerFetch = setInterval(() => {
-                this.fetch().then();
-            }, 500);
-
-            this.update();
-            this.timerUpdate = setInterval(() => {
-                this.update();
-            }, 125);
-        } else {
-            this.timerFetch = null;
-            this.timerUpdate = null;
-            this.update();
+            this.ws = new WebSocket(`wss://${window.location.hostname}/tucal/job?id=${this.id}`);
+            console.log(this.ws);
+            this.timerUpdate = setInterval(this.update, 125);
         }
     }
 
@@ -96,9 +90,6 @@ class Job {
                 'status': 'error',
                 'error': e.message,
             }
-        }
-        if (job.status !== 'running' && this.timerFetch) {
-            clearInterval(this.timerFetch);
         }
         if (job.remaining && this.data) {
             const eta = job.time + job.remaining;
