@@ -4,7 +4,7 @@
     "target": "ES2020",
     "module": "system",
     "outFile": "../www/res/scripts/min.js",
-    "rootDir": "./",
+    "rootDir": "src/",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
