@@ -2,5 +2,6 @@
 __pycache__/
 *.pcy
 dest/
+target/
 /*.sh
 /tucal.ini
