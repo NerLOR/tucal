@@ -9,7 +9,7 @@ import psycopg2.extras
 
 DB_CONN: Optional[Connection] = None
 
-CONFIG_PLACES = ['tucal.ini', '/etc/tucal/tucal.ini', '../tucal.ini']
+CONFIG_PLACES = ['tucal.ini', '/etc/tucal/tucal.ini', '../../tucal.ini']
 DB_TZ = 'Europe/Vienna'
 DB_CONFIG = {}
 
