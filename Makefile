@@ -18,10 +18,10 @@ build-www:
 	cp -pr typescript dest/typescript
 	tools/msgfmtjs.sh locale dest/typescript/src/messages.ts dest/typescript/src/messages.ts
 	tsc -p dest/typescript/
-	# replace css links in php/html
-	sed -i 's|"\(/res/[^"]*\)"|"\1?v=$(shell date -u +%Y%m%d-%H%M%S)"|g' dest/www/.php/header.php dest/www/.php/footer.php
+	# replace css links in html
+	sed -i 's|"\(/res/[^"]*\)"|"\1?v=$(shell date -u +%Y%m%d-%H%M%S)"|g' dest/www/base.html.tera
 	tools/minify-css.sh
-	sed -i 's|/res/styles/styles.css|/res/styles/min.css|g' dest/www/.php/header.php
+	sed -i 's|/res/styles/styles.css|/res/styles/min.css|g' dest/www/base.html.tera
 	# create .ico file from svg
 	convert -background none dest/www/res/svgs/tucal.svg -alpha set -define icon:auto-resize=256,128,64,32,24,16 dest/www/favicon.ico
 	# compile .po files

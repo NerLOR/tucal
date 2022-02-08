@@ -1,0 +1,12 @@
+{% extends "base" %}
+{% block content %}
+{% set msg = http_messages[status] %}
+<main class="w1">
+    <section class="status error">
+        <h1>{{ status }}</h1>
+        <h2>{{ macros::pgettext(msgid=msg, msgctxt="http") }} :&#xFEFF;(</h2>
+        <p>{{ macros::pgettext(msgid=msg ~ " (description)", msgctxt="http") }}</p>
+        <p>{% if error %}{{ error | escape }}{% endif %}</p>
+    </section>
+</main>
+{% endblock content %}

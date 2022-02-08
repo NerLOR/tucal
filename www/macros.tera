@@ -1,0 +1,14 @@
+{%- macro _(msgid) -%}
+    {%- if locale_msg and msgid in locale_msg -%}
+        {{- locale_msg[msgid] -}}
+    {%- else -%}
+        {{- msgid -}}
+    {%- endif -%}
+{%- endmacro input -%}
+{%- macro pgettext(msgid, msgctxt) -%}
+    {%- if locale_msg_ctxt and msgctxt in locale_msg_ctxt and msgid in locale_msg_ctxt[msgctxt] -%}
+        {{- locale_msg_ctxt[msgctxt][msgid] -}}
+    {%- else -%}
+        {{- msgid -}}
+    {%- endif -%}
+{%- endmacro input -%}

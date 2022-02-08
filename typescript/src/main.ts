@@ -132,6 +132,7 @@ function initJobs() {
 
 function initData() {
     api(`/tucal/rooms`).then((res) => {
+        if (!res) return;
         BUILDINGS = {};
         ROOMS = {};
         for (const building of res.data.buildings) {
@@ -146,6 +147,7 @@ function initData() {
     });
     if (MNR === null) return;
     api('/tucal/courses', {'mnr': MNR}).then((res) => {
+        if (!res) return;
         COURSES = {};
         COURSE_DEF = {};
         for (const course of res.data.personal) {
@@ -224,7 +226,7 @@ function initCopyLink() {
 
 async function api(endpoint: string,
                    urlData: {[index: string]: any} | null = null,
-                   data: {[index: string]: any} | null = null) {
+                   data: {[index: string]: any} | null = null): Promise<any | null> {
     let info = {};
     if (data !== null) {
         info = {
@@ -245,8 +247,13 @@ async function api(endpoint: string,
     }
 
     const req = await fetch(`/api${endpoint}${suffix}`, info);
-    const json = await req.json();
+    const type = req.headers.get('Content-Type');
+    if (!type || !type.startsWith('application/json')) {
+        console.error(`Invalid Content-Type "${type}"`);
+        return null;
+    }
 
+    const json = await req.json();
     if (json.message !== null) {
         if (json.status === "success") {
             console.warn(`API: ${json.message}`);
@@ -258,7 +265,8 @@ async function api(endpoint: string,
     if (req.status === 200 && json.status === "success") {
         return json;
     } else {
-        throw new Error(json.message);
+        console.error(json.message);
+        return null;
     }
 }
 
