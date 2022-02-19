@@ -117,11 +117,11 @@ TILab Raum 4,,,,DEZE64,DE ZE 64,lab,,,11,tiss
 TILab Raum 5,,,,DEZE72,DE ZE 72,lab,,,3,tiss
 complang-Labor,,,,EAEG19,EAEG 19,lab,,,26,tiss
 DSLab,,,,EAU120B,EA U1 20B,lab,,,24,tiss
-InfLab Frogger,,,,HGEG05,HGEG05,lab,,,25,tiss
-InfLab Pong,,,,HGEG15,HGEG15,lab,,,10,tiss
-InfLab Q*bert,,,,HGEG01A,HGEG05A,lab,,,25,tiss
-Informatiklabor Breakout,,,,HE0232,HEEG07,lab,,,10,tiss
-Informatiklabor Zelda,,,,HE0236,HEEG10,lab,,,10,tiss
+Informatiklabor Breakout,,InfLab Breakout,,HE0232,HEEG07,lab,,,10,tiss
+Informatiklabor Frogger,,InfLab Frogger,,HGEG05,HGEG05,lab,,,25,tiss
+Informatiklabor Pong,,InfLab Pong,,HGEG15,HGEG15,lab,,,10,tiss
+Informatiklabor Q*bert,,InfLab Q*bert,,HGEG01A,HGEG05A,lab,,,25,tiss
+Informatiklabor Zelda,,InfLab Zelda,,HE0236,HEEG10,lab,,,10,tiss
 Labor HC,,,,HCEG13,HCEG13,lab,,,7,tiss
 Labor HE,,,,HE0250,HE0250,lab,,,7,tiss
 Labor Mechanische Prüfung I,,,,HAEG09,HAEG09,lab,,,6,tiss
