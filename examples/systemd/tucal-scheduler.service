@@ -3,7 +3,7 @@ Description=TUcal scheduler
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/tucal/src/
+WorkingDirectory=/opt/tucal/python/src/
 EnvironmentFile=/etc/environment
 ExecStart=/bin/python3 -m tucal.scheduler
 Restart=always
