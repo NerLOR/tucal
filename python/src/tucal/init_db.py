@@ -4,14 +4,16 @@ import argparse
 import tucal.db
 import tuwien.tiss
 
-AREAS = '../data/areas.csv'
-BUILDINGS = '../data/buildings.csv'
-ROOMS = '../data/rooms.csv'
-COURSE_ACRONYMS = '../data/course_acronyms.csv'
-LECTURE_TUBE = '../data/lecture_tube.csv'
+DATA_DIR = '../../data'
 
-EVENT_TYPES = '../data/tiss/event_types.csv'
-COURSE_TYPES = '../data/tiss/course_types.csv'
+AREAS = f'{DATA_DIR}/areas.csv'
+BUILDINGS = f'{DATA_DIR}/buildings.csv'
+ROOMS = f'{DATA_DIR}/rooms.csv'
+COURSE_ACRONYMS = f'{DATA_DIR}/course_acronyms.csv'
+LECTURE_TUBE = f'{DATA_DIR}/lecture_tube.csv'
+
+EVENT_TYPES = f'{DATA_DIR}/tiss/event_types.csv'
+COURSE_TYPES = f'{DATA_DIR}/tiss/course_types.csv'
 
 
 if __name__ == '__main__':

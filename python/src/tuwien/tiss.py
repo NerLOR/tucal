@@ -306,7 +306,7 @@ class Session:
         title_en = html.unescape(COURSE_TITLE.findall(r.text)[0].strip())
 
         course_type = meta[0]
-        ects = meta[2]
+        ects = float(meta[2])
 
         return Course(course_nr, semester, title_de, title_en, course_type, ects)
 
