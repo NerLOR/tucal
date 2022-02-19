@@ -167,7 +167,7 @@ FH Hörsaal 5,,FH 5,,DA02G15,F5,lecture_hall,,220,198,colab tiss rdb
 FH Hörsaal 6,,FH 6,,DA02K01,F6,lecture_hall,,216,198,colab tiss rdb
 FH Hörsaal 7,,FH 7,,DB02H04,F7,lecture_hall,,82,70,colab tiss rdb
 FH Hörsaal 8,Nöbauer,FH 8,,DB02H12,F8,lecture_hall,,142,203,colab tiss rdb
-Informatikhörsaal,,Inf. HS,,DEEG16 DEU116,INFH,lecture_hall,,303,392,colab tiss rdb
+Informatikhörsaal,,InfHS,,DEEG16 DEU116,INFH,lecture_hall,,303,392,colab tiss rdb
 FAV Hörsaal 1,,FAV 1,,HEEG02,FAV1,lecture_hall,,,106,colab tiss
 FAV Hörsaal 2,,FAV 2,,HEEG03,FAV2,lecture_hall,,,35,colab tiss
 FAV Hörsaal 3,Zemanek,FAV 3,Seminarraum Zemanek,HHEG01,ZEMS,lecture_hall,,,40,colab tiss
