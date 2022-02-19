@@ -577,9 +577,9 @@ class Session:
                     end = tucal.parse_iso_timestamp(f'{iso_date}T{end_time}:00', True)
 
                     events.append({
-                        'location': location if not room_code else None,
-                        'room_code': room_code,
-                        'comment': comment,
+                        'location': html.unescape(location) if not room_code else None,
+                        'room_code': html.unescape(room_code) if room_code else None,
+                        'comment': html.unescape(comment) if comment else None,
                         'start': start,
                         'end': end,
                     })
