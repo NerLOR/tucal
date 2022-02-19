@@ -29,6 +29,9 @@ msgstr "Studenten"
 msgid "My Courses"
 msgstr "Meine LVAs"
 
+msgid "Old Courses"
+msgstr "Alte LVAs"
+
 msgid "Courses"
 msgstr "LVAs"
 
