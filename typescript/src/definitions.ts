@@ -109,7 +109,7 @@ class Room {
         this.nameNormalized = room.name_normalized;
         this.ltRoomCode = room.lt_room_code;
         this.ltName = room.lt_name;
-        this.buildingId = (this.roomCodes[0] || '').substr(0, 2);
+        this.buildingId = (this.roomCodes[0] || '').substring(0, 2);
     }
 
     getName(): string {
@@ -141,7 +141,7 @@ class Room {
 
     getCodeFormat(): string {
         return this.roomCodes.map(
-            (c) => `${c.substr(0, 2)} ${c.substr(2, 2)} ${c.substr(4)}`
+            (c) => `${c.substring(0, 2)} ${c.substring(2, 2)} ${c.substring(4)}`
         ).join(', ');
     }
 
@@ -149,7 +149,7 @@ class Room {
         const roomCode = this.roomCodes[0];
         if (!roomCode) return '';
 
-        const floorStr = formatFloor(roomCode.substr(2, 2));
+        const floorStr = formatFloor(roomCode.substring(2, 2));
         const building = this.getBuilding();
 
         let address = floorStr;

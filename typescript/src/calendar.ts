@@ -645,7 +645,7 @@ class WeekSchedule {
 
         if (evt.courseGroup && evt.courseGroup !== 'LVA') {
             let group = evt.courseGroup;
-            while (group.startsWith('Gruppe ')) group = group.substr(7);
+            while (group.startsWith('Gruppe ')) group = group.substring(7);
             html += `<div class="container"><div>${_('Group')}:</div><div>${group}</div></div>`;
         }
 

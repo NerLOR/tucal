@@ -208,7 +208,7 @@ class Job {
                 const lines = job.error.split('\n');
                 const errDesc = lines.filter((line, idx) => idx > 0 && !line.startsWith(' '));
                 if (errDesc[0]) {
-                    const err = errDesc[0].substr(errDesc[0].indexOf(':') + 1).trim();
+                    const err = errDesc[0].substring(errDesc[0].indexOf(':') + 1).trim();
                     status = _('Error') + `: ${err.trim()}`;
                 }
             }

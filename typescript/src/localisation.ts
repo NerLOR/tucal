@@ -2,7 +2,7 @@
 
 const LANG: string = document.documentElement.lang;
 const LANG_GROUP: string = LANG.split("-")[0] || "de";
-const LOCALE: string = LANG.startsWith("bar") ? "de" + LANG.substr(3) : LANG;
+const LOCALE: string = LANG.startsWith("bar") ? "de" + LANG.substring(3) : LANG;
 const LOCALE_GROUP: string = LOCALE.split("-")[0] || "de";
 
 function _(msgId: string): string {
@@ -13,7 +13,7 @@ function _(msgId: string): string {
 
 function formatFloor(floor: string): string {
     // TODO DG/EG/SO/ZE
-    const nr = (floor === 'EG') ? 0 : (floor[0] === 'U') ? -parseInt(floor.substr(1)) : parseInt(floor);
+    const nr = (floor === 'EG') ? 0 : (floor[0] === 'U') ? -parseInt(floor.substring(1)) : parseInt(floor);
 
     if (LOCALE_GROUP === 'de') {
         if (nr === 0) {

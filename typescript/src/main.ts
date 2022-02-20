@@ -44,7 +44,7 @@ function initCalendar() {
 
     const subject = parts[2];
     const year = parseInt(parts[3]);
-    const week = parseInt(parts[4].substr(1));
+    const week = parseInt(parts[4].substring(1));
     const eventId = (!parts[5] || parts[5].length === 0) ? null : parts[5];
 
     CALENDAR = new WeekSchedule(main, subject, eventId);
