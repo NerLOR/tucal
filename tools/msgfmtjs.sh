@@ -18,7 +18,7 @@ for loc in $(ls "$dir"); do
   first2="t"
   if [[ -z "$first1" ]]; then echo -ne ",\n" >>"$tmp"; fi
   echo -ne "    \"${loc/_/-}\": {\n" >>"$tmp"
-  cat "$dir/$loc/LC_MESSAGES/tucal.po" | while read line; do
+  { cat "$dir/$loc/LC_MESSAGES/tucal.po"; echo -ne "\n"; } | while read line; do
     if [[ "$line" =~ ^msgid ]]; then
       msgid="${line:7:-1}"
     elif [[ "$line" =~ ^msgctx ]]; then
