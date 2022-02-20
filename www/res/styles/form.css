@@ -28,6 +28,10 @@ a.button {
     width: -moz-fit-content;
     text-decoration: none !important;
     display: inline-block;
+}
+
+button.margin,
+a.button.margin {
     margin: 0.25em;
 }
 

@@ -131,8 +131,8 @@ require "../.php/header.php";
         <div class="container error"><?php echo $errorMsg;?></div>
 <?php } ?>
         <div class="center">
-            <a class="button" href="/account/sync"><?php echo _('Synchronize TU account');?></a>
-            <a class="button" href="/account/password"><?php echo _('Change password');?></a>
+            <a class="button margin" href="/account/sync"><?php echo _('Synchronize TU account');?></a>
+            <a class="button margin" href="/account/password"><?php echo _('Change password');?></a>
         </div>
     </section>
 </main>
