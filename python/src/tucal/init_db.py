@@ -18,6 +18,8 @@ COURSE_TYPES = f'{DATA_DIR}/tiss/course_types.csv'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--data-only', action='store_true',
+                        help='Only update tables from the data/ directory. Skip fetching TISS rooms')
     args = parser.parse_args()
 
     print('Updating event types...')
@@ -95,6 +97,9 @@ if __name__ == '__main__':
     print('Updated buildings')
 
     tucal.db.commit()
+
+    if args.data_only:
+        exit(0)
 
     print('Fetching tiss rooms...')
     s = tuwien.tiss.Session()
