@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (sizeof($data) > 0) {
             foreach ($data as $row) {
                 if (strtolower($row['username']) === strtolower($username)) {
-                    $errors['username'] = 'Already exists';
+                    $errors['username'] = 'Already in use';
                 }
                 if ($row['mnr'] == $mnr) {
                     $errors['mnr'] = 'Already in use';

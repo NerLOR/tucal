@@ -27,6 +27,8 @@ a.button {
     width: fit-content;
     width: -moz-fit-content;
     text-decoration: none !important;
+    display: inline-block;
+    margin: 0.25em;
 }
 
 button:hover,
@@ -41,6 +43,12 @@ a.button:focus {
 button:disabled {
     background-color: var(--grey-C0);
     border-color: var(--grey-C0);
+    color: var(--grey-40);
+}
+
+input:disabled {
+    background-color: var(--grey-C0);
+    border-color: var(--grey-80);
     color: var(--grey-40);
 }
 
@@ -160,7 +168,8 @@ main form.panel a.button:focus {
     cursor: pointer;
 }
 
-main form.panel ~ div.error {
+main form.panel ~ div.error,
+main form.table ~ div.error {
     border: 1px solid var(--red);
     border-radius: var(--border-radius);
     text-align: center;
@@ -178,5 +187,28 @@ main form.panel div.container label {
 }
 
 main form.table {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    margin: 1em 0;
+    align-items: center;
+}
 
+main form.table > div {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+main form.table label {
+    display: inline-block;
+    width: 100px;
+    flex: 200px 0 2;
+}
+
+main form.table input,
+main form.table select {
+    display: inline-block;
+    width: 200px;
+    flex: 250px 0 1;
 }

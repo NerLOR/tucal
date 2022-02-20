@@ -259,6 +259,10 @@ main p.center {
     text-align: center;
 }
 
+main div.center {
+    text-align: center;
+}
+
 main section > p {
     hyphens: auto;
     -moz-hyphens: auto;

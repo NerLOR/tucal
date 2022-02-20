@@ -104,6 +104,9 @@ msgstr "Passwort wiederholen"
 msgid "SSO password"
 msgstr "TU-Passwort"
 
+msgid "Change password"
+msgstr "Passwort ändern"
+
 msgid "Verify account"
 msgstr "Account verifizieren"
 
@@ -127,6 +130,9 @@ msgstr "Existiert bereits"
 
 msgid "Already in use"
 msgstr "Bereits in Verwendung"
+
+msgid "Username already in use"
+msgstr "Benutzername bereits in Verwendung"
 
 msgid "Too short"
 msgstr "Zu kurz"
@@ -308,6 +314,15 @@ msgstr "Weiter"
 
 msgid "Back"
 msgstr "Zurück"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+msgid "Locale"
+msgstr "Sprache/Region"
 
 
 msgctxt "http"
