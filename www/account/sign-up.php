@@ -70,8 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $stmt = db_exec("
-                    INSERT INTO tucal.account (mnr, username, pwd_hash)
-                    VALUES (:mnr, :username, NULL)
+                    INSERT INTO tucal.account (mnr, username)
+                    VALUES (:mnr, :username)
                     RETURNING account_nr", [
             'mnr' => $mnr,
             'username' => $username,
@@ -79,9 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nr = $stmt->fetch()[0];
 
         $stmt = db_exec("
-                    UPDATE tucal.account
-                    SET pwd_hash = crypt(:pwd, pwd_salt)
-                    WHERE account_nr = :nr", [
+                    INSERT INTO tucal.password (account_nr, pwd_salt, pwd_hash)
+                    VALUES (:nr, gen_salt('bf'), crypt(:pwd, pwd_salt))", [
             'nr' => $nr,
             'pwd' => $pw1,
         ]);
@@ -102,9 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     db_commit();
 
-    header("Status: 303");
-    header("Location: /account/verify");
-    tucal_exit();
+    redirect('/account/verify');
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     $STATUS = 405;
     header("Allow: GET, POST");
@@ -144,6 +141,10 @@ require "../.php/header.php";
 <?php if ($errorMsg !== null) { ?>
         <div class="container error"><?php echo $errorMsg;?></div>
 <?php } ?>
+        <p class="center small">
+            <?php echo _('Already signed up?');?> <a href="/account/login"><?php echo _('Login');?></a>.
+            <a href="/account/password/reset"><?php echo _('Forgot password');?></a>.
+        </p>
     </section>
 </main>
 <?php

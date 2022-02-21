@@ -28,12 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        if (strlen($subj) >= 1 && $subj[0] === '0') {
+        while (strlen($subj) >= 1 && $subj[0] === '0') {
             $subj = substr($subj, 1);
         }
         $stmt = db_exec("
-                    SELECT account_nr, mnr, username, (pwd_hash = crypt(:pwd, pwd_salt)) AS pwd_match, verified
-                    FROM tucal.account
+                    SELECT a.account_nr, mnr, username, (pwd_hash = crypt(:pwd, pwd_salt)) AS pwd_match, verified
+                    FROM tucal.account a
+                        LEFT JOIN tucal.password p ON p.account_nr = a.account_nr
                     WHERE mnr::text = :subj OR
                           lower(username) = lower(:subj::text)", [
             'subj' => $subj,
@@ -62,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect($redirect);
         }
     } catch (Exception $e) {
-        db_rollback();
         header("Status: 500");
         $errorMsg = $e->getMessage();
         goto doc;
@@ -94,8 +94,12 @@ require "../.php/header.php";
             <button type="submit"><?php echo _('Login');?></button>
         </form>
         <?php if ($errorMsg !== null) { ?>
-            <div class="container error"><?php echo $errorMsg;?></div>
+        <div class="container error"><?php echo $errorMsg;?></div>
         <?php } ?>
+        <p class="center small">
+            <?php echo _('No account yet?');?> <a href="/account/sign-up"><?php echo _('Sign up');?></a>.
+            <a href="/account/password/reset"><?php echo _('Forgot password');?></a>.
+        </p>
     </section>
 </main>
 <?php

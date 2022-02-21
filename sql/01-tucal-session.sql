@@ -23,9 +23,6 @@ CREATE TABLE tucal.account
 
     options       JSONB                    NOT NULL DEFAULT '{}'::jsonb,
 
-    pwd_salt      TEXT                              DEFAULT gen_salt('bf'),
-    pwd_hash      TEXT,
-
     CONSTRAINT pk_account PRIMARY KEY (account_nr),
     CONSTRAINT sk_account_id UNIQUE (account_id),
     CONSTRAINT sk_account_mnr UNIQUE (mnr),
@@ -48,10 +45,25 @@ CREATE TRIGGER t_insert_id
 EXECUTE PROCEDURE tucal.account_id();
 
 
+CREATE TABLE tucal.password
+(
+    account_nr BIGINT                   NOT NULL,
+    pwd_salt   TEXT                              DEFAULT gen_salt('bf'),
+    pwd_hash   TEXT,
+    update_ts  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+
+    CONSTRAINT pk_password PRIMARY KEY (account_nr),
+    CONSTRAINT fk_password_account FOREIGN KEY (account_nr) REFERENCES tucal.account (account_nr)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+
 CREATE TABLE tucal.friend
 (
     account_nr_1 BIGINT NOT NULL,
     account_nr_2 BIGINT NOT NULL,
+    nickname     TEXT DEFAULT NULL,
 
     CONSTRAINT pk_friend PRIMARY KEY (account_nr_1, account_nr_2),
     CONSTRAINT fk_friend_account_1 FOREIGN KEY (account_nr_1) REFERENCES tucal.account (account_nr)

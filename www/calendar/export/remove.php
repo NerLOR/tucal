@@ -65,6 +65,4 @@ if (substr($ref, 0, strlen($refQuery)) !== $refQuery) {
     $ref = '/calendar/' . substr($ref, strlen($refQuery));
 }
 
-header("Status: 303");
-header("Location: $ref");
-
+redirect($ref);

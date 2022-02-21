@@ -107,14 +107,38 @@ msgstr "TU-Passwort"
 msgid "Change password"
 msgstr "Passwort ändern"
 
+msgid "Change Password"
+msgstr "Passwort ändern"
+
+msgid "Current password"
+msgstr "Aktuelles Passwort"
+
+msgid "New password"
+msgstr "Neues Passwort"
+
+msgid "Repeat new password"
+msgstr "Neues Passwort wiederholen"
+
+msgid "Forgot password"
+msgstr "Passwort vergessen"
+
 msgid "Verify account"
-msgstr "Account verifizieren"
+msgstr "Konto verifizieren"
 
 msgid "SSO verification"
 msgstr "SSO-Verifizierung"
 
 msgid "Synchronize TU account"
-msgstr "TU-Account synchronisieren"
+msgstr "TU-Konto synchronisieren"
+
+msgid "Sync TU account"
+msgstr "TU-Konto syncen"
+
+msgid "No account yet?"
+msgstr "Noch kein Konto?"
+
+msgid "Already signed up?"
+msgstr "Bereits registriert?"
 
 msgid "Email verification"
 msgstr "E-Mail-Verifizierung"
@@ -147,13 +171,13 @@ msgid "Wrong"
 msgstr "Falsch"
 
 msgid "TU Wien account synchronization"
-msgstr "TU-Account-Synchronisation"
+msgstr "TU-Konto-Synchronisation"
 
 msgid "Automatic account synchronization"
-msgstr "Automatische Account-Synchronisation"
+msgstr "Automatische Konto-Synchronisation"
 
 msgid "One-time account synchronization"
-msgstr "Einmalige Account-Synchronisation"
+msgstr "Einmalige Konto-Synchronisation"
 
 msgid "SSO 2FA generator"
 msgstr "SSO-Zwei-Faktor-Authentifizierung Generator"
@@ -171,7 +195,7 @@ msgstr "Empfohlen wird, dass das TU-Passwort beim TUcal-Server hinterlegt wird. 
        "So können die Kalenderdaten regelmäßig im Hintergrund snychronisiert werden."
 
 msgid "One-time account synchronization (description)"
-msgstr "Es gibt auch die Möglichkeit die Account-Synchronisierung nur einmalig durchzuführen. "
+msgstr "Es gibt auch die Möglichkeit die Konto-Synchronisierung nur einmalig durchzuführen. "
        "Hierbei wird das Passwort nicht auf dem TUcal-Server gespeichert. "
        "Es kann nicht garantiert werden, dass der persönliche TUcal-Kalender automatisch aktualisiert wird."
 

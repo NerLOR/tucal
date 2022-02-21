@@ -63,14 +63,18 @@ function force_user_login(string $location = null, bool $verified = true) {
     }
 }
 
-function redirect(string $location) {
+function redirect(string $location, bool $tucal_exit = true) {
     // Use Necronda web server default error documents
     header("Status: 303");
     header("Location: $location");
     header("Content-Type: text/html");
     header("Content-Length: 0");
     header("Content-Security-Policy: default-src 'unsafe-inline' 'self' data:");
-    tucal_exit();
+    if ($tucal_exit) {
+        tucal_exit();
+    } else {
+        exit();
+    }
 }
 
 function base32_decode(string $data): string {

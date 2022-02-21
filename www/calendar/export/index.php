@@ -28,10 +28,7 @@ $file = $info[2];
 
 $file_parts = explode('.', $file);
 if ($file !== '' && (sizeof($file_parts) !== 2 || !in_array($file_parts[1], ['ics', 'json', 'html']))) {
-    header("Status: 303");
-    header("Location: /calendar/export/$token/");
-    header("Content-Length: 0");
-    exit();
+    redirect("/calendar/export/$token/", false);
 }
 $ext = ($file !== '') ? $file_parts[1] : null;
 
