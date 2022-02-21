@@ -141,7 +141,7 @@ class Room {
 
     getCodeFormat(): string {
         return this.roomCodes.map(
-            (c) => `${c.substring(0, 2)} ${c.substring(2, 2)} ${c.substring(4)}`
+            (c) => `${c.substring(0, 2)} ${c.substring(2, 4)} ${c.substring(4)}`
         ).join(', ');
     }
 
@@ -149,7 +149,7 @@ class Room {
         const roomCode = this.roomCodes[0];
         if (!roomCode) return '';
 
-        const floorStr = formatFloor(roomCode.substring(2, 2));
+        const floorStr = formatFloor(roomCode.substring(2, 4));
         const building = this.getBuilding();
 
         let address = floorStr;
