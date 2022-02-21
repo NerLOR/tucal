@@ -62,10 +62,10 @@ CREATE TABLE tuwel.event
     event_id         BIGINT NOT NULL,
     course_id        BIGINT NOT NULL,
 
-    start_ts         TIMESTAMP WITH TIME ZONE,
-    end_ts           TIMESTAMP WITH TIME ZONE,
-    access_ts        timestamp WITH TIME ZONE,
-    mod_ts           TIMESTAMP WITH TIME ZONE,
+    start_ts         TIMESTAMPTZ,
+    end_ts           TIMESTAMPTZ,
+    access_ts        TIMESTAMPTZ,
+    mod_ts           TIMESTAMPTZ,
 
     name             TEXT   NOT NULL,
     description      TEXT DEFAULT NULL,

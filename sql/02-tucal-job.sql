@@ -3,18 +3,18 @@ DROP TABLE IF EXISTS tucal.job;
 
 CREATE TABLE tucal.job
 (
-    job_nr   BIGINT                   NOT NULL GENERATED ALWAYS AS IDENTITY,
-    job_id   TEXT                              DEFAULT NULL,
+    job_nr   BIGINT        NOT NULL GENERATED ALWAYS AS IDENTITY,
+    job_id   TEXT                   DEFAULT NULL,
 
     name     TEXT,
     pid      INT,
     mnr      INT,
 
-    status   TEXT                     NOT NULL,
-    start_ts TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    time     DECIMAL(9, 3)            NOT NULL DEFAULT 0,
+    status   TEXT          NOT NULL,
+    start_ts TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    time     DECIMAL(9, 3) NOT NULL DEFAULT 0,
 
-    data     JSONB                    NOT NULL DEFAULT '{}'::jsonb,
+    data     JSONB         NOT NULL DEFAULT '{}'::jsonb,
 
     CONSTRAINT pk_job PRIMARY KEY (job_nr),
     CONSTRAINT sk_job_id UNIQUE (job_id),

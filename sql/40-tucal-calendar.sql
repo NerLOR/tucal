@@ -15,15 +15,15 @@ CREATE TABLE tucal.event
 
     parent_event_nr  BIGINT                                       DEFAULT NULL,
 
-    start_ts         TIMESTAMP WITH TIME ZONE            NOT NULL,
-    end_ts           TIMESTAMP WITH TIME ZONE            NOT NULL,
-    planned_start_ts TIMESTAMP WITH TIME ZONE                     DEFAULT NULL,
-    planned_end_ts   TIMESTAMP WITH TIME ZONE                     DEFAULT NULL,
-    real_start_ts    TIMESTAMP WITH TIME ZONE                     DEFAULT NULL,
-    real_end_ts      TIMESTAMP WITH TIME ZONE                     DEFAULT NULL,
+    start_ts         TIMESTAMPTZ                         NOT NULL,
+    end_ts           TIMESTAMPTZ                         NOT NULL,
+    planned_start_ts TIMESTAMPTZ                                  DEFAULT NULL,
+    planned_end_ts   TIMESTAMPTZ                                  DEFAULT NULL,
+    real_start_ts    TIMESTAMPTZ                                  DEFAULT NULL,
+    real_end_ts      TIMESTAMPTZ                                  DEFAULT NULL,
 
-    create_ts        TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT now(),
-    update_ts        TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT now(),
+    create_ts        TIMESTAMPTZ                         NOT NULL DEFAULT now(),
+    update_ts        TIMESTAMPTZ                         NOT NULL DEFAULT now(),
     update_seq       INT                                 NOT NULL DEFAULT 0,
 
     room_nr          INT                                          DEFAULT NULL,
@@ -68,21 +68,21 @@ EXECUTE PROCEDURE tucal.event_id();
 
 CREATE TABLE tucal.event_history
 (
-    event_nr      BIGINT                   NOT NULL,
-    event_version INT                      NOT NULL,
+    event_nr      BIGINT      NOT NULL,
+    event_version INT         NOT NULL,
 
-    start_ts      TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
-    end_ts        TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
+    start_ts      TIMESTAMPTZ          DEFAULT NULL,
+    end_ts        TIMESTAMPTZ          DEFAULT NULL,
 
-    room_nr       INT                               DEFAULT NULL,
+    room_nr       INT                  DEFAULT NULL,
     group_nr      BIGINT,
 
-    deleted       BOOLEAN                           DEFAULT NULL,
-    updated       BOOLEAN                           DEFAULT NULL,
-    global        BOOLEAN                           DEFAULT NULL,
-    data          JSONB                             DEFAULT NULL,
+    deleted       BOOLEAN              DEFAULT NULL,
+    updated       BOOLEAN              DEFAULT NULL,
+    global        BOOLEAN              DEFAULT NULL,
+    data          JSONB                DEFAULT NULL,
 
-    update_ts     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    update_ts     TIMESTAMPTZ NOT NULL DEFAULT now(),
 
     CONSTRAINT pk_event_history PRIMARY KEY (event_nr, event_version),
     CONSTRAINT fk_event_history_event FOREIGN KEY (event_nr) REFERENCES tucal.event (event_nr)
@@ -92,19 +92,19 @@ CREATE TABLE tucal.event_history
 
 CREATE TABLE tucal.external_event
 (
-    source   TEXT                     NOT NULL,
-    event_id TEXT                     NOT NULL,
+    source   TEXT        NOT NULL,
+    event_id TEXT        NOT NULL,
     event_nr BIGINT,
 
-    start_ts TIMESTAMP WITH TIME ZONE NOT NULL,
-    end_ts   TIMESTAMP WITH TIME ZONE NOT NULL,
+    start_ts TIMESTAMPTZ NOT NULL,
+    end_ts   TIMESTAMPTZ NOT NULL,
 
-    room_nr  INT                               DEFAULT NULL,
+    room_nr  INT                  DEFAULT NULL,
     group_nr BIGINT,
 
-    deleted  BOOLEAN                           DEFAULT FALSE,
-    global   BOOLEAN                           DEFAULT TRUE,
-    data     JSONB                    NOT NULL DEFAULT '{}'::jsonb,
+    deleted  BOOLEAN              DEFAULT FALSE,
+    global   BOOLEAN              DEFAULT TRUE,
+    data     JSONB       NOT NULL DEFAULT '{}'::jsonb,
 
     CONSTRAINT pk_external_event PRIMARY KEY (source, event_id),
     CONSTRAINT fk_external_event_event FOREIGN KEY (event_nr) REFERENCES tucal.event (event_nr)

@@ -6,22 +6,22 @@ DROP TABLE IF EXISTS tucal.account CASCADE;
 
 CREATE TABLE tucal.account
 (
-    account_nr    BIGINT                   NOT NULL GENERATED ALWAYS AS IDENTITY,
-    account_id    TEXT                     NOT NULL DEFAULT NULL,
+    account_nr    BIGINT      NOT NULL GENERATED ALWAYS AS IDENTITY,
+    account_id    TEXT        NOT NULL DEFAULT NULL,
 
-    mnr           INT                      NOT NULL,
-    username      CITEXT                   NOT NULL CHECK (username ~ '[[:alpha:]][[:alnum:]_ -]{1,30}[[:alnum:]]'),
-    email_address CITEXT                            DEFAULT NULL CHECK (email_address ~ '[^@]+@([a-z0-9_-]+\.)+[a-z]{2,}'),
+    mnr           INT         NOT NULL,
+    username      CITEXT      NOT NULL CHECK (username ~ '[[:alpha:]][[:alnum:]_ -]{1,30}[[:alnum:]]'),
+    email_address CITEXT               DEFAULT NULL CHECK (email_address ~ '[^@]+@([a-z0-9_-]+\.)+[a-z]{2,}'),
 
-    verified      BOOLEAN                  NOT NULL DEFAULT FALSE,
-    avatar_uri    TEXT                              DEFAULT NULL,
+    verified      BOOLEAN     NOT NULL DEFAULT FALSE,
+    avatar_uri    TEXT                 DEFAULT NULL,
 
-    create_ts     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    login_ts      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    active_ts     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    sync_ts       TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
+    create_ts     TIMESTAMPTZ NOT NULL DEFAULT now(),
+    login_ts      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    active_ts     TIMESTAMPTZ NOT NULL DEFAULT now(),
+    sync_ts       TIMESTAMPTZ          DEFAULT NULL,
 
-    options       JSONB                    NOT NULL DEFAULT '{}'::jsonb,
+    options       JSONB       NOT NULL DEFAULT '{}'::jsonb,
 
     CONSTRAINT pk_account PRIMARY KEY (account_nr),
     CONSTRAINT sk_account_id UNIQUE (account_id),
@@ -47,10 +47,10 @@ EXECUTE PROCEDURE tucal.account_id();
 
 CREATE TABLE tucal.password
 (
-    account_nr BIGINT                   NOT NULL,
-    pwd_salt   TEXT                              DEFAULT gen_salt('bf'),
+    account_nr BIGINT      NOT NULL,
+    pwd_salt   TEXT                 DEFAULT gen_salt('bf'),
     pwd_hash   TEXT,
-    update_ts  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    update_ts  TIMESTAMPTZ NOT NULL DEFAULT now(),
 
     CONSTRAINT pk_password PRIMARY KEY (account_nr),
     CONSTRAINT fk_password_account FOREIGN KEY (account_nr) REFERENCES tucal.account (account_nr)
@@ -111,15 +111,15 @@ FROM tucal.account a
 
 CREATE TABLE tucal.session
 (
-    session_nr BIGINT                   NOT NULL GENERATED ALWAYS AS IDENTITY,
-    token      TEXT                     NOT NULL CHECK (token ~ '[0-9A-Za-z]{64}'),
+    session_nr BIGINT      NOT NULL GENERATED ALWAYS AS IDENTITY,
+    token      TEXT        NOT NULL CHECK (token ~ '[0-9A-Za-z]{64}'),
 
-    account_nr INT                               DEFAULT NULL,
-    options    JSONB                    NOT NULL DEFAULT '{}'::jsonb,
+    account_nr INT                  DEFAULT NULL,
+    options    JSONB       NOT NULL DEFAULT '{}'::jsonb,
 
-    create_ts  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    login_ts   TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
-    active_ts  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    create_ts  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    login_ts   TIMESTAMPTZ          DEFAULT NULL,
+    active_ts  TIMESTAMPTZ NOT NULL DEFAULT now(),
 
     CONSTRAINT pk_sessoin PRIMARY KEY (session_nr),
     CONSTRAINT sk_session_token UNIQUE (token),

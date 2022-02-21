@@ -72,9 +72,9 @@ CREATE TABLE tiss.group
     semester           TEXT NOT NULL,
     group_name         TEXT NOT NULL,
 
-    application_start  TIMESTAMP WITH TIME ZONE,
-    application_end    TIMESTAMP WITH TIME ZONE,
-    deregistration_end TIMESTAMP WITH TIME ZONE,
+    application_start  TIMESTAMPTZ,
+    application_end    TIMESTAMPTZ,
+    deregistration_end TIMESTAMPTZ,
 
     CONSTRAINT pk_group PRIMARY KEY (course_nr, semester, group_name),
     CONSTRAINT fk_group_course FOREIGN KEY (course_nr, semester) REFERENCES tiss.course (course_nr, semester)
@@ -88,9 +88,9 @@ CREATE TABLE tiss.exam
     semester           TEXT NOT NULL,
     exam_name          TEXT NOT NULL,
 
-    application_start  TIMESTAMP WITH TIME ZONE,
-    application_end    TIMESTAMP WITH TIME ZONE,
-    deregistration_end TIMESTAMP WITH TIME ZONE,
+    application_start  TIMESTAMPTZ,
+    application_end    TIMESTAMPTZ,
+    deregistration_end TIMESTAMPTZ,
 
     CONSTRAINT pk_exam PRIMARY KEY (course_nr, semester, exam_name),
     CONSTRAINT fk_exam_course FOREIGN KEY (course_nr, semester) REFERENCES tiss.course (course_nr, semester)
@@ -111,9 +111,9 @@ CREATE TABLE tiss.event
     group_name  TEXT,
     exam_name   TEXT,
 
-    start_ts    TIMESTAMP WITH TIME ZONE            NOT NULL,
-    end_ts      TIMESTAMP WITH TIME ZONE            NOT NULL,
-    access_ts   TIMESTAMP WITH TIME ZONE,
+    start_ts    TIMESTAMPTZ                         NOT NULL,
+    end_ts      TIMESTAMPTZ                         NOT NULL,
+    access_ts   TIMESTAMPTZ,
 
     name        TEXT                                NOT NULL,
     description TEXT,

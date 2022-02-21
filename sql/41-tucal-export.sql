@@ -10,8 +10,8 @@ CREATE TABLE tucal.calendar_export
 
     subject_mnr INT                                          DEFAULT NULL,
 
-    create_ts   TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT current_timestamp,
-    active_ts   TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT current_timestamp,
+    create_ts   TIMESTAMPTZ                         NOT NULL DEFAULT current_timestamp,
+    active_ts   TIMESTAMPTZ                         NOT NULL DEFAULT current_timestamp,
 
     options     JSONB                               NOT NULL DEFAULT '{}'::jsonb,
 
