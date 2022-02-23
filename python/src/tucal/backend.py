@@ -258,6 +258,12 @@ def send_emails():
     cur.close()
 
 
+def clear_invalid_tokens():
+    cur = tucal.db.cursor()
+    cur.execute("DELETE FROM tucal.token WHERE valid_ts < now()")
+    cur.close()
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--update', required=False, action='store_true')
@@ -272,4 +278,5 @@ if __name__ == '__main__':
         send_emails()
         merge_external_events()
         update_events()
+        clear_invalid_tokens()
         time.sleep(1)
