@@ -72,6 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $USER['username'] = $username;
         }
     }
+
+    redirect("/account/");
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     $STATUS = 405;
     header("Allow: GET, POST");

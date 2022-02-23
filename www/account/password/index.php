@@ -7,10 +7,9 @@ global $LOCALES;
 global $STATUS;
 
 require "../../.php/session.php";
-force_user_login(null, false);
-
 require "../../.php/main.php";
 
+$tokenInvalid = false;
 $error = false;
 $errorMsg = null;
 $errors = [
@@ -19,8 +18,30 @@ $errors = [
     'pw2' => null,
 ];
 
+$token = $_GET['token'] ?? null;
+if ($token !== null) {
+    $stmt = db_exec("SELECT account_nr, usage, valid FROM tucal.v_token WHERE token = ?", [$token]);
+    $rows = $stmt->fetchAll();
+    if (sizeof($rows) === 0) {
+        $tokenInvalid = true;
+        goto doc;
+    }
+
+    $row = $rows[0];
+    if ($row[1] !== 'reset-password' || !$row[2]) {
+        $tokenInvalid = true;
+        goto doc;
+    }
+
+    $nr = $row[0];
+    if (!isset($USER) || $USER['nr'] !== $nr) {
+        $USER = ['nr' => $nr];
+        redirect("/account/password/?token=$token");
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $token = $_GET['token'] ?? null;
+    force_user_login(null, false);
     $cur = $_POST['current-password'] ?? null;
     $pw1 = $_POST['new-password'] ?? null;
     $pw2 = $_POST['repeat-new-password'] ?? null;
@@ -54,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             if (sizeof($data) === 0) {
+                db_rollback();
                 $errorMsg = _('Unknown error');
                 header("Status: 500");
                 goto doc;
@@ -61,15 +83,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $row = $data[0];
             if (!$row['pwd_match']) {
+                db_rollback();
                 $errors['pwd'] = 'Wrong';
                 header("Status: 401");
                 goto doc;
             }
         } else {
-
+            $stmt = db_exec("DELETE FROM tucal.token WHERE token = ?", [$token]);
+            $USER['verified'] = true;
         }
 
         if ($error !== false) {
+            db_rollback();
             header("Status: $error");
             goto doc;
         }
@@ -106,18 +131,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 doc:
-$TITLE = [_('Change Password')];
+if ($tokenInvalid) {
+    header("Status: 410");
+}
+
+$TITLE = [($token === null) ? _('Change Password') : _('Reset Password')];
 require "../../.php/header.php";
 ?>
 <main class="w1">
     <section>
-        <h1><?php echo _('Change Password');?></h1>
-        <form name="change-password" action="/account/password/" method="post" class="panel">
+        <h1><?php echo ($token === null) ? _('Change Password') : _('Reset Password');?></h1>
+<?php if (!$tokenInvalid) { ?>
+
+        <form name="change-password" action="/account/password/<?php if ($token !== null) echo "?token=" . htmlspecialchars($token);?>" method="post" class="panel">
+<?php if ($token === null) {?>
+
             <div class="text<?php echo $errors['pwd'] ? " error" : "";?>">
                 <input type="password" name="current-password" id="current-password" placeholder=" " value="<?php echo htmlspecialchars($_POST['current-password'] ?? '');?>" required/>
                 <label for="current-password"><?php echo _('Current password');?></label>
                 <label for="current-password"><?php if ($errors['pwd']) echo _($errors['pwd']);?></label>
             </div>
+<?php } ?>
+
             <div class="text<?php echo $errors['pw1'] ? " error" : "";?>">
                 <input type="password" name="new-password" id="new-password" placeholder=" " value="<?php echo htmlspecialchars($_POST['new-password'] ?? '');?>" required/>
                 <label for="new-password"><?php echo _('New password');?></label>
@@ -128,11 +163,17 @@ require "../../.php/header.php";
                 <label for="repeat-new-password"><?php echo _('Repeat new password');?></label>
                 <label for="repeat-new-password"><?php if ($errors['pw2']) echo _($errors['pw2']);?></label>
             </div>
-            <button type="submit"><?php echo _('Change password');?></button>
+            <button type="submit"><?php echo ($token === null) ? _('Change password') : _('Reset password');?></button>
         </form>
 <?php if ($errorMsg !== null) { ?>
+
         <div class="container error"><?php echo $errorMsg;?></div>
 <?php } ?>
+<?php } else { ?>
+
+        <div class="container error"><?php echo _('This link is invalid. Please try again.');?></div>
+<?php } ?>
+
         <p class="center small">
             <a href="/account/password/reset"><?php echo _('Forgot password');?></a>.
         </p>

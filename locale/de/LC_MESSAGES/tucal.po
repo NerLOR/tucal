@@ -122,6 +122,15 @@ msgstr "Neues Passwort wiederholen"
 msgid "Forgot password"
 msgstr "Passwort vergessen"
 
+msgid "Reset Password"
+msgstr "Passwort zurücksetzen"
+
+msgid "Reset password"
+msgstr "Passwort zurücksetzen"
+
+msgid "This link is invalid. Please try again."
+msgstr "Dieser Link ist ungültig. Bitte versuche es erneut."
+
 msgid "Verify account"
 msgstr "Konto verifizieren"
 
@@ -203,6 +212,15 @@ msgid "SSO password storage warning"
 msgstr "Mir ist bewusst, welche Risiken das Speichern meines Passwortes auf einem fremden Server birgt. "
        "Weiters nehme ich zur Kenntnis, dass das Passwort auf dem Server so gespeichert werden muss, dass es im "
        "Endeffekt lesbar bleibt. Daher ist kein „sicheres“ Verschlüsseln des Passworts möglich."
+
+msgid "Reset password (description)"
+msgstr "Um dein Passwort zurückzusetzen wird eine E-Mail an deine Studenten-E-Mail-Adresse geschickt."
+
+msgid "Password reset email sent (description)"
+msgstr "Eine E-Mail wurde versandt. Sieh in deinem Postfach nach."
+
+msgid "Passwort reset email sending (description)"
+msgstr "Eine E-Mail wird in den nächsten Minuten versendet. Sieh in deinem Postfach nach."
 
 msgid "Lecture"
 msgstr "Vorlesung"
@@ -380,3 +398,13 @@ msgstr "Interner Sever-Fehler"
 msgctxt "http"
 msgid "Not Implemented"
 msgstr "Nicht implementiert"
+
+msgctxt "email"
+msgid "Reset password"
+msgstr "Servus!\n"
+       "\n"
+       "Gehe auf den folgenden Link um dein TUcal-Passwort zurückzusetzen.\n"
+       "\n"
+       "%s\n"
+       "\n"
+       "Danke, dass du TUcal verwendest! :D"

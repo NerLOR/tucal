@@ -137,6 +137,15 @@ msgstr "Does not exist"
 msgid "Wrong"
 msgstr "Wrong"
 
+msgid "Reset password (description)"
+msgstr "A email will be sent to your student email address to reset your password."
+
+msgid "Password reset email sent (description)"
+msgstr "A email has been sent. Check your inbox."
+
+msgid "Passwort reset email sending (description)"
+msgstr "A email will be sent in the next minutes. Check your inbox."
+
 msgid "Lecture"
 msgstr "Lecture"
 
@@ -305,3 +314,13 @@ msgstr "Internal Server Error"
 msgctxt "http"
 msgid "Not Implemented"
 msgstr "Not Implemented"
+
+msgctxt "email"
+msgid "Reset password"
+msgstr "Hello!\n"
+       "\n"
+       "To reset your TUcal password visit the link below.\n"
+       "\n"
+       "%s\n"
+       "\n"
+       "Thank you for using TUcal! :D"

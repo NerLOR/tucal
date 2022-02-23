@@ -16,10 +16,16 @@ function tucal_exit() {
         'opts' => json_encode($_SESSION['opts']),
     ]);
     if (isset($USER) && isset($USER['opts'])) {
-        _db_exec("UPDATE tucal.account SET username = :name, options = :opts WHERE account_nr = :nr", [
-            'nr' => $USER['nr'],
-            'name' => $USER['username'],
-            'opts' => json_encode($USER['opts']),
+        _db_exec("
+            UPDATE tucal.account
+            SET username = :name,
+                verified = :verified,
+                options = :opts
+            WHERE account_nr = :nr", [
+                'nr' => $USER['nr'],
+                'name' => $USER['username'],
+                'verified' => $USER['verified'],
+                'opts' => json_encode($USER['opts']),
         ]);
     }
     try {

@@ -172,8 +172,7 @@ main form.panel a.button:focus {
     cursor: pointer;
 }
 
-main form.panel ~ div.error,
-main form.table ~ div.error {
+div.container.error {
     border: 1px solid var(--red);
     border-radius: var(--border-radius);
     text-align: center;

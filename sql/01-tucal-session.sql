@@ -108,6 +108,16 @@ CREATE TABLE tucal.token
         ON DELETE CASCADE
 );
 
+CREATE OR REPLACE VIEW tucal.v_token AS
+SELECT token_nr,
+       account_nr,
+       usage,
+       token,
+       token_short,
+       valid_ts,
+       (valid_ts >= now()) AS valid
+FROM tucal.token;
+
 
 CREATE TABLE tucal.message
 (
