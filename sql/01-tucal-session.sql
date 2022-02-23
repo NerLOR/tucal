@@ -78,7 +78,7 @@ CREATE TABLE tucal.friend
 
 CREATE TABLE tucal.sso_credential
 (
-    account_nr INT      NOT NULL,
+    account_nr BIGINT   NOT NULL,
 
     key        SMALLINT NOT NULL,
     pwd        TEXT     NOT NULL,
@@ -89,6 +89,57 @@ CREATE TABLE tucal.sso_credential
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
+
+
+CREATE TABLE tucal.token
+(
+    token_nr    BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+    account_nr  BIGINT NOT NULL,
+
+    usage       TEXT   NOT NULL,
+    token       TEXT   NOT NULL CHECK (token ~ '[0-9A-Za-z]{16}'),
+    token_short TEXT CHECK (token_short ~ '[0-9A-Z]{5}'),
+    valid_ts    TIMESTAMPTZ,
+
+    CONSTRAINT pk_token PRIMARY KEY (token_nr),
+    CONSTRAINT sk_token_token UNIQUE (token),
+    CONSTRAINT fk_token_account FOREIGN KEY (account_nr) REFERENCES tucal.account (account_nr)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE tucal.message
+(
+    message_nr       BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+    message_id       TEXT   NOT NULL DEFAULT NULL,
+
+    reply_to_address TEXT CHECK (reply_to_address ~ '[^@]+@([a-z0-9_-]+\.)+[a-z]{2,}'),
+    to_address       TEXT   NOT NULL CHECK (to_address ~ '[^@]+@([a-z0-9_-]+\.)+[a-z]{2,}'),
+    subject          TEXT   NOT NULL,
+    message          TEXT   NOT NULL,
+
+    submit_ts        TIMESTAMPTZ     DEFAULT now(),
+    send_ts          TIMESTAMPTZ     DEFAULT NULL,
+
+    CONSTRAINT pk_message PRIMARY KEY (message_nr),
+    CONSTRAINT sk_message UNIQUE (message_id)
+);
+
+CREATE OR REPLACE FUNCTION tucal.message_id()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.message_id = tucal.gen_id(NEW.message_nr, 19821::smallint);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER t_insert_id
+    BEFORE INSERT
+    ON tucal.message
+    FOR EACH ROW
+EXECUTE PROCEDURE tucal.message_id();
+
 
 CREATE OR REPLACE VIEW tucal.v_account AS
 SELECT a.account_nr,

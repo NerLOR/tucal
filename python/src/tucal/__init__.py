@@ -1,6 +1,7 @@
 
 from __future__ import annotations
 from typing import Optional, List, Dict, Any, Tuple, Generator
+from configparser import ConfigParser
 import datetime
 import pytz
 import sys
@@ -9,6 +10,21 @@ import json
 import socket
 
 import tuwien.sso
+
+
+CONFIG_PLACES = ['tucal.ini', '/etc/tucal/tucal.ini', '../../tucal.ini']
+
+
+def get_config() -> ConfigParser:
+    for file_name in CONFIG_PLACES:
+        try:
+            with open(file_name) as f:
+                parser = ConfigParser()
+                parser.read_file(f)
+                return parser
+        except FileNotFoundError or PermissionError:
+            pass
+    raise FileNotFoundError('config file not found')
 
 
 class LoginError(Exception):

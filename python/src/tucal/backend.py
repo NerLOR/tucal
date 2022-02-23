@@ -5,6 +5,8 @@ import json
 import datetime
 import argparse
 import re
+import smtplib
+from email.mime.text import MIMEText
 
 import tucal.db
 
@@ -21,6 +23,14 @@ TISS_TYPES = {
     4: None,
     5: 'roomTUlearn',
 }
+
+config = tucal.get_config()
+SMTP_HOST = config['email']['smtp_host']
+SMTP_PORT = int(config['email']['smtp_port'])
+SMTP_USER = config['email']['smtp_user']
+SMTP_PASSWORD = config['email']['smtp_password']
+EMAIL_FROM = config['email']['from']
+EMAIL_HOSTNAME = config['tucal']['hostname']
 
 
 def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_nr: int, group_nr: int, group_name: str,
@@ -212,6 +222,42 @@ def merge_external_events():
     tucal.db.commit()
 
 
+def send_emails():
+    cur = tucal.db.cursor()
+    cur.execute("""
+        SELECT message_nr, message_id, to_address, subject, message, reply_to_address, submit_ts
+        FROM tucal.message
+        WHERE send_ts IS NULL""")
+    rows = cur.fetch_all()
+    if len(rows) == 0:
+        cur.close()
+        return
+
+    msgs = []
+    for msg_nr, msg_id, to, subj, content, reply_to, submit in rows:
+        msg = MIMEText(content, 'plain')
+        msg['From'] = f'TUcal <{EMAIL_FROM}>'
+        msg['Date'] = submit.strftime('%a, %d %b %Y %H:%M:%S %z')
+        msg['Message-ID'] = f'{msg_id}@{EMAIL_HOSTNAME}'
+        msg['Subject'] = subj
+        msg['To'] = to
+        if reply_to:
+            msg['Reply-To'] = reply_to
+        msgs.append((msg_nr, msg))
+
+    server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
+    print(f'Connected to SMTP host {SMTP_HOST}:{SMTP_PORT} ({SMTP_USER})')
+    server.starttls()
+    server.login(SMTP_USER, SMTP_PASSWORD)
+    for msg_nr, msg in msgs:
+        server.send_message(msg)
+        cur.execute("UPDATE tucal.message SET send_ts = now() WHERE message_nr = ?", (msg_nr,))
+        print(f'Sent Msg#{msg_nr}')
+
+    server.quit()
+    cur.close()
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--update', required=False, action='store_true')
@@ -223,6 +269,7 @@ if __name__ == '__main__':
         exit(0)
 
     while True:
+        send_emails()
         merge_external_events()
         update_events()
         time.sleep(1)

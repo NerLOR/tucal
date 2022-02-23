@@ -147,3 +147,26 @@ function echo_job(string $jobId, string $successUrl, string $errorUrl) {
     }
     echo '></div>';
 }
+
+function send_email(string $address, string $subject, string $msg, string $reply_to = null): bool {
+    $stmt = db_exec("
+                INSERT INTO tucal.message (reply_to_address, to_address, subject, message)
+                VALUES (:reply, :to, :subj, :msg)
+                RETURNING message_nr", [
+        'reply' => $reply_to,
+        'to' => $address,
+        'subj' => $subject,
+        'msg' => $msg,
+    ]);
+    $nr = $stmt->fetchAll()[0][0];
+
+    $stmt = db_prepare("SELECT send_ts FROM tucal.message WHERE message_nr = :nr");
+    for ($i = 0; $i < 3; $i++) {
+        sleep(1);
+        $stmt->execute(['nr' => $nr]);
+        $send = $stmt->fetchAll()[0][0];
+        if ($send !== null)
+            return true;
+    }
+    return false;
+}
