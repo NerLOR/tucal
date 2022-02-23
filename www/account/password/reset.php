@@ -57,8 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     db_commit();
 
+    $user = $USER;
     $USER = ['opts' => ['locale' => $opts['locale']]];
     init_locale();
+    $USER = $user;
 
     $link = "https://$TUCAL[hostname]/account/password/?token=$token";
     $msg = sprintf(_ctx('email', 'Reset password'), $link);
