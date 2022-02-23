@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (sizeof($data) === 0) {
             db_rollback();
             header("Status: 404");
-            $errors['mnr'] = 'No associated account exists';
+            $errors['mnr'] = 'No associated account';
             goto doc;
         }
         $row = $data[0];

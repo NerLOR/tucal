@@ -146,6 +146,9 @@ msgstr "TU-Konto syncen"
 msgid "No account yet?"
 msgstr "Noch kein Konto?"
 
+msgid "No associated account"
+msgstr "Kein zugehöriges Konto"
+
 msgid "Already signed up?"
 msgstr "Bereits registriert?"
 
