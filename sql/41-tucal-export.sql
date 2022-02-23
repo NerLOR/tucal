@@ -2,18 +2,18 @@ DROP TABLE IF EXISTS tucal.calendar_export;
 
 CREATE TABLE tucal.calendar_export
 (
-    export_nr   BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
-    export_id   TEXT                                NOT NULL DEFAULT NULL,
-    token       TEXT                                NOT NULL CHECK (token ~ '[0-9A-Za-z]{16}'),
+    export_nr   BIGINT      NOT NULL GENERATED ALWAYS AS IDENTITY,
+    export_id   TEXT        NOT NULL DEFAULT NULL,
+    token       TEXT        NOT NULL CHECK (token ~ '[0-9A-Za-z]{16}'),
 
-    account_nr  BIGINT                              NOT NULL,
+    account_nr  BIGINT      NOT NULL,
 
-    subject_mnr INT                                          DEFAULT NULL,
+    subject_mnr INT                  DEFAULT NULL,
 
-    create_ts   TIMESTAMPTZ                         NOT NULL DEFAULT current_timestamp,
-    active_ts   TIMESTAMPTZ                         NOT NULL DEFAULT current_timestamp,
+    create_ts   TIMESTAMPTZ NOT NULL DEFAULT current_timestamp,
+    active_ts   TIMESTAMPTZ NOT NULL DEFAULT current_timestamp,
 
-    options     JSONB                               NOT NULL DEFAULT '{}'::jsonb,
+    options     JSONB       NOT NULL DEFAULT '{}'::jsonb,
 
     CONSTRAINT pk_calendar_export PRIMARY KEY (export_nr),
     CONSTRAINT sk_calendar_export UNIQUE (export_id),
