@@ -220,7 +220,7 @@ msgid "Reset password (description)"
 msgstr "Um dein Passwort zurückzusetzen wird eine E-Mail an deine Studenten-E-Mail-Adresse geschickt."
 
 msgid "Password reset email sent (description)"
-msgstr "Eine E-Mail wurde versandt. Sieh in deinem Postfach nach."
+msgstr "Eine E-Mail wurde versendet. Sieh in deinem Postfach nach."
 
 msgid "Passwort reset email sending (description)"
 msgstr "Eine E-Mail wird in den nächsten Minuten versendet. Sieh in deinem Postfach nach."

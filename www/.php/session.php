@@ -24,7 +24,7 @@ function tucal_exit() {
             WHERE account_nr = :nr", [
                 'nr' => $USER['nr'],
                 'name' => $USER['username'],
-                'verified' => $USER['verified'],
+                'verified' => $USER['verified'] ? 1 : 0,
                 'opts' => json_encode($USER['opts']),
         ]);
     }
