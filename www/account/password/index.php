@@ -90,7 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } else {
             $stmt = db_exec("DELETE FROM tucal.token WHERE token = ?", [$token]);
-            $USER['verified'] = true;
         }
 
         if ($error !== false) {
@@ -116,6 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'pwd' => $pw1,
         ]);
 
+        if ($token !== null) $USER['verified'] = true;
         db_commit();
     } catch (Exception $e) {
         db_rollback();
