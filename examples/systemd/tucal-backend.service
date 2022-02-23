@@ -1,5 +1,5 @@
 [Unit]
-Description=TUcal event merger
+Description=TUcal backend
 
 [Service]
 Type=simple
