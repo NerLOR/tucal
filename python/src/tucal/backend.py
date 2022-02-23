@@ -251,7 +251,7 @@ def send_emails():
     server.login(SMTP_USER, SMTP_PASSWORD)
     for msg_nr, msg in msgs:
         server.send_message(msg)
-        cur.execute("UPDATE tucal.message SET send_ts = now() WHERE message_nr = ?", (msg_nr,))
+        cur.execute("UPDATE tucal.message SET send_ts = now() WHERE message_nr = %s", (msg_nr,))
         print(f'Sent Msg#{msg_nr}')
 
     server.quit()
