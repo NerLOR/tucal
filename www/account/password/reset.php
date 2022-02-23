@@ -64,11 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $link = "https://$TUCAL[hostname]/account/password/?token=$token";
     $msg = sprintf(_ctx('email', 'Reset password'), $link);
-    $msg .= "\n\n----\n" .
-            "This is an automatically generated and sent message.\n" .
-            "If you did not take any action to receive such a message you may safely ignore this message.\n" .
-            "For more information visit https://$TUCAL[hostname]/\n";
-
     $res = send_email($email, '[TUcal] ' . _('Reset password'), $msg);
 
     redirect("/account/password/reset?status=" . ($res ? "sent" : "sending"));
