@@ -1,6 +1,7 @@
 <?php
 
 global $USER;
+global $STATUS;
 
 require "../.php/session.php";
 if (!isset($USER)) {

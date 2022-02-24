@@ -3,6 +3,7 @@
 global $TITLE;
 global $USER;
 global $LOCALE;
+global $STATUS;
 
 require "../.php/session.php";
 if (isset($USER)) {

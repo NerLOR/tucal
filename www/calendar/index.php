@@ -4,6 +4,7 @@ global $TITLE;
 global $USER;
 global $CONFIG;
 global $USE_PATH_INFO;
+global $STATUS;
 
 require "../.php/session.php";
 force_user_login();

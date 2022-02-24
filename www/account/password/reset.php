@@ -3,6 +3,7 @@
 global $USER;
 global $TITLE;
 global $TUCAL;
+global $STATUS;
 
 require "../../.php/session.php";
 require "../../.php/main.php";
@@ -97,9 +98,9 @@ require "../../.php/header.php";
 <?php } ?>
 <?php } else {
     if ($status === 'sent') {
-        echo "<p class='center'>" . _('Password reset email sent (description)') . "</p>";
+        echo "<p class='center'>" . _('Email sent (description)') . "</p>";
     } else if ($status === 'sending') {
-        echo "<p class='center'>" . _('Passwort reset email sending (description)') . "</p>";
+        echo "<p class='center'>" . _('Email sending (description)') . "</p>";
     }
 }
 ?>

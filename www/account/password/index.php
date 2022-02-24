@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 goto doc;
             }
         } else {
-            $stmt = db_exec("DELETE FROM tucal.token WHERE token = ?", [$token]);
+            db_exec("DELETE FROM tucal.token WHERE token = ?", [$token]);
         }
 
         if ($error !== false) {

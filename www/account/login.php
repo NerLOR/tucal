@@ -1,6 +1,7 @@
 <?php
 
 global $TITLE;
+global $STATUS;
 
 require "../.php/session.php";
 if (isset($USER) && $USER['verified']) {

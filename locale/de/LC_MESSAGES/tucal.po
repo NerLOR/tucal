@@ -131,6 +131,9 @@ msgstr "Passwort zurücksetzen"
 msgid "This link is invalid. Please try again."
 msgstr "Dieser Link ist ungültig. Bitte versuche es erneut."
 
+msgid "Verify Account"
+msgstr "Konto verifizieren"
+
 msgid "Verify account"
 msgstr "Konto verifizieren"
 
@@ -219,10 +222,10 @@ msgstr "Mir ist bewusst, welche Risiken das Speichern meines Passwortes auf eine
 msgid "Reset password (description)"
 msgstr "Um dein Passwort zurückzusetzen wird eine E-Mail an deine Studenten-E-Mail-Adresse geschickt."
 
-msgid "Password reset email sent (description)"
+msgid "Email sent (description)"
 msgstr "Eine E-Mail wurde versendet. Sieh in deinem Postfach nach."
 
-msgid "Passwort reset email sending (description)"
+msgid "Email sending (description)"
 msgstr "Eine E-Mail wird in den nächsten Minuten versendet. Sieh in deinem Postfach nach."
 
 msgid "Lecture"
@@ -407,6 +410,16 @@ msgid "Reset password"
 msgstr "Servus!\n"
        "\n"
        "Gehe auf den folgenden Link um dein TUcal-Passwort zurückzusetzen.\n"
+       "\n"
+       "%s\n"
+       "\n"
+       "Danke, dass du TUcal verwendest! :D"
+
+msgctxt "email"
+msgid "Verify account"
+msgstr "Servus!\n"
+       "\n"
+       "Gehe auf den folgenden Link um dein dein TUcal-Konto zu verifizieren.\n"
        "\n"
        "%s\n"
        "\n"

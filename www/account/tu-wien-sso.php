@@ -2,6 +2,7 @@
 
 global $TITLE;
 global $USER;
+global $STATUS;
 
 require "../.php/session.php";
 force_user_login(null, false);
