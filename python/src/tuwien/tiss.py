@@ -501,6 +501,7 @@ class Session:
         for g_html in GROUP_DIV.finditer(r.text):
             text = g_html.group(1).strip()
             name, status = SPAN_BOLD.findall(text)
+            name, status = html.unescape(name), html.unescape(status)
             data = {a: b for a, b in GROUP_OL_LI.findall(text)}
             enrolled = (status == 'angemeldet')
 
@@ -526,16 +527,16 @@ class Session:
                 m = ROOM_CODE.findall(location)
                 room_code = None
                 if len(m) > 0:
-                    room_code = m[0].replace('+', ' ')
+                    room_code = re.sub(r'%([0-9A-Za-z]{2})', lambda a: chr(int(a[1], 16)), m[0].replace('+', ' '))
 
                 iso_date = '-'.join(date.split('.')[::-1])
                 start = tucal.parse_iso_timestamp(f'{iso_date}T{start_time}:00', True)
                 end = tucal.parse_iso_timestamp(f'{iso_date}T{end_time}:00', True)
 
                 groups[name]['events'].append({
-                    'location': location if not room_code else None,
+                    'location': html.unescape(location) if not room_code else None,
                     'room_code': room_code,
-                    'comment': comment,
+                    'comment': html.unescape(comment),
                     'group': name,
                     'start': start,
                     'end': end,
@@ -575,7 +576,7 @@ class Session:
                     m = ROOM_CODE.findall(location)
                     room_code = None
                     if len(m) > 0:
-                        room_code = m[0].replace('+', ' ')
+                        room_code = re.sub(r'%([0-9A-Za-z]{2})', lambda a: chr(int(a[1], 16)), m[0].replace('+', ' '))
 
                     start_time, end_time = time_from_to.split(' - ')
                     iso_date = '-'.join(date.split('.')[::-1])
@@ -584,7 +585,7 @@ class Session:
 
                     events.append({
                         'location': html.unescape(location) if not room_code else None,
-                        'room_code': html.unescape(room_code) if room_code else None,
+                        'room_code': room_code,
                         'comment': html.unescape(comment) if comment else None,
                         'start': start,
                         'end': end,
