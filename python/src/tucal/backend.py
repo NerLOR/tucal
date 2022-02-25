@@ -36,6 +36,7 @@ EMAIL_HOSTNAME = config['tucal']['hostname']
 def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_nr: int, group_nr: int, group_name: str,
                      start_ts: datetime.datetime, end_ts: datetime.datetime):
     data.update({
+        'day_event': False,
         'status': None,
         'summary': None,
         'desc': None,
@@ -53,7 +54,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
     if 'user' not in data:
         data['user'] = {}
 
-    tuwel, tiss, aurora, htu = None, None, None, None
+    tuwel, tiss, tiss_extra, aurora, htu = None, None, None, None, None
 
     # FIXME better event merge
     cur = tucal.db.cursor()
@@ -64,6 +65,8 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             tuwel = xdata['tuwel']
         if 'tiss' in xdata:
             tiss = xdata['tiss']
+        if 'tiss_extra' in xdata:
+            tiss_extra = xdata['tiss_extra']
         if 'aurora' in xdata:
             aurora = xdata['aurora']
         if 'htu' in xdata:
@@ -125,6 +128,11 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
 
         if room_nr is None:
             data['mode'] = 'online_only'
+
+    if tiss_extra:
+        data['summary'] = tiss_extra['name']
+        data['type'] = 'deadline'
+        data['url'] = tiss_extra['url']
 
     if aurora:
         data['source_url'] = 'https://aurora.iguw.tuwien.ac.at/course/dwi/'

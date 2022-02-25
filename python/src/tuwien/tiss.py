@@ -44,6 +44,12 @@ GROUP_DIV = re.compile(r'<div class="groupWrapper">(.*?)</fieldset>', re.MULTILI
 TAGS = re.compile(r'<script[^>]*>.*?</script>|<[^>]*>', re.MULTILINE | re.DOTALL)
 SPACES = re.compile(r'\s+')
 
+LI_BEGIN = re.compile(r'<span id="registrationForm:begin">(.*?)</span>')
+LI_END = re.compile(r'<span id="registrationForm:end">(.*?)</span>')
+LI_DEREGEND = re.compile(r'<span id="registrationForm:deregEnd">(.*?)</span>')
+LI_APP_BEGIN = re.compile(r'<span id="groupContentForm:.*?:appBeginn">(.*?)</span>')
+LI_APP_END = re.compile(r'<span id="groupContentForm:.*?:appEnd">(.*?)</span>')
+
 
 class Building:
     id: str
@@ -536,7 +542,7 @@ class Session:
                 })
         return groups
 
-    def get_course_events(self, course: Course):
+    def get_course_events(self, course: Course) -> List[Dict[str, Any]]:
         self.get(f'/course/educationDetails.xhtml?semester={course.semester}&courseNr={course.nr}')
 
         data = {
@@ -584,4 +590,89 @@ class Session:
                         'end': end,
                     })
             data['j_id_4n:eventDetailDateTable_first'] += 20
+        return events
+
+    def get_course_due_events(self, course: Course) -> List[Dict[str, Any]]:
+        events = []
+
+        # LVA-An/-Abmeldung
+        uri = f'/education/course/courseRegistration.xhtml?semester={course.semester}&courseNr={course.nr}'
+        r = self.get(uri)
+        course_begin = LI_BEGIN.findall(r.text)
+        course_end = LI_END.findall(r.text)
+        course_deregend = LI_DEREGEND.findall(r.text)
+        if len(course_begin) > 0:
+            ts = datetime.datetime.strptime(course_begin[0], '%d.%m.%Y, %H:%M')
+            events.append({
+                'id': f'{course.nr}-{course.semester}-LVA-anmeldung',
+                'start': ts,
+                'end': ts,
+                'name': 'Beginn LVA-Anmeldung',
+                'url': TISS_URL + uri,
+            })
+        if len(course_end) > 0 and len(course_deregend) > 0 and course_end[0] == course_deregend[0]:
+            ts = datetime.datetime.strptime(course_end[0], '%d.%m.%Y, %H:%M')
+            events.append({
+                'id': f'{course.nr}-{course.semester}-LVA-an-abmeldung-ende',
+                'start': ts,
+                'end': ts,
+                'name': 'Ende LVA-An/-Abmeldung',
+                'url': TISS_URL + uri,
+            })
+        else:
+            if len(course_end) > 0:
+                ts = datetime.datetime.strptime(course_end[0], '%d.%m.%Y, %H:%M')
+                events.append({
+                    'id': f'{course.nr}-{course.semester}-LVA-anmeldung-ende',
+                    'start': ts,
+                    'end': ts,
+                    'name': 'Ende LVA-Anmeldung',
+                    'url': TISS_URL + uri,
+                })
+            if len(course_deregend) > 0:
+                ts = datetime.datetime.strptime(course_deregend[0], '%d.%m.%Y, %H:%M')
+                events.append({
+                    'id': f'{course.nr}-{course.semester}-LVA-abmeldung-ende',
+                    'start': ts,
+                    'end': ts,
+                    'name': 'Ende LVA-Abmeldung',
+                    'url': TISS_URL + uri,
+                })
+
+        # Gruppenan/-abmeldungen
+        uri = f'/education/course/groupList.xhtml?semester={course.semester}&courseNr={course.nr}'
+        r = self.get(uri)
+        begins = set(LI_APP_BEGIN.findall(r.text))
+        ends = set(LI_APP_END.findall(r.text))
+        for b in begins:
+            ts = datetime.datetime.strptime(b, '%d.%m.%Y, %H:%M')
+            events.append({
+                'id': f'{course.nr}-{course.semester}-group-anmeldung-{b}',
+                'start': ts,
+                'end': ts,
+                'name': 'Beginn Gruppenanmeldung',
+                'url': TISS_URL + uri,
+            })
+        for e in ends:
+            ts = datetime.datetime.strptime(e, '%d.%m.%Y, %H:%M')
+            events.append({
+                'id': f'{course.nr}-{course.semester}-group-anmeldung-{e}',
+                'start': ts,
+                'end': ts,
+                'name': 'Ende Gruppenanmeldung',
+                'url': TISS_URL + uri,
+            })
+
+        # Prüfungsan/-abmeldungen
+        #uri = f'/education/course/examDateList.xhtml?semester={course.semester}&courseNr={course.nr}'
+        #self.get(uri)
+        #data = {
+        #    'javax.faces.source': 'examDateListForm:j_id_4q',
+        #    'javax.faces.partial.execute': '@all',
+        #    'javax.faces.partial.render': 'examDateListForm',
+        #    'examDateListForm:j_id_4q': 'examDateListForm:j_id_4q',
+        #    'examDateListForm_SUBMIT': '1',
+        #}
+        #r = self.post(uri, data, ajax=True)
+
         return events

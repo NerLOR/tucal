@@ -54,6 +54,7 @@ interface TucalEventJSON {
         summary: string | null | undefined,
         desc: string | null | undefined,
         status: string | null | undefined,
+        day_event: boolean | null | undefined,
         zoom: string | null | undefined,
         lt: boolean | null | undefined,
         url: string | null | undefined,
@@ -287,6 +288,7 @@ class TucalEvent {
     id: string;
     deleted: boolean | null;
     status: string | null;
+    dayEvent: boolean;
     start: Date;
     end: Date;
     courseNr: string | null;
@@ -313,6 +315,7 @@ class TucalEvent {
         this.roomNr = event.room_nr;
         this.deleted = event.deleted;
         this.status = event.data.status || null;
+        this.dayEvent = event.data.day_event || false;
         this.start = asTimezone(new Date(Date.parse(event.start)), TIMEZONE);
         this.end = asTimezone(new Date(Date.parse(event.end)), TIMEZONE);
 

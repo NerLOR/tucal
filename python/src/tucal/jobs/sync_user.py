@@ -5,6 +5,7 @@ import random
 import time
 import hmac
 import struct
+import json
 
 from tucal import Job
 import tucal.plugins
@@ -150,11 +151,13 @@ def sync_user(mnr: int, use_db: bool = False, store_db: bool = False, keep_tiss_
     favorites = tiss.favorites
     course_events = {}
     course_groups = {}
+    course_due_events = {}
     for course in favorites:
         if course.semester < tucal.Semester.last():
             continue
         course_events[course] = tiss.get_course_events(course)
         course_groups[course] = tiss.get_groups(course)
+        course_due_events[course] = tiss.get_course_due_events(course)
 
     cur.execute("DELETE FROM tiss.course_user WHERE mnr = %s", (mnr,))
     cur.execute("""
@@ -213,6 +216,37 @@ def sync_user(mnr: int, use_db: bool = False, store_db: bool = False, keep_tiss_
                     ON CONFLICT ON CONSTRAINT pk_group_user DO NOTHING""", data)
 
             tucal.db.tiss.upsert_group_events(group['events'], group, course=course, access_time=now, mnr=int(mnr))
+
+    for course, events in course_due_events.items():
+        cur.execute("SELECT * FROM tucal.get_group(%s, %s, 'LVA')", (course.nr, str(course.semester)))
+        group_nr = cur.fetch_all()[0][0]
+        rows = [{
+            'source': 'tiss-extra',
+            'id': e['id'],
+            'start': e['start'],
+            'end': e['end'],
+            'group': group_nr,
+            'data': json.dumps({
+                'tiss_extra': {
+                    'name': e['name'],
+                    'url': e['url'],
+                },
+            }),
+        } for e in events]
+        fields = {
+            'source': 'source',
+            'event_id': 'id',
+            'start_ts': 'start',
+            'end_ts': 'end',
+            'group_nr': 'group',
+            'data': 'data',
+        }
+        pks = tucal.db.upsert_values('tucal.external_event', rows, fields, ('source', 'event_id'), {'data': 'jsonb'})
+        cur.execute(f"""
+            DELETE FROM tucal.external_event
+            WHERE source = 'tiss-extra' AND
+                  event_id LIKE '{course.nr}-{course.semester}-%%' AND
+                  event_id != ALL(%s)""", ([pk[1] for pk in pks],))
 
     tucal.db.commit()
 
