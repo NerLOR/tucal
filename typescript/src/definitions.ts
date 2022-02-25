@@ -300,7 +300,7 @@ class TucalEvent {
     desc: string | null;
     roomNr: number | null;
     zoom: string | null;
-    lecture_tube: boolean | null;
+    lectureTube: boolean | null;
     url: string | null;
     tissUrl: string | null;
     tuwelUrl: string | null;
@@ -334,7 +334,7 @@ class TucalEvent {
         this.summary = event.data.summary || null;
         this.desc = event.data.desc || null;
         this.zoom = event.data.zoom || null;
-        this.lecture_tube = event.data.lt || null;
+        this.lectureTube = event.data.lt || null;
         this.url = event.data.url || null;
         this.tissUrl = event.data.tiss_url || null;
         this.tuwelUrl = event.data.tuwel_url || null;

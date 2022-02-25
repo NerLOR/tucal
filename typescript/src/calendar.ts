@@ -532,7 +532,7 @@ class WeekSchedule {
                 evt.innerHTML =
                     '<div class="pre"></div>' +
                     '<div class="post"></div>' +
-                    (event.lecture_tube && ltLink ? `<a class="live" href="${ltLink}" target="_blank" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
+                    (event.lectureTube && ltLink ? `<a class="live" href="${ltLink}" target="_blank" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
                     (event.zoom !== null ? `<a class="live" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
                     `<div class="course"><span class="course">${course?.getName() || event.groupName}</span>` +
@@ -585,7 +585,7 @@ class WeekSchedule {
         let html = '';
 
         const ltLink = room && room.getLectureTubeLink() || null;
-        if (evt.lecture_tube && ltLink) {
+        if (evt.lectureTube && ltLink) {
             html += `<a class="live" href="${ltLink}" target="_blank" title="LectureTube">` +
                 `<img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>`;
         }
@@ -753,8 +753,8 @@ class WeekSchedule {
 
         const hasLiveChanged = (): boolean => {
             return (evt.zoom && live.value !== 'zoom') ||
-                (evt.lecture_tube && live.value !== 'lt') ||
-                (!evt.zoom && !evt.lecture_tube && live.value !== 'false');
+                (evt.lectureTube && live.value !== 'lt') ||
+                (!evt.zoom && !evt.lectureTube && live.value !== 'false');
         }
 
         const hasLiveUrlChanged = (): boolean => {
@@ -819,7 +819,7 @@ class WeekSchedule {
         if (evt.zoom) {
             live.value = 'zoom';
             liveUrl.value = evt.zoom;
-        } else if (evt.lecture_tube) {
+        } else if (evt.lectureTube) {
             live.value = 'lt';
         } else {
             form['live'].value = 'false';
