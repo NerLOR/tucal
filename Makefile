@@ -28,7 +28,7 @@ build-www:
 	# update build-id in footer
 	sed -i 's/{commit}/$(shell git log --format="%H" -n 1)/g' ${FOOTER}
 	sed -i 's/{short}/$(shell git log --format="%h" -n 1)/g' ${FOOTER}
-	sed -i 's/{timestamp}/$(shell date -u "+%Y-%m-%d %H:%M:%S")/g' ${FOOTER}
+	sed -i 's/{timestamp}/$(shell date -u "+%Y-%m-%d %H:%M")/g' ${FOOTER}
 	if [[ $(shell git status -s | wc -l) == 0 ]]; then \
 		sed -i 's/{comment}/clean/g' ${FOOTER} ;\
 		sed -i 's/{class}/clean/g' ${FOOTER} ;\
