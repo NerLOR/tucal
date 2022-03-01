@@ -1,4 +1,7 @@
 
+HEADER=dest/www/.php/header.php
+FOOTER=dest/www/.php/footer.php
+
 build-www:
 	mkdir -p dest/
 	rm -rf dest/www dest/typescript
@@ -19,9 +22,20 @@ build-www:
 	tools/msgfmtjs.sh locale dest/typescript/src/messages.ts dest/typescript/src/messages.ts
 	tsc -p dest/typescript/
 	# replace css links in php/html
-	sed -i 's|"\(/res/[^"]*\)"|"\1?v=$(shell date -u +%Y%m%d-%H%M%S)"|g' dest/www/.php/header.php dest/www/.php/footer.php
+	sed -i 's|"\(/res/[^"]*\)"|"\1?v=$(shell date -u +%Y%m%d-%H%M%S)"|g' ${HEADER} ${FOOTER}
 	tools/minify-css.sh
-	sed -i 's|/res/styles/styles.css|/res/styles/min.css|g' dest/www/.php/header.php
+	sed -i 's|/res/styles/styles.css|/res/styles/min.css|g' ${HEADER}
+	# update build-id in footer
+	sed -i 's/{commit}/$(shell git log --format="%H" -n 1)/g' ${FOOTER}
+	sed -i 's/{short}/$(shell git log --format="%h" -n 1)/g' ${FOOTER}
+	sed -i 's/{timestamp}/$(shell date -u "+%Y-%m-%d %H:%M:%S")/g' ${FOOTER}
+	if [[ $(shell git status -s | wc -l) == 0 ]]; then \
+		sed -i 's/{comment}/clean/g' ${FOOTER} ;\
+		sed -i 's/{class}/clean/g' ${FOOTER} ;\
+	else \
+		sed -i 's/{comment}/uncommited changes/g' ${FOOTER} ;\
+		sed -i 's/{class}/uncommited-changes/g' ${FOOTER} ;\
+	fi
 	# create .ico file from svg
 	convert -background none dest/www/res/svgs/tucal.svg -alpha set -define icon:auto-resize=256,128,64,32,24,16 dest/www/favicon.ico
 	# compile .po files
