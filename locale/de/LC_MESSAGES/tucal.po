@@ -194,11 +194,11 @@ msgstr "Automatische Konto-Synchronisation"
 msgid "One-time account synchronization"
 msgstr "Einmalige Konto-Synchronisation"
 
-msgid "SSO 2FA generator"
-msgstr "SSO-Zwei-Faktor-Authentifizierung Generator"
+msgid "SSO 2FA generator (optional)"
+msgstr "SSO-Zwei-Faktor-Auth. Generator (optional)"
 
-msgid "SSO 2FA token"
-msgstr "SSO-Zwei-Faktor-Authentifizierung Schlüssel"
+msgid "SSO 2FA token (optional)"
+msgstr "SSO-Zwei-Faktor-Auth. Schlüssel (optional)"
 
 msgid "Account synchronization (description)"
 msgstr "Der TUcal-Server synchronisiert im Hintergrund Kalenderdaten mit den Systemen der TU Wien (TISS, TUWEL, etc.). "

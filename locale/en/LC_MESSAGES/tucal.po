@@ -137,6 +137,12 @@ msgstr "Does not exist"
 msgid "Wrong"
 msgstr "Wrong"
 
+msgid "SSO 2FA generator (optional)"
+msgstr "SSO two-factor-auth. generator (optional)"
+
+msgid "SSO 2FA token (optional)"
+msgstr "SSO two-factor-auth. token (optional)"
+
 msgid "Reset password (description)"
 msgstr "A email will be sent to your student email address to reset your password."
 
