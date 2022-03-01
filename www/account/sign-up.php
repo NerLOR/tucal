@@ -81,13 +81,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt = db_exec("
                     INSERT INTO tucal.password (account_nr, pwd_salt, pwd_hash)
-                    VALUES (:nr, gen_salt('bf'), crypt(:pwd, pwd_salt))", [
+                    VALUES (:nr, gen_salt('bf'), NULL)", [
+            'nr' => $nr,
+        ]);
+
+        $stmt = db_exec("
+                    UPDATE tucal.password
+                    SET pwd_hash = crypt(:pwd, pwd_salt)
+                    WHERE account_nr = :nr", [
             'nr' => $nr,
             'pwd' => $pw1,
         ]);
 
         $USER = [
             'nr' => $nr,
+            'username' => $username,
             'opts' => [
                 'locale' => $LOCALE,
                 'lt_provider' => 'live-video-tuwien',
