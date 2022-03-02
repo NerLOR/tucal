@@ -291,7 +291,6 @@ def sync_users():
         res = client.recv(64)
         client.close()
         del client
-        time.sleep(1)
 
 
 if __name__ == '__main__':
@@ -309,5 +308,5 @@ if __name__ == '__main__':
         merge_external_events()
         update_events()
         clear_invalid_tokens()
-        sync_users()
+        #sync_users()
         time.sleep(1)
