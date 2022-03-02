@@ -487,8 +487,8 @@ class Session:
         r = self.get('/education/favorites.xhtml')
         courses = []
         for row in TABLE_TR.finditer(r.text):
-            data = [d.group(1) for d in TABLE_TD.finditer(row.group(1))][1:4]
-            if len(data) != 3 or data[0] == 'Summe':
+            data = [d.group(1) for d in TABLE_TD.finditer(row.group(1))][1:8]
+            if len(data) != 7 or data[0] == 'Summe' or data[6] != '':
                 continue
             course = LINK_COURSE.findall(data[0])[0]
             course_type = SPAN_TYPE.findall(data[0])[0]

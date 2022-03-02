@@ -42,11 +42,14 @@ class Handler(StreamRequestHandler):
         stdin = ''
         mnr = None
         if job_name == 'sync-user':
-            # sync-user [store] <mnr> [<pwd-b64> [<2fa-token> | <2fa-generator-b64>]]
+            # sync-user [store] [keep] <mnr> [<pwd-b64> [<2fa-token> | <2fa-generator-b64>]]
             cmd += ['tucal.jobs.sync_user']
             if len(job) > 0 and job[0] == 'store':
                 job.pop(0)
                 cmd += ['-s']
+            if len(job) > 0 and job[0] == 'keep':
+                job.pop(0)
+                cmd += ['-k']
             if len(job) == 0:
                 self.wfile.write(b'error: job sync-user requires at least one argument <mnr>\n')
                 return

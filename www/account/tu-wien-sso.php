@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tfa = '';
     }
 
-    $data = "sync-user $store $USER[mnr] $pwd64 $tfa";
+    $data = "sync-user $store keep $USER[mnr] $pwd64 $tfa";
     fwrite($sock, "$data\n");
     $res = fread($sock, 64);
 

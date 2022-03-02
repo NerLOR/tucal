@@ -30,7 +30,7 @@ if (!$sock) {
     goto doc;
 }
 
-$data = "sync-user $USER[mnr]";
+$data = "sync-user keep $USER[mnr]";
 fwrite($sock, "$data\n");
 $res = fread($sock, 64);
 
