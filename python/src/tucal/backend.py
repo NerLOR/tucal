@@ -291,6 +291,7 @@ def sync_users():
         res = client.recv(64)
         client.close()
         del client
+        time.sleep(1)
 
 
 if __name__ == '__main__':

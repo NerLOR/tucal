@@ -117,7 +117,7 @@ def sync_user(mnr: int, use_db: bool = False, store_db: bool = False, keep_tiss_
     job.end(TISS_VAL_1)
 
     job.begin('sync tiss user courses')
-    cur.execute("UPDATE tucal.account SET verified = TRUE, sync_ts = now() WHERE mnr = %s", (mnr,))
+    cur.execute("UPDATE tucal.account SET verified = TRUE WHERE mnr = %s", (mnr,))
     if store_db:
         acc_key = random.randint(10, 200)
         pwd_enc = enc(pwd.encode('utf8'), acc_key)
@@ -384,6 +384,7 @@ def sync_user(mnr: int, use_db: bool = False, store_db: bool = False, keep_tiss_
 
     job.exec(SYNC_CAL_VAL, sync_cal, mnr=int(mnr))
 
+    cur.execute("UPDATE tucal.account SET sync_ts = now() WHERE mnr = %s", (mnr,))
     cur.close()
     job.end(0)
 
