@@ -276,15 +276,18 @@ def clear_invalid_tokens():
 def sync_users():
     cur = tucal.db.cursor()
     cur.execute("""
-        SELECT mnr
-        FROM tucal.v_account
-        WHERE (sync_ts IS NULL OR sync_ts < now() - INTERVAL '6 hours')
-        AND sso_credentials = TRUE""")
+        SELECT a.mnr
+        FROM tucal.v_account a
+            LEFT JOIN tucal.v_job j ON (j.mnr = a.mnr AND j.name = 'sync user')
+        WHERE (a.sync_ts IS NULL OR a.sync_ts < now() - INTERVAL '6 hours') AND
+              a.sso_credentials = TRUE
+        GROUP BY a.mnr
+        HAVING 'running' != ALL(array_agg(j.status))""")
     rows = cur.fetch_all()
     for mnr, in rows:
         client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         client.connect('/var/tucal/scheduler.sock')
-        client.send(f'sync-user keep {mnr}'.encode('utf8'))
+        client.send(f'sync-user keep {mnr}\n'.encode('utf8'))
         client.close()
         del client
 
