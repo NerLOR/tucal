@@ -385,6 +385,7 @@ def sync_user(mnr: int, use_db: bool = False, store_db: bool = False, keep_tiss_
     job.exec(SYNC_CAL_VAL, sync_cal, mnr=int(mnr))
 
     cur.execute("UPDATE tucal.account SET sync_ts = now() WHERE mnr = %s", (mnr,))
+    tucal.db.commit()
     cur.close()
     job.end(0)
 
