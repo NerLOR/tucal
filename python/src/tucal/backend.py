@@ -284,7 +284,7 @@ def sync_users():
     for mnr, in rows:
         client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         client.connect('/var/tucal/scheduler.sock')
-        client.send(f'sync-user keep {mnr}')
+        client.send(f'sync-user keep {mnr}'.encode('utf8'))
         client.close()
         del client
 
