@@ -5,6 +5,7 @@ import json
 import datetime
 import argparse
 import re
+import socket
 import smtplib
 from email.mime.text import MIMEText
 
@@ -272,6 +273,22 @@ def clear_invalid_tokens():
     cur.close()
 
 
+def sync_users():
+    cur = tucal.db.cursor()
+    cur.execute("""
+        SELECT mnr
+        FROM tucal.v_account
+        WHERE (sync_ts IS NULL OR sync_ts < now() - INTERVAL '6 hours')
+        AND sso_credentials = TRUE""")
+    rows = cur.fetch_all()
+    for mnr, in rows:
+        client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        client.connect('/var/tucal/scheduler.sock')
+        client.send(f'sync-user keep {mnr}')
+        client.close()
+        del client
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--update', required=False, action='store_true')
@@ -287,4 +304,5 @@ if __name__ == '__main__':
         merge_external_events()
         update_events()
         clear_invalid_tokens()
+        sync_users()
         time.sleep(1)
