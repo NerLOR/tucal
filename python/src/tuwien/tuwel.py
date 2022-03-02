@@ -27,16 +27,16 @@ GROUP_NAME = re.compile(r'<h2 class="panel-title">\s*([^<]*)\s*</h2>')
 
 class Course:
     id: int
-    semester: Semester
-    nr: str
+    semester: Optional[Semester]
+    nr: Optional[str]
     name: str
     suffix: str
     short: str
 
-    def __init__(self, course_id: int, semester: Semester, nr: str, name: str, short: str):
+    def __init__(self, course_id: int, semester: Optional[Semester], nr: Optional[str], name: str, short: str):
         self.id = course_id
-        self.semester = Semester(str(semester))
-        self.nr = nr.replace('.', '')
+        self.semester = Semester(str(semester)) if semester else None
+        self.nr = nr.replace('.', '') if nr else None
         name = name.rsplit(' (', 1)
         self.name = name[0].strip()
         self.suffix = name[1].replace(')', '').strip() if len(name) > 1 else None
@@ -106,17 +106,21 @@ class Session:
         return AUTH_TOKEN.findall(r.text)[0]
 
     def _get_courses(self) -> Dict[str, Course]:
-        data = self.ajax('core_course_get_enrolled_courses_by_timeline_classification',
-                         classification='all', customfieldname='semester', customfieldvalue='',
-                         limit=0, offset=0, sort='fullname')
+        data1 = self.ajax('core_course_get_enrolled_courses_by_timeline_classification',
+                          classification='all', limit=0, offset=0, sort='fullname')
+        data2 = self.ajax('core_course_get_enrolled_courses_by_timeline_classification',
+                          classification='hidden', limit=0, offset=0, sort='fullname')
         courses = {}
-        for c in data['data']['courses']:
+        for c in data1['data']['courses'] + data2['data']['courses']:
             c.pop('courseimage', None)
             part = c['idnumber'].split('-')
-            num = part[0]
-            sem = Semester(part[1]) if len(part) > 1 else Semester.current()
+            if len(part) == 2:
+                num = part[0]
+                sem = Semester(part[1])
+            else:
+                num, sem = None, None
             m = COURSE_NR.match(c['fullname'])
-            name = m.group(1) if m else c['fullname']
+            name = html.unescape(m.group(1)) if m else c['fullname']
             courses[c['idnumber']] = Course(c['id'], sem, num, name, c['shortname'])
         return courses
 

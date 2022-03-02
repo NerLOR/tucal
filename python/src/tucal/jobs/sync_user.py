@@ -295,7 +295,7 @@ def sync_user(mnr: int, use_db: bool = False, store_db: bool = False, keep_tiss_
         data = {
             'cid': c.id,
             'cnr': c.nr,
-            'sem': str(c.semester),
+            'sem': str(c.semester) if c.semester else None,
             'name': c.name,
             'suffix': c.suffix,
             'short': c.short,
@@ -304,7 +304,7 @@ def sync_user(mnr: int, use_db: bool = False, store_db: bool = False, keep_tiss_
             INSERT INTO tuwel.course (course_id, course_nr, semester, name, suffix, short)
             VALUES (%(cid)s, %(cnr)s, %(sem)s, %(name)s, %(suffix)s, %(short)s)
             ON CONFLICT ON CONSTRAINT pk_course DO UPDATE
-            SET course_nr = %(cnr)s, semester = %(sem)s, name = %(sem)s, suffix = %(suffix)s,
+            SET course_nr = %(cnr)s, semester = %(sem)s, name = %(name)s, suffix = %(suffix)s,
                 short = %(short)s""", data)
 
         cur.execute("""

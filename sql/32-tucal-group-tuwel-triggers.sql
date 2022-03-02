@@ -10,7 +10,9 @@ $$
 DECLARE
     nr BIGINT;
 BEGIN
-    IF (SELECT tucal.get_group(NEW.course_nr, NEW.semester, 'LVA')) IS NOT NULL THEN
+    IF (NEW.course_nr IS NULL OR NEW.semester IS NULL) THEN
+        RETURN NEW;
+    ELSEIF (SELECT tucal.get_group(NEW.course_nr, NEW.semester, 'LVA')) IS NOT NULL THEN
         RETURN NEW;
     END IF;
     INSERT INTO tucal.group (group_name)
@@ -37,7 +39,9 @@ DECLARE
     semester  TEXT;
 BEGIN
     SELECT c.course_nr, c.semester FROM tuwel.course c WHERE course_id = NEW.course_id INTO course_nr, semester;
-    IF (SELECT tucal.get_group(course_nr, semester, NEW.name_normalized)) IS NOT NULL THEN
+    IF (course_nr IS NULL OR semester IS NULL) THEN
+        RETURN NEW;
+    ELSEIF (SELECT tucal.get_group(course_nr, semester, NEW.name_normalized)) IS NOT NULL THEN
         RETURN NEW;
     END IF;
     INSERT INTO tucal.group (group_name)

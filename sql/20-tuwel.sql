@@ -16,8 +16,8 @@ CREATE TABLE tuwel.course
 (
     course_id BIGINT NOT NULL,
 
-    course_nr TEXT   NOT NULL CHECK (course_nr ~ '[0-9]{3}[0-9A-Z]{3}'),
-    semester  TEXT   NOT NULL CHECK (semester ~ '[0-9]{4}[WS]'),
+    course_nr TEXT CHECK (course_nr ~ '[0-9]{3}[0-9A-Z]{3}'),
+    semester  TEXT CHECK (semester ~ '[0-9]{4}[WS]'),
 
     lti_id    BIGINT,
 
