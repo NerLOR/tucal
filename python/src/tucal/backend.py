@@ -244,8 +244,7 @@ def send_emails():
 
     msgs = []
     for msg_nr, msg_id, to, subj, content, reply_to, submit in rows:
-        msg = MIMEText(content.encode('utf-8'), 'plain', 'UTF-8')
-        msg.replace_header('Content-Type', 'text/plain; charset=UTF-8; format=flowed')
+        msg = MIMEText(content, 'plain', 'UTF-8')
         msg['From'] = f'TUcal <{EMAIL_FROM}>'
         msg['Date'] = submit.strftime('%a, %d %b %Y %H:%M:%S %z')
         msg['Message-ID'] = f'{msg_id}@{EMAIL_HOSTNAME}'
