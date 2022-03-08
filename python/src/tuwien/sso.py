@@ -31,8 +31,11 @@ class Session:
         self._password = password
         self._totp = totp
 
-    def login(self, url: str) -> bool:
+    def login(self, url: str = 'https://login.tuwien.ac.at/') -> bool:
         r = self._session.get(url)
+
+        if not r.url.startswith(SSO_URL):
+            return True
 
         if '<title>TU Wien Login</title>' in r.text:
             auth_state = INPUT_AUTH_STATE.findall(r.text)[0]

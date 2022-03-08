@@ -80,6 +80,13 @@ def commit() -> bool:
     return True
 
 
+def rollback() -> bool:
+    if DB_CONN is None:
+        return False
+    DB_CONN.rollback()
+    return True
+
+
 def upsert_values(table: str, data: List[Dict[str, Any]], fields: Dict[str, str], pk: Tuple,
                   types: Dict[str, str] = None) -> List[Tuple]:
     types = types or {}

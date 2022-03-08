@@ -282,7 +282,8 @@ def sync_users():
         WHERE (a.sync_ts IS NULL OR a.sync_ts < now() - INTERVAL '6 hours') AND
               a.sso_credentials = TRUE
         GROUP BY a.mnr
-        HAVING 'running' != ALL(array_agg(j.status))""")
+        HAVING 'running' != ALL(array_agg(j.status))
+        LIMIT 10""")
     rows = cur.fetch_all()
     for mnr, in rows:
         client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -308,5 +309,5 @@ if __name__ == '__main__':
         merge_external_events()
         update_events()
         clear_invalid_tokens()
-        #sync_users()
+        sync_users()
         time.sleep(1)

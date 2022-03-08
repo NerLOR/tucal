@@ -1,6 +1,6 @@
 # 187.B12 VU Denkweisen der Informatik
 
-from typing import Optional
+from typing import Optional, Dict
 import requests
 import requests.cookies
 import json
@@ -46,17 +46,24 @@ def get_group_nr(semester: tucal.Semester) -> Optional[int]:
     return group_nr
 
 
-class Plugin(tucal.Plugin):
-    @staticmethod
-    def sync():
-        group_nr = get_group_nr(tucal.Semester('2021W'))
+class Sync(tucal.Sync):
+    cal: tucal.icalendar.Calendar = None
+
+    def __init__(self, session: tuwien.sso.Session):
+        super().__init__(session)
+
+    def fetch(self):
         r = requests.get(WEBCAL)
         if r.status_code != 200:
             return
 
-        cal = tucal.icalendar.parse_ical(r.text)
+        self.cal = tucal.icalendar.parse_ical(r.text)
+
+    def store(self, cur: tucal.db.Cursor):
+        group_nr = get_group_nr(tucal.Semester('2021W'))
+
         rows = []
-        for evt in cal.events:
+        for evt in self.cal.events:
             if evt.summary.startswith('Abgabe:') or evt.summary.startswith('Ende Reviewing:') or \
                     evt.summary.startswith('Finale Abgabe:') or evt.summary.startswith('Start:'):
                 continue
@@ -87,32 +94,33 @@ class Plugin(tucal.Plugin):
         }
         tucal.db.upsert_values('tucal.external_event', rows, fields, ('source', 'event_id'), {'data': 'jsonb'})
 
-        ids_now = set(row['id'] for row in rows)
+        ids_now = {row['id'] for row in rows}
 
-        cur = tucal.db.cursor()
         cur.execute("LOCK TABLE tucal.external_event IN SHARE ROW EXCLUSIVE MODE")
         cur.execute("SELECT event_id FROM tucal.external_event WHERE source = '187B12-aurora' AND NOT deleted")
-        ids_db = set(row[0] for row in cur.fetch_all())
+        ids_db = {row[0] for row in cur.fetch_all()}
         ids_del = ids_db - ids_now
         cur.execute("""
             UPDATE tucal.external_event
             SET deleted = true
             WHERE source = '187B12-aurora' AND event_id = ANY(%s)""", (list(ids_del),))
 
-        tucal.db.commit()
 
-    @staticmethod
-    def sync_auth(sso: tuwien.sso.Session):
-        group_nr = get_group_nr(tucal.Semester('2021W'))
-        # TODO (LITTLE) AURORA HAS TO BE EXTERMINATED
+class SyncAuth(tucal.Sync):
+    events: Dict[str, Dict] = None
 
-        sso.session.get(AURORA)
-        sso.session.get(f'{AURORA}/course/dwi/login/?next=/course/dwi/')
-        r = sso.session.get('https://iu.zid.tuwien.ac.at/AuthServ.authenticate?app=131&param=/course/dwi/')
+    def __init__(self, session: tuwien.sso.Session):
+        super().__init__(session)
+
+    def fetch(self):
+        session = self.session.session
+        session.get(AURORA)
+        session.get(f'{AURORA}/course/dwi/login/?next=/course/dwi/')
+        r = session.get('https://iu.zid.tuwien.ac.at/AuthServ.authenticate?app=131&param=/course/dwi/')
         if r.status_code != 200:
             raise RuntimeError()
 
-        r = sso.session.get(f'{AURORA}/dcall_login/dcall_login.js')
+        r = session.get(f'{AURORA}/dcall_login/dcall_login.js')
         if r.status_code != 200:
             raise RuntimeError()
 
@@ -120,18 +128,18 @@ class Plugin(tucal.Plugin):
         if len(m) == 0:
             raise RuntimeError()
 
-        cookies = sso.session.cookies
+        cookies = session.cookies
         session_id = cookies.get('sessionid', domain=AURORA_HOST)
         c = requests.cookies.create_cookie('sessionid', session_id, domain=REVIEW_HOST)
         cookies.set_cookie(c)
 
         token, pk = m[0]
-        sso.session.post(f'{LITTLE_AURORA}/aurora_login/login/', {
+        session.post(f'{LITTLE_AURORA}/aurora_login/login/', {
             'token': token,
             'pk': pk,
         })
 
-        r = sso.session.get(f'{LITTLE_AURORA}/course/overview')
+        r = session.get(f'{LITTLE_AURORA}/course/overview')
         if r.status_code != 200:
             raise RuntimeError()
 
@@ -163,7 +171,7 @@ class Plugin(tucal.Plugin):
                     dt = dt.replace(year=2022)
                 assignments[current_assignment][s] = dt
 
-        events = {}
+        self.events = {}
         for ass, data in assignments.items():
             idx = ass
             if ass.startswith('Zusammenfassung'):
@@ -171,17 +179,21 @@ class Plugin(tucal.Plugin):
             elif 'Thinking' in ass:
                 m = RE_THINKING.findall(ass)
                 idx = f'Challenge {m[0]} Thinking'
-            if idx not in events:
-                events[idx] = {}
+            if idx not in self.events:
+                self.events[idx] = {}
                 if 'Challenge' in idx:
-                    events[idx]['challenges'] = []
-            evt = events[idx]
+                    self.events[idx]['challenges'] = []
+            evt = self.events[idx]
             if 'Challenge' in idx:
                 evt['challenges'].append(ass)
             evt.update(data)
 
+    def store(self, cur: tucal.db.Cursor):
+        # TODO (LITTLE) AURORA HAS TO BE EXTERMINATED
+        group_nr = get_group_nr(tucal.Semester('2021W'))
+
         rows = []
-        for name, event in events.items():
+        for name, event in self.events.items():
             for sub in ('end', 'reviewing_end', 'reflection'):
                 if sub not in event:
                     break
@@ -216,5 +228,13 @@ class Plugin(tucal.Plugin):
             'data': 'data',
         }
         tucal.db.upsert_values('tucal.external_event', rows, fields, ('source', 'event_id'), {'data': 'jsonb'})
-        tucal.db.commit()
 
+
+class Plugin(tucal.Plugin):
+    @staticmethod
+    def sync() -> Sync:
+        return Sync(tuwien.sso.Session())
+
+    @staticmethod
+    def sync_auth(sso: tuwien.sso.Session):
+        return SyncAuth(sso)

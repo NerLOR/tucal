@@ -41,12 +41,29 @@ class JobFormatError(Exception):
 
 class Plugin:
     @staticmethod
-    def sync():
-        pass
+    def sync() -> Optional[Sync]:
+        raise NotImplementedError()
 
     @staticmethod
-    def sync_auth(sso: tuwien.sso.Session):
-        pass
+    def sync_auth(sso: tuwien.sso.Session) -> Optional[Sync]:
+        raise NotImplementedError()
+
+
+class Sync:
+    session: tuwien.sso.Session
+
+    def __init__(self, session: tuwien.sso.Session):
+        self.session = session
+
+    def fetch(self):
+        raise NotImplementedError()
+
+    def store(self, cursor):
+        raise NotImplementedError()
+
+    def sync(self, cursor):
+        self.fetch()
+        self.store(cursor)
 
 
 def parse_iso_timestamp(iso: str, default: bool = False, tz: str = None) -> datetime.datetime:
@@ -202,15 +219,20 @@ class Job:
     _proc_start: float
     _clock_id: int
     _step_mult: List[float]
+    _indent: int
+    _pop_indents: List[int]
 
     def __init__(self, name: str = None, sub_steps: int = None, perc_steps: int = None, estimate: int = None):
         self.initialized = False
+        self._indent = 0
+        self._pop_indents = [0]
         if name or sub_steps or perc_steps or estimate:
             self.init(name, sub_steps, perc_steps, estimate)
 
     def init(self, name: str, sub_steps: int, perc_steps: int = 1, estimate: int = None):
         if self.initialized:
             self.perc_steps.append(perc_steps)
+            self._pop_indents.append(self._indent)
             self.begin(name, sub_steps)
             return
 
@@ -221,31 +243,40 @@ class Job:
         self._clock_id = time.CLOCK_MONOTONIC
         self._step_mult = [1]
         self._proc_start = time.clock_gettime(self._clock_id)
-        print(f'**{now().isoformat()}')
+        print(f'**start={now().isoformat()}')
         if estimate:
-            print(f'**{estimate}')
-        print(f'*{self._format_time()}:0.0000:START:{sub_steps}:{name}')
+            print(f'**estimate={estimate}')
+        print(f'*{self._format_time()}:0.0000::START:{sub_steps}:{name}')
         sys.stdout.flush()
 
     def begin(self, name: str, sub_steps: int = 0):
-        print(f'*{self._format_time()}:{self._perc:.4f}:START:{sub_steps}:{name}')
+        self._indent += 1
+        print(f'*{self._format_time()}:{self._perc:.4f}:{"-" * self._indent}:START:{sub_steps}:{name}')
         sys.stdout.flush()
 
     def end(self, steps: int):
         self._perc += steps / self.perc_steps[-1] * self._step_mult[-1]
-        print(f'*{self._format_time()}:{self._perc:.4f}:STOP')
+        if self._indent == 0 and self._perc < 1:
+            self._perc = 1
+        print(f'*{self._format_time()}:{self._perc:.4f}:{"-" * self._indent}:STOP')
+        self._indent -= 1
+        if self._indent == self._pop_indents[-1]:
+            self._pop_indents.pop()
+            self.perc_steps.pop()
         sys.stdout.flush()
 
     def sub_stop(self, steps: int):
         self._perc += steps / self.perc_steps[-1] * self._step_mult[-1]
 
-    def exec(self, steps: int, func, **kwargs):
+    def exec(self, steps: int, func, job: bool = True, **kwargs):
         self._step_mult.append(self._step_mult[-1] * steps / self.perc_steps[-1])
-        func(**kwargs, job=self)
+        if job:
+            kwargs['job'] = self
+        func(**kwargs)
         self._step_mult.pop()
 
     def _format_time(self) -> str:
-        return f'{time.clock_gettime(self._clock_id) - self._proc_start:7.4f}'
+        return f'{time.clock_gettime(self._clock_id) - self._proc_start:8.4f}'
 
 
 class JobStatus:
@@ -286,10 +317,14 @@ class JobStatus:
         line = line[1:].strip()
 
         if line.startswith('*'):
-            if self.start is None:
-                self.start = parse_iso_timestamp(line[1:])
-            elif self.estimate is None:
-                self.estimate = int(line[1:])
+            meta = [p.strip() for p in line[1:].strip().split('=', 1)]
+            if len(meta) != 2:
+                raise JobFormatError('invalid job format')
+
+            if meta[0] == 'start':
+                self.start = parse_iso_timestamp(meta[1])
+            elif meta[0] == 'estimate':
+                self.estimate = int(meta[1])
             else:
                 raise JobFormatError('invalid job format')
             return True
@@ -302,6 +337,7 @@ class JobStatus:
         self.time = time_sec
         self.progress = float(line[1])
 
+        line.pop(2)
         cmd = line[2]
         if cmd == 'STOP':
             if len(line) > 3 or self.current_step is None:

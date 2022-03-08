@@ -1,11 +1,12 @@
 # https://events.htu.at/
-import datetime
 
+from typing import List, Dict, Any, Optional
 import requests
 import json
 
 import tucal
 import tucal.db
+import tuwien.sso
 
 QUERY = {
     'operationName': 'SearchEventsAndGroups',
@@ -158,15 +159,21 @@ def get_group_nr() -> int:
     return rows[0][0]
 
 
-class Plugin(tucal.Plugin):
-    @staticmethod
-    def sync():
+class Sync(tucal.Sync):
+    events: List[Dict[str, Any]] = None
+
+    def __init__(self, session: tuwien.sso.Session):
+        super().__init__(session)
+
+    def fetch(self):
         r = requests.post(f'{EVENTS_HTU}/api', json=QUERY)
         if r.status_code != 200:
             raise RuntimeError()
 
         raw_events = r.json()
-        events = raw_events['data']['searchEvents']['elements']
+        self.events = raw_events['data']['searchEvents']['elements']
+
+    def store(self, cursor: tucal.db.Cursor):
         group_nr = get_group_nr()
 
         rows = [{
@@ -176,7 +183,7 @@ class Plugin(tucal.Plugin):
             'start': tucal.parse_iso_timestamp(event['beginsOn'], True),
             'end': tucal.parse_iso_timestamp(event['endsOn'], True),
             'data': json.dumps({'htu': event}),
-        } for event in events]
+        } for event in self.events]
 
         fields = {
             'source': 'source',
@@ -187,7 +194,16 @@ class Plugin(tucal.Plugin):
             'data': 'data',
         }
         tucal.db.upsert_values('tucal.external_event', rows, fields, ('source', 'event_id'), {'data': 'jsonb'})
-        tucal.db.commit()
+
+
+class Plugin(tucal.Plugin):
+    @staticmethod
+    def sync() -> Sync:
+        return Sync(tuwien.sso.Session())
+
+    @staticmethod
+    def sync_auth(sso: tuwien.sso.Session) -> None:
+        return None
 
 
 """

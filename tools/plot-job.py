@@ -15,7 +15,7 @@ if __name__ == '__main__':
         data = [
             line[1:].split(':')
             for line in f.readlines()
-            if line.startswith('*')
+            if line.startswith('*') and not line.startswith('**')
         ]
         data_y = [float(d[1]) * 100 for d in data]
         data_x = [float(d[0]) for d in data]
