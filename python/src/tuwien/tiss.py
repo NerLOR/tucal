@@ -439,10 +439,10 @@ class Session:
         data = {
             'javax.faces.behavior.event': 'action',
             'javax.faces.partial.event': 'click',
-            'javax.faces.source': 'j_id_7g:j_id_7h_8',
-            'javax.faces.partial.execute': 'j_id_7g:j_id_7h_8',
-            'javax.faces.partial.render': 'j_id_7g globalMessagesPanel',
-            'j_id_7g_SUBMIT': '1',
+            'javax.faces.source': 'j_id_7m:j_id_7n_8',
+            'javax.faces.partial.execute': 'j_id_7m:j_id_7n_8',
+            'javax.faces.partial.render': 'j_id_7m globalMessagesPanel',
+            'j_id_7m_SUBMIT': '1',
         }
         r = self.post('/events/personSchedule.xhtml', data, ajax=True)
         for link in LINK_TOKEN.finditer(r.text):

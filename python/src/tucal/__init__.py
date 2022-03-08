@@ -255,7 +255,7 @@ class Job:
         sys.stdout.flush()
 
     def end(self, steps: int):
-        self._perc += steps / self.perc_steps[-1] * self._step_mult[-1]
+        self._perc += steps / self.perc_steps[-1] * self._step_mult[-1] if self.perc_steps[-1] != 0 else 0
         if self._indent == 0 and self._perc < 1:
             self._perc = 1
         print(f'*{self._format_time()}:{self._perc:.4f}:{"-" * self._indent}:STOP')

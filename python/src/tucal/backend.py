@@ -286,12 +286,14 @@ def sync_users():
         LIMIT 10""")
     rows = cur.fetch_all()
     for mnr, in rows:
+        print(f'Syncing user {mnr}...')
         client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         client.connect('/var/tucal/scheduler.sock')
         client.send(f'sync-user keep {mnr}\n'.encode('utf8'))
-        res = client.recv(64)
+        res = client.recv(64).decode('utf8')
         client.close()
         del client
+        print(f'Informed scheduler: {res}')
 
 
 if __name__ == '__main__':
@@ -299,11 +301,14 @@ if __name__ == '__main__':
     parser.add_argument('-u', '--update', required=False, action='store_true')
     args = parser.parse_args()
 
+    print('Updating all events...')
     update_events(all_events=True)
+    print('Successfully updated all events')
 
     if args.update:
         exit(0)
 
+    print('Starting main loop')
     while True:
         send_emails()
         merge_external_events()
