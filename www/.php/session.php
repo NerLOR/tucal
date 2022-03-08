@@ -64,6 +64,9 @@ if (isset($_COOKIE['tucal_session'])) {
                 'sso_credentials' => $s['sso_credentials'],
                 'avatar_uri' => $s['avatar_uri'],
                 'opts' => json_decode($s['account_opts'], true),
+                'create_ts' => $s['account_create_ts'],
+                'login_ts' => $s['account_login_ts'],
+                'sync_ts' => $s['account_sync_ts'],
             ];
         }
     }

@@ -372,6 +372,18 @@ msgstr "Zurücksetzen"
 msgid "Locale"
 msgstr "Sprache/Region"
 
+msgid "Account statistics"
+msgstr "Konto Statistiken"
+
+msgid "Creation"
+msgstr "Erstellung"
+
+msgid "Latest login"
+msgstr "Letzte Anmeldung"
+
+msgid "Latest synchronization"
+msgstr "Letzte Synchronisation"
+
 
 msgctxt "http"
 msgid "Bad Request"

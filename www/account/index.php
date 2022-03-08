@@ -82,6 +82,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 doc:
 $theme = $_SESSION['opts']['theme'] ?? 'light';
 
+$fmt = 'd.m.Y, H:i (P)';
+$create_ts = strtotime($USER['create_ts']);
+$login_ts = strtotime($USER['login_ts']);
+$sync_ts = strtotime($USER['sync_ts']);
+
 $TITLE = [_('Settings')];
 require "../.php/header.php";
 ?>
@@ -136,6 +141,23 @@ require "../.php/header.php";
             <a class="button margin" href="/account/sync"><?php echo _('Synchronize TU account');?></a>
             <a class="button margin" href="/account/password/"><?php echo _('Change password');?></a>
         </div>
+    </section>
+    <section>
+        <h1><?php echo _('Account statistics'); ?></h1>
+        <form name="statistics" class="table">
+            <div>
+                <label for="create-ts"><?php echo _('Creation');?></label>
+                <input name="create-ts" id="create-ts" type="text" value="<?php echo date($fmt, $create_ts); ?>" readonly disabled/>
+            </div>
+            <div>
+                <label for="login-ts"><?php echo _('Latest login');?></label>
+                <input name="login-ts" id="login-ts" type="text" value="<?php echo date($fmt, $login_ts); ?>" readonly disabled/>
+            </div>
+            <div>
+                <label for="sync-ts"><?php echo _('Latest synchronization');?></label>
+                <input name="sync-ts" id="sync-ts" type="text" value="<?php echo date($fmt, $sync_ts); ?>" readonly disabled/>
+            </div>
+        </form>
     </section>
 </main>
 <?php
