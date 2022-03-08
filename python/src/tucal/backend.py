@@ -224,7 +224,6 @@ def merge_external_events():
         else:
             evt_nr = event_rows[0][0]
 
-        print(f'{source}/{evt_id} -> {evt_nr}')
         cur.execute("UPDATE tucal.external_event SET event_nr = %s WHERE (source, event_id) = (%s, %s)",
                     (evt_nr, source, evt_id))
 
@@ -284,7 +283,7 @@ def sync_users():
         GROUP BY a.mnr, j.mnr
         HAVING 'running' != ALL(array_agg(j.status)) OR
                j.mnr IS NULL
-        LIMIT 10""")
+        LIMIT 2""")
     rows = cur.fetch_all()
     for mnr, in rows:
         print(f'Syncing user {mnr}...', flush=True)
