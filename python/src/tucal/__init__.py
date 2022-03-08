@@ -329,8 +329,8 @@ class JobStatus:
                 raise JobFormatError('invalid job format')
             return True
 
-        line = line.split(':', 3)
-        if len(line) < 3:
+        line = line.split(':', 4)
+        if len(line) < 4:
             raise JobFormatError('invalid job format')
 
         time_sec = float(line[0])
