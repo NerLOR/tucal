@@ -16,16 +16,16 @@ CHILDREN = {}
 
 
 def on_exit():
-    print('cleaning up child processes')
+    print('cleaning up child processes', flush=True)
     cur = tucal.db.cursor()
     for pid, data in CHILDREN.items():
         proc = data['proc']
         job_nr = data['job_nr']
-        print(f'killing {proc.pid}...')
+        print(f'killing {proc.pid}...', flush=True)
         cur.execute("UPDATE tucal.job SET status = 'aborted', pid = NULL WHERE job_nr = %s", (job_nr,))
         proc.terminate()
     tucal.db.commit()
-    print('cleanup complete')
+    print('cleanup complete', flush=True)
 
 
 class Handler(StreamRequestHandler):
@@ -98,7 +98,7 @@ class Handler(StreamRequestHandler):
 
         CHILDREN[pid]['job_nr'] = job_nr
 
-        print(f'[{job_nr:8}] {job_name} - PID {pid} - {" ".join(cmd)}')
+        print(f'[{job_nr:8}] {job_name} - PID {pid} - {" ".join(cmd)}', flush=True)
         self.wfile.write(f'{job_nr} {job_id} {pid}\n'.encode('utf8'))
 
         reader = tucal.JobStatus()
@@ -137,7 +137,7 @@ class Handler(StreamRequestHandler):
         proc.stdout.read()
         err = proc.stderr.read().decode('utf8')
         if len(err) > 0:
-            print('\n'.join([f'[{job_nr:8}] {line}' for line in err.rstrip().splitlines()]))
+            print('\n'.join([f'[{job_nr:8}] {line}' for line in err.rstrip().splitlines()]), flush=True)
             try:
                 self.wfile.write(b'\n'.join(
                     [b'stderr:' + line.encode('utf8') for line in err.rstrip().splitlines()]
@@ -168,7 +168,7 @@ class Handler(StreamRequestHandler):
         proc.stderr.close()
         proc.terminate()
 
-        print(f'[{job_nr:8}] terminated')
+        print(f'[{job_nr:8}] terminated', flush=True)
         del CHILDREN[pid]
         self.wfile.close()
         self.rfile.close()

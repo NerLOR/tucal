@@ -255,13 +255,13 @@ def send_emails():
         msgs.append((msg_nr, msg))
 
     server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
-    print(f'Connected to SMTP host {SMTP_HOST}:{SMTP_PORT} ({SMTP_USER})')
+    print(f'Connected to SMTP host {SMTP_HOST}:{SMTP_PORT} ({SMTP_USER})', flush=True)
     server.starttls()
     server.login(SMTP_USER, SMTP_PASSWORD)
     for msg_nr, msg in msgs:
         server.send_message(msg)
         cur.execute("UPDATE tucal.message SET send_ts = now() WHERE message_nr = %s", (msg_nr,))
-        print(f'Sent Msg#{msg_nr}')
+        print(f'Sent Msg#{msg_nr}', flush=True)
 
     server.quit()
     cur.close()
@@ -286,14 +286,14 @@ def sync_users():
         LIMIT 10""")
     rows = cur.fetch_all()
     for mnr, in rows:
-        print(f'Syncing user {mnr}...')
+        print(f'Syncing user {mnr}...', flush=True)
         client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         client.connect('/var/tucal/scheduler.sock')
         client.send(f'sync-user keep {mnr}\n'.encode('utf8'))
         res = client.recv(64).decode('utf8')
         client.close()
         del client
-        print(f'Informed scheduler: {res}')
+        print(f'Informed scheduler: {res}', flush=True)
 
 
 if __name__ == '__main__':
@@ -301,14 +301,14 @@ if __name__ == '__main__':
     parser.add_argument('-u', '--update', required=False, action='store_true')
     args = parser.parse_args()
 
-    print('Updating all events...')
+    print('Updating all events...', flush=True)
     update_events(all_events=True)
-    print('Successfully updated all events')
+    print('Successfully updated all events', flush=True)
 
     if args.update:
         exit(0)
 
-    print('Starting main loop')
+    print('Starting main loop', flush=True)
     while True:
         send_emails()
         merge_external_events()
