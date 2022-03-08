@@ -225,7 +225,7 @@ class Job:
     def __init__(self, name: str = None, sub_steps: int = None, perc_steps: int = None, estimate: int = None):
         self.initialized = False
         self._indent = 0
-        self._pop_indents = [0]
+        self._pop_indents = [-1]
         if name or sub_steps or perc_steps or estimate:
             self.init(name, sub_steps, perc_steps, estimate)
 
