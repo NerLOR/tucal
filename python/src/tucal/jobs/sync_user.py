@@ -476,6 +476,7 @@ class SyncUser(tucal.Sync):
         self.job.end(0)
 
     def store(self, cur: tucal.db.Cursor):
+        # FIXME deadlocks!
         self.job.init('store user calendars', 4, 12)
         self.job.exec(3, self.tiss.store, False, cur=cur)
         self.job.exec(3, self.tuwel.store, False, cur=cur)
