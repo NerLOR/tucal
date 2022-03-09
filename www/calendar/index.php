@@ -71,10 +71,11 @@ if ($subject === $USER['mnr']) {
     $TITLE[] = _('My Calendar');
 } else {
     $stmt = db_exec("
-            SELECT a.username
-            FROM tucal.friend f
-                JOIN tucal.v_account a ON a.account_nr = f.account_nr_1
-            WHERE (a.mnr, account_nr_2) = (:mnr, :nr)", [
+            SELECT a.username, f2.nickname
+            FROM tucal.friend f1
+                JOIN tucal.v_account a ON a.account_nr = f1.account_nr_1
+                LEFT JOIN tucal.friend f2 ON f2.account_nr_1 = :nr AND f2.account_nr_2 = f1.account_nr_1
+            WHERE (a.mnr, f1.account_nr_2) = (:mnr, :nr)", [
         'mnr' => $subject,
         'nr' => $USER['nr'],
     ]);
@@ -82,7 +83,7 @@ if ($subject === $USER['mnr']) {
     if (sizeof($rows) === 0) {
         $STATUS = 403;
     } else {
-        $TITLE[] = $rows[0]['username'];
+        $TITLE[] = $rows[0]['nickname'] ?? $rows[0]['username'];
     }
     $TITLE[] = _('Calendar');
 }

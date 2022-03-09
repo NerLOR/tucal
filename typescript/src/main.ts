@@ -229,6 +229,7 @@ function initUsernames() {
         if (a.tagName !== "A") continue;
         const name = a.getElementsByClassName("name")[0];
         const mnr = parseInt((<HTMLElement> a).dataset['mnr'] || '');
+        const username = (<HTMLElement> a).dataset['username'] || null;
         if (!name || !mnr) continue;
 
         // FIXME Firefox: click into field does not align cursor
@@ -250,7 +251,9 @@ function initUsernames() {
             }
 
             const doc = new DOMParser().parseFromString(newText, "text/html");
-            const value = doc.documentElement.textContent;
+            let value = doc.documentElement.textContent;
+            if (value === '' || value === username)
+                value = null;
 
             if (timer) clearTimeout(timer)
             timer = setTimeout(() => {
