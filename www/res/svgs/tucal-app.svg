@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="256" height="256" xmlns="http://www.w3.org/2000/svg" viewBox="-10 -19 92 92">
+<svg width="256" height="256" xmlns="http://www.w3.org/2000/svg" viewBox="-38 -47 148 148">
     <title>TUcal</title>
-    <!--rect x="-1000" y="-1000" width="2000" height="2000"/-->
+    <rect x="-1000" y="-1000" width="2000" height="2000" fill="#4080C0"/>
 
     <!--rect x="-8" y="-16" height="85" width="87" fill="#4080C0" rx="6"/-->
     <rect x="-8" y="-5" height="71" width="87" fill="#4080C0" rx="4" stroke="#FFFFFF" stroke-width="2"/>

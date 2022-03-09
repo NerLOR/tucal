@@ -1,6 +1,7 @@
 
 HEADER=dest/www/.php/header.php
 FOOTER=dest/www/.php/footer.php
+MANIFEST=dest/www/app.webmanifest
 
 build-www:
 	mkdir -p dest/
@@ -22,7 +23,7 @@ build-www:
 	tools/msgfmtjs.sh locale dest/typescript/src/messages.ts dest/typescript/src/messages.ts
 	tsc -p dest/typescript/
 	# replace css links in php/html
-	sed -i 's:"\(/res/[^"]*\|/favicon.ico\|/app.webmanifest\)":"\1?v=$(shell date -u +%Y%m%d-%H%M%S)":g' ${HEADER} ${FOOTER}
+	sed -i 's:"\(/res/[^"]*\|/favicon.ico\|/app.webmanifest\)":"\1?v=$(shell date -u +%Y%m%d-%H%M%S)":g' ${HEADER} ${FOOTER} ${MANIFEST}
 	tools/minify-css.sh
 	sed -i 's|/res/styles/styles.css|/res/styles/min.css|g' ${HEADER}
 	# update build-id in footer
@@ -38,6 +39,7 @@ build-www:
 	fi
 	# create .ico file from svg
 	convert -background none dest/www/res/svgs/tucal.svg -alpha set -define icon:auto-resize=256,128,64,32,24,16 dest/www/favicon.ico
+	convert -background none dest/www/res/svgs/tucal-app.svg -alpha set -define icon:auto-resize=256,128,64,32,24,16 dest/www/res/icons/tucal-app.ico
 	# compile .po files
 	for locale in $$(ls locale); do \
 		mkdir -p "dest/www/.php/locale/$$locale/LC_MESSAGES/" ;\

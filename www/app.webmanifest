@@ -8,12 +8,24 @@
   "background_color": "#4080C0",
   "categories": ["education", "productivity"],
   "icons": [{
+    "src": "/res/svgs/tucal-app.svg",
+    "sizes": "any",
+    "type": "image/svg+xml",
+    "purpose": "maskable"
+  },{
+    "src": "/res/icons/tucal-app.ico",
+    "sizes": "256x256 128x128 64x64 32x32 24x24 16x16",
+    "type": "image/x-icon",
+    "purpose": "maskable"
+  },{
     "src": "/res/svgs/tucal.svg",
     "sizes": "any",
-    "type": "image/svg+xml"
+    "type": "image/svg+xml",
+    "purpose": "any"
   },{
     "src": "/favicon.ico",
     "sizes": "256x256 128x128 64x64 32x32 24x24 16x16",
-    "type": "image/x-icon"
+    "type": "image/x-icon",
+    "purpose": "any"
   }]
 }
