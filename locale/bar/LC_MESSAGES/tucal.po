@@ -101,6 +101,11 @@ msgstr "Foisch"
 msgid "Open link"
 msgstr "Link aufmochn"
 
+msgid "Course acronym suggestion (description)"
+msgstr "Bei Ändarungswinschn oda -vuaschlägn fia de LVA-Obkiazungen bitte via "
+       "<a href='%s'>Kontaktfoamula</a> oda <a href='mailto:%s'>E-Mail</a> mödn. "
+       "Oitanativ a per <a href='%s' target='_blank'>GitHub-Pull-Request</a>."
+
 msgid "Today"
 msgstr "Haid"
 

@@ -228,6 +228,11 @@ msgstr "Eine E-Mail wurde versendet. Sieh in deinem Postfach nach."
 msgid "Email sending (description)"
 msgstr "Eine E-Mail wird in den nächsten Minuten versendet. Sieh in deinem Postfach nach."
 
+msgid "Course acronym suggestion (description)"
+msgstr "Bei Änderungswünschen oder -vorschlägen für die LVA-Abkürzungen bitte via "
+       "<a href='%s'>Kontaktformular</a> oder <a href='mailto:%s'>E-Mail</a> melden. "
+       "Alternativ auch per <a href='%s' target='_blank'>GitHub-Pull-Request</a>."
+
 msgid "Lecture"
 msgstr "Vorlesung"
 

@@ -3,6 +3,7 @@
 global $TITLE;
 global $USER;
 global $LOCALE;
+global $CONFIG;
 
 require "../.php/session.php";
 force_user_login();
@@ -111,11 +112,13 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $last = $row['course_nr'] . '-' . $row['semester'];
 }
 
+$github = 'https://github.com/NerLOR/tucal/blob/master/data/course_acronyms.csv';
 
 ?>
 <main class="w2">
     <section class="course-list">
         <h1><?php echo _('My Courses');?></h1>
+        <p class="center small"><?php echo sprintf(_('Course acronym suggestion (description)'), '/contact', $CONFIG['email']['contact_direct'], $github);?></p>
         <?php foreach ($courses as $course) if ($course['semester'] == $maxSem) echoCourse($course); ?>
     </section>
     <section class="group-list">

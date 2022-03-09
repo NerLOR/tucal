@@ -152,6 +152,11 @@ msgstr "A email has been sent. Check your inbox."
 msgid "Email sending (description)"
 msgstr "A email will be sent in the next minutes. Check your inbox."
 
+msgid "Course acronym suggestion (description)"
+msgstr "If you want to suggest any changes to the course acronyms please contact us via "
+       "the <a href='%s'>contact form</a> or <a href='mailto:%s'>email</a>. "
+       "Alternatively also by <a href='%s' target='_blank'>GibHub pull request</a>."
+
 msgid "Lecture"
 msgstr "Lecture"
 
