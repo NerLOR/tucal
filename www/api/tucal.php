@@ -236,8 +236,8 @@ function nickname() {
     $stmt = db_exec("
             UPDATE tucal.friend
             SET nickname = :name
-            WHERE account_nr_2 = (SELECT account_nr FROM tucal.v_account WHERE mnr = :mnr) AND
-                  account_nr_1 = :me", [
+            WHERE account_nr_1 = (SELECT account_nr FROM tucal.v_account WHERE mnr = :mnr) AND
+                  account_nr_2 = :me", [
         'name' => $name,
         'me' => $USER['nr'],
         'mnr' => $mnr,
