@@ -263,6 +263,12 @@ main p.small {
     font-size: 0.875em;
 }
 
+main p.narrow {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 main div.center {
     text-align: center;
 }

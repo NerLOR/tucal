@@ -120,7 +120,7 @@ $contact = '/contact?subject=LVA-Abkürzungen';
 <main class="w2">
     <section class="course-list">
         <h1><?php echo _('My Courses');?></h1>
-        <p class="center small"><?php echo sprintf(_('Course acronym suggestion (description)'), $contact, $mailto, $github);?></p>
+        <p class="center small narrow"><?php echo sprintf(_('Course acronym suggestion (description)'), $contact, $mailto, $github);?></p>
         <?php foreach ($courses as $course) if ($course['semester'] == $maxSem) echoCourse($course); ?>
     </section>
     <section class="group-list">
