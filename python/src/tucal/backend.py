@@ -205,17 +205,21 @@ def merge_external_events():
 
     for source, evt_id, start_ts, end_ts, group_nr in rows:
         # FIXME better equality check
-        cur.execute("""
-            SELECT e.event_nr, array_agg(x.source)
-            FROM tucal.event e
-                LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
-            WHERE e.group_nr = %s AND
-                  (%s - e.start_ts <= INTERVAL '30' MINUTE AND e.end_ts - %s <= INTERVAL '60' MINUTE)
-            GROUP BY e.event_nr""", (group_nr, start_ts, end_ts))
-        event_rows = cur.fetch_all()
-        event_rows = [(evt_nr, sources) for evt_nr, sources in event_rows if source not in sources]
 
-        if len(event_rows) == 0:
+        event_rows = None
+        if end_ts > start_ts:
+            cur.execute("""
+                SELECT e.event_nr, array_agg(x.source)
+                FROM tucal.event e
+                    LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
+                WHERE e.group_nr = %s AND
+                      e.end_ts > e.start_ts AND
+                      (%s - e.start_ts <= INTERVAL '30' MINUTE AND e.end_ts - %s <= INTERVAL '60' MINUTE)
+                GROUP BY e.event_nr
+                HAVING %s != ALL(array_agg(x.source))""", (group_nr, start_ts, end_ts, source))
+            event_rows = cur.fetch_all()
+
+        if event_rows is None or len(event_rows) == 0:
             cur.execute("""
                 INSERT INTO tucal.event (start_ts, end_ts, room_nr, group_nr)
                 VALUES (%s, %s, NULL, %s)
