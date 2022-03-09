@@ -514,6 +514,9 @@ section.calendar-legend div.legend > span.color-name {
     div.calendar thead th.day-header {
         font-size: 0.625em;
     }
+    div.calendar thead li {
+        font-size: 0.75em;
+    }
 }
 
 @media screen and (max-width: 500px) {
