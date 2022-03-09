@@ -23,17 +23,17 @@ require "../.php/header.php";
 <?php
 
 $stmt = db_exec("
-        SELECT account_id, mnr, username, verified
+        SELECT account_id, mnr, username, f2.nickname, verified
         FROM tucal.friend f1
             JOIN tucal.friend f2 ON (f2.account_nr_1, f2.account_nr_2) = (f1.account_nr_2, f1.account_nr_1)
             JOIN tucal.account a ON a.account_nr = f1.account_nr_1
         WHERE f1.account_nr_2 = :nr
-        ORDER BY a.username", [
+        ORDER BY f2.nickname, a.username", [
     'nr' => $USER['nr'],
 ]);
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     echo '<div>';
-    echo_account($row, true, "/calendar/$row[mnr]/");
+    echo_account($row, "/calendar/$row[mnr]/");
     echo "<a href=\"/friends/remove?id=$row[account_id]\" class=\"friend-request\"><img src=\"/res/svgs/\"/></a>";
     echo "</div>\n";
 }
@@ -56,7 +56,7 @@ $stmt = db_exec("
 ]);
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     echo '<div>';
-    echo_account($row, true, "/calendar/$row[mnr]/");
+    echo_account($row, "/calendar/$row[mnr]/");
     echo "<a href=\"/friends/add?id=$row[account_id]\" class=\"friend-request\"><img src=\"/res/svgs/\"/></a>";
     echo "</div>\n";
 }
@@ -69,17 +69,17 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 <?php
 
 $stmt = db_exec("
-        SELECT account_id, mnr, username, verified
+        SELECT account_id, mnr, username, f1.nickname, verified
         FROM tucal.friend f1
             LEFT JOIN tucal.friend f2 ON (f2.account_nr_1, f2.account_nr_2) = (f1.account_nr_2, f1.account_nr_1)
             JOIN tucal.account a ON a.account_nr = f1.account_nr_2
         WHERE f1.account_nr_1 = :nr AND f2.account_nr_1 IS NULL
-        ORDER BY a.username", [
+        ORDER BY f1.nickname, a.username", [
     'nr' => $USER['nr'],
 ]);
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     echo '<div>';
-    echo_account($row, true);
+    echo_account($row);
     echo "<a href=\"/friends/remove?id=$row[account_id]\" class=\"friend-request\"><img src=\"/res/svgs/\"/></a>";
     echo "</div>\n";
 }

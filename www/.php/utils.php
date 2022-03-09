@@ -111,21 +111,18 @@ function base32_decode(string $data): string {
     return $plain;
 }
 
-function echo_account($row, $mnr = false, $uri = null) {
-    echo '<a class="account"';
-    if ($uri !== null) {
-        echo " href=\"$uri\"";
-    }
+function echo_account($row, $uri = null) {
+    echo "<a class=\"account\" data-username=\"$row[username]\" data-nickname=\"$row[nickname]\" data-mnr=\"$row[mnr]\"";
+    if ($uri !== null) echo " href=\"$uri\"";
+
     echo '><div>';
     echo '<img src="/res/avatars/default.png" alt="' . _('Avatar') . '"/>';
-    echo "<span class=\"username\">$row[username]";
-    if ($row['verified']) {
-        echo ' <span class="verified">✓</span>';
-    }
-    if ($mnr) {
-        echo " <span class=\"mnr\">$row[mnr]</span>";
-    }
-    echo "</span></div></a>";
+    echo "<div>";
+    echo "<span class=\"name\" contenteditable=\"true\">" . htmlspecialchars($row['nickname'] ?? $row['username']) . "</span>";
+    echo '<div class="sub' . ($row['nickname'] ? ' has-nickname' : '') . '">';
+    echo "<span class=\"mnr\">$row[mnr]</span>";
+    echo "<span class=\"username\">$row[username]</span>";
+    echo "</div></div></div></a>";
 }
 
 function echo_job(string $jobId, string $successUrl, string $errorUrl) {

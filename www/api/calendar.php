@@ -8,6 +8,15 @@ try {
     header('Content-Type: application/json; charset=UTF-8');
     header("Cache-Control: private, no-cache");
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        if ($data === null) {
+            error(400, json_last_error_msg());
+        }
+        $_POST = $data;
+    }
+
     switch ($info) {
         case '/calendar': calendar(); break;
         case '/update': update(); break;
@@ -143,12 +152,6 @@ function update() {
         error(401);
     }
 
-    $json = file_get_contents('php://input');
-    $data = json_decode($json, true);
-    if ($data === null) {
-        error(400, json_last_error_msg());
-    }
-
     db_transaction();
 
     try {
@@ -170,8 +173,8 @@ function update() {
         $group = $row['group_nr'];
 
         $dataStr = '{}';
-        if ($data['user']) {
-            $dataStr = json_encode($data['user']);
+        if ($_POST['user']) {
+            $dataStr = json_encode($_POST['user']);
         }
 
         // postgres DOW - sunday (0), saturday (6)

@@ -343,11 +343,13 @@ a.account {
     cursor: pointer;
 }
 
-a.account:hover {
+a.account:hover,
+a.account:focus {
     background-color: var(--grey-F0);
 }
 
-.theme-dark a.account:hover {
+.theme-dark a.account:hover,
+.theme-dark a.account:focus {
     background-color: var(--grey-D0);
 }
 
@@ -363,13 +365,41 @@ a.account img {
     border-radius: var(--border-radius);
 }
 
-a.account span.username {
+a.account span.name {
     font-size: 1rem;
+    display: block;
+    border: none;
+    padding: 1px 4px;
+    margin: -1px -4px;
+    background-color: unset;
+    width: unset;
+    border-radius: var(--border-radius);
 }
 
-a.account span.mnr {
-    font-size: 0.75rem;
+a.account span.name:hover,
+a.account span.name:focus {
+    background-color: var(--input-bg-color);
+    cursor: text;
+}
+
+a.account .sub {
+    font-size: 0.675rem;
     color: var(--grey-80);
+    display: block;
+    min-width: 4.5em;
+}
+
+a.account span.username {
+    margin-left: -4.5em;
+}
+
+a.account:not(:hover):not(:focus) *:not(.has-nickname) > span.username,
+a.account:not(:hover):not(:focus) .has-nickname > span.mnr,
+a.account:hover *:not(.has-nickname) > span.username,
+a.account:hover .has-nickname > span.username,
+a.account:focus *:not(.has-nickname) > span.username,
+a.account:focus .has-nickname > span.username {
+    opacity: 0;
 }
 
 a.account span.verified {

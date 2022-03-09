@@ -23,6 +23,7 @@ window.addEventListener("DOMContentLoaded", () => {
     initNav();
     initJobs();
     initCopyLink();
+    initUsernames();
 
     const path = window.location.pathname;
     if (STATUS === 200) {
@@ -218,6 +219,44 @@ function initCopyLink() {
         a.addEventListener('click', (evt) => {
             evt.preventDefault();
             navigator.clipboard.writeText(link).then();
+        });
+    }
+}
+
+function initUsernames() {
+    const accounts = document.getElementsByClassName("account");
+    for (const a of accounts) {
+        if (a.tagName !== "A") continue;
+        const name = a.getElementsByClassName("name")[0];
+        const mnr = parseInt((<HTMLElement> a).dataset['mnr'] || '');
+        if (!name || !mnr) continue;
+
+        // FIXME Firefox: click into field does not align cursor
+
+        a.addEventListener('click', (evt) => {
+            if (evt.composedPath().includes(name))
+                evt.preventDefault();
+        });
+
+        let timer: number | null = null;
+        name.addEventListener('input', () => {
+            const oldText = name.innerHTML;
+            const newText = oldText.replace(/<[^>]*>/g, '');
+            if (newText.length !== oldText.length)
+                name.innerHTML = newText;
+
+            if (oldText.includes('<br/>') || oldText.includes('<br>')) {
+                return;
+            }
+
+            const doc = new DOMParser().parseFromString(newText, "text/html");
+            const value = doc.documentElement.textContent;
+
+            if (timer) clearTimeout(timer)
+            timer = setTimeout(() => {
+                timer = null;
+                api('/tucal/friends/nickname', null, {'mnr': mnr, 'nickname': value}).then();
+            }, 500);
         });
     }
 }

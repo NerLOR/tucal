@@ -8,10 +8,20 @@ try {
     header('Content-Type: application/json; charset=UTF-8');
     header("Cache-Control: private, no-cache");
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        if ($data === null) {
+            error(400, json_last_error_msg());
+        }
+        $_POST = $data;
+    }
+
     switch ($info) {
         case '/rooms': rooms(); break;
         case '/job': job(); break;
         case '/courses': courses(); break;
+        case '/friends/nickname': nickname(); break;
         default: error(404);
     }
 } catch (Exception $e) {
@@ -28,6 +38,7 @@ function error(int $status, string $message = null, bool $db_error = false) {
 
 function rooms() {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        header("Allow: GET");
         error(405);
     }
 
@@ -89,6 +100,7 @@ function rooms() {
 
 function job() {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        header("Allow: GET");
         error(405);
     }
 
@@ -117,6 +129,7 @@ function courses() {
     global $USER;
 
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        header("Allow: GET");
         error(405);
     }
 
@@ -199,5 +212,38 @@ function courses() {
     }
 
     echo "\n]}}\n";
+    tucal_exit();
+}
+
+function nickname() {
+    global $USER;
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header("Allow: POST");
+        error(405);
+    } elseif (!isset($USER)) {
+        error(401);
+    }
+
+    $mnr = $_POST['mnr'] ?? null;
+    $name = $_POST['nickname'] ?? null;
+    if ($mnr === null) {
+        error(400);
+    } elseif ($name !== null && strlen($name) > 24) {
+        error(400);
+    }
+
+    $stmt = db_exec("
+            UPDATE tucal.friend
+            SET nickname = :name
+            WHERE account_nr_2 = (SELECT account_nr FROM tucal.v_account WHERE mnr = :mnr) AND
+                  account_nr_1 = :me", [
+        'name' => $name,
+        'me' => $USER['nr'],
+        'mnr' => $mnr,
+    ]);
+
+    echo '{"status":"success","message":"work in progress","data":null}' . "\n";
+
     tucal_exit();
 }
