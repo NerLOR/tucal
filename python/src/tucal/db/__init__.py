@@ -1,6 +1,6 @@
 
 from __future__ import annotations
-from typing import Union, List, Tuple, Dict, Optional, Any
+from typing import Union, List, Tuple, Dict, Optional, Any, Iterable
 import re
 import psycopg2
 import psycopg2.extras
@@ -50,6 +50,9 @@ class Cursor:
 
     def fetch_all(self) -> List[Tuple]:
         return self.cursor.fetchall()
+
+    def lock(self, tables: Iterable[str], mode: str = 'ROW EXCLUSIVE') -> bool:
+        return self.cursor.execute(f"LOCK TABLE {', '.join(tables)} IN {mode} MODE")
 
     def __del__(self):
         del self.cursor

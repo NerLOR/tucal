@@ -138,7 +138,7 @@ def upsert_event(evt: Dict[str, Any], access_time: datetime.datetime, room_code:
     cur.execute("""
         SELECT event_nr FROM tiss.event
         WHERE (room_code IS NULL OR %(room)s IS NULL OR COALESCE(room_code, '') = COALESCE(%(room)s, '')) AND
-        (type, name, start_ts, end_ts) = (%(type)s, %(name)s, %(start)s, %(end)s)""", data)
+        (type, name, start_ts, end_ts, course_nr) = (%(type)s, %(name)s, %(start)s, %(end)s, %(course)s)""", data)
     events = cur.fetch_all()
 
     if len(events) > 0:

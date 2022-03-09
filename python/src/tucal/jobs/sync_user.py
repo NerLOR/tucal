@@ -485,8 +485,13 @@ class SyncUser(tucal.Sync):
         self.job.end(0)
 
     def store(self, cur: tucal.db.Cursor):
-        # FIXME deadlocks!
         self.job.init('store user calendars', 4, 12)
+
+        cur.lock(('tucal.event', 'tucal.external_event', 'tucal.group',
+                  'tiss.event', 'tiss.course',
+                  'tuwel.event', 'tuwel.course'),
+                 mode='SHARE ROW EXCLUSIVE')
+
         self.job.exec(3, self.tiss.store, False, cur=cur)
         self.job.exec(3, self.tuwel.store, False, cur=cur)
         self.job.exec(3, self.cal.store, False, cur=cur)
