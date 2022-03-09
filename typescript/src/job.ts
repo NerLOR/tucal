@@ -121,35 +121,37 @@ class Job {
         const statusText = container.getElementsByTagName("span")[0];
         if (!progressBar || !statusText) throw new Error();
 
-        if (job.status === 'error') {
-            this.elem.classList.add('error');
+        if (!this.elem.classList.contains('error') && !this.elem.classList.contains('success')) {
+            if (job.status === 'error') {
+                this.elem.classList.add('error');
 
-            const href = this.elem.getAttribute('data-error-href');
-            if (href && this.elem.getElementsByTagName("button").length === 0) {
-                const btn = document.createElement('a');
-                btn.classList.add('button');
-                btn.innerText = _('Back');
-                btn.href = href;
-                this.elem.appendChild(btn);
-            }
+                const href = this.elem.getAttribute('data-error-href');
+                if (href && this.elem.getElementsByTagName("button").length === 0) {
+                    const btn = document.createElement('a');
+                    btn.classList.add('button');
+                    btn.innerText = _('Back');
+                    btn.href = href;
+                    this.elem.appendChild(btn);
+                }
 
-            if (this.onError !== null) {
-                this.onError();
-            }
-        } else if (job.status === 'success') {
-            this.elem.classList.add('success');
+                if (this.onError !== null) {
+                    this.onError();
+                }
+            } else if (job.status === 'success') {
+                this.elem.classList.add('success');
 
-            const href = this.elem.getAttribute('data-success-href');
-            if (href && this.elem.getElementsByTagName("button").length === 0) {
-                const btn = document.createElement('a');
-                btn.classList.add('button');
-                btn.innerText = _('Next (step)');
-                btn.href = href;
-                this.elem.appendChild(btn);
-            }
+                const href = this.elem.getAttribute('data-success-href');
+                if (href && this.elem.getElementsByTagName("button").length === 0) {
+                    const btn = document.createElement('a');
+                    btn.classList.add('button');
+                    btn.innerText = _('Next (step)');
+                    btn.href = href;
+                    this.elem.appendChild(btn);
+                }
 
-            if (this.onSuccess !== null) {
-                this.onSuccess();
+                if (this.onSuccess !== null) {
+                    this.onSuccess();
+                }
             }
         }
 
