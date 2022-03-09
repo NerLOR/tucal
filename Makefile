@@ -22,7 +22,7 @@ build-www:
 	tools/msgfmtjs.sh locale dest/typescript/src/messages.ts dest/typescript/src/messages.ts
 	tsc -p dest/typescript/
 	# replace css links in php/html
-	sed -i 's|"\(/res/[^"]*\)"|"\1?v=$(shell date -u +%Y%m%d-%H%M%S)"|g' ${HEADER} ${FOOTER}
+	sed -i 's:"\(/res/[^"]*\|/favicon.ico\|/app.webmanifest\)":"\1?v=$(shell date -u +%Y%m%d-%H%M%S)":g' ${HEADER} ${FOOTER}
 	tools/minify-css.sh
 	sed -i 's|/res/styles/styles.css|/res/styles/min.css|g' ${HEADER}
 	# update build-id in footer

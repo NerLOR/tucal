@@ -64,9 +64,13 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <meta name="user-options" content="<?php echo isset($USER) ? htmlspecialchars(json_encode($USER['opts'])) : '{}';?>"/>
+    <meta name="theme-color" content="#4080C0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
     <link rel="stylesheet" href="/res/styles/styles.css" type="text/css"/>
     <link rel="icon" href="/res/svgs/<?php echo $icon;?>.svg" type="image/svg+xml" sizes="any"/>
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="256x256 128x128 64x64 32x32 24x24 16x16"/>
+    <link rel="manifest" href="/app.webmanifest"/>
     <script src="/res/scripts/min.js" type="application/javascript"></script>
 </head>
 <body>
