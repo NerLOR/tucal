@@ -9,7 +9,7 @@ interface Step {
 }
 
 class Job {
-    elem: Element;
+    elem: HTMLElement;
     id: string;
     timerFetch: number | null;
     timerUpdate: number | null;
@@ -31,10 +31,10 @@ class Job {
     } | null;
     progress: number;
 
-    constructor(element: Element, success: Function | null = null, error: Function | null = null) {
+    constructor(element: HTMLElement, success: Function | null = null, error: Function | null = null) {
         this.elem = element;
-        const id = this.elem.getAttribute('data-job-id');
-        const dataStr = this.elem.getAttribute('data-job');
+        const id = this.elem.dataset['job-id'];
+        const dataStr = this.elem.dataset['job'];
         if (!id) throw new Error();
 
         if (dataStr) {
@@ -125,7 +125,7 @@ class Job {
             if (job.status === 'error') {
                 this.elem.classList.add('error');
 
-                const href = this.elem.getAttribute('data-error-href');
+                const href = this.elem.dataset['error-href'];
                 if (href && this.elem.getElementsByTagName("button").length === 0) {
                     const btn = document.createElement('a');
                     btn.classList.add('button');
@@ -140,7 +140,7 @@ class Job {
             } else if (job.status === 'success') {
                 this.elem.classList.add('success');
 
-                const href = this.elem.getAttribute('data-success-href');
+                const href = this.elem.dataset['success-href'];
                 if (href && this.elem.getElementsByTagName("button").length === 0) {
                     const btn = document.createElement('a');
                     btn.classList.add('button');

@@ -1,8 +1,8 @@
 "use strict";
 
-const STATUS: number = parseInt(document.documentElement.getAttribute("data-status") || '0');
+const STATUS: number = parseInt(document.documentElement.dataset['status'] || '0');
 
-const _MNR: string | null = document.documentElement.getAttribute("data-mnr");
+const _MNR: string | null = document.documentElement.dataset['mnr'] || null;
 const MNR: string | null = (_MNR && _MNR.length > 0) ? _MNR : null;
 
 const _USER_OPTS = document.getElementsByName("user-options")[0];
@@ -126,7 +126,7 @@ function initNav() {
 function initJobs() {
     const jobs = document.getElementsByClassName("job-viewer");
     for (const job of jobs) {
-        new Job(job);
+        new Job(<HTMLElement> job);
     }
 }
 
