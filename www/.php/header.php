@@ -65,6 +65,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <meta name="user-options" content="<?php echo isset($USER) ? htmlspecialchars(json_encode($USER['opts'])) : '{}';?>"/>
     <meta name="theme-color" content="#4080C0"/>
+    <meta name="color-scheme" content="<?php if (isset($theme)) {if ($theme == 'light') echo "light"; else echo "dark";} else {echo "light dark";}?>"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
     <link rel="stylesheet" href="/res/styles/styles.css" type="text/css"/>
