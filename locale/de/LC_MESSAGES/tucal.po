@@ -384,6 +384,9 @@ msgstr "Letzte Anmeldung"
 msgid "Latest synchronization"
 msgstr "Letzte Synchronisation"
 
+msgid "Never"
+msgstr "Nie"
+
 
 msgctxt "http"
 msgid "Bad Request"

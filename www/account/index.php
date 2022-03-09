@@ -83,9 +83,12 @@ doc:
 $theme = $_SESSION['opts']['theme'] ?? 'light';
 
 $fmt = 'd.m.Y, H:i (P)';
-$create_ts = strtotime($USER['create_ts']);
-$login_ts = strtotime($USER['login_ts']);
-$sync_ts = strtotime($USER['sync_ts']);
+$create_ts = null;
+$login_ts = null;
+$sync_ts = null;
+if ($USER['create_ts']) $create_ts = strtotime($USER['create_ts']);
+if ($USER['login_ts']) $login_ts = strtotime($USER['login_ts']);
+if ($USER['sync_ts']) $sync_ts = strtotime($USER['sync_ts']);
 
 $TITLE = [_('Settings')];
 require "../.php/header.php";
@@ -147,15 +150,15 @@ require "../.php/header.php";
         <form name="statistics" class="table">
             <div>
                 <label for="create-ts"><?php echo _('Creation');?></label>
-                <input name="create-ts" id="create-ts" type="text" value="<?php echo date($fmt, $create_ts); ?>" readonly disabled/>
+                <input name="create-ts" id="create-ts" type="text" value="<?php echo $create_ts !== null ? date($fmt, $create_ts) : _('Never'); ?>" readonly disabled/>
             </div>
             <div>
                 <label for="login-ts"><?php echo _('Latest login');?></label>
-                <input name="login-ts" id="login-ts" type="text" value="<?php echo date($fmt, $login_ts); ?>" readonly disabled/>
+                <input name="login-ts" id="login-ts" type="text" value="<?php echo $login_ts !== null ? date($fmt, $login_ts) : _('Never'); ?>" readonly disabled/>
             </div>
             <div>
                 <label for="sync-ts"><?php echo _('Latest synchronization');?></label>
-                <input name="sync-ts" id="sync-ts" type="text" value="<?php echo date($fmt, $sync_ts); ?>" readonly disabled/>
+                <input name="sync-ts" id="sync-ts" type="text" value="<?php echo $sync_ts !== null ? date($fmt, $sync_ts) : _('Never'); ?>" readonly disabled/>
             </div>
         </form>
     </section>
