@@ -69,6 +69,16 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="256x256 128x128 64x64 32x32 24x24 16x16"/>
     <link rel="manifest" href="/app.webmanifest"/>
     <script src="/res/scripts/min.js" type="application/javascript"></script>
+    <!--preload-->
+    <link rel="preload" as="image" href="/res/svgs/tucal.svg"/>
+    <link rel="preload" as="image" href="/res/svgs/tp.svg"/>
+    <link rel="preload" as="image" href="/res/svgs/friend.svg"/>
+    <link rel="preload" as="image" href="/res/svgs/friend-request.svg"/>
+    <link rel="preload" as="image" href="/res/svgs/friend-add.svg"/>
+    <link rel="preload" as="image" href="/res/svgs/friend-remove.svg"/>
+    <link rel="preload" as="image" href="/res/icons/lecturetube.png"/>
+    <link rel="preload" as="image" href="/res/icons/lecturetube-live.png"/>
+    <link rel="preload" as="image" href="/res/icons/zoom.png"/>
 </head>
 <body>
 <nav>

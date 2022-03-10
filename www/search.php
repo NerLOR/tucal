@@ -48,10 +48,10 @@ if (strlen($query) >= 3) {
                 ORDER BY username", ['q' => $query, 'nr' => $USER['nr']]);
         while ($row = $stmt->fetch()) {
             echo "<div>";
-            echo_account($row);
             if (!$row['friend_request'] && $row['account_id'] !== $USER['id']) {
-                echo "<a href=\"/friends/add?id=$row[account_id]\" class=\"friend-request\"><img src=\"/res/svgs/\"/></a>";
+                echo "<a href=\"/friends/add?id=$row[account_id]\" class=\"friend-request\"><img></a>";
             }
+            echo_account($row);
             echo "</div>\n";
         }
     }

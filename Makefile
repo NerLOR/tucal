@@ -2,6 +2,7 @@
 HEADER=dest/www/.php/header.php
 FOOTER=dest/www/.php/footer.php
 MANIFEST=dest/www/app.webmanifest
+CSS=dest/www/res/styles/*.css
 
 build-www:
 	mkdir -p dest/
@@ -23,7 +24,7 @@ build-www:
 	tools/msgfmtjs.sh locale dest/typescript/src/messages.ts dest/typescript/src/messages.ts
 	tsc -p dest/typescript/
 	# replace css links in php/html
-	sed -i 's:"\(/res/[^"]*\|/favicon.ico\|/app.webmanifest\)":"\1?v=$(shell date -u +%Y%m%d-%H%M%S)":g' ${HEADER} ${FOOTER} ${MANIFEST}
+	sed -i 's:"\(/res/[^"]*\|/favicon.ico\|/app.webmanifest\)":"\1?v=$(shell date -u +%Y%m%d-%H%M%S)":g' ${HEADER} ${FOOTER} ${MANIFEST} ${CSS}
 	tools/minify-css.sh
 	sed -i 's|/res/styles/styles.css|/res/styles/min.css|g' ${HEADER}
 	# update build-id in footer
