@@ -229,7 +229,7 @@ function nickname() {
     $name = $_POST['nickname'] ?? null;
     if ($mnr === null) {
         error(400);
-    } elseif ($name !== null && strlen($name) > 24) {
+    } elseif ($name !== null && (strlen($name) > 24 || strlen($name) === 0)) {
         error(400);
     }
 
