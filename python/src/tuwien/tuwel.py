@@ -21,7 +21,7 @@ COURSE_NR = re.compile(r'^[A-z0-9]{3}\.[A-Z0-9]{3} (.*)$')
 SPAN = re.compile(r'<span class="media-body font-weight-bold">\s*([^<>]*)\s*</span>')
 GROUP_OPTION = re.compile(r'<option value="([0-9]+)">([^<]*)</option>')
 GROUP_TOOL_LINK = re.compile(r'href="https://tuwel\.tuwien\.ac\.at/mod/grouptool/view\.php\?id=([0-9]+)"')
-GROUP_MEMBERS = re.compile(r'>(Gruppenmitglieder anzeigen|Angemeldet auf Platz)')
+GROUP_MEMBERS = re.compile(r'>(Angemeldet auf Platz)')
 GROUP_NAME = re.compile(r'<h2 class="panel-title">\s*([^<]*)\s*</h2>')
 
 
