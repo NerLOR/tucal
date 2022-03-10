@@ -180,7 +180,6 @@ class Room {
 
 class CourseDef {
     nr: string;
-    semester: string;
     ects: number;
     type: string;
     name_de: string;
@@ -192,7 +191,6 @@ class CourseDef {
 
     constructor(course: CourseJSON) {
         this.nr = course.nr;
-        this.semester = course.semester;
         this.ects = course.ects;
         this.type = course.type;
         this.name_de = course.name_de;

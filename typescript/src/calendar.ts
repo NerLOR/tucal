@@ -595,7 +595,7 @@ class WeekSchedule {
         }
 
         if (course) {
-            html += `<h2><a href="/courses/#${course.nr}-${course.semester}">` +
+            html += `<h2><a href="/courses/#${course.nr}-${evt.semester}">` +
                 `<span class="course-name">${course.getName()}</span> ` +
                 `<span class="course-type">(${course.type})</span> ` +
                 `<span class="course-nr">${course.getCourseNr()} (${evt.semester})</span>` +
