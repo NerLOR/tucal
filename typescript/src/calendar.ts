@@ -683,9 +683,11 @@ class WeekSchedule {
             html += `<div class="container"><div>${_('Description')}:</div><div>${evt.desc}</div></div>`;
         }
 
-        html += `<div class="container"><div>${_('Custom (settings)')}:</div><div>` +
-            `<label><input type="checkbox" name="hidden"/> ${_('Hide')}</label>` +
-            `</div></div>`;
+        if (this.subject === MNR) {
+            html += `<div class="container"><div>${_('Custom (settings)')}:</div><div>` +
+                `<label><input type="checkbox" name="hidden"/> ${_('Hide')}</label>` +
+                `</div></div>`;
+        }
 
         html += '<hr/><div class="form-pre hidden">';
 
@@ -748,7 +750,7 @@ class WeekSchedule {
         const summary = form['summary'];
         const status = form['status'];
         const mode = form['mode'];
-        const hidden = <HTMLInputElement> <unknown> form['hidden'];
+        const hidden = (<HTMLInputElement> <unknown> form['hidden']) || null;
         let manual = false;
 
         if (ROOMS) {
@@ -803,7 +805,7 @@ class WeekSchedule {
         }
 
         const hasHiddenChanged = (): boolean => {
-            return evt.userHidden !== hidden.checked;
+            return hidden && evt.userHidden !== hidden.checked;
         }
 
         const hasChanged = (): boolean => {
@@ -859,7 +861,7 @@ class WeekSchedule {
         if (evt.summary) summary.value = evt.summary;
         if (evt.status) status.value = evt.status;
         if (evt.mode) mode.value = evt.mode.replace(/_/g, '-');
-        if (evt.userHidden) hidden.checked = true;
+        if (evt.userHidden && hidden) hidden.checked = true;
 
         form.addEventListener('input', onChange);
         onChange();
@@ -899,7 +901,7 @@ class WeekSchedule {
                 data['summary'] = (summary.value !== '') ? summary.value.trim() : null;
             }
 
-            if (hasHiddenChanged()) {
+            if (hasHiddenChanged() && hidden) {
                 user['hidden'] = hidden.checked;
             }
 
