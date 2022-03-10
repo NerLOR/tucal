@@ -235,6 +235,9 @@ msgstr "Custom"
 msgid "Hide"
 msgstr "Hide"
 
+msgid "Show hidden events"
+msgstr "Show hidden events"
+
 msgid "Apply"
 msgstr "Apply"
 

@@ -311,6 +311,9 @@ msgstr "Persönlich"
 msgid "Hide"
 msgstr "Verbergen"
 
+msgid "Show hidden events"
+msgstr "Verborgene Termine anzeigen"
+
 msgid "Apply"
 msgstr "Übernehmen"
 

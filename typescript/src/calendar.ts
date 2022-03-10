@@ -92,6 +92,23 @@ class WeekSchedule {
             tbody.appendChild(tr);
         }
 
+        const tfoot = table.createTFoot();
+        tfoot.appendChild(document.createElement("th"));
+        const th = document.createElement("th");
+        th.colSpan = 7;
+        const settings = document.createElement("div");
+        settings.classList.add('settings');
+        settings.innerHTML = `<label><input type="checkbox" id="show-hidden"/> ${_('Show hidden events')}</label>`;
+        th.appendChild(settings);
+        tfoot.appendChild(th);
+
+        const showHidden = settings.getElementsByTagName("input")[0];
+        if (!showHidden) throw new Error();
+        showHidden.addEventListener("input", () => {
+            this.showHidden = showHidden.checked;
+            this.reloadEvents(true);
+        });
+
         const buttons = table.getElementsByTagName("button");
         if (!buttons[0] || !buttons[1] || !buttons[2]) throw new Error();
         buttons[0].addEventListener("click", () => {

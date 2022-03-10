@@ -17,7 +17,7 @@ div.calendar {
     background-color: var(--sec-bg-color-2);
     box-sizing: border-box;
     --left-size: 50px;
-    --header-size: calc(var(--row-size) * 5);
+    --header-size: calc(var(--row-size) * 6);
     --row-size: 25px;
     --time-start: calc(7 * 60);
     --time-end: calc(22 * 60);
@@ -107,6 +107,21 @@ div.calendar > table tbody td:nth-child(8) {
     background-color: var(--grey-F8);
 }
 
+div.calendar > table tfoot th {
+    background-color: var(--grey-E8);
+    border: 1px solid var(--border-color);
+    border-top: none;
+}
+
+div.calendar > table tfoot th:not(:first-child) {
+    border-left: none;
+}
+
+div.calendar div.settings {
+    padding: 0.5em 1em;
+    text-align: left;
+}
+
 div.calendar > table td.today {
     background-color: var(--color-lighter) !important;
 }
@@ -176,7 +191,7 @@ div.calendar thead tr:nth-child(2) th > div {
     overflow-y: scroll;
     overflow-x: hidden;
     width: 100%;
-    height: var(--header-size);
+    height: calc(var(--header-size) - var(--row-size));
 }
 
 div.calendar thead ul {
@@ -223,7 +238,7 @@ div.calendar div.event-wrapper {
     position: absolute;
     width: calc(100% - var(--left-size));
     height: calc(var(--row-size) * 30 + 1px);
-    bottom: 0;
+    top: var(--header-size);
     right: 0;
     overflow: hidden;
 }

@@ -136,6 +136,9 @@ msgstr "Persänlich"
 msgid "Hide"
 msgstr "Vabeagn"
 
+msgid "Show hidden events"
+msgstr "Vaboagene Teamine onzeign"
+
 msgid "Apply"
 msgstr "Übanemma"
 
