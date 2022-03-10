@@ -1,7 +1,20 @@
 
 div.friend-container {
-    display: block;
-    width: fit-content;
-    width: -moz-fit-content;
-    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+div.friend-container > div {
+    display: inline-block;
+    width: 220px;
+    position: relative;
+}
+
+div.friend-container a.friend-request {
+    position: absolute;
+    right: 0;
+    margin: 4px;
+    height: 32px;
+    width: 32px;
 }
