@@ -33,7 +33,7 @@ class Job {
 
     constructor(element: HTMLElement, success: Function | null = null, error: Function | null = null) {
         this.elem = element;
-        const id = this.elem.dataset['job-id'];
+        const id = this.elem.dataset['jobId'];
         const dataStr = this.elem.dataset['job'];
         if (!id) throw new Error();
 
@@ -125,7 +125,7 @@ class Job {
             if (job.status === 'error') {
                 this.elem.classList.add('error');
 
-                const href = this.elem.dataset['error-href'];
+                const href = this.elem.dataset['errorHref'];
                 if (href && this.elem.getElementsByTagName("button").length === 0) {
                     const btn = document.createElement('a');
                     btn.classList.add('button');
@@ -140,7 +140,7 @@ class Job {
             } else if (job.status === 'success') {
                 this.elem.classList.add('success');
 
-                const href = this.elem.dataset['success-href'];
+                const href = this.elem.dataset['successHref'];
                 if (href && this.elem.getElementsByTagName("button").length === 0) {
                     const btn = document.createElement('a');
                     btn.classList.add('button');
