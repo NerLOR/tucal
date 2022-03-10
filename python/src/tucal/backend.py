@@ -182,7 +182,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
 
 def update_events(all_events: bool = False):
     cur = tucal.db.cursor()
-    cur.execute("LOCK TABLE tucal.event IN SHARE ROW EXCLUSIVE MODE")
+    cur.execute("LOCK TABLE tucal.event, tucal.external_event IN SHARE ROW EXCLUSIVE MODE")
     cur.execute("""
         SELECT e.event_nr, e.data, e.parent_event_nr, e.start_ts, e.end_ts, e.room_nr, e.group_nr, l.name
         FROM tucal.event e
@@ -196,7 +196,7 @@ def update_events(all_events: bool = False):
 
 def merge_external_events():
     cur = tucal.db.cursor()
-    cur.execute("LOCK TABLE tucal.event IN SHARE ROW EXCLUSIVE MODE")
+    cur.execute("LOCK TABLE tucal.event, tucal.external_event IN SHARE ROW EXCLUSIVE MODE")
     cur.execute("""
         SELECT source, event_id, start_ts, end_ts, group_nr
         FROM tucal.external_event
