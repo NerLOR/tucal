@@ -305,6 +305,12 @@ msgstr "Kurzinfo"
 msgid "Description"
 msgstr "Beschreibung"
 
+msgid "Custom (settings)"
+msgstr "Persönlich"
+
+msgid "Hide"
+msgstr "Verbergen"
+
 msgid "Apply"
 msgstr "Übernehmen"
 

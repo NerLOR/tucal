@@ -130,6 +130,12 @@ msgstr "Kuazinfo"
 msgid "Description"
 msgstr "Beschreibung"
 
+msgid "Custom (settings)"
+msgstr "Persänlich"
+
+msgid "Hide"
+msgstr "Vabeagn"
+
 msgid "Apply"
 msgstr "Übanemma"
 

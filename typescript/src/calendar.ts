@@ -34,6 +34,7 @@ class WeekSchedule {
             events: TucalEvent[],
         },
     } = {};
+    showHidden: boolean = false;
 
     constructor(element: Element, subject: string, eventId: string | null = null) {
         this.subject = subject;
@@ -440,6 +441,7 @@ class WeekSchedule {
             const weekDay = (event.start.getDay() + 6) % 7;
             const day = events[weekDay];
             if (!day) throw new Error();
+            if (event.userHidden && !this.showHidden) continue;
 
             if (event.start.getTime() === event.end.getTime()) {
                 deadlines.push(event);
@@ -498,6 +500,7 @@ class WeekSchedule {
                 if (event.type) evt.classList.add(event.type);
                 if (event.mode === 'online_only') evt.classList.add("online");
                 if (event.status === 'cancelled') evt.classList.add("cancelled");
+                if (event.userHidden) evt.classList.add("hidden");
 
                 const startMinute = start.getHours() * 60 + start.getMinutes();
                 const endMinute = end.getHours() * 60 + end.getMinutes();
@@ -663,6 +666,10 @@ class WeekSchedule {
             html += `<div class="container"><div>${_('Description')}:</div><div>${evt.desc}</div></div>`;
         }
 
+        html += `<div class="container"><div>${_('Custom (settings)')}:</div><div>` +
+            `<label><input type="checkbox" name="hidden"/> ${_('Hide')}</label>` +
+            `</div></div>`;
+
         html += '<hr/><div class="form-pre hidden">';
 
         html += `<div class="container"><div>${_('Live')}:</div><div>` +
@@ -724,6 +731,7 @@ class WeekSchedule {
         const summary = form['summary'];
         const status = form['status'];
         const mode = form['mode'];
+        const hidden = <HTMLInputElement> <unknown> form['hidden'];
         let manual = false;
 
         if (ROOMS) {
@@ -777,13 +785,18 @@ class WeekSchedule {
             return evt.summary !== (summary.value !== '' ? summary.value : null);
         }
 
+        const hasHiddenChanged = (): boolean => {
+            return evt.userHidden !== hidden.checked;
+        }
+
         const hasChanged = (): boolean => {
             return hasLiveChanged() ||
                 hasLiveUrlChanged() ||
                 hasRoomChanged() ||
                 hasStatusChanged() ||
                 hasModeChanged() ||
-                hasSummaryChanged();
+                hasSummaryChanged() ||
+                hasHiddenChanged();
         }
 
         const onChange = () => {
@@ -807,7 +820,7 @@ class WeekSchedule {
                 liveUrl.required = undefined;
             }
 
-            if (hasChanged() && manual) {
+            if (hasChanged()) {
                 formDiv.classList.remove('hidden');
             } else {
                 formDiv.classList.add('hidden');
@@ -829,6 +842,7 @@ class WeekSchedule {
         if (evt.summary) summary.value = evt.summary;
         if (evt.status) status.value = evt.status;
         if (evt.mode) mode.value = evt.mode.replace(/_/g, '-');
+        if (evt.userHidden) hidden.checked = true;
 
         form.addEventListener('input', onChange);
         onChange();
@@ -841,6 +855,7 @@ class WeekSchedule {
             if (form['all-following'].checked) urlData['following'] = 'true';
 
             const data: {[index: string]: any} = {};
+            const user: {[index: string]: any} = {};
 
             if (hasLiveChanged() || hasLiveUrlChanged()) {
                 if (live.value === 'lt') {
@@ -867,7 +882,11 @@ class WeekSchedule {
                 data['summary'] = (summary.value !== '') ? summary.value.trim() : null;
             }
 
-            api('/calendar/update', urlData, {'user': data}).then(() => {
+            if (hasHiddenChanged()) {
+                user['hidden'] = hidden.checked;
+            }
+
+            api('/calendar/update', urlData, {'data': {'user': data}, 'user': user}).then(() => {
                 // wait for event merger to update events
                 sleep(1000).then(() => {
                     if (urlData['previous'] || urlData['following']) {

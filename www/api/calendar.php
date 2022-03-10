@@ -67,7 +67,7 @@ function calendar() {
     }
 
     $stmt = db_exec("
-            SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.data,
+            SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.data, d.data AS user_data,
                    l.course_nr, l.semester, l.name, g.group_id, g.group_name, e.deleted
             FROM tucal.event e
                 JOIN tucal.external_event x ON x.event_nr = e.event_nr
@@ -75,6 +75,7 @@ function calendar() {
                 JOIN tucal.account a ON a.account_nr = m.account_nr
                 LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
                 LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
+                LEFT JOIN tucal.event_user_data d ON (d.event_nr, d.account_nr) = (e.event_nr, a.account_nr)
             WHERE e.start_ts >= :start AND e.start_ts < :end AND
                   a.mnr = :mnr AND
                   (e.global OR (:mnr = ANY(SELECT u.mnr FROM tuwel.event_user eu
@@ -82,7 +83,7 @@ function calendar() {
                                            WHERE eu.event_id::text = x.event_id))) AND
                   (m.ignore_from IS NULL OR e.start_ts < m.ignore_from) AND
                   (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
-            GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data,
+            GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data, d.data,
                      l.course_nr, l.semester, l.name, g.group_id, g.group_name
             ORDER BY e.start_ts, length(l.name), e.data -> 'summary'", [
         'mnr' => $subject,
@@ -127,6 +128,7 @@ function calendar() {
                 'name' => $row['group_name'],
             ],
             'data' => json_decode($row['data']),
+            'user' => $row['user_data'] ? json_decode($row['user_data']) : null,
         ];
         echo json_encode($data, JSON_FLAGS);
     }
@@ -172,34 +174,64 @@ function update() {
         $end = new DateTime($row['end_ts']);
         $group = $row['group_nr'];
 
-        $dataStr = '{}';
+        $dataUserStr = '{}';
+        $userStr = '{}';
+        if ($_POST['data']) {
+            if ($_POST['data']['user']) {
+                $dataUserStr = json_encode($_POST['data']['user']);
+            }
+        }
         if ($_POST['user']) {
-            $dataStr = json_encode($_POST['user']);
+            $userStr = json_encode($_POST['user']);
         }
 
         // postgres DOW - sunday (0), saturday (6)
-        db_exec("
-                UPDATE tucal.event
-                SET data = jsonb_set(data, '{\"user\"}', data -> 'user' || :data::jsonb),
-                    updated = FALSE,
-                    update_ts = now(),
-                    update_seq = update_seq + 1
+        $stmt = db_exec("
+                SELECT event_nr
+                FROM tucal.event
                 WHERE event_nr = :enr OR (
-                          group_nr = :group AND
-                          start_ts::date = end_ts::date AND
-                          start_ts::time = :stime AND
-                          EXTRACT(DOW FROM start_ts) = :dow AND
-                          ((:prev::bool AND start_ts < :start) OR (:foll::bool AND start_ts > :start))
+                      group_nr = :group AND
+                      start_ts::date = end_ts::date AND
+                      start_ts::time = :stime AND
+                      EXTRACT(DOW FROM start_ts) = :dow AND
+                      ((:prev::bool AND start_ts < :start) OR (:foll::bool AND start_ts > :start))
                     )", [
             'enr' => $eventNr,
             'group' => $group,
             'start' => $row['start_ts'],
             'stime' => $start->format('H:i:s'),
             'dow' => $start->format('w'),
-            'data' => $dataStr,
             'prev' => $previous ? 'TRUE' : 'FALSE',
             'foll' => $following ? 'TRUE' : 'FALSE',
         ]);
+        $enrs = [];
+        while ($row = $stmt->fetch()) {
+            $enrs[] = $row[0];
+        }
+        $enrsStr = '{' . join(',', $enrs) . '}';
+
+        db_exec("
+                UPDATE tucal.event
+                SET data = jsonb_set(data, '{\"user\"}', data -> 'user' || :data::jsonb),
+                    updated = FALSE,
+                    update_ts = now(),
+                    update_seq = update_seq + 1
+                WHERE event_nr = ANY(:enrs)", [
+            'enrs' => $enrsStr,
+            'data' => $dataUserStr,
+        ]);
+
+        foreach ($enrs as $enr) {
+            db_exec("
+                    INSERT INTO tucal.event_user_data (event_nr, account_nr, data)
+                    VALUES (:enr, :anr, :data::jsonb)
+                    ON CONFLICT ON CONSTRAINT pk_event_user_data DO UPDATE
+                    SET data = tucal.event_user_data.data || :data::jsonb", [
+                'enr' => $enr,
+                'anr' => $USER['nr'],
+                'data' => $userStr,
+            ]);
+        }
     } catch (Exception $e) {
         db_rollback();
         error(500, $e->getMessage());

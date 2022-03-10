@@ -229,6 +229,12 @@ msgstr "Summary"
 msgid "Description"
 msgstr "Description"
 
+msgid "Custom (settings)"
+msgstr "Custom"
+
+msgid "Hide"
+msgstr "Hide"
+
 msgid "Apply"
 msgstr "Apply"
 

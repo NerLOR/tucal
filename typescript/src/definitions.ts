@@ -66,6 +66,9 @@ interface TucalEventJSON {
         source_name: string | null | undefined,
         organizer: string | null | undefined,
     },
+    user: null | {
+        hidden: boolean | null | undefined,
+    },
 }
 
 class Building {
@@ -307,6 +310,7 @@ class TucalEvent {
     organizer: string | null;
     type: string | null;
     mode: string | null;
+    userHidden: boolean = false;
 
     constructor(event: TucalEventJSON) {
         this.id = event.id;
@@ -341,6 +345,10 @@ class TucalEvent {
         this.organizer = event.data.organizer || null;
         this.type = event.data.type || null;
         this.mode = event.data.mode || null;
+
+        if (event.user) {
+            this.userHidden = event.user.hidden || false;
+        }
     }
 
     getRoom(): Room | null {

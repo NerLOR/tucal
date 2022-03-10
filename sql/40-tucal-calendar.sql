@@ -331,3 +331,20 @@ CREATE TRIGGER t_delete
     ON tuwel.event
     FOR EACH ROW
 EXECUTE PROCEDURE tuwel.delete_event();
+
+
+CREATE TABLE tucal.event_user_data
+(
+    event_nr   BIGINT NOT NULL,
+    account_nr BIGINT NOT NULL,
+
+    data       JSONB  NOT NULL DEFAULT '{}'::jsonb,
+
+    CONSTRAINT pk_event_user_data PRIMARY KEY (event_nr, account_nr),
+    CONSTRAINT fk_event_user_data_event FOREIGN KEY (event_nr) REFERENCES tucal.event (event_nr)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT fk_event_user_data_account FOREIGN KEY (account_nr) REFERENCES tucal.account (account_nr)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);

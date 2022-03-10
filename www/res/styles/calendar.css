@@ -376,6 +376,10 @@ div.calendar div.event.cancelled {
     opacity: 0.25;
 }
 
+div.calendar div.event.hidden {
+    opacity: 0.5;
+}
+
 div.calendar div.event.course,
 section.calendar-legend div.legend.course {
     --hue: 270deg;
