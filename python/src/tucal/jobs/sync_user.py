@@ -421,9 +421,9 @@ class SyncUser(tucal.Sync):
                     except tucal.InvalidCredentialsError as e:
                         if i == 2:
                             raise e
-                        time.sleep(1)
+                        time.sleep(5)
             else:
-                self.session.credentials(self.mnr, pwd)
+                self.session.credentials(self.mnr, pwd, tfa_token)
                 self.session.login()
         except tucal.InvalidCredentialsError as e:
             if pwd_from_db:
