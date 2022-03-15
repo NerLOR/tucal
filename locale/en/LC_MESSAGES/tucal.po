@@ -247,14 +247,14 @@ msgstr "Apply changes for all previous events"
 msgid "Apply changes for all following events"
 msgstr "Apply changes for all following events"
 
-msgid "Floor"
-msgstr "Floor"
+msgid "floor"
+msgstr "floor"
 
 msgid "Ground floor"
 msgstr "Ground floor"
 
-msgid "Basement floor"
-msgstr "Basement"
+msgid "basement floor"
+msgstr "basement"
 
 msgid "Status"
 msgstr "Status"

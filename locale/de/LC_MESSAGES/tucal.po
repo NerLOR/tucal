@@ -329,7 +329,7 @@ msgstr "Änderungen für alle nachfolgenden Termine übernehmen"
 msgid "floor"
 msgstr "Stock"
 
-msgid "ground floor"
+msgid "Ground floor"
 msgstr "Erdgeschoss"
 
 msgid "basement floor"
