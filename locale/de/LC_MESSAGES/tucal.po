@@ -74,6 +74,9 @@ msgstr "Impressum"
 msgid "Contact"
 msgstr "Kontakt"
 
+msgid "Donate"
+msgstr "Spenden"
+
 msgid "Login"
 msgstr "Anmelden"
 
