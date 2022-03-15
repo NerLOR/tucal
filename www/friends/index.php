@@ -34,7 +34,7 @@ $stmt = db_exec("
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     echo '<div>';
     echo "<a href=\"/friends/remove?id=$row[account_id]\" class=\"friend-request\"><img/></a>";
-    echo_account($row, "/calendar/$row[mnr]/");
+    echo_account($row, "/calendar/$row[mnr]/", true);
     echo "</div>\n";
 }
 
@@ -57,7 +57,7 @@ $stmt = db_exec("
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     echo '<div>';
     echo "<a href=\"/friends/add?id=$row[account_id]\" class=\"friend-request\"><img/></a>";
-    echo_account($row, "/calendar/$row[mnr]/");
+    echo_account($row, "/calendar/$row[mnr]/", true);
     echo "</div>\n";
 }
 

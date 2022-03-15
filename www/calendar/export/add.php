@@ -16,6 +16,8 @@ if ($_SERVER['PATH_INFO']) {
     tucal_exit();
 }
 
+force_user_login();
+
 $subject = $_GET['subject'] ?? null;
 if ($subject === null) {
     header("Status: 400");

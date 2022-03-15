@@ -32,10 +32,12 @@ a.friend-request[href^="/friends/remove"] img {
     content: url("/res/svgs/friend.svg");
 }
 
-a.friend-request[href^="/friends/remove"]:hover {
+a.friend-request[href^="/friends/remove"]:hover,
+a.friend-request[href^="/friends/remove"]:focus {
     border-color: var(--red);
 }
-a.friend-request[href^="/friends/remove"]:hover img {
+a.friend-request[href^="/friends/remove"]:hover img,
+a.friend-request[href^="/friends/remove"]:focus img{
     content: url("/res/svgs/friend-remove.svg");
 }
 
@@ -46,9 +48,11 @@ a.friend-request[href^="/friends/add"] img {
     content: url("/res/svgs/friend-request.svg");
 }
 
-a.friend-request[href^="/friends/add"]:hover {
+a.friend-request[href^="/friends/add"]:hover,
+a.friend-request[href^="/friends/add"]:focus {
     border-color: var(--green);
 }
-a.friend-request[href^="/friends/add"]:hover img {
+a.friend-request[href^="/friends/add"]:hover img,
+a.friend-request[href^="/friends/add"]:focus img {
     content: url("/res/svgs/friend-add.svg");
 }

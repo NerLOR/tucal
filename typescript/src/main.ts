@@ -234,10 +234,12 @@ function initUsernames() {
 
         // FIXME Firefox: click into field does not align cursor
 
-        a.addEventListener('click', (evt) => {
-            if (evt.composedPath().includes(name))
-                evt.preventDefault();
-        });
+        if (name.getAttribute('contenteditable')) {
+            a.addEventListener('click', (evt) => {
+                if (evt.composedPath().includes(name))
+                    evt.preventDefault();
+            });
+        }
 
         let timer: number | null = null;
         name.addEventListener('input', () => {

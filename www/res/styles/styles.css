@@ -2,6 +2,7 @@
 @import "nav.css";
 @import "calendar.css";
 @import "calendar-event.css";
+@import "calendar-exports.css";
 @import "form.css";
 @import "status.css";
 @import "job.css";
@@ -358,6 +359,7 @@ a.account > div {
     display: flex;
     gap: 0.5em;
     align-items: center;
+    text-align: left;
 }
 
 a.account img {
@@ -371,14 +373,14 @@ a.account span.name {
     display: block;
     border: none;
     padding: 1px 4px;
-    margin: -1px -4px;
+    margin: -1px -2px -1px -4px;
     background-color: unset;
     width: unset;
     border-radius: var(--border-radius);
 }
 
-a.account span.name:hover,
-a.account span.name:focus {
+a.account span.name[contenteditable="true"]:hover,
+a.account span.name[contenteditable="true"]:focus {
     background-color: var(--input-bg-color);
     cursor: text;
 }

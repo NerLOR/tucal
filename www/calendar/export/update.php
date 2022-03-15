@@ -45,9 +45,26 @@ try {
         tucal_exit();
     }
 
-    db_exec("DELETE FROM tucal.calendar_export WHERE account_nr = :nr AND export_id = :id", [
+    $types = [];
+    foreach (['course', 'group', 'other'] as $t) {
+        if (($_POST["export-$t-events"] ?? '0') === 'on')
+            $types[] = $t;
+    }
+
+    $opts = [
+        'event_types' => $types,
+        'todos' => str_replace('-', '_', $_POST['todos'] ?? 'as-todos'),
+        'location' => str_replace('-', '_', $_POST['location'] ?? 'room-abbr'),
+        'location_tuw_maps' => ($_POST['tuw-maps'] ?? '0') === 'on',
+    ];
+
+    db_exec("
+            UPDATE tucal.calendar_export
+            SET options = jsonb_set(options, '{ical}', :opts, true)
+            WHERE account_nr = :nr AND export_id = :id", [
         'id' => $id,
         'nr' => $USER['nr'],
+        'opts' => json_encode($opts),
     ]);
 } catch (Exception $e) {
     db_rollback();

@@ -17,28 +17,28 @@ function formatFloor(floor: string): string {
 
     if (LOCALE_GROUP === 'de') {
         if (nr === 0) {
-            return _('ground floor');
+            return _('Ground floor');
         } else if (nr > 0){
-            return `${nr}. ${_('floor')}`;
+            return `${nr}. ${_('Floor')}`;
         } else {
-            return `${-nr}. ${_('basement floor')}`;
+            return `${-nr}. ${_('Basement floor')}`;
         }
     } else if (LOCALE_GROUP === 'en') {
         if (nr === 0) {
-            return _('ground floor');
+            return _('Ground floor');
         } else if (nr > 0) {
             switch (nr % 10) {
-                case 1: return `${nr}st ${_('floor')}`;
-                case 2: return `${nr}nd ${_('floor')}`;
-                case 3: return `${nr}rd ${_('floor')}`;
-                default: return `${nr}th ${_('floor')}`;
+                case 1: return `${nr}st ${_('Floor')}`;
+                case 2: return `${nr}nd ${_('Floor')}`;
+                case 3: return `${nr}rd ${_('Floor')}`;
+                default: return `${nr}th ${_('Floor')}`;
             }
         } else {
             switch (nr % 10) {
-                case 1: return `${nr}st ${_('basement floor')}`;
-                case 2: return `${nr}nd ${_('basement floor')}`;
-                case 3: return `${nr}rd ${_('basement floor')}`;
-                default: return `${nr}th ${_('basement floor')}`;
+                case 1: return `${nr}st ${_('Basement floor')}`;
+                case 2: return `${nr}nd ${_('Basement floor')}`;
+                case 3: return `${nr}rd ${_('Basement floor')}`;
+                default: return `${nr}th ${_('Basement floor')}`;
             }
         }
     } else {

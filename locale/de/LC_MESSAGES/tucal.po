@@ -401,6 +401,69 @@ msgstr "Letzte Synchronisation"
 msgid "Never"
 msgstr "Nie"
 
+msgid "Export calendar"
+msgstr "Kalender exportieren"
+
+msgid "Synchronize calendar"
+msgstr "Kalender synchronisieren"
+
+msgid "Exported calendars"
+msgstr "Exportierte Kalender"
+
+msgid "User"
+msgstr "Benutzer"
+
+msgid "Link"
+msgstr "Link"
+
+msgid "Remove"
+msgstr "Entfernen"
+
+msgid "Tasks/Deadlines"
+msgstr "Aufgaben/Deadlines"
+
+msgid "Do not export"
+msgstr "Nicht exportieren"
+
+msgid "Export as events"
+msgstr "Als Termine exportieren"
+
+msgid "Export as tasks"
+msgstr "Als Aufgaben exportieren"
+
+msgid "Export events"
+msgstr "Events exportieren"
+
+msgid "Course events"
+msgstr "LVA-Termine"
+
+msgid "Group events"
+msgstr "Gruppentermine"
+
+msgid "Other events"
+msgstr "Sonstige Termine"
+
+msgid "Event location"
+msgstr "Veranstaltungsort"
+
+msgid "Room name abbreviation"
+msgstr "Raumkürzel"
+
+msgid "Room name"
+msgstr "Raumname"
+
+msgid "Campus"
+msgstr "Campus"
+
+msgid "Building"
+msgstr "Gebäude"
+
+msgid "Full address"
+msgstr "Volle Adresse"
+
+msgid "Include TUW-Maps link"
+msgstr "TUW-Maps-Link einfügen"
+
 
 msgctxt "http"
 msgid "Bad Request"

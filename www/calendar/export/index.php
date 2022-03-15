@@ -41,7 +41,7 @@ if (sizeof($rows) === 0) {
 }
 $exp = $rows[0];
 $mnr = $exp['subject_mnr'];
-$opts = json_decode($exp['options']);
+$opts = json_decode($exp['options'], true);
 
 if ($ext !== null && $file_parts[0] !== 'personal') {
     header("Status: 307");
@@ -108,20 +108,21 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 $stmt = db_exec("
         SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.create_ts, e.update_ts, e.update_seq, e.room_nr, e.data,
-               l.course_nr, l.semester, l.name, g.group_id
+               d.data AS user_data, l.course_nr, l.semester, l.name, g.group_id
         FROM tucal.event e
             JOIN tucal.external_event x ON x.event_nr = e.event_nr
             JOIN tucal.group_member m ON m.group_nr = e.group_nr
             JOIN tucal.account a ON a.account_nr = m.account_nr
             LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
             LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
+            LEFT JOIN tucal.event_user_data d ON (d.event_nr, d.account_nr) = (e.event_nr, a.account_nr)
         WHERE a.mnr = :mnr AND NOT e.deleted AND
               (e.global OR (:mnr = ANY(SELECT u.mnr FROM tuwel.event_user eu
                                        JOIN tuwel.user u ON u.user_id = eu.user_id
                                        WHERE eu.event_id::text = x.event_id))) AND
               (m.ignore_from IS NULL OR e.start_ts < m.ignore_from) AND
               (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
-        GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data,
+        GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data, d.data,
                  l.course_nr, l.semester, l.name, g.group_id
         ORDER BY e.start_ts, length(l.name), e.data -> 'summary'", ["mnr" => $mnr]);
 
@@ -183,6 +184,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $create->setTimezone($tz);
 
     $data = json_decode($row['data'], true);
+    $userData = json_decode($row['user_data'], true);
     $todo = ($row['start_ts'] === $row['end_ts']);
 
     $courseNr = $row['course_nr'];
@@ -199,23 +201,49 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $roomNr = $row['room_nr'];
     if ($roomNr !== null) {
         $room = $rooms[$roomNr];
+        $roomNameAbbr = $room['room_name_short'] ?? "#$roomNr";
         $roomName = $room['room_name'] ?? "#$roomNr";
+        $roomSuffix = $room['room_suffix'] ?? null;
         $roomLoc = explode('/', $room['room_code'])[0];
         $roomLocLong = explode('/', $room['room_code_long'])[0];
     } else {
         $room = null;
+        $roomNameAbbr = null;
         $roomName = null;
+        $roomSuffix = null;
         $roomLoc = null;
         $roomLocLong = null;
     }
 
     if ($ext === 'ics') {
+        $icalOpts = $opts['ical'] ?? [];
         $format = "Ymd\\THis";
         $formatZ = "$format\\Z";
 
-        if ($todo) {
+        if ($userData['hidden'] ?? false) {
+            continue;
+        } elseif ($end < $start || $end->getTimestamp() - $start->getTimestamp() > 43_200) {
+            continue;
+        }
+
+        $type = $data['type'];
+        $types = $icalOpts['event_types'];
+        if ($type === 'course' || $type === 'lecture') {
+            if (!in_array('course', $types)) continue;
+        } elseif ($type === 'group') {
+            if (!in_array('group', $types)) continue;
+        } elseif ($type !== 'deadline' && $type !== 'assignment') {
+            if (!in_array('other', $types)) continue;
+        }
+
+        $todos = $icalOpts['todos'] ?? 'as_todos';
+        $isTodo = ($todo && $todos == 'as_todos');
+
+        if ($isTodo) {
             ical_line("BEGIN", ["VTODO"]);
             ical_line("DUE", [$start->format($format)], ["TZID=Europe/Vienna"]);
+        } elseif ($todo && $todos === 'omitted') {
+            continue;
         } else {
             ical_line("BEGIN", ["VEVENT"]);
             ical_line("DTSTART", [$start->format($format)], ["TZID=Europe/Vienna"]);
@@ -226,44 +254,50 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $desc = "";
         if ($courseName !== null) {
             $summary .= $courseName;
-        }
-        if ($todo) {
-            $summary .= " - $data[summary]";
-            $desc .= $data['description'] ?? '';
         } else {
+            $summary .= $data['summary'];
+        }
+
+        if ($isTodo) {
+            $summary .= " - $data[summary]";
+        } elseif ($courseName !== null) {
             $desc .= $data['summary'];
-            if (array_key_exists('description', $data)) {
-                $desc .= "\n\n$data[description]";
-            }
         }
 
         ical_line("SUMMARY", [$summary]);
         ical_line("DESCRIPTION", [$desc]);
 
+        $tuwMaps = $icalOpts['location_tuw_maps'] ?? true;
+        $locMode = $icalOpts['location'] ?? 'room_abbr';
+
         $loc = null;
-        $locAlt = null;
+        $locLink = null;
         if ($room !== null) {
-            $bName = $room['building_name'];
-            if ($bName === null) {
-                $bName = "";
+            $bName = ($room['building_name']) ? "$room[building_name], " : '';
+            $addr = ($room['address']) ? " ($room[address], Wien Österreich)" : '';
+            $fullAddr = "Technische Universität Wien$addr";
+            $locLink = "https://tuw-maps.tuwien.ac.at/?q=$roomLoc";
+
+            if ($locMode === 'room_abbr') {
+                $loc = "$roomNameAbbr ($roomLocLong)";
             } else {
-                $bName = "$bName, ";
+                $loc = $roomName;
+                if ($roomSuffix) $loc .= " - $roomSuffix";
+                $loc .= " ($roomLocLong)";
+                if ($locMode !== 'room_name') {
+                    if ($locMode !== 'campus') {
+                        $loc .= $bName;
+                        if ($locMode !== 'building') $loc .= ", $fullAddr";
+                    }
+                    $loc .= ", $room[area_name]";
+                }
             }
-            $addr = $room['address'];
-            if ($addr === null) {
-                $addr = "";
-            } else {
-                $addr = " ($addr, Wien, Österreich)";
-            }
-            $locAlt = "https://tuw-maps.tuwien.ac.at/?q=$roomLoc";
-            $loc = "$roomName ($roomLocLong), $bName$room[area_name], Technische Universität Wien$addr\n$locAlt";
+            if ($tuwMaps) $loc .= "\n$locLink";
         }
 
         if ($loc !== null) {
             $altRep = [];
-            if ($locAlt !== null) {
-                $altRep [] = "ALTREP=\"$locAlt\"";
-            }
+            if ($locLink !== null) $altRep [] = "ALTREP=\"$locLink\"";
             ical_line("LOCATION", [$loc], $altRep);
         }
 
@@ -275,10 +309,10 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         ical_line("CATEGORIES", $categories);
         ical_line("CLASS", ["PUBLIC"]);
 
-        if ($todo) {
+        if ($isTodo) {
             ical_line("STATUS", ["NEEDS-ACTION"]);
         } else {
-            ical_line("STATUS", ["CONFIRMED"]);
+            ical_line("STATUS", [strtoupper($data['status'] ?? 'CONFIRMED')]);
         }
 
         $create->setTimezone($utcTz);
@@ -289,7 +323,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         ical_line("LAST-MODIFIED", [$update->format($formatZ)]);
         ical_line("SEQUENCE", ["$row[update_seq]"]);
 
-        if ($todo) {
+        if ($isTodo) {
             ical_line("END", ["VTODO"]);
         } else {
             ical_line("END", ["VEVENT"]);

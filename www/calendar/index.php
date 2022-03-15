@@ -90,7 +90,15 @@ if ($subject === $USER['mnr']) {
 
 
 if (!isset($STATUS) || $STATUS === 200) {
-    $stmt = db_exec("SELECT * FROM tucal.calendar_export WHERE account_nr = :nr", ['nr' => $USER['nr']]);
+    $stmt = db_exec("
+            SELECT e.export_nr, e.export_id, e.token, e.account_nr, e.subject_mnr, e.create_ts, e.active_ts, e.options,
+                   a.mnr, a.username, f.nickname
+            FROM tucal.calendar_export e
+                LEFT JOIN tucal.account a ON e.subject_mnr = a.mnr
+                LEFT JOIN tucal.friend f ON (f.account_nr_1, f.account_nr_2) = (:nr, a.account_nr)
+            WHERE e.account_nr = :nr", [
+        'nr' => $USER['nr'],
+    ]);
 }
 
 require "../.php/header.php";
@@ -123,32 +131,78 @@ require "../.php/header.php";
             <span class="color-name"><?php echo _('Striped');?></span>
             <span><?php echo _('Online-only event');?></span>
         </div>
+        <hr/>
+        <div class="button-wrapper">
+            <form class="single" action="/calendar/export/add?subject=<?php echo htmlspecialchars($subject);?>" method="post">
+                <button type="submit"><?php echo _('Export calendar');?></button>
+            </form>
+            <a class="button" href="/account/sync"><?php echo _('Synchronize calendar');?></a>
+        </div>
     </section>
     <section>
-        <h2><?php echo _('Calendar exports');?></h2>
+        <h2><?php echo _('Exported calendars');?></h2>
+        <div class="calendar-exports-wrapper">
         <table class="calendar-exports">
             <thead>
-                <tr><th>Name</th><th>Link</th><th>Settings</th><th></th></tr>
+                <tr><th><?php echo _('User');?></th><th><?php echo _('Link');?></th><th><?php echo _('Settings');?></th><th><?php echo _('Remove');?></th></tr>
             </thead>
             <tbody>
 <?php
 
 while ($row = $stmt->fetch()) {
-    echo "<tr>";
-    echo "<td>$row[subject_mnr]</td>";
     $path = "/calendar/export/$row[token]/personal.ics";
-    echo "<td><a href='$path' class='copy-link'>" . _("Open link") . "</a></td>";
-    echo "<td></td>";
-    echo "<td><form action='/calendar/export/remove?id=$row[export_id]' method='post'><button type='submit'>" . _('Remove') . "</button></form></td>";
-    echo "</tr>\n";
-}
+    $opts = json_decode($row['options'], true);
+    $icalOpts = $opts['ical'] ?? [];
+    $todos = $icalOpts['todos'] ?? 'as_todos';
+    $exportEvents = $icalOpts['event_types'] ?? ['course', 'group'];
+    $loc = $icalOpts['location'] ?? 'room_abbr';
+    $tuwMaps = $icalOpts['tuw_maps'] ?? true;
 
 ?>
+    <tr>
+        <td>
+            <?php echo_account($row, "/calendar/$row[subject_mnr]/");?><br/>
+            <?php echo $opts['name'] ?? '';?>
+        </td>
+        <td><a href="<?php echo $path;?>" class="copy-link"><?php echo _("Open link");?></a></td>
+        <td>
+            <form action="/calendar/export/update?id=<?php echo $row['export_id'];?>" method="post">
+                <div class="flex">
+                    <fieldset>
+                        <legend><?php echo _('Tasks/Deadlines');?></legend>
+                        <label><input type="radio" name="todos" value="omitted"<?php echo ($todos === 'omitted') ? ' checked' : '';?>/> <?php echo _('Do not export');?></label><br/>
+                        <label><input type="radio" name="todos" value="as-events"<?php echo ($todos === 'as_events') ? ' checked' : '';?>/> <?php echo _('Export as events');?></label><br/>
+                        <label><input type="radio" name="todos" value="as-todos"<?php echo ($todos === 'as_todos') ? ' checked' : '';?>/> <?php echo _('Export as tasks');?></label>
+                    </fieldset>
+                    <fieldset>
+                        <legend><?php echo _('Export events');?></legend>
+                        <label><input type="checkbox" name="export-course-events"<?php echo in_array('course', $exportEvents) ? ' checked' : '';?>/> <?php echo _('Course events');?></label><br/>
+                        <label><input type="checkbox" name="export-group-events"<?php echo in_array('group', $exportEvents) ? ' checked' : '';?>/> <?php echo _('Group events');?></label><br/>
+                        <label><input type="checkbox" name="export-other-events"<?php echo in_array('other', $exportEvents) ? ' checked' : '';?>/> <?php echo _('Other events');?></label>
+                    </fieldset>
+                    <fieldset>
+                        <legend><?php echo _('Event location');?></legend>
+                        <label><input type="radio" name="location" value="room-abbr"<?php echo ($loc === 'room_abbr') ? ' checked' : '';?>/> <?php echo _('Room name abbreviation');?></label><br/>
+                        <label><input type="radio" name="location" value="room-name"<?php echo ($loc === 'room') ? ' checked' : '';?>/> <?php echo _('Room name');?></label><br/>
+                        <label><input type="radio" name="location" value="campus"<?php echo ($loc === 'campus') ? ' checked' : '';?>/> <?php echo _('Campus');?></label><br/>
+                        <label><input type="radio" name="location" value="building"<?php echo ($loc === 'building') ? ' checked' : '';?>/> <?php echo _('Building');?></label><br/>
+                        <label><input type="radio" name="location" value="full-addr"<?php echo ($loc === 'full_addr') ? ' checked' : '';?>/> <?php echo _('Full address');?></label><br/>
+                        <label><input type="checkbox" name="tuw-maps"<?php echo $tuwMaps ? ' checked' : '';?>/> <?php echo _('Include TUW-Maps link');?></label>
+                    </fieldset>
+                </div>
+                <button type="submit"><?php echo _('Save');?></button>
+            </form>
+        </td>
+        <td>
+            <form action="/calendar/export/remove?id=<?php echo $row['export_id'];?>" method="post">
+                <button type="submit"><?php echo _('Remove');?></button>
+            </form>
+        </td>
+    </tr>
+<?php } ?>
             </tbody>
         </table>
-        <form action="/calendar/export/add?subject=<?php echo htmlspecialchars($subject);?>" method="post">
-            <button type="submit"><?php echo _('Export calendar');?></button>
-        </form>
+        </div>
     </section>
 </main>
 <?php

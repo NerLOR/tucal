@@ -189,6 +189,14 @@ main form.panel div.container label {
     -moz-hyphens: auto;
 }
 
+main form.single {
+    display: inline-block;
+}
+
+main form.single button {
+    font-size: 1em;
+}
+
 main form.table {
     display: flex;
     flex-direction: column;
@@ -215,4 +223,9 @@ main form.table select {
     display: inline-block;
     width: 200px;
     flex: 250px 0 1;
+}
+
+main form fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
 }

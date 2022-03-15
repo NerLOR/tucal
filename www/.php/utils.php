@@ -111,14 +111,14 @@ function base32_decode(string $data): string {
     return $plain;
 }
 
-function echo_account($row, $uri = null) {
+function echo_account($row, $uri = null, $editable = false) {
     echo "<a class=\"account\" data-username=\"$row[username]\" data-nickname=\"$row[nickname]\" data-mnr=\"$row[mnr]\"";
     if ($uri !== null) echo " href=\"$uri\"";
 
     echo '><div>';
     echo '<img src="/res/avatars/default.png" alt="' . _('Avatar') . '"/>';
     echo "<div>";
-    echo "<span class=\"name\" contenteditable=\"true\">" . htmlspecialchars($row['nickname'] ?? $row['username']) . "</span>";
+    echo "<span class=\"name\"" . ($editable ? ' contenteditable="true"' : '') . ">" . htmlspecialchars($row['nickname'] ?? $row['username']) . "</span>";
     echo '<div class="sub' . ($row['nickname'] ? ' has-nickname' : '') . '">';
     echo "<span class=\"mnr\">$row[mnr]</span>";
     echo "<span class=\"username\">$row[username]</span>";
