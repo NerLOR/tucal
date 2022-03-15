@@ -183,7 +183,7 @@ while ($row = $stmt->fetch()) {
                     <fieldset>
                         <legend><?php echo _('Event location');?></legend>
                         <label><input type="radio" name="location" value="room-abbr"<?php echo ($loc === 'room_abbr') ? ' checked' : '';?>/> <?php echo _('Room name abbreviation');?></label><br/>
-                        <label><input type="radio" name="location" value="room-name"<?php echo ($loc === 'room') ? ' checked' : '';?>/> <?php echo _('Room name');?></label><br/>
+                        <label><input type="radio" name="location" value="room-name"<?php echo ($loc === 'room_name') ? ' checked' : '';?>/> <?php echo _('Room name');?></label><br/>
                         <label><input type="radio" name="location" value="campus"<?php echo ($loc === 'campus') ? ' checked' : '';?>/> <?php echo _('Campus');?></label><br/>
                         <label><input type="radio" name="location" value="building"<?php echo ($loc === 'building') ? ' checked' : '';?>/> <?php echo _('Building');?></label><br/>
                         <label><input type="radio" name="location" value="full-addr"<?php echo ($loc === 'full_addr') ? ' checked' : '';?>/> <?php echo _('Full address');?></label><br/>
