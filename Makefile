@@ -56,3 +56,7 @@ database:
 
 clean:
 	rm -rf dest/
+
+png:
+	mkdir -p dest/
+	convert -background none -size 1024 www/res/svgs/tucal.svg -alpha set -resize 1024 dest/tucal.png
