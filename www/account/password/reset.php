@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($mnr === null) {
         header("Status: 400");
         goto doc;
-    } else if (isset($USER) && $USER['mnr_int'] !== (int) $mnr) {
+    } elseif (isset($USER) && $USER['mnr_int'] !== (int) $mnr) {
         header("Status: 400");
         $errors['mnr'] = 'Wrong';
         goto doc;
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $res = send_email($email, '[TUcal] ' . _('Reset password'), $msg);
 
     redirect("/account/password/reset?status=" . ($res ? "sent" : "sending"));
-} else if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     $STATUS = 405;
     header("Allow: GET, POST");
 }
@@ -99,7 +99,7 @@ require "../../.php/header.php";
 <?php } else {
     if ($status === 'sent') {
         echo "<p class='center'>" . _('Email sent (description)') . "</p>";
-    } else if ($status === 'sending') {
+    } elseif ($status === 'sending') {
         echo "<p class='center'>" . _('Email sending (description)') . "</p>";
     }
 }

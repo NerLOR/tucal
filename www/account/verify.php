@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $res = send_email($USER['email_address_1'], '[TUcal] ' . _('Verify account'), $msg);
 
     redirect("/account/verify?status=" . ($res ? "sent" : "sending"));
-} else if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     $STATUS = 405;
     header("Allow: GET, POST");
 }
@@ -75,7 +75,7 @@ require "../.php/header.php";
 <?php if ($tokenInvalid) { ?>
 
         <div class="container error"><?php echo _('This link is invalid. Please try again.');?></div>
-<?php } else if ($status === null) { ?>
+<?php } elseif ($status === null) { ?>
 
         <form class="panel">
             <p><?php echo _('SSO verification (description)');?></p>
@@ -93,7 +93,7 @@ require "../.php/header.php";
 <?php } else {
     if ($status === 'sent') {
         echo "<p class='center'>" . _('Email sent (description)') . "</p>";
-    } else if ($status === 'sending') {
+    } elseif ($status === 'sending') {
         echo "<p class='center'>" . _('Email sending (description)') . "</p>";
     }
 }

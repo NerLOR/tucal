@@ -150,7 +150,7 @@ function update() {
 
     if ($evtId === null) {
         error(400);
-    } else if (!isset($USER)) {
+    } elseif (!isset($USER)) {
         error(401);
     }
 
