@@ -1,11 +1,6 @@
-<?php
-
-global $TUCAL;
-
-?>
 </div>
 <footer>
-    <a href="https://<?php echo $TUCAL['hostname'];?>/"><img src="/res/svgs/tucal.svg"/></a>
+    <a href="https://<?php global $TUCAL; echo $TUCAL['hostname'];?>/"><img src="/res/svgs/tucal.svg"/></a>
     <a href="/impressum"><?php echo _('Imprint');?></a>
     <a href="/contact"><?php echo _('Contact');?></a>
     <a href="https://www.paypal.com/donate/?hosted_button_id=W2HVX7662NXCN" target="_blank"><?php echo _('Donate');?></a>
@@ -15,5 +10,4 @@ global $TUCAL;
 </footer>
 </body>
 </html>
-<?php
-tucal_exit();
+<?php tucal_exit();
