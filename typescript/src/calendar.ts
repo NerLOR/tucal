@@ -599,8 +599,11 @@ class WeekSchedule {
 
         const courseName = course && (LOCALE_GROUP === 'de' ? course.name_de : course.name_en);
 
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("event-detail-wrapper");
         const div = document.createElement("div");
         div.classList.add("event-detail");
+        wrapper.appendChild(div);
 
         let html = '';
 
@@ -918,11 +921,11 @@ class WeekSchedule {
             });
         });
 
-        this.cal.appendChild(div);
+        this.cal.appendChild(wrapper);
     }
 
     clearEventDetail() {
-        const eventDetail = this.cal.getElementsByClassName("event-detail");
+        const eventDetail = this.cal.getElementsByClassName("event-detail-wrapper");
         while (eventDetail[0]) eventDetail[0].remove();
     }
 }

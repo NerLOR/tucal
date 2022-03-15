@@ -1,21 +1,31 @@
 
-div.calendar div.event-detail {
+div.calendar .event-detail-wrapper {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    z-index: 25;
+    overflow-y: scroll;
+}
+
+div.calendar .event-detail {
+    position: relative;
     background-color: var(--sec-bg-color);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     width: 800px;
-    margin: auto;
-    top: 15vmin;
-    left: calc(50% - 400px);
-    z-index: 25;
+    max-width: calc(100vw - 1em);
+    margin: 15vmin auto 4em auto;
     box-sizing: border-box;
     padding: 1em;
     font-size: 1rem;
     box-shadow: 0 0 8px var(--black-alpha);
 }
 
-div.calendar div.event-detail > h2 {
+div.calendar .event-detail > h2 {
     color: var(--black);
     text-align: left;
     font-size: 1em;
@@ -23,12 +33,12 @@ div.calendar div.event-detail > h2 {
     margin: 0.5em 0 0 0;
 }
 
-div.calendar div.event-detail > h2 span.course-nr {
+div.calendar .event-detail > h2 span.course-nr {
     font-size: 0.75em;
     font-weight: normal;
 }
 
-div.calendar div.event-detail > h3 {
+div.calendar .event-detail > h3 {
     color: var(--black);
     font-size: 0.75em;
     text-align: left;
@@ -36,7 +46,7 @@ div.calendar div.event-detail > h3 {
     margin: 0;
 }
 
-div.calendar div.event-detail > h4 {
+div.calendar .event-detail > h4 {
     color: var(--black);
     font-size: 1em;
     text-align: left;
@@ -44,55 +54,55 @@ div.calendar div.event-detail > h4 {
     margin: 1em 0;
 }
 
-div.calendar div.event-detail > h4 .day {
+div.calendar .event-detail > h4 .day {
     font-weight: normal;
     font-size: 0.75em;
 }
 
-div.calendar div.event-detail div.container {
+div.calendar .event-detail div.container {
     display: flex;
     margin: 0.5em 0;
 }
 
-div.calendar div.event-detail div.container > div:nth-child(1) {
+div.calendar .event-detail div.container > div:nth-child(1) {
     flex: 7.5em 0 0;
 }
 
-div.calendar div.event-detail div.container > div:nth-child(2) {
+div.calendar .event-detail div.container > div:nth-child(2) {
     max-height: 200px;
     overflow-x: hidden;
     width: 100%;
 }
 
-div.calendar div.event-detail .room {
+div.calendar .event-detail .room {
     font-size: 0.75em;
 }
 
-div.calendar div.event-detail .room-name {
+div.calendar .event-detail .room-name {
     font-size: 1.333333em;
 }
 
-div.calendar div.event-detail a.live {
+div.calendar .event-detail a.live {
     float: right;
     height: 32px;
 }
 
-div.calendar div.event-detail a.live img {
+div.calendar .event-detail a.live img {
     height: 32px;
     width: 32px;
 }
 
-div.calendar div.event-detail a.live:hover img {
+div.calendar .event-detail a.live:hover img {
     filter: drop-shadow(0 0 1px var(--black-alpha));
 }
 
-div.calendar div.event-detail hr {
+div.calendar .event-detail hr {
     position: relative;
     width: calc(100% + 2em);
     left: -1em;
 }
 
-div.calendar div.event-detail hr ~ button {
+div.calendar .event-detail hr ~ button {
     position: absolute;
     background-color: var(--sec-bg-color);
     border: 1px solid var(--border-color);
@@ -107,11 +117,11 @@ div.calendar div.event-detail hr ~ button {
     color: var(--grey-C0);
 }
 
-div.calendar div.event-detail hr ~ button:hover {
+div.calendar .event-detail hr ~ button:hover {
     background-color: var(--grey-F0);
 }
 
-div.calendar div.event-detail .form-save {
+div.calendar .event-detail .form-save {
     width: fit-content;
     margin: 0.5em auto;
     display: flex;
@@ -123,44 +133,44 @@ div.calendar div.event-detail .form-save {
     justify-content: center;
 }
 
-div.calendar div.event-detail div.form-pre > div {
+div.calendar .event-detail div.form-pre > div {
     max-height: 200px;
     transition: max-height 0.25s, margin-top 0.25s, margin-bottom 0.25s;
     overflow: hidden;
 }
 
-div.calendar div.event-detail div.form-pre > div > div {
+div.calendar .event-detail div.form-pre > div > div {
     overflow: hidden;
 }
 
-div.calendar div.event-detail hr.form-pre {
+div.calendar .event-detail hr.form-pre {
     transition: margin 0.25s, border-top-width 0.25s;
 }
 
-div.calendar div.event-detail .form-save.hidden {
+div.calendar .event-detail .form-save.hidden {
     height: 0;
     margin-top: 0;
     margin-bottom: 0;
 }
 
-div.calendar div.event-detail div.form-pre.hidden > div {
+div.calendar .event-detail div.form-pre.hidden > div {
     max-height: 0;
     margin-top: 0;
     margin-bottom: 0;
 }
 
-div.calendar div.event-detail hr.form-pre.hidden {
+div.calendar .event-detail hr.form-pre.hidden {
     margin-top: 0;
     margin-bottom: 0;
     border-width: 0;
 }
 
-div.calendar div.event-detail .form-save label {
+div.calendar .event-detail .form-save label {
     display: block;
     font-size: 0.75em;
 }
 
-div.calendar div.event-detail .form-save button {
+div.calendar .event-detail .form-save button {
     width: 50%;
     margin: 0.5em auto 0 auto;
     box-sizing: border-box;
@@ -169,19 +179,19 @@ div.calendar div.event-detail .form-save button {
     padding: 0.5em 1em;
 }
 
-div.calendar div.event-detail label.radio {
+div.calendar .event-detail label.radio {
     margin-right: 1em;
     white-space: pre;
 }
 
-div.calendar div.event-detail .url {
+div.calendar .event-detail .url {
     overflow: hidden;
     transition: height 0.25s;
     height: 3em;
     font-size: 0.75em;
 }
 
-div.calendar div.event-detail input.line {
+div.calendar .event-detail input.line {
     display: block;
     margin: 0.25rem;
     height: 2em;
@@ -189,30 +199,23 @@ div.calendar div.event-detail input.line {
     font-size: 1em;
 }
 
-div.calendar div.event-detail select {
+div.calendar .event-detail select {
     margin: 0.25rem;
 }
 
-div.calendar div.event-detail .url.hidden {
+div.calendar .event-detail .url.hidden {
     height: 0;
 }
 
-div.calendar div.event-detail a.link {
+div.calendar .event-detail a.link {
     float: right;
     font-weight: normal;
     margin: 0.125em 0.25em;
     font-size: 0.75em;
 }
 
-@media screen and (max-width: 816px) {
-    div.calendar div.event-detail {
-        width: calc(100% - 16px);
-        left: 8px;
-    }
-}
-
 @media screen and (max-width: 400px) {
-    div.calendar div.event-detail {
+    div.calendar .event-detail {
         font-size: 0.75rem;
     }
 }
