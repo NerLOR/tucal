@@ -435,7 +435,7 @@ msgid "Export as tasks"
 msgstr "Als Aufgaben exportieren"
 
 msgid "Export events"
-msgstr "Events exportieren"
+msgstr "Termine exportieren"
 
 msgid "Course events"
 msgstr "LVA-Termine"
