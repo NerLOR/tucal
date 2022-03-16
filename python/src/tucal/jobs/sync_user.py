@@ -484,13 +484,57 @@ class SyncUser(tucal.Sync):
 
         self.job.end(0)
 
-    def store(self, cur: tucal.db.Cursor):
-        self.job.init('store user calendars', 4, 12)
+    def _delete_user_group(self, cur: tucal.db.Cursor):
+        sem = str(tucal.Semester.current())
+
+        cur.execute("DELETE FROM tiss.course_user WHERE (mnr, semester) = (%s, %s)", (self.mnr_int, sem))
+        cur.execute("DELETE FROM tiss.group_user WHERE (mnr, semester) = (%s, %s)", (self.mnr_int, sem))
+        cur.execute("DELETE FROM tiss.exam_user WHERE (mnr, semester) = (%s, %s)", (self.mnr_int, sem))
+
+        cur.execute("SELECT user_id FROM tuwel.user WHERE mnr = %s", (self.mnr_int,))
+        user_ids = cur.fetch_all()
+        if len(user_ids) > 0:
+            user_id = user_ids[0]
+            cur.execute("""
+                DELETE FROM tuwel.course_user
+                WHERE user_id = %s AND
+                      course_id = ANY(
+                            SELECT course_id
+                            FROM tuwel.course
+                            WHERE semester = %s
+                      )""", (user_id, sem))
+            cur.execute("""
+                DELETE FROM tuwel.group_user
+                WHERE user_id = %s AND
+                      group_id = ANY(
+                            SELECT g.group_id
+                            FROM tuwel.group g
+                                JOIN tuwel.course c ON c.course_id = g.course_id
+                            WHERE c.semester = %s
+                      )""", (user_id, sem))
+
+        cur.execute("""
+            DELETE FROM tucal.group_member
+            WHERE account_nr = (SELECT account_nr FROM tucal.account WHERE mnr = %s) AND
+                  group_nr = ANY(
+                        SELECT g.group_nr
+                        FROM tucal.group g
+                            JOIN tucal.group_link l ON l.group_nr = g.group_nr
+                        WHERE l.semester = %s
+                  )""", (self.mnr_int, sem))
+
+    def store(self, cur: tucal.db.Cursor, reset_semester: bool = False):
+        self.job.init('store user calendars', 4 + (1 if reset_semester else 0), 12 + (2 if reset_semester else 0))
 
         cur.lock(('tucal.event', 'tucal.external_event', 'tucal.group',
-                  'tiss.event', 'tiss.course',
-                  'tuwel.event', 'tuwel.course'),
+                  'tiss.event', 'tiss.course', 'tiss.group', 'tiss.exam',
+                  'tuwel.event', 'tuwel.course', 'tuwel.group'),
                  mode='SHARE ROW EXCLUSIVE')
+
+        if reset_semester:
+            self.job.begin('reset user semester groups')
+            self._delete_user_group(cur)
+            self.job.end(2)
 
         self.job.exec(3, self.tiss.store, False, cur=cur)
         self.job.exec(3, self.tuwel.store, False, cur=cur)
@@ -507,10 +551,10 @@ class SyncUser(tucal.Sync):
     def pre_sync(self):
         self.job.init('sync user', 2, 6, estimate=70)
 
-    def sync(self, keep_tiss_cal_settings: bool = True):
+    def sync(self, keep_tiss_cal_settings: bool = True, reset_semester: bool = False):
         cur = tucal.db.cursor()
         self.job.exec(5, self.fetch, False, keep_tiss_cal_settings=keep_tiss_cal_settings)
-        self.job.exec(1, self.store, False, cur=cur)
+        self.job.exec(1, self.store, False, cur=cur, reset_semester=reset_semester)
         cur.close()
         self.job.end(0)
 
@@ -521,6 +565,8 @@ if __name__ == '__main__':
                         help='Matriculation number')
     parser.add_argument('--keep-calendar-settings', '-k', action='store_true', default=False,
                         help='Do not alter any TISS calendar settings')
+    parser.add_argument('--reset-semester', '-r', action='store_true', default=False,
+                        help='Reset user groups and courses for the current semester')
     mx_group = parser.add_mutually_exclusive_group()
     mx_group.add_argument('--store', '-s', action='store_true', default=False,
                           help='Store provided password (and 2fa generator) in database')
@@ -531,5 +577,5 @@ if __name__ == '__main__':
     sync_user = SyncUser(tuwien.sso.Session(), args.mnr)
     sync_user.pre_sync()
     sync_user.login(pwd_from_db=args.database, pwd_store_db=args.store)
-    sync_user.sync(keep_tiss_cal_settings=args.keep_calendar_settings)
+    sync_user.sync(keep_tiss_cal_settings=args.keep_calendar_settings, reset_semester=args.reset_semester)
     tucal.db.commit()
