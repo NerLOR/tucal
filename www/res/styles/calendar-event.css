@@ -9,6 +9,7 @@ div.calendar .event-detail-wrapper {
     padding: 0;
     z-index: 25;
     overflow-y: scroll;
+    background-color: #00000080;
 }
 
 div.calendar .event-detail {
