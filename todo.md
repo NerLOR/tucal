@@ -12,4 +12,5 @@ TODOs
   * Messages (email to all or specific users)
 * `planned_ts`
 * Event user data: undefined, if same as "normal" data
+* Manually join groups (HTU events, ...)
 * Update locale (de, bar, en)

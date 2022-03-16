@@ -21,7 +21,7 @@ COURSE_NR = re.compile(r'^[A-z0-9]{3}\.[A-Z0-9]{3} (.*)$')
 SPAN = re.compile(r'<span class="media-body font-weight-bold">\s*([^<>]*)\s*</span>')
 GROUP_OPTION = re.compile(r'<option value="([0-9]+)">([^<]*)</option>')
 GROUP_TOOL_LINK = re.compile(r'href="https://tuwel\.tuwien\.ac\.at/mod/grouptool/view\.php\?id=([0-9]+)"')
-GROUP_MEMBERS = re.compile(r'>(Angemeldet auf Platz)')
+GROUP_MEMBERS = re.compile(r'>(Angemeldet auf Platz)')  # FIXME add english text
 GROUP_NAME = re.compile(r'<h2 class="panel-title">\s*([^<]*)\s*</h2>')
 
 
@@ -131,7 +131,8 @@ class Session:
             p2 = r.text.find('</select>', p1)
             data = r.text[p1:p2]
             groups = [(int(opt.group(1)), opt.group(2)) for opt in GROUP_OPTION.finditer(data)]
-            if '<option value="-1">Keine Gruppe</option>' not in data:
+            if '<option value="-1">Keine Gruppe</option>' not in data \
+                    and '<option value="-1">No group</option>' not in data:
                 return groups
             all_groups = {g[1]: g[0] for g in groups}
         else:
