@@ -415,7 +415,7 @@ div.calendar div.event:hover {
     z-index: 5;
 }
 
-div.calendar div.event.now {
+div.calendar div.event:not(.cancelled).now {
     box-shadow: 0 0 4px var(--glow);
 }
 
