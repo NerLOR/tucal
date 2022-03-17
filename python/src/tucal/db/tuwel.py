@@ -113,7 +113,7 @@ def upsert_event(evt: Dict[str, Any], access_time: datetime.datetime, user_id: i
         cur.execute("""
             INSERT INTO tuwel.event_user (event_id, user_id)
             VALUES (%(id)s, %(user)s)
-            ON CONFLICT DO NOTHING""", data)
+            ON CONFLICT ON CONSTRAINT pk_event_user DO NOTHING""", data)
 
     cur.close()
     return

@@ -526,9 +526,11 @@ class SyncUser(tucal.Sync):
     def store(self, cur: tucal.db.Cursor, reset_semester: bool = False):
         self.job.init('store user calendars', 4 + (1 if reset_semester else 0), 12 + (2 if reset_semester else 0))
 
-        cur.lock(('tucal.event', 'tucal.external_event', 'tucal.group',
+        cur.lock(('tucal.event', 'tucal.external_event', 'tucal.group', 'tucal.group_member',
                   'tiss.event', 'tiss.course', 'tiss.group', 'tiss.exam',
-                  'tuwel.event', 'tuwel.course', 'tuwel.group'),
+                  'tiss.event_user', 'tiss.course_user', 'tiss.group_user', 'tiss.exam_user',
+                  'tuwel.event', 'tuwel.course', 'tuwel.group',
+                  'tuwel.event_user', 'tuwel.course_user', 'tuwel.group_user'),
                  mode='SHARE ROW EXCLUSIVE')
 
         if reset_semester:
@@ -536,9 +538,9 @@ class SyncUser(tucal.Sync):
             self._delete_user_group(cur)
             self.job.end(2)
 
+        self.job.exec(3, self.cal.store, False, cur=cur)
         self.job.exec(3, self.tiss.store, False, cur=cur)
         self.job.exec(3, self.tuwel.store, False, cur=cur)
-        self.job.exec(3, self.cal.store, False, cur=cur)
 
         self.job.begin('store plugin calendars')
         for plugin in self.plugins:
