@@ -152,8 +152,7 @@ class SyncCalendar(tucal.Sync):
                        FROM tuwel.event e
                        WHERE e.event_id = eu.event_id)""", (user_id,))
 
-            for evt in cal.events:
-                tucal.db.tuwel.upsert_ical_event(evt, user_id)
+            tucal.db.tuwel.upsert_ical_events(cal.events, user_id)
 
         self.job.end(1)
 

@@ -11,7 +11,6 @@ import tucal
 DB_CONN: Optional[Connection] = None
 DB_TZ = 'Europe/Vienna'
 
-VALUES = re.compile(r'VALUES\s+(\((\s*%(\(.*?\))?s\s*,?\s*)*\))')
 _VALS = Union[List[Any], Tuple, Dict[str, Any]]
 
 
@@ -39,10 +38,20 @@ class Cursor:
 
     def execute_values(self, sql: str, data: List[_VALS], template: str = None):
         if template is None:
-            vals = VALUES.findall(sql)
-            if len(vals) > 0:
-                sql = VALUES.sub('VALUES %s', sql)
-                template = vals[0][0]
+            pos_start = sql.find('VALUES')
+            if pos_start != -1:
+                pos_end = pos_start
+                i, mx = 0, 0
+                while (i != 0 or mx == 0) and pos_end < len(sql):
+                    c = sql[pos_end]
+                    if c == '(':
+                        i += 1
+                        mx += 1
+                    elif c == ')':
+                        i -= 1
+                    pos_end += 1
+                template = sql[pos_start + 6:pos_end]
+                sql = sql[:pos_start] + 'VALUES %s' + sql[pos_end:]
         return psycopg2.extras.execute_values(self.cursor, sql, data, template=template)
 
     def fetch_one(self) -> Tuple:

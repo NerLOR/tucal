@@ -108,7 +108,8 @@ def upsert_ical_event(evt: ical.Event, room_code: str = None, mnr: int = None) -
     if mnr is not None:
         cur.execute("""
             INSERT INTO tiss.event_user (event_nr, mnr)
-            VALUES (%(nr)s, %(mnr)s) ON CONFLICT DO NOTHING""", data)
+            VALUES (%(nr)s, %(mnr)s)
+            ON CONFLICT DO NOTHING""", data)
 
     cur.close()
     return data['nr']
@@ -153,9 +154,9 @@ def upsert_event(evt: Dict[str, Any], access_time: datetime.datetime, room_code:
     else:
         cur.execute("""
             INSERT INTO tiss.event (type, room_code, start_ts, end_ts, access_ts, name, description,
-                livestream, online_only, course_nr) 
+                                    livestream, online_only, course_nr)
             VALUES (%(type)s, %(room)s, %(start)s, %(end)s, %(access)s, %(name)s, NULL, %(live)s, %(online)s,
-                %(course)s)
+                    %(course)s)
             RETURNING event_nr""", data)
         events = cur.fetch_all()
         data['nr'] = events[0][0]
@@ -163,7 +164,8 @@ def upsert_event(evt: Dict[str, Any], access_time: datetime.datetime, room_code:
     if mnr is not None:
         cur.execute("""
             INSERT INTO tiss.event_user (event_nr, mnr) 
-            VALUES (%(nr)s, %(mnr)s) ON CONFLICT DO NOTHING""", data)
+            VALUES (%(nr)s, %(mnr)s)
+            ON CONFLICT DO NOTHING""", data)
 
     cur.close()
     return data['nr']
@@ -203,8 +205,8 @@ def upsert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], cou
 
     if len(rows_update) > 0:
         cur.execute_values("""
-            UPDATE tiss.event e SET group_name = d.group_name, location = d.location, description = d.description,
-                                    access_ts = d.acc
+            UPDATE tiss.event e
+            SET group_name = d.group_name, location = d.location, description = d.description, access_ts = d.acc
             FROM (VALUES (%(nr)s, %(group_name)s, %(loc)s, %(desc)s, %(acc)s)) AS
                 d (event_nr, group_name, location, description, acc)
             WHERE e.event_nr = d.event_nr""", rows_update)
@@ -213,9 +215,9 @@ def upsert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], cou
     if len(rows_insert) > 0:
         cur.execute_values("""
             INSERT INTO tiss.event (type, course_nr, semester, room_code, group_name, start_ts, end_ts, access_ts, name,
-                description, location)
+                                    description, location)
             VALUES (%(type)s, %(cnr)s, %(sem)s, %(room)s, %(group_name)s, %(start)s, %(end)s, %(acc)s, %(name)s,
-                %(desc)s, %(loc)s)
+                    %(desc)s, %(loc)s)
             RETURNING event_nr""", rows_insert)
         inserted = cur.fetch_all()
     evt_nrs = inserted + [evt['nr'] for evt in rows_update]
@@ -261,28 +263,28 @@ def upsert_course_events(events: List[Dict[str, Any]], course: Course, access_ti
 
     if len(rows_update) > 0:
         cur.execute_values("""
-                UPDATE tiss.event e SET location = d.location, description = d.description,
-                                        access_ts = d.acc
-                FROM (VALUES (%(nr)s, %(loc)s, %(desc)s, %(acc)s)) AS
-                    d (event_nr, location, description, acc)
-                WHERE e.event_nr = d.event_nr""", rows_update)
+            UPDATE tiss.event e
+            SET location = d.location, description = d.description, access_ts = d.acc
+            FROM (VALUES (%(nr)s, %(loc)s, %(desc)s, %(acc)s)) AS
+                d (event_nr, location, description, acc)
+            WHERE e.event_nr = d.event_nr""", rows_update)
 
     inserted = []
     if len(rows_insert) > 0:
         cur.execute_values("""
-                INSERT INTO tiss.event (type, course_nr, semester, room_code, start_ts, end_ts, access_ts, name,
-                    description, location)
-                VALUES (%(type)s, %(cnr)s, %(sem)s, %(room)s, %(start)s, %(end)s, %(acc)s, %(name)s,
-                    %(desc)s, %(loc)s)
-                RETURNING event_nr""", rows_insert)
+            INSERT INTO tiss.event (type, course_nr, semester, room_code, start_ts, end_ts, access_ts, name,
+                description, location)
+            VALUES (%(type)s, %(cnr)s, %(sem)s, %(room)s, %(start)s, %(end)s, %(acc)s, %(name)s,
+                %(desc)s, %(loc)s)
+            RETURNING event_nr""", rows_insert)
         inserted = cur.fetch_all()
     evt_nrs = inserted + [evt['nr'] for evt in rows_update]
 
     if mnr and len(evt_nrs) > 0:
         cur.execute_values("""
-                INSERT INTO tiss.event_user (event_nr, mnr)
-                VALUES (%s, %s)
-                ON CONFLICT DO NOTHING""", [(evt, mnr) for evt in evt_nrs])
+            INSERT INTO tiss.event_user (event_nr, mnr)
+            VALUES (%s, %s)
+            ON CONFLICT DO NOTHING""", [(evt, mnr) for evt in evt_nrs])
 
     cur.close()
     return None

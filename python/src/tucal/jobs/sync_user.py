@@ -357,8 +357,7 @@ class SyncUserTuwel(tucal.Sync):
             DELETE FROM tuwel.event_user
             WHERE user_id = (SELECT user_id FROM tuwel.user WHERE mnr = %s) AND
                   event_id = ANY(SELECT event_id FROM tuwel.event WHERE start_ts >= now())""", (self.mnr_int,))
-        for evt in self.events:
-            tucal.db.tuwel.upsert_event(evt, self.access_time, self.user_id)
+        tucal.db.tuwel.upsert_events(self.events, self.access_time, self.user_id)
 
         self.job.end(1)
 
