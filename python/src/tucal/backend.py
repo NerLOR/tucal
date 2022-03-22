@@ -177,11 +177,12 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         if data['type'] is None:
             data['type'] = 'course'
 
+    # delete redundant data['user'] keys
     data_items = {(k, v) for k, v in data.items() if v.__hash__}
     user_items = {(k, v) for k, v in data['user'].items() if v.__hash__}
     user_keys = {k for k, v in data['user'].items() if v.__hash__}
-    diff = {k for k, v in user_items - data_items}
-    for k in user_keys - diff:
+    diff_keys = {k for k, v in user_items - data_items}
+    for k in user_keys - diff_keys:
         del data['user'][k]
 
     data.update(data['user'])
