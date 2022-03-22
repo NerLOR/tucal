@@ -54,4 +54,4 @@ SELECT job_nr,
        (data ->> 'remaining')::text::decimal(9, 3) AS time_remaining,
        data
 FROM tucal.job
-ORDER BY job_nr;
+ORDER BY job_nr DESC;
