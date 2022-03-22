@@ -45,7 +45,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         'summary': None,
         'desc': None,
         'zoom': None,
-        'lt': None,
+        'lt': False,
         'url': None,
         'type': None,
         'mode': None,
