@@ -7,6 +7,6 @@ if [[ -z "$host"  || -z "$path" ]]; then
 fi
 
 make build-www || exit
-ssh "$host" "cd \"$path\" && rm -rf * && rm -rf .php"
+ssh "$host" "cd \"$path\" && rm -rf .php account api calendar courses friends res *.*"
 scp -rpq dest/www/* "$host:$path"
 scp -rpq dest/www/.php "$host:$path"

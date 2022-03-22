@@ -23,7 +23,7 @@ require "../.php/header.php";
 <?php
 
 $stmt = db_exec("
-        SELECT account_id, mnr, username, f2.nickname, verified
+        SELECT account_id, mnr, username, f2.nickname, verified, avatar_uri
         FROM tucal.friend f1
             JOIN tucal.friend f2 ON (f2.account_nr_1, f2.account_nr_2) = (f1.account_nr_2, f1.account_nr_1)
             JOIN tucal.account a ON a.account_nr = f1.account_nr_1
@@ -46,7 +46,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 <?php
 
 $stmt = db_exec("
-        SELECT account_id, mnr, username, verified
+        SELECT account_id, mnr, username, verified, avatar_uri
         FROM tucal.friend f1
             LEFT JOIN tucal.friend f2 ON (f2.account_nr_1, f2.account_nr_2) = (f1.account_nr_2, f1.account_nr_1)
             JOIN tucal.account a ON a.account_nr = f1.account_nr_1
@@ -69,7 +69,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 <?php
 
 $stmt = db_exec("
-        SELECT account_id, mnr, username, f1.nickname, verified
+        SELECT account_id, mnr, username, f1.nickname, verified, avatar_uri
         FROM tucal.friend f1
             LEFT JOIN tucal.friend f2 ON (f2.account_nr_1, f2.account_nr_2) = (f1.account_nr_2, f1.account_nr_1)
             JOIN tucal.account a ON a.account_nr = f1.account_nr_2

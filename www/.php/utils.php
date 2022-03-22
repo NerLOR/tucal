@@ -116,7 +116,7 @@ function echo_account($row, $uri = null, $editable = false) {
     if ($uri !== null) echo " href=\"$uri\"";
 
     echo '><div>';
-    echo '<img src="/res/avatars/default.png" alt="' . _('Avatar') . '"/>';
+    echo '<img src="' . ($row['avatar_uri'] ?? '/res/avatars/default.png') . '" alt="' . _('Profile picture') . '"/>';
     echo "<div>";
     echo "<span class=\"name\"" . ($editable ? ' contenteditable="true"' : '') . ">" . htmlspecialchars($row['nickname'] ?? $row['username']) . "</span>";
     echo '<div class="sub' . ($row['nickname'] ? ' has-nickname' : '') . '">';

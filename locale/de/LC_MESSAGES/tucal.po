@@ -467,6 +467,30 @@ msgstr "Volle Adresse"
 msgid "Include TUW-Maps link"
 msgstr "TUW-Maps-Link einfügen"
 
+msgid "Profile picture"
+msgstr "Profilbild"
+
+msgid "The uploaded file exceeds the maximum upload size."
+msgstr "Die hochgeladene Datei überschreitet die maximale Größe zum Hochladen."
+
+msgid "The uploaded file has not been fully uploaded."
+msgstr "Die hochgeladene Datei wurde nicht vollständig hochgeladen."
+
+msgid "No file has been uploaded."
+msgstr "Es wurde keine Datei hochgeladen."
+
+msgid "Unable to find a temporary directory."
+msgstr "Es konnte kein temporärer Ordner gefunden werden."
+
+msgid "Unable to write to target directory."
+msgstr "Der Ziel-Ordner konnte nicht beschrieben werden."
+
+msgid "The file upload has been stopped by a PHP extension."
+msgstr "Das Hochladen wurde von einer PHP-Extension gestoppt."
+
+msgid "Unable to convert profile picture."
+msgstr "Konvertieren des Profilbildes nicht möglich."
+
 
 msgctxt "http"
 msgid "Bad Request"

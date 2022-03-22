@@ -2,7 +2,6 @@
 TODOs
 =====
 
-* User avatar
 * Calendar export name
 * Calendar export: categories
 * Contact

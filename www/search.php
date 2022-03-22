@@ -40,7 +40,7 @@ if (strlen($query) >= 3) {
 <?php
 
         $stmt = db_exec("
-                SELECT account_id, mnr, username, verified, account_nr_1 IS NOT NULL AS friend_request
+                SELECT account_id, mnr, username, verified, account_nr_1 IS NOT NULL AS friend_request, avatar_uri
                 FROM tucal.v_account a
                     LEFT JOIN tucal.friend f ON (f.account_nr_1, f.account_nr_2) = (:nr, a.account_nr)
                 WHERE mnr::text = :q OR

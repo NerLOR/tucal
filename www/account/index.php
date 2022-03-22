@@ -6,6 +6,20 @@ global $LOCALE;
 global $LOCALES;
 global $STATUS;
 
+$FILE_ERRORS = [
+    UPLOAD_ERR_INI_SIZE => "The uploaded file exceeds the maximum upload size.",
+    UPLOAD_ERR_FORM_SIZE => "The uploaded file exceeds the maximum upload size.",
+    UPLOAD_ERR_PARTIAL => "The uploaded file has not been fully uploaded.",
+    UPLOAD_ERR_NO_FILE => "No file has been uploaded.",
+    UPLOAD_ERR_NO_TMP_DIR => "Unable to find a temporary directory.",
+    UPLOAD_ERR_CANT_WRITE => "Unable to write to target directory.",
+    UPLOAD_ERR_EXTENSION => "The file upload has been stopped by a PHP extension.",
+];
+
+$AVATAR_SIZE = '256x256';
+$AVATAR_URI = '/upload/avatar';
+$AVATAR_PATH = "$_SERVER[DOCUMENT_ROOT]$AVATAR_URI";
+
 require "../.php/session.php";
 force_user_login(null, false);
 
@@ -73,6 +87,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if (isset($_FILES['avatar'])) {
+        $avatar = $_FILES['avatar'];
+        if ($avatar['error'] !== UPLOAD_ERR_OK) {
+            header("Status: 500");
+            $errorMsg = _($FILE_ERRORS[$avatar['error']]);
+            goto doc;
+        }
+
+        $parts = explode('.', $avatar['name']);
+        $ext = $parts[sizeof($parts) - 1];
+        if (strlen($ext) > 4 || strlen($ext) <= 1 || sizeof($parts) <= 1 || !ctype_alpha($ext)) {
+            $ext = null;
+        }
+        $file = "$AVATAR_PATH/.tmp.$USER[id]" . ($ext !== null ? ".$ext" : "");
+
+        if (!move_uploaded_file($avatar['tmp_name'], $file)) {
+            header("Status: 500");
+            goto doc;
+        }
+
+        if ((isset($avatar['type']) && $avatar['type'] === 'image/jpeg') || (!isset($avatar['type']) && ($ext === 'jpg' || $ext === 'jpeg'))) {
+            $outType = 'jpg';
+        } else {
+            $outType = 'png';
+        }
+        $fileOut = "$AVATAR_PATH/.$USER[id].$outType";
+        $fileFin = "$AVATAR_PATH/$USER[id].$outType";
+        $uri = "$AVATAR_URI/$USER[id].$outType?v=" . gmdate("Ymd-His");
+        $clean = "rm -rf $AVATAR_PATH/.tmp.$USER[id] $AVATAR_PATH/.tmp.$USER[id].* $AVATAR_PATH/.$USER[id].*";
+
+        $res = exec("/bin/convert '$file' -resize $AVATAR_SIZE^ -gravity Center -extent $AVATAR_SIZE '$fileOut'");
+        if ($res === false) {
+            exec($clean);
+            header("Status: 500");
+            $errorMsg = _("Unable to convert profile picture.");
+            goto doc;
+        }
+
+        exec("rm -rf $AVATAR_PATH/$USER[id].*");
+        exec("mv '$fileOut' '$fileFin'");
+        exec($clean);
+        $USER['avatar_uri'] = $uri;
+    }
+
     redirect("/account/");
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     $STATUS = 405;
@@ -96,7 +154,7 @@ require "../.php/header.php";
 <main class="w3">
     <section>
         <h1><?php echo _('Settings');?></h1>
-        <form name="account-settings" action="/account/" method="post" class="table">
+        <form name="account-settings" action="/account/" method="post" class="table" enctype="multipart/form-data">
             <div>
                 <label for="username"><?php echo _('Username');?></label>
                 <input name="username" id="username" type="text" value="<?php echo htmlentities($USER['username'])?>" pattern="\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>
@@ -134,6 +192,10 @@ require "../.php/header.php";
                     <option value="dark"<?php echo $theme === 'dark' ? " selected" : "";?>><?php echo _('Dark theme');?></option>
                     <option value="black"<?php echo $theme === 'black' ? " selected" : "";?>><?php echo _('Black theme');?></option>
                 </select>
+            </div>
+            <div>
+                <label for="avatar"><?php echo _('Profile picture');?></label>
+                <input type="file" name="avatar" id="avatar" accept="image/*"/>
             </div>
             <button type="submit"><?php echo _('Save');?></button>
         </form>

@@ -105,7 +105,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
 <?php if (isset($USER)) { ?>
             <div id="user-menu">
                 <div>
-                    <img src="/res/avatars/default.png" alt="<?php echo _('Avatar');?>"/>
+                    <img src="<?php echo $USER['avatar_uri'] ?? "/res/avatars/default.png";?>" alt="<?php echo _('Profile picture');?>"/>
                     <a><?php echo $USER['username'];?></a>
                     <span class="arrow">▾</span>
                 </div>

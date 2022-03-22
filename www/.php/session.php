@@ -20,11 +20,13 @@ function tucal_exit() {
             UPDATE tucal.account
             SET username = :name,
                 verified = :verified,
+                avatar_uri = :avatar,
                 options = :opts
             WHERE account_nr = :nr", [
                 'nr' => $USER['nr'],
                 'name' => $USER['username'],
                 'verified' => $USER['verified'] ? 1 : 0,
+                'avatar' => $USER['avatar_uri'],
                 'opts' => json_encode($USER['opts']),
         ]);
     }
