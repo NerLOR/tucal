@@ -47,7 +47,9 @@ class Session:
                 'AuthState': auth_state,
             })
 
-            if r.status_code != 200 or '<h3>Benutzername oder Passwort falsch.</h3>' in r.text:
+            if r.status_code != 200:
+                raise tucal.LoginError('unable to log in')
+            elif '<h3>Benutzername oder Passwort falsch.</h3>' in r.text:
                 raise tucal.InvalidCredentialsError('invalid credentials')
 
         if '<title>Zustimmung zur Weitergabe persönlicher Daten</title>' in r.text:
