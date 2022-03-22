@@ -75,6 +75,12 @@ class Handler(StreamRequestHandler):
             if len(job) > 0:
                 self.wfile.write(b'error: job sync-users has no additional arguments\n')
                 return
+        elif job_name == 'sync-plugins':
+            # sync-plugins
+            cmd += ['tucal.jobs.sync_plugins']
+            if len(job) > 0:
+                self.wfile.write(b'error:job sync-plugins has no additional arguments\n ')
+                return
         else:
             self.wfile.write(b'error: unknown job type\n')
             return
