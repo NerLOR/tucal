@@ -321,7 +321,7 @@ def sync_users():
 def sync_plugins():
     global LAST_PLUGIN_SYNC
     now = tucal.now()
-    if LAST_PLUGIN_SYNC is None or (now - LAST_PLUGIN_SYNC).seconds > PLUGIN_SYNC_INTERVAL:
+    if LAST_PLUGIN_SYNC is None or (now - LAST_PLUGIN_SYNC).total_seconds() > PLUGIN_SYNC_INTERVAL:
         print('Syncing plugins...', flush=True)
         try:
             job_nr, job_id, pid = schedule_job(['sync-plugins'])
