@@ -1,5 +1,5 @@
 
-from typing import Dict, Any
+from typing import Dict, Any, Optional, Iterable, Tuple
 import time
 import json
 import datetime
@@ -32,6 +32,9 @@ SMTP_USER = config['email']['smtp_user']
 SMTP_PASSWORD = config['email']['smtp_password']
 EMAIL_FROM = config['email']['from']
 EMAIL_HOSTNAME = config['tucal']['hostname']
+
+LAST_PLUGIN_SYNC: Optional[datetime.datetime] = None
+PLUGIN_SYNC_INTERVAL: int = 3600
 
 
 def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_nr: int, group_nr: int, group_name: str,
@@ -276,6 +279,23 @@ def clear_invalid_tokens():
     cur.close()
 
 
+def schedule_job(job_args: Iterable[str]) -> Tuple[int, str, int]:
+    client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    try:
+        client.connect('/var/tucal/scheduler.sock')
+    except FileNotFoundError:
+        raise RuntimeError('unable to contact scheduler')
+    client.send((' '.join(job_args) + '\n').encode('utf8'))
+    res = client.recv(64).decode('utf8')
+    client.close()
+    del client
+    if res.startswith('error:'):
+        raise RuntimeError(res[6:].strip())
+    res = res.strip().split(' ')
+    # job_nr, job_id, PID
+    return int(res[0]), res[1], int(res[2])
+
+
 def sync_users():
     cur = tucal.db.cursor()
     cur.execute("""
@@ -291,29 +311,43 @@ def sync_users():
     rows = cur.fetch_all()
     for mnr, in rows:
         print(f'Syncing user {mnr}...', flush=True)
-        client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        client.connect('/var/tucal/scheduler.sock')
-        client.send(f'sync-user keep {mnr}\n'.encode('utf8'))
-        res = client.recv(64).decode('utf8')
-        client.close()
-        del client
-        print(f'Informed scheduler: {res}', flush=True)
+        try:
+            job_nr, job_id, pid = schedule_job(['sync-user', 'keep', str(mnr)])
+            print(f'Informed scheduler: {job_nr} {job_id} (PID {pid})', flush=True)
+        except RuntimeError as e:
+            print(f'Error: {e}', flush=True)
+
+
+def sync_plugins():
+    global LAST_PLUGIN_SYNC
+    now = tucal.now()
+    if LAST_PLUGIN_SYNC is None or (now - LAST_PLUGIN_SYNC).seconds > PLUGIN_SYNC_INTERVAL:
+        print('Syncing plugins...', flush=True)
+        try:
+            job_nr, job_id, pid = schedule_job(['sync-plugins'])
+            print(f'Informed scheduler: {job_nr} {job_id} (PID {pid})', flush=True)
+            LAST_PLUGIN_SYNC = now
+        except RuntimeError as e:
+            print(f'Error: {e}', flush=True)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-u', '--update', required=False, action='store_true')
+    mx = parser.add_mutually_exclusive_group()
+    mx.add_argument('-u', '--update', required=False, action='store_true')
+    mx.add_argument('-s', '--skip-updates', required=False, action='store_true')
     args = parser.parse_args()
 
-    print('Updating all events...', flush=True)
-    update_events(all_events=True)
-    print('Successfully updated all events', flush=True)
-
-    if args.update:
-        exit(0)
+    if not args.skip_updates:
+        print('Updating all events...', flush=True)
+        update_events(all_events=True)
+        print('Successfully updated all events', flush=True)
+        if args.update:
+            exit(0)
 
     print('Starting main loop', flush=True)
     while True:
+        sync_plugins()
         send_emails()
         merge_external_events()
         update_events()
