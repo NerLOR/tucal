@@ -6,6 +6,7 @@ TODOs
 * Calendar export: categories
 * Contact
 * Impressum
+* Start page: Feature list
 * Admin panel
   * Jobs
   * Accounts
