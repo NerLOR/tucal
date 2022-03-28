@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (isset($_FILES['avatar'])) {
+    if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
         $avatar = $_FILES['avatar'];
         if ($avatar['error'] !== UPLOAD_ERR_OK) {
             header("Status: 500");
