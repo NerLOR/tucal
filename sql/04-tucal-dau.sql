@@ -184,10 +184,9 @@ ORDER BY date DESC, hour_utc DESC;
 
 CREATE OR REPLACE VIEW tucal.v_dau_daily AS
 SELECT date,
-       max(users_v_hour) AS users_day,
+       max(users_v_day)  AS users_day,
        max(users_v_week) AS users_week,
        max(users_v)      AS users
 FROM TUCAL.dau
-WHERE date < current_date
 GROUP BY date
 ORDER BY date;

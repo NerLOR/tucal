@@ -7,15 +7,17 @@ from matplotlib.colors import hsv_to_rgb
 
 import tucal.db
 
-AVG_VAL = 3
+AVG_VAL = 10
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.parse_args()
+    parser.add_argument('-a', '--all', action='store_true', default=False,
+                        help='Also use data from the current day')
+    args = parser.parse_args()
 
     cur = tucal.db.cursor()
-    cur.execute("SELECT * FROM tucal.v_dau_daily")
+    cur.execute("SELECT * FROM tucal.v_dau_daily" + (" WHERE date < current_date" if not args.all else ''))
     data = cur.fetch_all()
     dau = []
     for i in range(len(data)):
@@ -46,9 +48,9 @@ if __name__ == '__main__':
     plt.fill_between(dates, d3, color=c1)
     l3, = plt.plot(dates, d3, color=c1, label='Daily active users')
     plt.fill_between(dates, d3, d4, color=c2_l)
-    l4, = plt.plot(dates, d4, color=c2, linewidth=2, label='Daily active users (7-day average)')
+    l4, = plt.plot(dates, d4, color=c2, linewidth=2, label=f'Daily active users ({AVG_VAL * 2 + 1}-day average)')
 
-    plt.legend(handles=[l1, l2, l3, l4])
+    plt.legend(handles=[l1, l2, l3, l4], loc='upper left')
     fig.set_dpi(150)
     fig.tight_layout()
     matplotlib.pyplot.show()
