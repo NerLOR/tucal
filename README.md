@@ -3,7 +3,7 @@
 
 ## Setup own instance
 
-1. Copy `tucal.default.ini` to `tucal.ini` and update values.
+1. Copy `tucal.default.ini` to `tucal.ini`, `impressum.default.php` to `impressum.php` and update values.
 
 2. To initialize database run
    ```shell
