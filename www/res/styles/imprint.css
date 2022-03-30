@@ -1,0 +1,13 @@
+
+section.imprint {
+
+}
+
+section.imprint p.legal {
+    hyphens: auto;
+    -moz-hyphens: auto;
+}
+
+section.imprint p.info {
+    padding-left: 2em;
+}

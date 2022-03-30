@@ -5,7 +5,6 @@ TODOs
 * Calendar export name
 * Calendar export: categories
 * Contact
-* Impressum
 * Start page: Feature list
 * Admin panel
   * Jobs
@@ -15,6 +14,7 @@ TODOs
   * Login as other user (`$_SESSION`, ...)
 * `planned_ts`
 * Manually join groups (HTU events, ...)
+* Manage updates in TISS groups
 * Exams
   * Day-events
   * Slots

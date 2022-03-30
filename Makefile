@@ -14,7 +14,7 @@ build-www:
 	done
 	# copy php to dest
 	cp -pr www dest/www
-	cp -pr tucal.ini dest/www/.php/
+	cp -pr tucal.ini impressum.php dest/www/.php/
 	# download Europe/Vienna timezone
 	wget "http://tzurl.org/zoneinfo/Europe/Vienna" -O "vienna.tmp.txt"
 	tail -n +4 "vienna.tmp.txt" | head -n -1 > "dest/www/calendar/export/europe-vienna.txt"
