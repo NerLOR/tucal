@@ -15,5 +15,8 @@ TODOs
   * Login as other user (`$_SESSION`, ...)
 * `planned_ts`
 * Manually join groups (HTU events, ...)
+* Exams
+  * Day-events
+  * Slots
 * Update locale (de, bar, en)
 * Hide/finish tasks/deadlines
