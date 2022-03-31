@@ -110,7 +110,7 @@ $stmt = db_exec("
         SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.create_ts, e.update_ts, e.update_seq, e.room_nr, e.data,
                d.data AS user_data, l.course_nr, l.semester, l.name, g.group_id
         FROM tucal.event e
-            JOIN tucal.external_event x ON x.event_nr = e.event_nr
+            LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
             JOIN tucal.group_member m ON m.group_nr = e.group_nr
             JOIN tucal.account a ON a.account_nr = m.account_nr
             LEFT JOIN tucal.group g ON g.group_nr = e.group_nr

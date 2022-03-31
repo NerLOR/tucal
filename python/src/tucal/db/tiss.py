@@ -206,9 +206,10 @@ def upsert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], cou
     if len(rows_update) > 0:
         cur.execute_values("""
             UPDATE tiss.event e
-            SET group_name = d.group_name, location = d.location, description = d.description, access_ts = d.acc
-            FROM (VALUES (%(nr)s, %(group_name)s, %(loc)s, %(desc)s, %(acc)s)) AS
-                d (event_nr, group_name, location, description, acc)
+            SET group_name = d.group_name, location = d.location, description = d.description, access_ts = d.acc,
+                semester = d.sem, room_code = d.room
+            FROM (VALUES (%(nr)s, %(group_name)s, %(loc)s, %(desc)s, %(acc)s, %(sem)s, %(room)s)) AS
+                d (event_nr, group_name, location, description, acc, sem, room)
             WHERE e.event_nr = d.event_nr""", rows_update)
 
     inserted = []

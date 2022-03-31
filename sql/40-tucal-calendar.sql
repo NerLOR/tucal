@@ -123,7 +123,7 @@ CREATE OR REPLACE FUNCTION tucal.update_external_event()
 $$
 BEGIN
     IF NEW.event_nr IS NULL THEN
-    ELSEIF OLD IS NULL OR OLD.event_nr IS NULL OR NEW.event_nr != OLD.event_nr THEN
+    ELSEIF OLD IS NULL OR OLD.event_nr IS NULL OR NEW.event_nr IS DISTINCT FROM OLD.event_nr THEN
         UPDATE tucal.event
         SET start_ts   = (CASE WHEN NEW.source != 'tuwel' THEN NEW.start_ts ELSE start_ts END),
             end_ts     = (CASE WHEN NEW.source != 'tuwel' THEN NEW.end_ts ELSE end_ts END),
@@ -137,12 +137,12 @@ BEGIN
         WHERE event_nr = NEW.event_nr;
     ELSE
         UPDATE tucal.event
-        SET start_ts   = (CASE WHEN OLD.start_ts != NEW.start_ts THEN NEW.start_ts ELSE start_ts END),
-            end_ts     = (CASE WHEN OLD.end_ts != NEW.end_ts THEN NEW.end_ts ELSE end_ts END),
-            room_nr    = (CASE WHEN OLD.room_nr != NEW.room_nr THEN NEW.room_nr ELSE room_Nr END),
-            group_nr   = (CASE WHEN OLD.group_nr != NEW.group_nr THEN NEW.group_nr ELSE group_nr END),
-            deleted    = (CASE WHEN OLD.deleted != NEW.deleted THEN NEW.deleted ELSE deleted END),
-            global     = (CASE WHEN OLD.global != NEW.global THEN NEW.global ELSE global END),
+        SET start_ts   = (CASE WHEN OLD.start_ts IS DISTINCT FROM NEW.start_ts THEN NEW.start_ts ELSE start_ts END),
+            end_ts     = (CASE WHEN OLD.end_ts IS DISTINCT FROM NEW.end_ts THEN NEW.end_ts ELSE end_ts END),
+            room_nr    = (CASE WHEN OLD.room_nr IS DISTINCT FROM NEW.room_nr THEN NEW.room_nr ELSE room_Nr END),
+            group_nr   = (CASE WHEN OLD.group_nr IS DISTINCT FROM NEW.group_nr THEN NEW.group_nr ELSE group_nr END),
+            deleted    = (CASE WHEN OLD.deleted IS DISTINCT FROM NEW.deleted THEN NEW.deleted ELSE deleted END),
+            global     = (CASE WHEN OLD.global IS DISTINCT FROM NEW.global THEN NEW.global ELSE global END),
             updated    = FALSE,
             update_ts  = now(),
             update_seq = update_seq + 1

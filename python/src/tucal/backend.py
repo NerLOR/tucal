@@ -209,12 +209,12 @@ def merge_external_events():
     cur = tucal.db.cursor()
     cur.execute("LOCK TABLE tucal.event, tucal.external_event IN SHARE ROW EXCLUSIVE MODE")
     cur.execute("""
-        SELECT source, event_id, start_ts, end_ts, group_nr
+        SELECT source, event_id, start_ts, end_ts, group_nr, room_nr
         FROM tucal.external_event
         WHERE event_nr IS NULL""")
     rows = cur.fetch_all()
 
-    for source, evt_id, start_ts, end_ts, group_nr in rows:
+    for source, evt_id, start_ts, end_ts, group_nr, room_nr in rows:
         # FIXME better equality check
 
         event_rows = None
@@ -225,9 +225,11 @@ def merge_external_events():
                     LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
                 WHERE e.group_nr = %s AND
                       e.end_ts > e.start_ts AND
+                      (e.room_nr IS NULL OR %s IS NULL OR coalesce(e.room_nr, -1) = coalesce(%s, -1)) AND
                       (%s - e.start_ts <= INTERVAL '30' MINUTE AND e.end_ts - %s <= INTERVAL '60' MINUTE)
                 GROUP BY e.event_nr
-                HAVING %s != ALL(array_agg(x.source))""", (group_nr, start_ts, end_ts, source))
+                HAVING %s != ALL(array_agg(coalesce(x.source, '<NULL>')))""",
+                        (group_nr, room_nr, room_nr, start_ts, end_ts, source))
             event_rows = cur.fetch_all()
 
         if event_rows is None or len(event_rows) == 0:

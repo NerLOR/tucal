@@ -70,7 +70,7 @@ function calendar() {
             SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.data, d.data AS user_data,
                    l.course_nr, l.semester, l.name, g.group_id, g.group_name, e.deleted
             FROM tucal.event e
-                JOIN tucal.external_event x ON x.event_nr = e.event_nr
+                LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
                 JOIN tucal.group_member m ON m.group_nr = e.group_nr
                 JOIN tucal.account a ON a.account_nr = m.account_nr
                 LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
@@ -159,7 +159,7 @@ function update() {
     try {
         db_exec("LOCK TABLE tucal.event IN SHARE ROW EXCLUSIVE MODE");
 
-        $stmt = db_exec("SELECT event_nr, group_nr, start_ts, end_ts FROM tucal.event WHERE event_id = :id", [
+        $stmt = db_exec("SELECT event_nr, group_nr, room_nr, start_ts, end_ts FROM tucal.event WHERE event_id = :id", [
             'id' => $evtId,
         ]);
         $rows = $stmt->fetchAll();
@@ -170,6 +170,7 @@ function update() {
 
         $row = $rows[0];
         $eventNr = $row['event_nr'];
+        $room = $row['room_nr'];
         $start = new DateTime($row['start_ts']);
         $end = new DateTime($row['end_ts']);
         $group = $row['group_nr'];
@@ -191,6 +192,7 @@ function update() {
                 FROM tucal.event
                 WHERE event_nr = :enr OR (
                       group_nr = :group AND
+                      room_nr IS NOT DISTINCT FROM :room AND
                       start_ts::date = end_ts::date AND
                       start_ts::time = :stime AND
                       EXTRACT(DOW FROM start_ts) = :dow AND
@@ -198,6 +200,7 @@ function update() {
                     )", [
             'enr' => $eventNr,
             'group' => $group,
+            'room' => $room,
             'start' => $row['start_ts'],
             'stime' => $start->format('H:i:s'),
             'dow' => $start->format('w'),
