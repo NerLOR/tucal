@@ -20,3 +20,5 @@ TODOs
   * Slots
 * Update locale (de, bar, en)
 * Hide/finish tasks/deadlines
+* Delete SSO credentials
+* Delete account
