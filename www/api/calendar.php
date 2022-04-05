@@ -37,8 +37,8 @@ function error(int $status, string $message = null, bool $db_error = false) {
 
 function calendar() {
     global $USER;
-    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-        header("Allow: GET");
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
+        header("Allow: HEAD, GET");
         error(405);
     }
 

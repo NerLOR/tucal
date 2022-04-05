@@ -68,9 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $res = send_email($email, '[TUcal] ' . _('Reset password'), $msg);
 
     redirect("/account/password/reset?status=" . ($res ? "sent" : "sending"));
-} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
     $STATUS = 405;
-    header("Allow: GET, POST");
+    header("Allow: HEAD, GET, POST");
 }
 
 doc:

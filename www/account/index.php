@@ -132,9 +132,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     redirect("/account/");
-} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
     $STATUS = 405;
-    header("Allow: GET, POST");
+    header("Allow: HEAD, GET, POST");
 }
 
 doc:

@@ -28,9 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $res = send_email($USER['email_address_1'], '[TUcal] ' . _('Verify account'), $msg);
 
     redirect("/account/verify?status=" . ($res ? "sent" : "sending"));
-} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
     $STATUS = 405;
-    header("Allow: GET, POST");
+    header("Allow: HEAD, GET, POST");
 }
 
 $token = $_GET['token'] ?? null;
