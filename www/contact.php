@@ -3,6 +3,7 @@
 global $TITLE;
 global $STATUS;
 global $CONFIG;
+global $USER;
 
 require ".php/session.php";
 
@@ -56,7 +57,7 @@ if ($status === 'sent' || $status == 'sending') { ?>
             </div>
             <div>
                 <label for="contact-email"><?php echo _('Email address'); ?></label>
-                <input type="email" name="email" id="contact-email" placeholder="<?php echo _('(optional)'); ?>"/>
+                <input type="email" name="email" id="contact-email" value="<?php echo (isset($USER) ? $USER['email_address_1'] : ''); ?>" placeholder="<?php echo _('(optional)'); ?>"/>
             </div>
             <div>
                 <label for="contact-subject"><?php echo _('Subject'); ?></label>

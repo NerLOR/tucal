@@ -4,7 +4,6 @@ TODOs
 
 * Calendar export name
 * Calendar export: categories
-* Contact
 * Start page: Feature list
 * Admin panel
   * Jobs
