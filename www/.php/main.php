@@ -10,8 +10,16 @@ if ((isset($STATUS) && $STATUS >= 400 && $STATUS < 600) || ((!isset($USE_PATH_IN
     require "footer.php";
 }
 
-if (isset($STATUS)) {
+$sent = false;
+foreach (headers_list() as $h) {
+    if (strtolower(substr($h, 0, 7)) === 'status:') {
+        $STATUS = (int) substr($h, 7);
+        $sent = true;
+        break;
+    }
+}
+
+if (!$sent) {
+    $STATUS = $STATUS ?? 200;
     header("Status: $STATUS");
-} else {
-    $STATUS = 200;
 }

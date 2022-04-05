@@ -126,6 +126,7 @@ CREATE TABLE tucal.message
 
     reply_to_address TEXT CHECK (reply_to_address ~ '[^@]+@([a-z0-9_-]+\.)+[a-z]{2,}'),
     to_address       TEXT   NOT NULL CHECK (to_address ~ '[^@]+@([a-z0-9_-]+\.)+[a-z]{2,}'),
+    from_name        TEXT,
     subject          TEXT   NOT NULL,
     message          TEXT   NOT NULL,
 

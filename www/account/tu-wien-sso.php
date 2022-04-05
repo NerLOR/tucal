@@ -131,7 +131,7 @@ if ($jobId === null) { ?>
             </div>
             <div class="container red">
                 <input name="sso-store" id="sso-store" type="checkbox" value="accept" required/>
-                <label for="sso-store"><?php echo _('SSO password storage warning');?></label>
+                <label for="sso-store"><?php echo _('SSO password storage warning (description)');?></label>
                 <label for="sso-store"></label>
             </div>
             <button type="submit" name="mode" value="store"><?php echo _('Automatic account synchronization');?></button>

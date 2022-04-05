@@ -250,7 +250,7 @@ def merge_external_events():
 def send_emails():
     cur = tucal.db.cursor()
     cur.execute("""
-        SELECT message_nr, message_id, to_address, subject, message, reply_to_address, submit_ts
+        SELECT message_nr, message_id, to_address, subject, message, reply_to_address, from_name, submit_ts
         FROM tucal.message
         WHERE send_ts IS NULL""")
     rows = cur.fetch_all()
@@ -259,9 +259,9 @@ def send_emails():
         return
 
     msgs = []
-    for msg_nr, msg_id, to, subj, content, reply_to, submit in rows:
+    for msg_nr, msg_id, to, subj, content, reply_to, from_name, submit in rows:
         msg = MIMEText(content, 'plain', 'UTF-8')
-        msg['From'] = f'TUcal <{EMAIL_FROM}>'
+        msg['From'] = f'{from_name or "TUcal"} <{EMAIL_FROM}>'
         msg['Date'] = submit.strftime('%a, %d %b %Y %H:%M:%S %z')
         msg['Message-ID'] = f'{msg_id}@{EMAIL_HOSTNAME}'
         msg['Subject'] = subj

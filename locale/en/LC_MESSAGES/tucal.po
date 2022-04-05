@@ -152,6 +152,12 @@ msgstr "A email has been sent. Check your inbox."
 msgid "Email sending (description)"
 msgstr "A email will be sent in the next minutes. Check your inbox."
 
+msgid "Contact request sent (description)"
+msgstr "Your contact request has successfully been sent to the site owner."
+
+msgid "Contact request sending (description)"
+msgstr "Your contact request will be sent to the site owner in the next minutes."
+
 msgid "Course acronym suggestion (description)"
 msgstr "If you want to suggest any changes to the course acronyms please contact us via "
        "the <a href='%s'>contact form</a> or <a href='mailto:%s'>email</a>. "

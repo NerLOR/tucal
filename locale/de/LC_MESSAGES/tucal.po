@@ -74,6 +74,9 @@ msgstr "Impressum"
 msgid "Contact"
 msgstr "Kontakt"
 
+msgid "Contact request"
+msgstr "Kontaktanfrage"
+
 msgid "Donate"
 msgstr "Spenden"
 
@@ -217,7 +220,7 @@ msgstr "Es gibt auch die Möglichkeit die Konto-Synchronisierung nur einmalig du
        "Hierbei wird das Passwort nicht auf dem TUcal-Server gespeichert. "
        "Es kann nicht garantiert werden, dass der persönliche TUcal-Kalender automatisch aktualisiert wird."
 
-msgid "SSO password storage warning"
+msgid "SSO password storage warning (description)"
 msgstr "Mir ist bewusst, welche Risiken das Speichern meines Passwortes auf einem fremden Server birgt. "
        "Weiters nehme ich zur Kenntnis, dass das Passwort auf dem Server so gespeichert werden muss, dass es im "
        "Endeffekt lesbar bleibt. Daher ist kein „sicheres“ Verschlüsseln des Passworts möglich."
@@ -230,6 +233,12 @@ msgstr "Eine E-Mail wurde versendet. Sieh in deinem Postfach nach."
 
 msgid "Email sending (description)"
 msgstr "Eine E-Mail wird in den nächsten Minuten versendet. Sieh in deinem Postfach nach."
+
+msgid "Contact request sent (description)"
+msgstr "Deine Kontaktanfrage wurde erfolgreich an den Inhaber der Seite versendet."
+
+msgid "Contact request sending (description)"
+msgstr "Deine Kontaktanfrage wird in den nächsten Minuten an den Inhaber der Seite versendet."
 
 msgid "Course acronym suggestion (description)"
 msgstr "Bei Änderungswünschen oder -vorschlägen für die LVA-Abkürzungen bitte via "
@@ -490,6 +499,24 @@ msgstr "Das Hochladen wurde von einer PHP-Extension gestoppt."
 
 msgid "Unable to convert profile picture."
 msgstr "Konvertieren des Profilbildes nicht möglich."
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Subject"
+msgstr "Betreff"
+
+msgid "Message"
+msgstr "Nachricht"
+
+msgid "Submit"
+msgstr "Absenden"
+
+msgid "(optional)"
+msgstr "(optional)"
+
+msgid "(required)"
+msgstr "(benötigt)"
 
 
 msgctxt "http"

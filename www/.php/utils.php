@@ -145,7 +145,7 @@ function echo_job(string $jobId, string $successUrl, string $errorUrl) {
     echo '></div>';
 }
 
-function send_email(string $address, string $subject, string $msg, string $reply_to = null): bool {
+function send_email(string $address, string $subject, string $msg, string $reply_to = null, string $from_name = null): bool {
     global $TUCAL;
 
     $msg .= "\n\n-- \n" .
@@ -154,11 +154,12 @@ function send_email(string $address, string $subject, string $msg, string $reply
         "For more information visit https://$TUCAL[hostname]/";
 
     $stmt = db_exec("
-                INSERT INTO tucal.message (reply_to_address, to_address, subject, message)
-                VALUES (:reply, :to, :subj, :msg)
+                INSERT INTO tucal.message (reply_to_address, to_address, from_name, subject, message)
+                VALUES (:reply, :to, :from, :subj, :msg)
                 RETURNING message_nr", [
         'reply' => $reply_to,
         'to' => $address,
+        'from' => $from_name,
         'subj' => $subject,
         'msg' => $msg,
     ]);
