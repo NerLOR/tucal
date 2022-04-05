@@ -9,12 +9,15 @@ if [[ -z "$dir" || -z "$in" || -z "$out" ]]; then
   exit 1
 fi
 
+msgids=$(grep -ohe "_(['\"].*['\"])" typescript/src/* | sed "s/_([\"']\|[\"'])//g" | sort | uniq)
+
 rm -rf "$tmp"
 first1="t"
 msgctx=""
 msgid=""
 msgstr=""
 for loc in "$dir"/*; do
+  loc="${loc:${#dir}+1}"
   first2="t"
   if [[ -z "$first1" ]]; then echo -ne ",\n" >>"$tmp"; fi
   echo -ne "    \"${loc/_/-}\": {\n" >>"$tmp"
@@ -26,7 +29,7 @@ for loc in "$dir"/*; do
     elif [[ "$line" =~ ^msgstr ]]; then
       msgstr="${line:8:-1}"
     elif [[ -z "$line" ]]; then
-      if [[ -n "$msgid" && -z "$msgctx" ]]; then
+      if [[ -n "$msgid" && -z "$msgctx" && $(echo "$msgids" | grep -c "^${msgid}$") -gt 0 ]]; then
         if [[ -z "$first2" ]]; then echo -ne ",\n" >>"$tmp"; fi
         echo -ne "        \"$msgid\": \"$msgstr\"" >>"$tmp"
         first2=""
