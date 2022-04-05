@@ -157,6 +157,7 @@ while ($row = $stmt->fetch()) {
     $exportEvents = $icalOpts['event_types'] ?? ['course', 'group'];
     $loc = $icalOpts['location'] ?? 'room_abbr';
     $tuwMaps = $icalOpts['tuw_maps'] ?? true;
+    $cat = ($icalOpts['categories'] ?? ['event_type'])[0];
 
 ?>
     <tr>
@@ -188,6 +189,11 @@ while ($row = $stmt->fetch()) {
                         <label><input type="radio" name="location" value="building"<?php echo ($loc === 'building') ? ' checked' : '';?>/> <?php echo _('Building');?></label><br/>
                         <label><input type="radio" name="location" value="full-addr"<?php echo ($loc === 'full_addr') ? ' checked' : '';?>/> <?php echo _('Full address');?></label><br/>
                         <label><input type="checkbox" name="tuw-maps"<?php echo $tuwMaps ? ' checked' : '';?>/> <?php echo _('Include TUW-Maps link');?></label>
+                    </fieldset>
+                    <fieldset>
+                        <legend><?php echo _('Event categories');?></legend>
+                        <label><input type="radio" name="categories" value="event-type"<?php echo ($cat === 'event_type' ? ' checked' : '');?>/> <?php echo _('By event type');?></label><br/>
+                        <label><input type="radio" name="categories" value="course"<?php echo ($cat === 'course' ? ' checked' : '');?>/> <?php echo _('By course');?></label>
                     </fieldset>
                 </div>
                 <button type="submit"><?php echo _('Save');?></button>

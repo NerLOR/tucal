@@ -476,6 +476,15 @@ msgstr "Volle Adresse"
 msgid "Include TUW-Maps link"
 msgstr "TUW-Maps-Link einfügen"
 
+msgid "Event categories"
+msgstr "Terminkategorien"
+
+msgid "By event type"
+msgstr "Nach Termintyp"
+
+msgid "By course"
+msgstr "Nach LVA"
+
 msgid "Profile picture"
 msgstr "Profilbild"
 

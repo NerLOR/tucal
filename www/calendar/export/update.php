@@ -56,6 +56,7 @@ try {
         'todos' => str_replace('-', '_', $_POST['todos'] ?? 'as-todos'),
         'location' => str_replace('-', '_', $_POST['location'] ?? 'room-abbr'),
         'location_tuw_maps' => ($_POST['tuw-maps'] ?? '0') === 'on',
+        'categories' => [str_replace('-', '_', $_POST['categories'] ?? 'event-type')],
     ];
 
     db_exec("

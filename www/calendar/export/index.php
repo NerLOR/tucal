@@ -301,9 +301,16 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             ical_line("LOCATION", [$loc], $altRep);
         }
 
+        $cat = $icalOpts['categories'] ?? ['event_type'];
         $categories = [];
-        if ($courseNrLong !== null) {
-            $categories[] = "$courseNrLong $course[type] $course[name_de] ($row[semester])";
+        if (in_array('event_type', $cat)) {
+            $categories[] = strtoupper($type ?? 'other');
+        }
+
+        if (in_array('course', $cat)) {
+            if ($courseNrLong !== null) {
+                $categories[] = "$courseNrLong $course[type] $course[name_de] ($row[semester])";
+            }
         }
 
         ical_line("CATEGORIES", $categories);
