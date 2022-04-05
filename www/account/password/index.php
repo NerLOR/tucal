@@ -140,42 +140,42 @@ require "../../.php/header.php";
 ?>
 <main class="w1">
     <section>
-        <h1><?php echo ($token === null) ? _('Change Password') : _('Reset Password');?></h1>
+        <h1><?php echo ($token === null) ? _('Change Password') : _('Reset Password'); ?></h1>
 <?php if (!$tokenInvalid) { ?>
 
-        <form name="change-password" action="/account/password/<?php if ($token !== null) echo "?token=" . htmlspecialchars($token);?>" method="post" class="panel">
+        <form name="change-password" action="/account/password/<?php if ($token !== null) echo "?token=" . htmlspecialchars($token); ?>" method="post" class="panel">
 <?php if ($token === null) {?>
 
-            <div class="text<?php echo $errors['pwd'] ? " error" : "";?>">
-                <input type="password" name="current-password" id="current-password" placeholder=" " value="<?php echo htmlspecialchars($_POST['current-password'] ?? '');?>" required/>
-                <label for="current-password"><?php echo _('Current password');?></label>
-                <label for="current-password"><?php if ($errors['pwd']) echo _($errors['pwd']);?></label>
+            <div class="text<?php echo $errors['pwd'] ? " error" : ""; ?>">
+                <input type="password" name="current-password" id="current-password" placeholder=" " value="<?php echo htmlspecialchars($_POST['current-password'] ?? ''); ?>" required/>
+                <label for="current-password"><?php echo _('Current password'); ?></label>
+                <label for="current-password"><?php if ($errors['pwd']) echo _($errors['pwd']); ?></label>
             </div>
 <?php } ?>
 
-            <div class="text<?php echo $errors['pw1'] ? " error" : "";?>">
-                <input type="password" name="new-password" id="new-password" placeholder=" " value="<?php echo htmlspecialchars($_POST['new-password'] ?? '');?>" required/>
-                <label for="new-password"><?php echo _('New password');?></label>
-                <label for="new-password"><?php if ($errors['pw1']) echo _($errors['pw1']);?></label>
+            <div class="text<?php echo $errors['pw1'] ? " error" : ""; ?>">
+                <input type="password" name="new-password" id="new-password" placeholder=" " value="<?php echo htmlspecialchars($_POST['new-password'] ?? ''); ?>" required/>
+                <label for="new-password"><?php echo _('New password'); ?></label>
+                <label for="new-password"><?php if ($errors['pw1']) echo _($errors['pw1']); ?></label>
             </div>
-            <div class="text<?php echo $errors['pw2'] ? " error" : "";?>">
-                <input type="password" name="repeat-new-password" id="repeat-new-password" placeholder=" " value="<?php echo htmlspecialchars($_POST['repeat-new-password'] ?? '');?>" required/>
-                <label for="repeat-new-password"><?php echo _('Repeat new password');?></label>
-                <label for="repeat-new-password"><?php if ($errors['pw2']) echo _($errors['pw2']);?></label>
+            <div class="text<?php echo $errors['pw2'] ? " error" : ""; ?>">
+                <input type="password" name="repeat-new-password" id="repeat-new-password" placeholder=" " value="<?php echo htmlspecialchars($_POST['repeat-new-password'] ?? ''); ?>" required/>
+                <label for="repeat-new-password"><?php echo _('Repeat new password'); ?></label>
+                <label for="repeat-new-password"><?php if ($errors['pw2']) echo _($errors['pw2']); ?></label>
             </div>
-            <button type="submit"><?php echo ($token === null) ? _('Change password') : _('Reset password');?></button>
+            <button type="submit"><?php echo ($token === null) ? _('Change password') : _('Reset password'); ?></button>
         </form>
 <?php if ($errorMsg !== null) { ?>
 
-        <div class="container error"><?php echo $errorMsg;?></div>
+        <div class="container error"><?php echo $errorMsg; ?></div>
 <?php } ?>
 <?php } else { ?>
 
-        <div class="container error"><?php echo _('This link is invalid. Please try again.');?></div>
+        <div class="container error"><?php echo _('This link is invalid. Please try again.'); ?></div>
 <?php } ?>
 
         <p class="center small">
-            <a href="/account/password/reset"><?php echo _('Forgot password');?></a>.
+            <a href="/account/password/reset"><?php echo _('Forgot password'); ?></a>.
         </p>
     </section>
 </main>

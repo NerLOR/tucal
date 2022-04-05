@@ -57,16 +57,16 @@ function echoCourse($course) {
     ?>
     <form method="post" action="/courses/update">
         <div class="ignore-mode">
-            <label><input type="radio" name="ignore" value="never"<?php echo $mode === 'never' ? ' checked': '';?>/> <?php echo _('Never ignored');?></label>
-            <label><input type="radio" name="ignore" value="partly"<?php echo $mode === 'partly' ? ' checked': '';?>/> <?php echo _('Partly ignored');?></label>
-            <label><input type="radio" name="ignore" value="fully"<?php echo $mode === 'fully' ? ' checked': '';?>/> <?php echo _('Fully ignored');?></label>
+            <label><input type="radio" name="ignore" value="never"<?php echo $mode === 'never' ? ' checked': ''; ?>/> <?php echo _('Never ignored'); ?></label>
+            <label><input type="radio" name="ignore" value="partly"<?php echo $mode === 'partly' ? ' checked': ''; ?>/> <?php echo _('Partly ignored'); ?></label>
+            <label><input type="radio" name="ignore" value="fully"<?php echo $mode === 'fully' ? ' checked': ''; ?>/> <?php echo _('Fully ignored'); ?></label>
         </div>
-        <div class="ignore-dates<?php echo $mode === 'partly' ? ' show' : '';?>">
-            <label><span><?php echo _('Ignore until');?></span> <input type="date" name="ignore-until" value="<?php echo $ignUntil;?>"/></label>
-            <label><span><?php echo _('Ignore from');?></span> <input type="date" name="ignore-from" value="<?php echo $ignFrom;?>"/></label>
+        <div class="ignore-dates<?php echo $mode === 'partly' ? ' show' : ''; ?>">
+            <label><span><?php echo _('Ignore until'); ?></span> <input type="date" name="ignore-until" value="<?php echo $ignUntil; ?>"/></label>
+            <label><span><?php echo _('Ignore from'); ?></span> <input type="date" name="ignore-from" value="<?php echo $ignFrom; ?>"/></label>
         </div>
-        <input type="hidden" name="course" value="<?php echo "$course[course_nr]-$course[semester]";?>"/>
-        <button type="submit"><?php echo _('Save');?></button>
+        <input type="hidden" name="course" value="<?php echo "$course[course_nr]-$course[semester]"; ?>"/>
+        <button type="submit"><?php echo _('Save'); ?></button>
     </form>
 <?php
 
@@ -119,12 +119,12 @@ $contact = '/contact?subject=LVA-Abkürzungen';
 ?>
 <main class="w2">
     <section class="course-list">
-        <h1><?php echo _('My Courses');?></h1>
-        <p class="center small narrow"><?php echo sprintf(_('Course acronym suggestion (description)'), $contact, $mailto, $github);?></p>
+        <h1><?php echo _('My Courses'); ?></h1>
+        <p class="center small narrow"><?php echo sprintf(_('Course acronym suggestion (description)'), $contact, $mailto, $github); ?></p>
         <?php foreach ($courses as $course) if ($course['semester'] == $maxSem) echoCourse($course); ?>
     </section>
     <section class="group-list">
-        <h1><?php echo _('Groups');?></h1>
+        <h1><?php echo _('Groups'); ?></h1>
         <?php
 
         $stmt = db_exec("
@@ -141,7 +141,7 @@ $contact = '/contact?subject=LVA-Abkürzungen';
 
         ?>
         <hr/>
-        <h1><?php echo _('Join Groups');?></h1>
+        <h1><?php echo _('Join Groups'); ?></h1>
         <?php
 
         $stmt = db_exec("
@@ -158,7 +158,7 @@ $contact = '/contact?subject=LVA-Abkürzungen';
         ?>
     </section>
     <section class="course-list">
-        <h1><?php echo _('Old Courses');?></h1>
+        <h1><?php echo _('Old Courses'); ?></h1>
         <?php foreach ($courses as $course) if ($course['semester'] != $maxSem) echoCourse($course); ?>
     </section>
 </main>

@@ -124,35 +124,35 @@ require "../.php/header.php";
 <main class="w1">
     <section>
         <form name="sign-up" action="/account/sign-up" method="post" class="panel">
-            <h1><?php echo _('Sign up');?></h1>
-            <div class="text<?php echo $errors['mnr'] ? " error" : "";?>">
-                <input name="mnr" id="mnr" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['mnr'] ?? '');?>" pattern="[0-9]{7,8}" required/>
-                <label for="mnr"><?php echo _('Matriculation number');?></label>
-                <label for="mnr"><?php if ($errors['mnr']) echo _($errors['mnr']);?></label>
+            <h1><?php echo _('Sign up'); ?></h1>
+            <div class="text<?php echo $errors['mnr'] ? " error" : ""; ?>">
+                <input name="mnr" id="mnr" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['mnr'] ?? ''); ?>" pattern="[0-9]{7,8}" required/>
+                <label for="mnr"><?php echo _('Matriculation number'); ?></label>
+                <label for="mnr"><?php if ($errors['mnr']) echo _($errors['mnr']); ?></label>
             </div>
-            <div class="text<?php echo $errors['username'] ? " error" : "";?>">
-                <input name="username" id="username" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['username'] ?? '');?>" pattern="\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>
-                <label for="username"><?php echo _('Username');?></label>
-                <label for="username"><?php if ($errors['username']) echo _($errors['username']);?></label>
+            <div class="text<?php echo $errors['username'] ? " error" : ""; ?>">
+                <input name="username" id="username" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>" pattern="\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>
+                <label for="username"><?php echo _('Username'); ?></label>
+                <label for="username"><?php if ($errors['username']) echo _($errors['username']); ?></label>
             </div>
-            <div class="text<?php echo $errors['pw1'] ? " error" : "";?>">
-                <input name="password" id="password" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password'] ?? '');?>" required/>
-                <label for="password"><?php echo _('Password');?></label>
-                <label for="password"><?php if ($errors['pw1']) echo _($errors['pw1']);?></label>
+            <div class="text<?php echo $errors['pw1'] ? " error" : ""; ?>">
+                <input name="password" id="password" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password'] ?? ''); ?>" required/>
+                <label for="password"><?php echo _('Password'); ?></label>
+                <label for="password"><?php if ($errors['pw1']) echo _($errors['pw1']); ?></label>
             </div>
-            <div class="text<?php echo $errors['pw2'] ? " error" : "";?>">
-                <input name="repeat-password" id="repeat-password" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['repeat-password'] ?? '');?>" required/>
-                <label for="repeat-password"><?php echo _('Repeat password');?></label>
-                <label for="repeat-password"><?php if ($errors['pw2']) echo _($errors['pw2']);?></label>
+            <div class="text<?php echo $errors['pw2'] ? " error" : ""; ?>">
+                <input name="repeat-password" id="repeat-password" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['repeat-password'] ?? ''); ?>" required/>
+                <label for="repeat-password"><?php echo _('Repeat password'); ?></label>
+                <label for="repeat-password"><?php if ($errors['pw2']) echo _($errors['pw2']); ?></label>
             </div>
-            <button type="submit"><?php echo _('Sign up');?></button>
+            <button type="submit"><?php echo _('Sign up'); ?></button>
         </form>
 <?php if ($errorMsg !== null) { ?>
-        <div class="container error"><?php echo $errorMsg;?></div>
+        <div class="container error"><?php echo $errorMsg; ?></div>
 <?php } ?>
         <p class="center small">
-            <?php echo _('Already signed up?');?> <a href="/account/login"><?php echo _('Login');?></a>.
-            <a href="/account/password/reset"><?php echo _('Forgot password');?></a>.
+            <?php echo _('Already signed up?'); ?> <a href="/account/login"><?php echo _('Login'); ?></a>.
+            <a href="/account/password/reset"><?php echo _('Forgot password'); ?></a>.
         </p>
     </section>
 </main>

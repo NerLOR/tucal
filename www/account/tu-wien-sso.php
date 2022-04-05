@@ -115,55 +115,55 @@ require "../.php/header.php";
 if ($jobId === null) { ?>
 <main class="w1">
     <section>
-        <h1><?php echo _('TU Wien account synchronization');?></h1>
+        <h1><?php echo _('TU Wien account synchronization'); ?></h1>
         <form name="sso-store" action="/account/tu-wien-sso" method="post" class="panel">
-            <p><?php echo _('Account synchronization (description)');?></p>
-            <p><?php echo _('Automatic account synchronization (description)');?></p>
+            <p><?php echo _('Account synchronization (description)'); ?></p>
+            <p><?php echo _('Automatic account synchronization (description)'); ?></p>
             <div class="text">
-                <input name="password-store" id="password-store" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password-store'] ?? '');?>" required/>
-                <label for="password-store"><?php echo _('SSO password');?></label>
+                <input name="password-store" id="password-store" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password-store'] ?? ''); ?>" required/>
+                <label for="password-store"><?php echo _('SSO password'); ?></label>
                 <label for="password-store"></label>
             </div>
-            <div class="text <?php echo $errors['2fa-gen'] ? " error" : "";?>">
-                <input name="2fa-generator" id="2fa-generator" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['2fa-generator'] ?? '');?>"/>
-                <label for="2fa-generator"><?php echo _('SSO 2FA generator (optional)');?></label>
-                <label for="2fa-generator"><?php if ($errors['2fa-gen']) echo _($errors['2fa-gen']);?></label>
+            <div class="text <?php echo $errors['2fa-gen'] ? " error" : ""; ?>">
+                <input name="2fa-generator" id="2fa-generator" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['2fa-generator'] ?? ''); ?>"/>
+                <label for="2fa-generator"><?php echo _('SSO 2FA generator (optional)'); ?></label>
+                <label for="2fa-generator"><?php if ($errors['2fa-gen']) echo _($errors['2fa-gen']); ?></label>
             </div>
             <div class="container red">
                 <input name="sso-store" id="sso-store" type="checkbox" value="accept" required/>
-                <label for="sso-store"><?php echo _('SSO password storage warning (description)');?></label>
+                <label for="sso-store"><?php echo _('SSO password storage warning (description)'); ?></label>
                 <label for="sso-store"></label>
             </div>
-            <button type="submit" name="mode" value="store"><?php echo _('Automatic account synchronization');?></button>
+            <button type="submit" name="mode" value="store"><?php echo _('Automatic account synchronization'); ?></button>
         </form>
 <?php if ($errorMsg !== null && $mode === 'store') { ?>
-        <div class="container error"><?php echo $errorMsg;?></div>
+        <div class="container error"><?php echo $errorMsg; ?></div>
 <?php } ?>
         <form name="sso-no-store" action="/account/tu-wien-sso" method="post" class="panel">
-            <hr data-content="<?php echo strtoupper(_('or'));?>"/>
-            <p><?php echo _('One-time account synchronization (description)');?></p>
+            <hr data-content="<?php echo strtoupper(_('or')); ?>"/>
+            <p><?php echo _('One-time account synchronization (description)'); ?></p>
             <div class="text">
-                <input name="password-no-store" id="password-no-store" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password-no-store'] ?? '');?>" required/>
-                <label for="password-no-store"><?php echo _('SSO password');?></label>
+                <input name="password-no-store" id="password-no-store" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password-no-store'] ?? ''); ?>" required/>
+                <label for="password-no-store"><?php echo _('SSO password'); ?></label>
                 <label for="password-no-store"></label>
             </div>
             <div class="text">
-                <input name="2fa-token" id="2fa-token" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['2fa-token'] ?? '');?>"/>
-                <label for="2fa-token"><?php echo _('SSO 2FA token (optional)');?></label>
+                <input name="2fa-token" id="2fa-token" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['2fa-token'] ?? ''); ?>"/>
+                <label for="2fa-token"><?php echo _('SSO 2FA token (optional)'); ?></label>
                 <label for="2fa-token"></label>
             </div>
-            <button type="submit" name="mode" value="no-store"><?php echo _('One-time account synchronization');?></button>
+            <button type="submit" name="mode" value="no-store"><?php echo _('One-time account synchronization'); ?></button>
         </form>
 <?php if ($errorMsg !== null && ($mode === 'no-store' || $mode === null)) { ?>
-        <div class="container error"><?php echo $errorMsg;?></div>
+        <div class="container error"><?php echo $errorMsg; ?></div>
 <?php } ?>
     </section>
 </main>
 <?php } else { ?>
 <main class="w2">
     <section>
-        <h1><?php echo _('TU Wien account synchronization');?></h1>
-        <?php echo_job($jobId, "/calendar/$USER[mnr]", "/account/tu-wien-sso");?>
+        <h1><?php echo _('TU Wien account synchronization'); ?></h1>
+        <?php echo_job($jobId, "/calendar/$USER[mnr]", "/account/tu-wien-sso"); ?>
 
     </section>
 </main>

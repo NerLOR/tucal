@@ -80,21 +80,21 @@ require "../../.php/header.php";
 ?>
 <main class="w1">
     <section>
-        <h1><?php echo _('Reset Password');?></h1>
+        <h1><?php echo _('Reset Password'); ?></h1>
 <?php if ($status === null) {?>
 
         <form class="panel" action="/account/password/reset" method="post">
-            <p><?php echo _('Reset password (description)');?></p>
-            <div class="text<?php echo $errors['mnr'] ? " error" : "";?>">
-                <input name="mnr" id="mnr" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['mnr'] ?? '');?>" pattern="[0-9]{7,8}" required/>
-                <label for="mnr"><?php echo _('Matriculation number');?></label>
-                <label for="mnr"><?php if ($errors['mnr']) echo _($errors['mnr']);?></label>
+            <p><?php echo _('Reset password (description)'); ?></p>
+            <div class="text<?php echo $errors['mnr'] ? " error" : ""; ?>">
+                <input name="mnr" id="mnr" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['mnr'] ?? ''); ?>" pattern="[0-9]{7,8}" required/>
+                <label for="mnr"><?php echo _('Matriculation number'); ?></label>
+                <label for="mnr"><?php if ($errors['mnr']) echo _($errors['mnr']); ?></label>
             </div>
-            <button type="submit"><?php echo _('Reset password');?></button>
+            <button type="submit"><?php echo _('Reset password'); ?></button>
         </form>
 <?php if ($errorMsg !== null) { ?>
 
-        <div class="container error"><?php echo $errorMsg;?></div>
+        <div class="container error"><?php echo $errorMsg; ?></div>
 <?php } ?>
 <?php } else {
     if ($status === 'sent') {

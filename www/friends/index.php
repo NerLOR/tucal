@@ -13,11 +13,11 @@ require "../.php/header.php";
 ?>
 <main class="w2">
     <section>
-        <h1><?php echo _('My Friends');?></h1>
+        <h1><?php echo _('My Friends'); ?></h1>
         <form action="/search" method="get" class="search">
             <input type="hidden" name="r" value="users"/>
-            <input type="text" name="q" placeholder="<?php echo _('Add friend');?>" minlength="3" required/>
-            <button type="submit"><?php echo _('Search (for)');?></button>
+            <input type="text" name="q" placeholder="<?php echo _('Add friend'); ?>" minlength="3" required/>
+            <button type="submit"><?php echo _('Search (for)'); ?></button>
         </form>
         <div class="friend-container">
 <?php
@@ -41,7 +41,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 ?>
         </div>
         <hr/>
-        <h2><?php echo _('Pending Friend Requests');?></h2>
+        <h2><?php echo _('Pending Friend Requests'); ?></h2>
         <div class="friend-container">
 <?php
 
@@ -64,7 +64,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 ?>
         </div>
         <hr/>
-        <h2><?php echo _('Sent Friend Requests');?></h2>
+        <h2><?php echo _('Sent Friend Requests'); ?></h2>
         <div class="friend-container">
 <?php
 

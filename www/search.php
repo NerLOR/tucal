@@ -26,9 +26,9 @@ require ".php/header.php";
 <main class="w3 search">
     <section>
         <form action="/search" method="get" class="search">
-            <input type="hidden" name="r" value="<?php echo htmlspecialchars($r);?>"/>
-            <input type="text" name="q" placeholder="<?php echo _('Search (for)');?>" value="<?php echo htmlspecialchars($query)?>" minlength="3" required/>
-            <button type="submit"><?php echo _('Search (for)');?></button>
+            <input type="hidden" name="r" value="<?php echo htmlspecialchars($r); ?>"/>
+            <input type="text" name="q" placeholder="<?php echo _('Search (for)'); ?>" value="<?php echo htmlspecialchars($query)?>" minlength="3" required/>
+            <button type="submit"><?php echo _('Search (for)'); ?></button>
         </form>
 <?php
 if (strlen($query) >= 3) {
@@ -36,7 +36,7 @@ if (strlen($query) >= 3) {
 
 ?>
         <hr/>
-        <h2><?php echo _('Students');?></h2>
+        <h2><?php echo _('Students'); ?></h2>
 <?php
 
         $stmt = db_exec("
@@ -60,7 +60,7 @@ if (strlen($query) >= 3) {
 
 ?>
         <hr/>
-        <h2><?php echo _('Courses');?> (TISS)</h2>
+        <h2><?php echo _('Courses'); ?> (TISS)</h2>
 <?php
 
         $cnr = str_replace('.', '', $query);

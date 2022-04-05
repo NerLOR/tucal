@@ -81,25 +81,25 @@ require "../.php/header.php";
 <main class="w1">
     <section>
         <form name="login" action="/account/login" method="post" class="panel">
-            <h1><?php echo _('Login');?></h1>
-            <div class="text<?php echo $errors['subject'] ? " error" : "";?>">
-                <input name="subject" id="subject" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['subject'] ?? '');?>" pattern="[0-9]{7,8}|\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>
-                <label for="subject"><?php echo _('Matriculation number or username');?></label>
-                <label for="subject"><?php if ($errors['subject']) echo _($errors['subject']);?></label>
+            <h1><?php echo _('Login'); ?></h1>
+            <div class="text<?php echo $errors['subject'] ? " error" : ""; ?>">
+                <input name="subject" id="subject" type="text" placeholder=" " value="<?php echo htmlspecialchars($_POST['subject'] ?? ''); ?>" pattern="[0-9]{7,8}|\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>
+                <label for="subject"><?php echo _('Matriculation number or username'); ?></label>
+                <label for="subject"><?php if ($errors['subject']) echo _($errors['subject']); ?></label>
             </div>
-            <div class="text<?php echo $errors['pwd'] ? " error" : "";?>">
-                <input name="password" id="password" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password'] ?? '');?>" required/>
-                <label for="password"><?php echo _('Password');?></label>
-                <label for="password"><?php if ($errors['pwd']) echo _($errors['pwd']);?></label>
+            <div class="text<?php echo $errors['pwd'] ? " error" : ""; ?>">
+                <input name="password" id="password" type="password" placeholder=" " value="<?php echo htmlspecialchars($_POST['password'] ?? ''); ?>" required/>
+                <label for="password"><?php echo _('Password'); ?></label>
+                <label for="password"><?php if ($errors['pwd']) echo _($errors['pwd']); ?></label>
             </div>
-            <button type="submit"><?php echo _('Login');?></button>
+            <button type="submit"><?php echo _('Login'); ?></button>
         </form>
         <?php if ($errorMsg !== null) { ?>
-        <div class="container error"><?php echo $errorMsg;?></div>
+        <div class="container error"><?php echo $errorMsg; ?></div>
         <?php } ?>
         <p class="center small">
-            <?php echo _('No account yet?');?> <a href="/account/sign-up"><?php echo _('Sign up');?></a>.
-            <a href="/account/password/reset"><?php echo _('Forgot password');?></a>.
+            <?php echo _('No account yet?'); ?> <a href="/account/sign-up"><?php echo _('Sign up'); ?></a>.
+            <a href="/account/password/reset"><?php echo _('Forgot password'); ?></a>.
         </p>
     </section>
 </main>

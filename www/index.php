@@ -46,19 +46,19 @@ require ".php/header.php";
         <h1>Benutzerzahlen</h1>
         <div>
             <div>
-                <h2><?php echo $todayNum;?></h2>
+                <h2><?php echo $todayNum; ?></h2>
                 <h3>Heute aktiv</h3>
             </div>
             <div>
-                <h2><?php echo $weeklyNum;?></h2>
+                <h2><?php echo $weeklyNum; ?></h2>
                 <h3>In den letzten 7 Tagen aktiv</h3>
             </div>
             <div>
-                <h2><?php echo $credNum;?></h2>
+                <h2><?php echo $credNum; ?></h2>
                 <h3>SSO-Zugangsdaten hinterlegt</h3>
             </div>
             <div>
-                <h2><?php echo $userNum;?></h2>
+                <h2><?php echo $userNum; ?></h2>
                 <h3>Insgesamt verifiziert</h3>
             </div>
         </div>

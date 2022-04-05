@@ -24,8 +24,8 @@ require "../.php/header.php";
     <main class="w1">
         <section>
             <form name="logout" action="/account/logout" method="post" class="panel">
-                <h1><?php echo _('Logout');?></h1>
-                <button type="submit"><?php echo _('Logout');?></button>
+                <h1><?php echo _('Logout'); ?></h1>
+                <button type="submit"><?php echo _('Logout'); ?></button>
             </form>
         </section>
     </main>

@@ -71,24 +71,24 @@ require "../.php/header.php";
 ?>
 <main class="w1">
     <section>
-        <h1><?php echo _('Verify Account');?></h1>
+        <h1><?php echo _('Verify Account'); ?></h1>
 <?php if ($tokenInvalid) { ?>
 
-        <div class="container error"><?php echo _('This link is invalid. Please try again.');?></div>
+        <div class="container error"><?php echo _('This link is invalid. Please try again.'); ?></div>
 <?php } elseif ($status === null) { ?>
 
         <form class="panel">
-            <p><?php echo _('SSO verification (description)');?></p>
-            <a class="button" href="/account/tu-wien-sso"><?php echo _('SSO verification');?></a>
+            <p><?php echo _('SSO verification (description)'); ?></p>
+            <a class="button" href="/account/tu-wien-sso"><?php echo _('SSO verification'); ?></a>
         </form>
         <form action="/account/verify" method="post" class="panel">
-            <hr data-content="<?php echo strtoupper(_('or'));?>"/>
-            <p><?php echo _('Email verification (description)');?></p>
+            <hr data-content="<?php echo strtoupper(_('or')); ?>"/>
+            <p><?php echo _('Email verification (description)'); ?></p>
             <div class="text">
-                <input name="email-address" id="email-address" type="email" placeholder=" " value="<?php echo $USER['email_address_1'];?>" readonly required/>
-                <label for="email-address"><?php echo _('Email address');?></label>
+                <input name="email-address" id="email-address" type="email" placeholder=" " value="<?php echo $USER['email_address_1']; ?>" readonly required/>
+                <label for="email-address"><?php echo _('Email address'); ?></label>
             </div>
-            <button type="submit" name="mode" value="email"><?php echo _('Email verification');?></button>
+            <button type="submit" name="mode" value="email"><?php echo _('Email verification'); ?></button>
         </form>
 <?php } else {
     if ($status === 'sent') {

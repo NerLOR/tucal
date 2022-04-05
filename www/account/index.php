@@ -153,73 +153,73 @@ require "../.php/header.php";
 ?>
 <main class="w3">
     <section>
-        <h1><?php echo _('Settings');?></h1>
+        <h1><?php echo _('Settings'); ?></h1>
         <form name="account-settings" action="/account/" method="post" class="table" enctype="multipart/form-data">
             <div>
-                <label for="username"><?php echo _('Username');?></label>
+                <label for="username"><?php echo _('Username'); ?></label>
                 <input name="username" id="username" type="text" value="<?php echo htmlentities($USER['username'])?>" pattern="\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>
             </div>
             <div>
-                <label for="mnr"><?php echo _('Matriculation number');?></label>
+                <label for="mnr"><?php echo _('Matriculation number'); ?></label>
                 <input name="mnr" id="mnr" type="text" value="<?php echo htmlentities($USER['mnr'])?>" readonly disabled/>
             </div>
             <div>
-                <label for="email-address-1"><?php echo _('Email address');?></label>
+                <label for="email-address-1"><?php echo _('Email address'); ?></label>
                 <input name="email-address-1" id="email-address-1" type="text" value="<?php echo htmlentities($USER['email_address_1'])?>" readonly disabled/>
             </div>
             <div>
-                <label for="locale"><?php echo _('Locale');?></label>
+                <label for="locale"><?php echo _('Locale'); ?></label>
                 <select name="locale" id="locale">
-                    <option value="de-AT"<?php echo $LOCALE === 'de-AT' ? " selected" : "";?>>Deutsch (Österreich)</option>
-                    <option value="de-DE"<?php echo $LOCALE === 'de-DE' ? " selected" : "";?>>Deutsch (Deutschland)</option>
-                    <option value="en-GB"<?php echo $LOCALE === 'en-GB' ? " selected" : "";?>>English (United Kingdom)</option>
-                    <option value="en-US"<?php echo $LOCALE === 'en-US' ? " selected" : "";?>>English (United States)</option>
-                    <option value="bar-AT"<?php echo $LOCALE === 'bar-AT' ? " selected" : "";?>>BETA – Bairisch (Östareich)</option>
+                    <option value="de-AT"<?php echo $LOCALE === 'de-AT' ? " selected" : ""; ?>>Deutsch (Österreich)</option>
+                    <option value="de-DE"<?php echo $LOCALE === 'de-DE' ? " selected" : ""; ?>>Deutsch (Deutschland)</option>
+                    <option value="en-GB"<?php echo $LOCALE === 'en-GB' ? " selected" : ""; ?>>English (United Kingdom)</option>
+                    <option value="en-US"<?php echo $LOCALE === 'en-US' ? " selected" : ""; ?>>English (United States)</option>
+                    <option value="bar-AT"<?php echo $LOCALE === 'bar-AT' ? " selected" : ""; ?>>BETA – Bairisch (Östareich)</option>
                 </select>
             </div>
             <div>
-                <label for="lt-provider"><?php echo _('LectureTube provider');?></label>
+                <label for="lt-provider"><?php echo _('LectureTube provider'); ?></label>
                 <select name="lt-provider" id="lt-provider">
-                    <option value="live-video-tuwien"<?php echo $USER['opts']['lt_provider'] === "live-video-tuwien" ? " selected" : "";?>>live.video.tuwien.ac.at</option>
-                    <option value="hs-streamer"<?php echo $USER['opts']['lt_provider'] === "hs-streamer" ? " selected" : "";?>>HS-Streamer</option>
+                    <option value="live-video-tuwien"<?php echo $USER['opts']['lt_provider'] === "live-video-tuwien" ? " selected" : ""; ?>>live.video.tuwien.ac.at</option>
+                    <option value="hs-streamer"<?php echo $USER['opts']['lt_provider'] === "hs-streamer" ? " selected" : ""; ?>>HS-Streamer</option>
                 </select>
             </div>
             <div>
-                <label for="theme"><?php echo _('Theme');?></label>
+                <label for="theme"><?php echo _('Theme'); ?></label>
                 <select name="theme" id="theme">
-                    <option value="browser"<?php echo $theme === 'browser' ? " selected" : "";?>><?php echo _('Browser theme');?></option>
-                    <option value="light"<?php echo $theme === 'light' ? " selected" : "";?>><?php echo _('Light theme');?></option>
-                    <option value="dark"<?php echo $theme === 'dark' ? " selected" : "";?>><?php echo _('Dark theme');?></option>
-                    <option value="black"<?php echo $theme === 'black' ? " selected" : "";?>><?php echo _('Black theme');?></option>
+                    <option value="browser"<?php echo $theme === 'browser' ? " selected" : ""; ?>><?php echo _('Browser theme'); ?></option>
+                    <option value="light"<?php echo $theme === 'light' ? " selected" : ""; ?>><?php echo _('Light theme'); ?></option>
+                    <option value="dark"<?php echo $theme === 'dark' ? " selected" : ""; ?>><?php echo _('Dark theme'); ?></option>
+                    <option value="black"<?php echo $theme === 'black' ? " selected" : ""; ?>><?php echo _('Black theme'); ?></option>
                 </select>
             </div>
             <div>
-                <label for="avatar"><?php echo _('Profile picture');?></label>
+                <label for="avatar"><?php echo _('Profile picture'); ?></label>
                 <input type="file" name="avatar" id="avatar" accept="image/*"/>
             </div>
-            <button type="submit"><?php echo _('Save');?></button>
+            <button type="submit"><?php echo _('Save'); ?></button>
         </form>
 <?php if ($errorMsg !== null) { ?>
-        <div class="container error"><?php echo $errorMsg;?></div>
+        <div class="container error"><?php echo $errorMsg; ?></div>
 <?php } ?>
         <div class="center">
-            <a class="button margin" href="/account/sync"><?php echo _('Synchronize TU account');?></a>
-            <a class="button margin" href="/account/password/"><?php echo _('Change password');?></a>
+            <a class="button margin" href="/account/sync"><?php echo _('Synchronize TU account'); ?></a>
+            <a class="button margin" href="/account/password/"><?php echo _('Change password'); ?></a>
         </div>
     </section>
     <section>
         <h1><?php echo _('Account statistics'); ?></h1>
         <form name="statistics" class="table">
             <div>
-                <label for="create-ts"><?php echo _('Creation');?></label>
+                <label for="create-ts"><?php echo _('Creation'); ?></label>
                 <input name="create-ts" id="create-ts" type="text" value="<?php echo $create_ts !== null ? date($fmt, $create_ts) : _('Never'); ?>" readonly disabled/>
             </div>
             <div>
-                <label for="login-ts"><?php echo _('Latest login');?></label>
+                <label for="login-ts"><?php echo _('Latest login'); ?></label>
                 <input name="login-ts" id="login-ts" type="text" value="<?php echo $login_ts !== null ? date($fmt, $login_ts) : _('Never'); ?>" readonly disabled/>
             </div>
             <div>
-                <label for="sync-ts"><?php echo _('Latest synchronization');?></label>
+                <label for="sync-ts"><?php echo _('Latest synchronization'); ?></label>
                 <input name="sync-ts" id="sync-ts" type="text" value="<?php echo $sync_ts !== null ? date($fmt, $sync_ts) : _('Never'); ?>" readonly disabled/>
             </div>
         </form>
