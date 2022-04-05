@@ -52,10 +52,11 @@ CREATE OR REPLACE FUNCTION tucal.update_dau()
     RETURNS TRIGGER AS
 $$
 DECLARE
-    now    TIMESTAMPTZ = current_timestamp AT TIME ZONE 'UTC';
-    today  DATE        = now::date;
-    cur_h  INT         = EXTRACT(HOUR FROM now);
-    time_h TIMESTAMPTZ = today::timestamptz + ((cur_h || ':00')::interval);
+    now     TIMESTAMPTZ = current_timestamp AT TIME ZONE 'UTC';
+    today   DATE        = now::date;
+    today_h TIMESTAMPTZ = today::timestamptz + '05:00'::interval;
+    cur_h   INT         = EXTRACT(HOUR FROM now);
+    time_h  TIMESTAMPTZ = today::timestamptz + ((cur_h || ':00')::interval);
 BEGIN
     INSERT INTO tucal.dau (date, hour_utc)
     VALUES (today, 0),
@@ -101,15 +102,15 @@ BEGIN
                SUM((create_ts >= time_h AND create_ts < time_h + INTERVAL '1' HOUR)::int),
                SUM((sso_credentials)::int),
                SUM((active_ts >= time_h)::int),
-               SUM((active_ts >= today)::int),
-               SUM((active_ts >= today - INTERVAL '7' DAY)::int),
-               SUM((active_ts >= today - INTERVAL '30' DAY)::int),
+               SUM((active_ts >= today_h)::int),
+               SUM((active_ts >= today_h - INTERVAL '7' DAY)::int),
+               SUM((active_ts >= today_h - INTERVAL '30' DAY)::int),
                SUM((verified)::int),
                SUM((verified AND sso_credentials)::int),
                SUM((verified AND active_ts >= time_h)::int),
-               SUM((verified AND active_ts >= today)::int),
-               SUM((verified AND active_ts >= today - INTERVAL '7' DAY)::int),
-               SUM((verified AND active_ts >= today - INTERVAL '30' DAY)::int)
+               SUM((verified AND active_ts >= today_h)::int),
+               SUM((verified AND active_ts >= today_h - INTERVAL '7' DAY)::int),
+               SUM((verified AND active_ts >= today_h - INTERVAL '30' DAY)::int)
         FROM tucal.v_account)
     WHERE (date, hour_utc) = (today, cur_h);
     UPDATE tucal.dau
@@ -132,21 +133,21 @@ BEGIN
         SELECT COUNT(*),
                SUM((create_ts >= time_h AND create_ts < time_h + INTERVAL '1' HOUR)::int),
                SUM((active_ts >= time_h)::int),
-               SUM((active_ts >= today)::int),
-               SUM((active_ts >= today - INTERVAL '7' DAY)::int),
-               SUM((active_ts >= today - INTERVAL '30' DAY)::int),
+               SUM((active_ts >= today_h)::int),
+               SUM((active_ts >= today_h - INTERVAL '7' DAY)::int),
+               SUM((active_ts >= today_h - INTERVAL '30' DAY)::int),
                SUM(((active_ts - INTERVAL '1' DAY > create_ts))::int),
                SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND active_ts >= time_h)::int),
-               SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND active_ts >= today)::int),
-               SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND active_ts >= today - INTERVAL '7' DAY)::int),
-               SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND active_ts >= today - INTERVAL '30' DAY)::int),
+               SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND active_ts >= today_h)::int),
+               SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND active_ts >= today_h - INTERVAL '7' DAY)::int),
+               SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND active_ts >= today_h - INTERVAL '30' DAY)::int),
                SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND verified)::int),
                SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND verified AND active_ts >= time_h)::int),
-               SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND verified AND active_ts >= today)::int),
+               SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND verified AND active_ts >= today_h)::int),
                SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND verified AND
-                    active_ts >= today - INTERVAL '7' DAY)::int),
+                    active_ts >= today_h - INTERVAL '7' DAY)::int),
                SUM(((active_ts - INTERVAL '1' DAY > create_ts) AND verified AND
-                    active_ts >= today - INTERVAL '30' DAY)::int)
+                    active_ts >= today_h - INTERVAL '30' DAY)::int)
         FROM tucal.v_session)
     WHERE (date, hour_utc) = (today, cur_h);
     RETURN NEW;
