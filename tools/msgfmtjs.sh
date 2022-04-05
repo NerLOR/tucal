@@ -5,7 +5,7 @@ out="$3"
 tmp="msgfmt.tmp.js"
 tmp2="$3.tmp"
 if [[ -z "$dir" || -z "$in" || -z "$out" ]]; then
-  echo "usage: msgfmtjs.sh <locale-dir> <input-file> <output-file>" >&2
+  echo "msgfmtjs.sh: usage: msgfmtjs.sh <locale-dir> <input-file> <output-file>" >&2
   exit 1
 fi
 
@@ -14,11 +14,11 @@ first1="t"
 msgctx=""
 msgid=""
 msgstr=""
-for loc in $(ls "$dir"); do
+for loc in "$dir"/*; do
   first2="t"
   if [[ -z "$first1" ]]; then echo -ne ",\n" >>"$tmp"; fi
   echo -ne "    \"${loc/_/-}\": {\n" >>"$tmp"
-  { cat "$dir/$loc/LC_MESSAGES/tucal.po"; echo -ne "\n"; } | while read line; do
+  { cat "$dir/$loc/LC_MESSAGES/tucal.po"; echo -ne "\n"; } | while read -r line; do
     if [[ "$line" =~ ^msgid ]]; then
       msgid="${line:7:-1}"
     elif [[ "$line" =~ ^msgctx ]]; then
@@ -26,7 +26,7 @@ for loc in $(ls "$dir"); do
     elif [[ "$line" =~ ^msgstr ]]; then
       msgstr="${line:8:-1}"
     elif [[ -z "$line" ]]; then
-      if [[ ! -z "$msgid" && -z "$msgctx" ]]; then
+      if [[ -n "$msgid" && -z "$msgctx" ]]; then
         if [[ -z "$first2" ]]; then echo -ne ",\n" >>"$tmp"; fi
         echo -ne "        \"$msgid\": \"$msgstr\"" >>"$tmp"
         first2=""

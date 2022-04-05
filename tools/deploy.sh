@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 host="$1"
 path="$2"
 if [[ -z "$host"  || -z "$path" ]]; then

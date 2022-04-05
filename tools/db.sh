@@ -6,4 +6,4 @@ port=$(echo "$db" | grep "^port *=" | sed "$regex")
 user=$(echo "$db" | grep "^user *=" | sed "$regex")
 name=$(echo "$db" | grep "^name *=" | sed "$regex")
 pwd=$(echo "$db" | grep "^password *=" | sed "$regex")
-PGPASSWORD="$pwd" psql -h "$host" -p "$port" "$name" "$user" $@
+PGPASSWORD="$pwd" psql -h "$host" -p "$port" "$name" "$user" "$@"
