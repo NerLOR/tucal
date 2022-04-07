@@ -5,6 +5,10 @@ global $STATUS;
 global $CONFIG;
 global $USER;
 
+$subjects = [
+    'LVA-Abkürzungen' => 'Vorschlag für LVA-Abkürzug(en) bei TUcal',
+];
+
 require ".php/session.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -30,6 +34,14 @@ doc:
 $TITLE = [_('Contact')];
 $status = $_GET['status'] ?? null;
 
+$mailto = $CONFIG['email']['contact_direct'];
+$subj = isset($_GET['subject']) ? $subjects[$_GET['subject']] ?? null : null;
+if (isset($_GET['subject']) && $subj === null) {
+    redirect("/contact");
+} else if ($subj !== null) {
+    $mailto .= "?subject=$subj";
+}
+
 require ".php/main.php";
 require ".php/header.php";
 
@@ -50,6 +62,8 @@ if ($status === 'sent' || $status == 'sending') { ?>
 <main class="w2">
     <section class="contact">
         <h1><?php echo _('Contact request'); ?></h1>
+        <p class="center"><?php echo sprintf(_('Contact request (description)'), $mailto); ?></p>
+        <hr/>
         <form method="post" action="/contact" name="contact">
             <div>
                 <label for="contact-name"><?php echo _('Name'); ?></label>
@@ -61,7 +75,7 @@ if ($status === 'sent' || $status == 'sending') { ?>
             </div>
             <div>
                 <label for="contact-subject"><?php echo _('Subject'); ?></label>
-                <input type="text" name="subject" id="contact-subject" placeholder="<?php echo _('(required)'); ?>" required/>
+                <input type="text" name="subject" id="contact-subject" value="<?php echo $subj ?? ''; ?>" placeholder="<?php echo _('(required)'); ?>" required/>
             </div>
             <div>
                 <label for="contact-message"><?php echo _('Message'); ?></label>

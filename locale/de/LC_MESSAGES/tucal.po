@@ -245,6 +245,10 @@ msgstr "Bei Änderungswünschen oder -vorschlägen für die LVA-Abkürzungen bit
        "<a href='%s'>Kontaktformular</a> oder <a href='mailto:%s'>E-Mail</a> melden. "
        "Alternativ auch per <a href='%s' target='_blank'>GitHub-Pull-Request</a>."
 
+msgid "Contact request (description)"
+msgstr "Eine Nachricht an den Inhaber der Seite kann über dieses Formular oder direkt per "
+       "<a href='mailto:%s'>E-Mail</a> gesendet werden."
+
 msgid "Lecture"
 msgstr "Vorlesung"
 

@@ -163,6 +163,9 @@ msgstr "If you want to suggest any changes to the course acronyms please contact
        "the <a href='%s'>contact form</a> or <a href='mailto:%s'>email</a>. "
        "Alternatively also by <a href='%s' target='_blank'>GibHub pull request</a>."
 
+msgid "Contact request (description)"
+msgstr "A contact request to the site owner may be sent via this form or directly via <a href='mailto:%s'>Email</a>."
+
 msgid "Lecture"
 msgstr "Lecture"
 
