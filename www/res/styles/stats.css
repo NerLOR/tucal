@@ -8,8 +8,9 @@ section.stats > div {
     justify-content: center;
     align-items: stretch;
     gap: 1em;
-    flex-direction: row-reverse;
     flex-wrap: wrap;
+    max-width: 520px;
+    margin: auto;
 }
 
 section.stats > div > div {
