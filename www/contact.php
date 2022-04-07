@@ -62,7 +62,7 @@ if ($status === 'sent' || $status == 'sending') { ?>
 <main class="w2">
     <section class="contact">
         <h1><?php echo _('Contact request'); ?></h1>
-        <p class="center"><?php echo sprintf(_('Contact request (description)'), $mailto); ?></p>
+        <p class="center small"><?php echo sprintf(_('Contact request (description)'), $mailto); ?></p>
         <hr/>
         <form method="post" action="/contact" name="contact">
             <div>
