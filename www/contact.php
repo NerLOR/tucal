@@ -40,7 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $details .= "Session: $_SESSION[nr]\n";
     if (isset($USER)) {
-        $details .= "User: $USER[username] ($USER[mnr], $USER[id])";
+        $v = $USER['verified'] ? 'verified' : 'NOT verified';
+        $details .= "User: $USER[username] (MNr: $USER[mnr], ID: $USER[id], $v)";
     }
 
     $res = send_email($CONFIG['email']['contact'], $subject, $msg, $email, $name, $details);
