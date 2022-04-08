@@ -145,13 +145,14 @@ function echo_job(string $jobId, string $successUrl, string $errorUrl) {
     echo '></div>';
 }
 
-function send_email(string $address, string $subject, string $msg, string $reply_to = null, string $from_name = null): bool {
+function send_email(string $address, string $subject, string $msg, string $reply_to = null, string $from_name = null, string $details = null): bool {
     global $TUCAL;
 
     $msg .= "\n\n-- \n" .
         "This is an automatically generated and sent message.\n" .
         "If you did not take any action to receive such a message you may safely ignore this message.\n" .
         "For more information visit https://$TUCAL[hostname]/";
+    if ($details !== null) $msg .= "\n\n$details";
 
     $stmt = db_exec("
                 INSERT INTO tucal.message (reply_to_address, to_address, from_name, subject, message)

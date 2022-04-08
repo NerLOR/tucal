@@ -23,7 +23,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $email = ($email === '') ? null : $email;
 
-    $res = send_email($CONFIG['email']['contact'], $subject, $msg, $email, $name);
+    $details = "IP: $_SERVER[REMOTE_ADDR]";
+    if (isset($_SERVER['REMOTE_HOST'])) {
+        $details .= " ($_SERVER[REMOTE_HOST])";
+    }
+    $details .= "\n";
+    if (isset($_SERVER['REMOTE_INFO'])) {
+        $info = json_decode($_SERVER['REMOTE_INFO'], true);
+        $country = $info['country']['names']['en'];
+        $cc = $info['country']['iso_code'];
+        $details .= "Country: $country ($cc)\n";
+        $asn = $info['autonomous_system_number'];
+        $aso = $info['autonomous_system_organization'];
+        $details .= "AS: $asn, $aso\n";
+    }
+
+    $details .= "Session: $_SESSION[nr]\n";
+    if (isset($USER)) {
+        $details .= "User: $USER[username] ($USER[mnr], $USER[id])";
+    }
+
+    $res = send_email($CONFIG['email']['contact'], $subject, $msg, $email, $name, $details);
     redirect('/contact?status=' . ($res ? 'sent' : 'sending'));
 } else if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
     header("Allow: HEAD, GET, POST");
