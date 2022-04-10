@@ -174,7 +174,7 @@ require "../.php/header.php";
                     <option value="de-DE"<?php echo $LOCALE === 'de-DE' ? " selected" : ""; ?>>Deutsch (Deutschland)</option>
                     <option value="en-GB"<?php echo $LOCALE === 'en-GB' ? " selected" : ""; ?>>English (United Kingdom)</option>
                     <option value="en-US"<?php echo $LOCALE === 'en-US' ? " selected" : ""; ?>>English (United States)</option>
-                    <option value="bar-AT"<?php echo $LOCALE === 'bar-AT' ? " selected" : ""; ?>>BETA – Bairisch (Östareich)</option>
+                    <option value="bar-AT"<?php echo $LOCALE === 'bar-AT' ? " selected" : ""; ?>>Bairisch (Östareich)</option>
                 </select>
             </div>
             <div>

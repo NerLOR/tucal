@@ -572,32 +572,64 @@ msgid "Bad Request"
 msgstr "Ungültige Anfrage"
 
 msgctxt "http"
+msgid "Bad Request (description)"
+msgstr "Der Client hat eine ungültige Anfrage gesendet."
+
+msgctxt "http"
 msgid "Unauthorized"
 msgstr "Unauthorisiert"
+
+msgctxt "http"
+msgid "Unauthorized (description)"
+msgstr "Die Anfrage benötigt eine Authentifizierung des Benutzers."
 
 msgctxt "http"
 msgid "Forbidden"
 msgstr "Zugriff verboten"
 
 msgctxt "http"
+msgid "Forbidden (description)"
+msgstr "Der Zugriff auf diese Seite ist nicht erlaubt."
+
+msgctxt "http"
 msgid "Not Found"
 msgstr "Seite nicht gefunden"
+
+msgctxt "http"
+msgid "Not Found (description)"
+msgstr "Die angefragte Seite konnte nicht gefunden werden."
 
 msgctxt "http"
 msgid "Conflict"
 msgstr "Konflikt"
 
 msgctxt "http"
+msgid "Conflict (description)"
+msgstr "Die Ressource, die erstellt werden soll, existiert bereits."
+
+msgctxt "http"
 msgid "Gone"
 msgstr "Seite gelöscht"
+
+msgctxt "http"
+msgid "Gone (description)"
+msgstr "Die angefragte Seite wurde absichtlich gelöscht."
 
 msgctxt "http"
 msgid "Internal Server Error"
 msgstr "Interner Sever-Fehler"
 
 msgctxt "http"
+msgid "Internal Server Error (description)"
+msgstr "Es ist ein unerwarteter interner Fehler aufgetreten."
+
+msgctxt "http"
 msgid "Not Implemented"
 msgstr "Nicht implementiert"
+
+msgctxt "http"
+msgid "Not Implemented (description)"
+msgstr "Eine benötigte Funktionalität ist noch nicht implementiert."
 
 msgctxt "email"
 msgid "Reset password"

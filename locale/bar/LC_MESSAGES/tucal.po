@@ -1,23 +1,59 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-26 18:50+01\n"
+"PO-Revision-Date: 2022-04-10 16:00+0200\n"
 "Last-Translator: Lorenz Stechauner <lorenz.stechauner@necronda.net>\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
 msgid "My Calendar"
-msgstr "Mẽi Kalenda"
+msgstr "Mei Kalenda"
 
 msgid "Calendar"
-msgstr "kalenda"
+msgstr "Kalenda"
 
 msgid "My Friends"
 msgstr "Meine Freind"
 
+msgid "Add friend"
+msgstr "Meine Freind"
+
+msgid "Pending Friend Requests"
+msgstr "Ausstehande Freindschoftsonfrogn"
+
+msgid "Sent Friend Requests"
+msgstr "Gsendete Freindschoftsonfrogn"
+
+msgid "Students"
+msgstr "Studentn"
+
 msgid "My Courses"
 msgstr "Meine LVAs"
 
+msgid "Old Courses"
+msgstr "Oide LVAs"
+
 msgid "Courses"
 msgstr "LVAs"
+
+msgid "Groups"
+msgstr "Gruppn"
+
+msgid "Join Groups"
+msgstr "Gruppn beitretn"
+
+msgid "Never ignored"
+msgstr "Imma onzeign"
+
+msgid "Partly ignored"
+msgstr "Töweise vabeagn"
+
+msgid "Fully ignored"
+msgstr "Vuiständig vabeagn"
+
+msgid "Ignore from"
+msgstr "Vabeagn ob"
+
+msgid "Ignore until"
+msgstr "Vabeagn bis"
 
 msgid "Search"
 msgstr "Suche"
@@ -31,8 +67,20 @@ msgstr "Start"
 msgid "Home Page"
 msgstr "Startseitn"
 
+msgid "Imprint"
+msgstr "Impressum"
+
+msgid "Contact"
+msgstr "Kontakt"
+
+msgid "Contact request"
+msgstr "Kontaktonfroge"
+
+msgid "Donate"
+msgstr "Spendn"
+
 msgid "Login"
-msgstr "Ånmödn"
+msgstr "Omödn"
 
 msgid "Logout"
 msgstr "Obmödn"
@@ -44,13 +92,13 @@ msgid "Settings"
 msgstr "Eistöllungen"
 
 msgid "Matriculation number"
-msgstr "Matrikelnumma"
+msgstr "Matriklnumma"
 
 msgid "Matriculation number or username"
-msgstr "Matrikelnumma oda Benutzanåm"
+msgstr "Matriklnumma oda Benutzanom"
 
 msgid "Username"
-msgstr "Benutzanåm"
+msgstr "Benutzanom"
 
 msgid "Password"
 msgstr "Basswoad"
@@ -61,14 +109,56 @@ msgstr "Basswoad wiedahoin"
 msgid "SSO password"
 msgstr "TU-Basswoad"
 
+msgid "Change password"
+msgstr "Basswoad ändan"
+
+msgid "Change Password"
+msgstr "Basswoad ändan"
+
+msgid "Current password"
+msgstr "Jetziges Basswoad"
+
+msgid "New password"
+msgstr "Neiches Basswoad"
+
+msgid "Repeat new password"
+msgstr "Neiches Basswoad wiedahoin"
+
+msgid "Forgot password"
+msgstr "Basswoad vagessn"
+
+msgid "Reset Password"
+msgstr "Basswoad zrucksetzn"
+
+msgid "Reset password"
+msgstr "Basswoad zrucksetzn"
+
+msgid "This link is invalid. Please try again."
+msgstr "Der Link is ungütig. Bitte noamoi probian."
+
+msgid "Verify Account"
+msgstr "Konto verifizian"
+
 msgid "Verify account"
-msgstr "Account verifizian"
+msgstr "Konto verifizian"
 
 msgid "SSO verification"
 msgstr "SSO-Verifiziarung"
 
 msgid "Synchronize TU account"
 msgstr "TU-Account synkronisian"
+
+msgid "Sync TU account"
+msgstr "TU-Konto synkronisian"
+
+msgid "No account yet?"
+msgstr "No ka Konto?"
+
+msgid "No associated account"
+msgstr "Ka zugehöriges Konto"
+
+msgid "Already signed up?"
+msgstr "Scho registriat?"
 
 msgid "Email verification"
 msgstr "E-Mail-Verifiziarung"
@@ -80,31 +170,88 @@ msgid "or"
 msgstr "oda"
 
 msgid "Already exists"
-msgstr "Gibt's scho"
+msgstr "Gibts scho"
 
 msgid "Already in use"
 msgstr "Wird scho vawendt"
+
+msgid "Username already in use"
+msgstr "Benutzanom wird scho vawendt"
 
 msgid "Too short"
 msgstr "Zu kuaz"
 
 msgid "Does not match"
-msgstr "Bassd ned zåmm"
+msgstr "Bassd ned zomm"
 
 msgid "Does not exist"
-msgstr "Gibt's ned"
+msgstr "Gibts ned"
 
 msgid "Wrong"
 msgstr "Foisch"
 
+msgid "TU Wien account synchronization"
+msgstr "TU-Konto-Synkronisierung"
+
+msgid "Automatic account synchronization"
+msgstr "Automatische Konto-Synkronisierung"
+
+msgid "One-time account synchronization"
+msgstr "Amolige Konto-Synkronisierung"
+
+msgid "SSO 2FA generator (optional)"
+msgstr "SSO-Zwa-Faktor-Auth. Generator (optional)"
+
+msgid "SSO 2FA token (optional)"
+msgstr "SSO-Zwa-Faktor-Auth. Schlüssel (optional)"
+
+msgid "Lecture"
+msgstr "Voalesung"
+
+msgid "General course event"
+msgstr "Oigemeina LVA-Teamin"
+
+msgid "Group event"
+msgstr "Gruppnteamin"
+
+msgid "Other event"
+msgstr "Ondara Teamin"
+
+msgid "Online-only event"
+msgstr "Nua onlein"
+
+msgid "Striped"
+msgstr "Gstreift"
+
+msgid "Blue"
+msgstr "Blau"
+
+msgid "Purple"
+msgstr "Violett"
+
+msgid "Green"
+msgstr "Grea"
+
+msgid "Grey"
+msgstr "Grau"
+
+msgid "Theme"
+msgstr "Desein"
+
+msgid "Light theme"
+msgstr "Hölles Design"
+
+msgid "Dark theme"
+msgstr "Dunkls Design"
+
+msgid "Black theme"
+msgstr "Schwoazes Design"
+
+msgid "Browser theme"
+msgstr "Browser Design"
+
 msgid "Open link"
 msgstr "Link aufmochn"
-
-msgid "Course acronym suggestion (description)"
-msgstr ""
-"Bei Ändarungswinschn oda -vuaschlägn fia de LVA-Obkiazungen bitte via <a "
-"href='%s'>Kontaktfoamula</a> oda <a href='mailto:%s'>E-Mail</a> mödn. "
-"Oitanativ a per <a href='%s' target='_blank'>GitHub-Pull-Request</a>."
 
 msgid "Today"
 msgstr "Haid"
@@ -151,7 +298,7 @@ msgstr "Ändarungen fia olle nochfoigendn Teamine übanemma"
 msgid "floor"
 msgstr "Stook"
 
-msgid "ground floor"
+msgid "Ground floor"
 msgstr "Eadgschoss"
 
 msgid "basement floor"
@@ -161,10 +308,10 @@ msgid "Status"
 msgstr "Status"
 
 msgid "Live"
-msgstr "Leif"
+msgstr "Live"
 
 msgid "Not live"
-msgstr "Ned Leif"
+msgstr "Ned Live"
 
 msgid "No room"
 msgstr "Ka Raum"
@@ -202,33 +349,288 @@ msgstr "Weida"
 msgid "Back"
 msgstr "Zruck"
 
+msgid "Save"
+msgstr "Speichan"
+
+msgid "Reset"
+msgstr "Zrucksetzn"
+
+msgid "Locale"
+msgstr "Sproch/Region"
+
+msgid "Account statistics"
+msgstr "Konto Statistikn"
+
+msgid "Creation"
+msgstr "Erstöllung"
+
+msgid "Latest login"
+msgstr "Letzte Omödung"
+
+msgid "Latest synchronization"
+msgstr "Letzte Synkronisierung"
+
+msgid "Never"
+msgstr "Nie"
+
+msgid "Delete account data"
+msgstr "Kontodatn leschn"
+
+msgid "Delete SSO credentials"
+msgstr "SSO-Zuagongsdatn leschn"
+
+msgid "Delete SSO Credentials"
+msgstr "SSO-Zuagongsdatn leschn"
+
+msgid "Delete account"
+msgstr "Konto leschn"
+
+msgid "Delete Account"
+msgstr "Konto leschn"
+
+msgid "Export calendar"
+msgstr "Kalenda expoatian"
+
+msgid "Synchronize calendar"
+msgstr "Kalenda synkronisian"
+
+msgid "Exported calendars"
+msgstr "Expoatiate Kalenda"
+
+msgid "User"
+msgstr "Benutza"
+
+msgid "Link"
+msgstr "Link"
+
+msgid "Remove"
+msgstr "Entfeanen"
+
+msgid "Tasks/Deadlines"
+msgstr "Aufgobn/Deadlines"
+
+msgid "Do not export"
+msgstr "Ned expoatian"
+
+msgid "Export as events"
+msgstr "Ois Teamine expoatian"
+
+msgid "Export as tasks"
+msgstr "Ois Aufgobn expoatian"
+
+msgid "Export events"
+msgstr "Teamine expoatian"
+
+msgid "Course events"
+msgstr "LVA-Teamine"
+
+msgid "Group events"
+msgstr "Gruppnteamine"
+
+msgid "Other events"
+msgstr "Ondare Teamine"
+
+msgid "Event location"
+msgstr "Veaonstoitungsuat"
+
+msgid "Room name abbreviation"
+msgstr "Raumkiazl"
+
+msgid "Room name"
+msgstr "Raumnom"
+
+msgid "Campus"
+msgstr "Campus"
+
+msgid "Building"
+msgstr "Gebäde"
+
+#, fuzzy
+msgid "Full address"
+msgstr "Volle Adress"
+
+msgid "Include TUW-Maps link"
+msgstr "TUW-Maps-Link vawendn"
+
+msgid "Event categories"
+msgstr "Teaminkategorien"
+
+msgid "By event type"
+msgstr "Noch Teamintyp"
+
+msgid "By course"
+msgstr "Noch LVA"
+
+msgid "Profile picture"
+msgstr "Profübüdl"
+
+msgid "The uploaded file exceeds the maximum upload size."
+msgstr "De hochglodane Datei übaschreitet de maximale Gräss zum Hochlona."
+
+msgid "The uploaded file has not been fully uploaded."
+msgstr "De hochglodane Datei is ned voiständig hochglond wuan."
+
+msgid "No file has been uploaded."
+msgstr "Es is ka Datei hochglond wuan."
+
+msgid "Unable to find a temporary directory."
+msgstr "Es hot ka temporära Ordna gfundn wean kina."
+
+msgid "Unable to write to target directory."
+msgstr "Da Zü-Oadna hot ned beschriem wean kina."
+
+msgid "The file upload has been stopped by a PHP extension."
+msgstr "Des Hochlona is vo ana PHP-Extension gstoppt wuan."
+
+msgid "Unable to convert profile picture."
+msgstr "Konvertian vom Profübüld ned meglich."
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Subject"
+msgstr "Betreff"
+
+msgid "Message"
+msgstr "Nochricht"
+
+msgid "Submit"
+msgstr "Obsendn"
+
+msgid "(optional)"
+msgstr "(optional)"
+
+msgid "(required)"
+msgstr "(benötigt)"
+
+msgid "Account synchronization (description)"
+msgstr ""
+"Der TUcal-Server synchronisiert im Hintergrund Kalenderdaten mit den "
+"Systemen der TU Wien (TISS, TUWEL, etc.). Um eine personalisierung zu "
+"ermöglichen (z.B. Anmeldungen für LVAs) ist es dabei leider nötig, dass der "
+"Benutzer sein TU-Passwort angibt."
+
+msgid "Automatic account synchronization (description)"
+msgstr ""
+"Empfohlen wird, dass das TU-Passwort beim TUcal-Server hinterlegt wird. So "
+"können die Kalenderdaten regelmäßig im Hintergrund synchronisiert werden."
+
+msgid "One-time account synchronization (description)"
+msgstr ""
+"Es gibt auch die Möglichkeit die Konto-Synchronisierung nur einmalig "
+"durchzuführen. Hierbei wird das Passwort nicht auf dem TUcal-Server "
+"gespeichert. Es kann nicht garantiert werden, dass der persönliche TUcal-"
+"Kalender automatisch aktualisiert wird."
+
+msgid "SSO password storage warning (description)"
+msgstr ""
+"Mir ist bewusst, welche Risiken das Speichern meines Passwortes auf einem "
+"fremden Server birgt. Weiters nehme ich zur Kenntnis, dass das Passwort auf "
+"dem Server so gespeichert werden muss, dass es im Endeffekt lesbar bleibt. "
+"Daher ist kein „sicheres“ Verschlüsseln des Passworts möglich."
+
+msgid "Reset password (description)"
+msgstr ""
+"Um dein Passwort zurückzusetzen wird eine E-Mail an deine Studenten-E-Mail-"
+"Adresse geschickt."
+
+msgid "Email sent (description)"
+msgstr "Eine E-Mail wurde versendet. Sieh in deinem Postfach nach."
+
+msgid "Email sending (description)"
+msgstr ""
+"Eine E-Mail wird in den nächsten Minuten versendet. Sieh in deinem Postfach "
+"nach."
+
+msgid "Contact request sent (description)"
+msgstr ""
+"Deine Kontaktanfrage wurde erfolgreich an den Inhaber der Seite versendet."
+
+msgid "Contact request sending (description)"
+msgstr ""
+"Deine Kontaktanfrage wird in den nächsten Minuten an den Inhaber der Seite "
+"versendet."
+
+msgid "Course acronym suggestion (description)"
+msgstr ""
+"Bei Änderungswünschen oder -vorschlägen für die LVA-Abkürzungen bitte via <a "
+"href='%s'>Kontaktformular</a> oder <a href='mailto:%s'>E-Mail</a> melden. "
+"Alternativ auch per <a href='%s' target='_blank'>GitHub-Pull-Request</a>."
+
+msgid "Contact request (description)"
+msgstr ""
+"Eine Nachricht an den Inhaber der Seite kann über dieses Formular oder "
+"direkt per <a href='mailto:%s'>E-Mail</a> gesendet werden."
+
+msgid "Account deletion warning (description)"
+msgstr ""
+"Hiermit bestätige ich, dass nach abschicken dieses Formulars mein gesamtes "
+"TUcal-Konto mitsamt aller Daten unwiderruflich gelöscht wird. Ein "
+"Wiederherstellen ist dann selbst einem Administrator nicht mehr möglich."
+
+msgctxt "http"
+msgid "Bad Request"
+msgstr "Ungütige Onfroge"
+
+msgctxt "http"
+msgid "Bad Request (description)"
+msgstr "Da Client hot a ungütige Onfroge gschickt."
+
 msgctxt "http"
 msgid "Unauthorized"
 msgstr "Unauthorisiat"
+
+msgctxt "http"
+msgid "Unauthorized (description)"
+msgstr "De Onfroge braucht a Authentifiziarung vom Benutza."
 
 msgctxt "http"
 msgid "Forbidden"
 msgstr "Zuagriff vabotn"
 
 msgctxt "http"
+msgid "Forbidden (description)"
+msgstr "Da Zuagriff auf de Seitn is ned alaubt."
+
+msgctxt "http"
 msgid "Not Found"
 msgstr "Seitn ned gfundn"
+
+msgctxt "http"
+msgid "Not Found (description)"
+msgstr "De ongfrogte Seitn hot ned gfundn wean kina."
 
 msgctxt "http"
 msgid "Conflict"
 msgstr "Konflikt"
 
 msgctxt "http"
+msgid "Conflict (description)"
+msgstr "De Ressource, de eastöt weadn soit, existiat scho."
+
+msgctxt "http"
 msgid "Gone"
 msgstr "Seitn glöscht"
+
+msgctxt "http"
+msgid "Gone (description)"
+msgstr "De ongfrogte Seitn is scho obsichtlich glescht wuan."
 
 msgctxt "http"
 msgid "Internal Server Error"
 msgstr "Interna Server-Föhla"
 
 msgctxt "http"
+msgid "Internal Server Error (description)"
+msgstr "Es is a unawoateta intera Föhla auftetn."
+
+msgctxt "http"
 msgid "Not Implemented"
 msgstr "Ned implementiat"
+
+msgctxt "http"
+msgid "Not Implemented (description)"
+msgstr "Da Programmiera woa zu föh und hot des no ned programmiat."
 
 msgctxt "email"
 msgid "Reset password"

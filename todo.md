@@ -16,5 +16,4 @@ TODOs
 * Exams
   * Day-events
   * Slots
-* Update locale (de, bar, en)
 * Hide/finish tasks/deadlines

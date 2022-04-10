@@ -566,32 +566,64 @@ msgid "Bad Request"
 msgstr "Invalid Request"
 
 msgctxt "http"
+msgid "Bad Request (description)"
+msgstr "The client sent a bad request."
+
+msgctxt "http"
 msgid "Unauthorized"
 msgstr "Unauthorized"
+
+msgctxt "http"
+msgid "Unauthorized (description)"
+msgstr "The request needs user authentication."
 
 msgctxt "http"
 msgid "Forbidden"
 msgstr "Access Forbidden"
 
 msgctxt "http"
+msgid "Forbidden (description)"
+msgstr "The access to this page is restricted."
+
+msgctxt "http"
 msgid "Not Found"
 msgstr "Page Not Found"
+
+msgctxt "http"
+msgid "Not Found (description)"
+msgstr "The requested page could not bee found."
 
 msgctxt "http"
 msgid "Conflict"
 msgstr "Conflict"
 
 msgctxt "http"
+msgid "Conflict (description)"
+msgstr "The ressource, which should be created, exists already."
+
+msgctxt "http"
 msgid "Gone"
 msgstr "Page Gone"
+
+msgctxt "http"
+msgid "Gone (description)"
+msgstr "The requested page has intentionally been deleted."
 
 msgctxt "http"
 msgid "Internal Server Error"
 msgstr "Internal Server Error"
 
 msgctxt "http"
+msgid "Internal Server Error (description)"
+msgstr "An unexpected internal error occurred."
+
+msgctxt "http"
 msgid "Not Implemented"
 msgstr "Not Implemented"
+
+msgctxt "http"
+msgid "Not Implemented (description)"
+msgstr "A needed function has not been implemented yet."
 
 msgctxt "email"
 msgid "Reset password"
