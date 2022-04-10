@@ -4,7 +4,6 @@ msgstr ""
 "Last-Translator: Lorenz Stechauner <lorenz.stechauner@necronda.net>\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
-
 msgid "ground floor"
 msgstr "Erdgeschoß"
 
