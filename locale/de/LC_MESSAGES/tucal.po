@@ -192,13 +192,13 @@ msgid "Wrong"
 msgstr "Falsch"
 
 msgid "TU Wien account synchronization"
-msgstr "TU-Konto-Synchronisation"
+msgstr "TU-Konto-Synchronisierung"
 
 msgid "Automatic account synchronization"
-msgstr "Automatische Konto-Synchronisation"
+msgstr "Automatische Konto-Synchronisierung"
 
 msgid "One-time account synchronization"
-msgstr "Einmalige Konto-Synchronisation"
+msgstr "Einmalige Konto-Synchronisierung"
 
 msgid "SSO 2FA generator (optional)"
 msgstr "SSO-Zwei-Faktor-Auth. Generator (optional)"
@@ -248,6 +248,10 @@ msgstr "Bei Änderungswünschen oder -vorschlägen für die LVA-Abkürzungen bit
 msgid "Contact request (description)"
 msgstr "Eine Nachricht an den Inhaber der Seite kann über dieses Formular oder direkt per "
        "<a href='mailto:%s'>E-Mail</a> gesendet werden."
+
+msgid "Account deletion warning (description)"
+msgstr "Hiermit bestätige ich, dass nach abschicken dieses Formulars mein gesamtes TUcal-Konto mitsamt aller Daten "
+       "unwiderruflich gelöscht wird. Ein Wiederherstellen ist dann selbst einem Administrator nicht mehr möglich."
 
 msgid "Lecture"
 msgstr "Vorlesung"
@@ -412,10 +416,25 @@ msgid "Latest login"
 msgstr "Letzte Anmeldung"
 
 msgid "Latest synchronization"
-msgstr "Letzte Synchronisation"
+msgstr "Letzte Synchronisierung"
 
 msgid "Never"
 msgstr "Nie"
+
+msgid "Delete account data"
+msgstr "Kontodaten löschen"
+
+msgid "Delete SSO credentials"
+msgstr "SSO-Zugangsdaten löschen"
+
+msgid "Delete SSO Credentials"
+msgstr "SSO-Zugangsdaten löschen"
+
+msgid "Delete account"
+msgstr "Konto löschen"
+
+msgid "Delete Account"
+msgstr "Konto löschen"
 
 msgid "Export calendar"
 msgstr "Kalender exportieren"

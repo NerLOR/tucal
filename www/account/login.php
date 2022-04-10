@@ -94,9 +94,9 @@ require "../.php/header.php";
             </div>
             <button type="submit"><?php echo _('Login'); ?></button>
         </form>
-        <?php if ($errorMsg !== null) { ?>
+<?php if ($errorMsg !== null) { ?>
         <div class="container error"><?php echo $errorMsg; ?></div>
-        <?php } ?>
+<?php } ?>
         <p class="center small">
             <?php echo _('No account yet?'); ?> <a href="/account/sign-up"><?php echo _('Sign up'); ?></a>.
             <a href="/account/password/reset"><?php echo _('Forgot password'); ?></a>.

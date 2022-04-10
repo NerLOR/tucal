@@ -4,10 +4,10 @@ global $TITLE;
 global $USER;
 global $STATUS;
 
-require "../.php/session.php";
+require "../../.php/session.php";
 force_user_login(null, false);
 
-require "../.php/main.php";
+require "../../.php/main.php";
 
 $jobId = $_GET['job'] ?? null;
 $errorMsg = null;
@@ -21,7 +21,7 @@ if ($jobId === null) {
     $rows = $stmt->fetchAll();
     if (sizeof($rows) > 0) {
         $jobId = $rows[0][0];
-        redirect("/account/tu-wien-sso?job=$jobId");
+        redirect("/account/tu-wien-sso/?job=$jobId");
     }
 }
 
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         goto doc;
     }
 
-   redirect("/account/tu-wien-sso?job=$res[1]");
+   redirect("/account/tu-wien-sso/?job=$res[1]");
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
     $STATUS = 405;
     header("Allow: HEAD, GET, POST");
@@ -110,13 +110,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 doc:
 
 $TITLE = [_('TU Wien account synchronization')];
-require "../.php/header.php";
+require "../../.php/header.php";
 
 if ($jobId === null) { ?>
 <main class="w1">
     <section>
         <h1><?php echo _('TU Wien account synchronization'); ?></h1>
-        <form name="sso-store" action="/account/tu-wien-sso" method="post" class="panel">
+        <form name="sso-store" action="/account/tu-wien-sso/" method="post" class="panel">
             <p><?php echo _('Account synchronization (description)'); ?></p>
             <p><?php echo _('Automatic account synchronization (description)'); ?></p>
             <div class="text">
@@ -139,7 +139,7 @@ if ($jobId === null) { ?>
 <?php if ($errorMsg !== null && $mode === 'store') { ?>
         <div class="container error"><?php echo $errorMsg; ?></div>
 <?php } ?>
-        <form name="sso-no-store" action="/account/tu-wien-sso" method="post" class="panel">
+        <form name="sso-no-store" action="/account/tu-wien-sso/" method="post" class="panel">
             <hr data-content="<?php echo strtoupper(_('or')); ?>"/>
             <p><?php echo _('One-time account synchronization (description)'); ?></p>
             <div class="text">
@@ -163,9 +163,9 @@ if ($jobId === null) { ?>
 <main class="w2">
     <section>
         <h1><?php echo _('TU Wien account synchronization'); ?></h1>
-        <?php echo_job($jobId, "/calendar/$USER[mnr]", "/account/tu-wien-sso"); ?>
+        <?php echo_job($jobId, "/calendar/$USER[mnr]", "/account/tu-wien-sso/"); ?>
 
     </section>
 </main>
 <?php }
-require "../.php/footer.php";
+require "../../.php/footer.php";

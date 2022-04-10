@@ -412,6 +412,14 @@ a.account span.verified {
     color: var(--green);
 }
 
+main section.red {
+    --border-color: var(--red);
+}
+
+main section.red h1 {
+    color: var(--red);
+}
+
 @media screen and (min-device-width: 480px) {
     *::-webkit-scrollbar {
         width: 15px;

@@ -3,5 +3,6 @@ __pycache__/
 *.pcy
 dest/
 /*.sh
-/tucal.ini
-/impressum.php
+/*.ini
+/*.php
+!/*.default.*

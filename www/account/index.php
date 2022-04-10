@@ -224,6 +224,13 @@ require "../.php/header.php";
             </div>
         </form>
     </section>
+    <section class="red">
+        <h1><?php echo _('Delete account data'); ?></h1>
+        <div class="center">
+            <a class="button margin red" href="/account/tu-wien-sso/delete"<?php echo $USER['sso_credentials'] ? '' : ' disabled'; ?>><?php echo _('Delete SSO credentials'); ?></a>
+            <a class="button margin red" href="/account/delete"><?php echo _('Delete account'); ?></a>
+        </div>
+    </section>
 </main>
 <?php
 require "../.php/footer.php";

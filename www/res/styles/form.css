@@ -47,7 +47,9 @@ a.button:focus {
     color: var(--color-comp);
 }
 
-button:disabled {
+button:disabled,
+a.button[disabled] {
+    pointer-events: none;
     background-color: var(--grey-C0);
     border-color: var(--grey-C0);
     color: var(--grey-40);
@@ -232,4 +234,9 @@ main form.table select {
 main form fieldset {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
+}
+
+button.red,
+a.button.red {
+    --color: var(--red);
 }
