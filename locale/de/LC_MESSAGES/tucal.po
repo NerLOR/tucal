@@ -513,7 +513,7 @@ msgstr ""
 msgid "Automatic account synchronization (description)"
 msgstr ""
 "Empfohlen wird, dass das TU-Passwort beim TUcal-Server hinterlegt wird. "
-"So können die Kalenderdaten regelmäßig im Hintergrund snychronisiert werden."
+"So können die Kalenderdaten regelmäßig im Hintergrund synchronisiert werden."
 
 msgid "One-time account synchronization (description)"
 msgstr ""

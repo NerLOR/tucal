@@ -1,9 +1,8 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-26 18:50+01\n"
+"PO-Revision-Date: 2022-04-10 16:00+0200\n"
 "Last-Translator: Lorenz Stechauner <lorenz.stechauner@necronda.net>\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-
 
 msgid "My Calendar"
 msgstr "My Calendar"
@@ -28,6 +27,9 @@ msgstr "Students"
 
 msgid "My Courses"
 msgstr "My Courses"
+
+msgid "Old Courses"
+msgstr "Old Courses"
 
 msgid "Courses"
 msgstr "Courses"
@@ -71,6 +73,12 @@ msgstr "Imprint"
 msgid "Contact"
 msgstr "Contact"
 
+msgid "Contact request"
+msgstr "Contact request"
+
+msgid "Donate"
+msgstr "Donate"
+
 msgid "Login"
 msgstr "Login"
 
@@ -101,6 +109,36 @@ msgstr "Repeat password"
 msgid "SSO password"
 msgstr "TU password"
 
+msgid "Change password"
+msgstr "Change password"
+
+msgid "Change Password"
+msgstr "Change Password"
+
+msgid "Current password"
+msgstr "Current password"
+
+msgid "New password"
+msgstr "New password"
+
+msgid "Repeat new password"
+msgstr "Repeat new password"
+
+msgid "Forgot password"
+msgstr "Forgot password"
+
+msgid "Reset Password"
+msgstr "Reset Password"
+
+msgid "Reset password"
+msgstr "Reset password"
+
+msgid "This link is invalid. Please try again."
+msgstr "Dieser Link ist ungültig. Bitte versuche es erneut."
+
+msgid "Verify Account"
+msgstr "Verify Account"
+
 msgid "Verify account"
 msgstr "Verify account"
 
@@ -108,7 +146,19 @@ msgid "SSO verification"
 msgstr "SSO verification"
 
 msgid "Synchronize TU account"
-msgstr "Syncrhonize TU account"
+msgstr "Synchronize TU account"
+
+msgid "Sync TU account"
+msgstr "Sync TU account"
+
+msgid "No account yet?"
+msgstr "No account yet?"
+
+msgid "No associated account"
+msgstr "No associated account"
+
+msgid "Already signed up?"
+msgstr "Already signed up?"
 
 msgid "Email verification"
 msgstr "Email verification"
@@ -125,6 +175,9 @@ msgstr "Already exists"
 msgid "Already in use"
 msgstr "Already in use"
 
+msgid "Username already in use"
+msgstr "Username already in use"
+
 msgid "Too short"
 msgstr "Too short"
 
@@ -137,34 +190,20 @@ msgstr "Does not exist"
 msgid "Wrong"
 msgstr "Wrong"
 
+msgid "TU Wien account synchronization"
+msgstr "TU Wien account synchronization"
+
+msgid "Automatic account synchronization"
+msgstr "Automatic account synchronization"
+
+msgid "One-time account synchronization"
+msgstr "One-time account synchronization"
+
 msgid "SSO 2FA generator (optional)"
 msgstr "SSO two-factor-auth. generator (optional)"
 
 msgid "SSO 2FA token (optional)"
 msgstr "SSO two-factor-auth. token (optional)"
-
-msgid "Reset password (description)"
-msgstr "A email will be sent to your student email address to reset your password."
-
-msgid "Email sent (description)"
-msgstr "A email has been sent. Check your inbox."
-
-msgid "Email sending (description)"
-msgstr "A email will be sent in the next minutes. Check your inbox."
-
-msgid "Contact request sent (description)"
-msgstr "Your contact request has successfully been sent to the site owner."
-
-msgid "Contact request sending (description)"
-msgstr "Your contact request will be sent to the site owner in the next minutes."
-
-msgid "Course acronym suggestion (description)"
-msgstr "If you want to suggest any changes to the course acronyms please contact us via "
-       "the <a href='%s'>contact form</a> or <a href='mailto:%s'>email</a>. "
-       "Alternatively also by <a href='%s' target='_blank'>GibHub pull request</a>."
-
-msgid "Contact request (description)"
-msgstr "A contact request to the site owner may be sent via this form or directly via <a href='mailto:%s'>Email</a>."
 
 msgid "Lecture"
 msgstr "Lecture"
@@ -310,7 +349,211 @@ msgstr "Weiter"
 msgid "Back"
 msgstr "Zurück"
 
+msgid "Save"
+msgstr "Save"
 
+msgid "Reset"
+msgstr "Reset"
+
+msgid "Locale"
+msgstr "Locale"
+
+msgid "Account statistics"
+msgstr "Account statistics"
+
+msgid "Creation"
+msgstr "Creation"
+
+msgid "Latest login"
+msgstr "Latest login"
+
+msgid "Latest synchronization"
+msgstr "Latest synchronization"
+
+msgid "Never"
+msgstr "Never"
+
+msgid "Delete account data"
+msgstr "Delete account data"
+
+msgid "Delete SSO credentials"
+msgstr "Delete SSO credentials"
+
+msgid "Delete SSO Credentials"
+msgstr "Delete SSO Credentials"
+
+msgid "Delete account"
+msgstr "Delete account"
+
+msgid "Delete Account"
+msgstr "Delete Account"
+
+msgid "Export calendar"
+msgstr "Export calendar"
+
+msgid "Synchronize calendar"
+msgstr "Synchronize calendar"
+
+msgid "Exported calendars"
+msgstr "Exported calendars"
+
+msgid "User"
+msgstr "User"
+
+msgid "Link"
+msgstr "Link"
+
+msgid "Remove"
+msgstr "Remove"
+
+msgid "Tasks/Deadlines"
+msgstr "Tasks/Deadlines"
+
+msgid "Do not export"
+msgstr "Do not export"
+
+msgid "Export as events"
+msgstr "Export as events"
+
+msgid "Export as tasks"
+msgstr "Export as tasks"
+
+msgid "Export events"
+msgstr "Export events"
+
+msgid "Course events"
+msgstr "Course events"
+
+msgid "Group events"
+msgstr "Group events"
+
+msgid "Other events"
+msgstr "Other events"
+
+msgid "Event location"
+msgstr "Event location"
+
+msgid "Room name abbreviation"
+msgstr "Room name abbreviation"
+
+msgid "Room name"
+msgstr "Room name"
+
+msgid "Campus"
+msgstr "Campus"
+
+msgid "Building"
+msgstr "Building"
+
+msgid "Full address"
+msgstr "Full address"
+
+msgid "Include TUW-Maps link"
+msgstr "Include TUW-Maps link"
+
+msgid "Event categories"
+msgstr "Event categories"
+
+msgid "By event type"
+msgstr "By event type"
+
+msgid "By course"
+msgstr "By course"
+
+msgid "Profile picture"
+msgstr "Profile picture"
+
+msgid "The uploaded file exceeds the maximum upload size."
+msgstr "The uploaded file exceeds the maximum upload size."
+
+msgid "The uploaded file has not been fully uploaded."
+msgstr "The uploaded file has not been fully uploaded."
+
+msgid "No file has been uploaded."
+msgstr "No file has been uploaded."
+
+msgid "Unable to find a temporary directory."
+msgstr "Unable to find a temporary directory."
+
+msgid "Unable to write to target directory."
+msgstr "Unable to write to target directory."
+
+msgid "The file upload has been stopped by a PHP extension."
+msgstr "The file upload has been stopped by a PHP extension."
+
+msgid "Unable to convert profile picture."
+msgstr "Unable to convert profile picture."
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Subject"
+msgstr "Subject"
+
+msgid "Message"
+msgstr "Message"
+
+msgid "Submit"
+msgstr "Submit"
+
+msgid "(optional)"
+msgstr "(optional)"
+
+msgid "(required)"
+msgstr "(required)"
+
+msgid "Account synchronization (description)"
+msgstr ""
+"The TUcal Server synchronizes calendar data with the systems of TU Wien (TISS, TUWEL, etc.) in the background. "
+"To allow for a personalized view (e.g. course registration) it is necessary for the user to provide their SSO password."
+
+msgid "Automatic account synchronization (description)"
+msgstr "It is recommended to store your SSO password on the TUcal server. "
+"This way, calendar data can be regularly synchronized in the background."
+
+msgid "One-time account synchronization (description)"
+msgstr ""
+"There is also the option of synchronizing accounts only once. "
+"Therefore the password is not saved on the TUcal server."
+"It cannot be guaranteed that the personal TUcal calendar will be updated automatically."
+
+msgid "SSO password storage warning (description)"
+msgstr ""
+"I am aware of the risks of saving my password on a third-party server. "
+"Furthermore, I acknowledge that the password must be stored on the server in such a way that it ultimately remains "
+"readable. "
+"Therefore, no “secure” encryption of the password is possible."
+
+msgid "Reset password (description)"
+msgstr "An email will be sent to your student email address to reset your password."
+
+msgid "Email sent (description)"
+msgstr "An email has been sent. Check your inbox."
+
+msgid "Email sending (description)"
+msgstr "An email will be sent in the next minutes. Check your inbox."
+
+msgid "Contact request sent (description)"
+msgstr "Your contact request has successfully been sent to the site owner."
+
+msgid "Contact request sending (description)"
+msgstr "Your contact request will be sent to the site owner in the next minutes."
+
+msgid "Course acronym suggestion (description)"
+msgstr ""
+"If you want to suggest any changes to the course acronyms please contact us via the <a href='%s'>contact form</a> or "
+"<a href='mailto:%s'>email</a>. "
+"Alternatively also by <a href='%s' target='_blank'>GibHub pull request</a>."
+
+msgid "Contact request (description)"
+msgstr ""
+"A contact request to the site owner may be sent via this form or directly via <a href='mailto:%s'>Email</a>."
+
+msgid "Account deletion warning (description)"
+msgstr ""
+"Hereby I confirm, that after submitting this form my entire TUcal account with all of its associated data will be "
+"irreversibly deleted. "
+"A restore is then no longer possible even for an administrator."
 
 msgctxt "http"
 msgid "Bad Request"
@@ -346,20 +589,22 @@ msgstr "Not Implemented"
 
 msgctxt "email"
 msgid "Reset password"
-msgstr "Hello!\n"
-       "\n"
-       "To reset your TUcal password visit the link below.\n"
-       "\n"
-       "%s\n"
-       "\n"
-       "Thank you for using TUcal! :D"
+msgstr ""
+"Hello!\n"
+"\n"
+"To reset your TUcal password visit the link below.\n"
+"\n"
+"%s\n"
+"\n"
+"Thank you for using TUcal! :D"
 
 msgctxt "email"
 msgid "Verify account"
-msgstr "Hello!\n"
-       "\n"
-       "To verify your TUcal account visit the link below.\n"
-       "\n"
-       "%s\n"
-       "\n"
-       "Thank you for using TUcal! :D"
+msgstr ""
+"Hello!\n"
+"\n"
+"To verify your TUcal account visit the link below.\n"
+"\n"
+"%s\n"
+"\n"
+"Thank you for using TUcal! :D"
