@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-26 18:50+01\n"
+"PO-Revision-Date: 2022-04-10 16:00+0200\n"
 "Last-Translator: Lorenz Stechauner <lorenz.stechauner@necronda.net>\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
@@ -205,53 +205,6 @@ msgstr "SSO-Zwei-Faktor-Auth. Generator (optional)"
 
 msgid "SSO 2FA token (optional)"
 msgstr "SSO-Zwei-Faktor-Auth. Schlüssel (optional)"
-
-msgid "Account synchronization (description)"
-msgstr "Der TUcal-Server synchronisiert im Hintergrund Kalenderdaten mit den Systemen der TU Wien (TISS, TUWEL, etc.). "
-       "Um eine personalisierung zu ermöglichen (z.B. Anmeldungen für LVAs) ist es dabei leider nötig, dass der "
-       "Benutzer sein TU-Passwort angibt."
-
-msgid "Automatic account synchronization (description)"
-msgstr "Empfohlen wird, dass das TU-Passwort beim TUcal-Server hinterlegt wird. "
-       "So können die Kalenderdaten regelmäßig im Hintergrund snychronisiert werden."
-
-msgid "One-time account synchronization (description)"
-msgstr "Es gibt auch die Möglichkeit die Konto-Synchronisierung nur einmalig durchzuführen. "
-       "Hierbei wird das Passwort nicht auf dem TUcal-Server gespeichert. "
-       "Es kann nicht garantiert werden, dass der persönliche TUcal-Kalender automatisch aktualisiert wird."
-
-msgid "SSO password storage warning (description)"
-msgstr "Mir ist bewusst, welche Risiken das Speichern meines Passwortes auf einem fremden Server birgt. "
-       "Weiters nehme ich zur Kenntnis, dass das Passwort auf dem Server so gespeichert werden muss, dass es im "
-       "Endeffekt lesbar bleibt. Daher ist kein „sicheres“ Verschlüsseln des Passworts möglich."
-
-msgid "Reset password (description)"
-msgstr "Um dein Passwort zurückzusetzen wird eine E-Mail an deine Studenten-E-Mail-Adresse geschickt."
-
-msgid "Email sent (description)"
-msgstr "Eine E-Mail wurde versendet. Sieh in deinem Postfach nach."
-
-msgid "Email sending (description)"
-msgstr "Eine E-Mail wird in den nächsten Minuten versendet. Sieh in deinem Postfach nach."
-
-msgid "Contact request sent (description)"
-msgstr "Deine Kontaktanfrage wurde erfolgreich an den Inhaber der Seite versendet."
-
-msgid "Contact request sending (description)"
-msgstr "Deine Kontaktanfrage wird in den nächsten Minuten an den Inhaber der Seite versendet."
-
-msgid "Course acronym suggestion (description)"
-msgstr "Bei Änderungswünschen oder -vorschlägen für die LVA-Abkürzungen bitte via "
-       "<a href='%s'>Kontaktformular</a> oder <a href='mailto:%s'>E-Mail</a> melden. "
-       "Alternativ auch per <a href='%s' target='_blank'>GitHub-Pull-Request</a>."
-
-msgid "Contact request (description)"
-msgstr "Eine Nachricht an den Inhaber der Seite kann über dieses Formular oder direkt per "
-       "<a href='mailto:%s'>E-Mail</a> gesendet werden."
-
-msgid "Account deletion warning (description)"
-msgstr "Hiermit bestätige ich, dass nach abschicken dieses Formulars mein gesamtes TUcal-Konto mitsamt aller Daten "
-       "unwiderruflich gelöscht wird. Ein Wiederherstellen ist dann selbst einem Administrator nicht mehr möglich."
 
 msgid "Lecture"
 msgstr "Vorlesung"
@@ -551,6 +504,61 @@ msgid "(required)"
 msgstr "(benötigt)"
 
 
+msgid "Account synchronization (description)"
+msgstr ""
+"Der TUcal-Server synchronisiert im Hintergrund Kalenderdaten mit den Systemen der TU Wien (TISS, TUWEL, etc.). "
+"Um eine personalisierung zu ermöglichen (z.B. Anmeldungen für LVAs) ist es dabei leider nötig, dass der Benutzer sein "
+"TU-Passwort angibt."
+
+msgid "Automatic account synchronization (description)"
+msgstr ""
+"Empfohlen wird, dass das TU-Passwort beim TUcal-Server hinterlegt wird. "
+"So können die Kalenderdaten regelmäßig im Hintergrund snychronisiert werden."
+
+msgid "One-time account synchronization (description)"
+msgstr ""
+"Es gibt auch die Möglichkeit die Konto-Synchronisierung nur einmalig durchzuführen. "
+"Hierbei wird das Passwort nicht auf dem TUcal-Server gespeichert. "
+"Es kann nicht garantiert werden, dass der persönliche TUcal-Kalender automatisch aktualisiert wird."
+
+msgid "SSO password storage warning (description)"
+msgstr ""
+"Mir ist bewusst, welche Risiken das Speichern meines Passwortes auf einem fremden Server birgt. "
+"Weiters nehme ich zur Kenntnis, dass das Passwort auf dem Server so gespeichert werden muss, dass es im Endeffekt "
+"lesbar bleibt. Daher ist kein „sicheres“ Verschlüsseln des Passworts möglich."
+
+msgid "Reset password (description)"
+msgstr "Um dein Passwort zurückzusetzen wird eine E-Mail an deine Studenten-E-Mail-Adresse geschickt."
+
+msgid "Email sent (description)"
+msgstr "Eine E-Mail wurde versendet. Sieh in deinem Postfach nach."
+
+msgid "Email sending (description)"
+msgstr "Eine E-Mail wird in den nächsten Minuten versendet. Sieh in deinem Postfach nach."
+
+msgid "Contact request sent (description)"
+msgstr "Deine Kontaktanfrage wurde erfolgreich an den Inhaber der Seite versendet."
+
+msgid "Contact request sending (description)"
+msgstr "Deine Kontaktanfrage wird in den nächsten Minuten an den Inhaber der Seite versendet."
+
+msgid "Course acronym suggestion (description)"
+msgstr ""
+"Bei Änderungswünschen oder -vorschlägen für die LVA-Abkürzungen bitte via <a href='%s'>Kontaktformular</a> oder "
+"<a href='mailto:%s'>E-Mail</a> melden. Alternativ auch per <a href='%s' target='_blank'>GitHub-Pull-Request</a>."
+
+msgid "Contact request (description)"
+msgstr ""
+"Eine Nachricht an den Inhaber der Seite kann über dieses Formular oder direkt per <a href='mailto:%s'>E-Mail</a> "
+"gesendet werden."
+
+msgid "Account deletion warning (description)"
+msgstr ""
+"Hiermit bestätige ich, dass nach abschicken dieses Formulars mein gesamtes TUcal-Konto mitsamt aller Daten "
+"unwiderruflich gelöscht wird. "
+"Ein Wiederherstellen ist dann selbst einem Administrator nicht mehr möglich."
+
+
 msgctxt "http"
 msgid "Bad Request"
 msgstr "Ungültige Anfrage"
@@ -583,22 +591,25 @@ msgctxt "http"
 msgid "Not Implemented"
 msgstr "Nicht implementiert"
 
+
 msgctxt "email"
 msgid "Reset password"
-msgstr "Servus!\n"
-       "\n"
-       "Gehe auf den folgenden Link um dein TUcal-Passwort zurückzusetzen.\n"
-       "\n"
-       "%s\n"
-       "\n"
-       "Danke, dass du TUcal verwendest! :D"
+msgstr ""
+"Servus!\n"
+"\n"
+"Gehe auf den folgenden Link um dein TUcal-Passwort zurückzusetzen.\n"
+"\n"
+"%s\n"
+"\n"
+"Danke, dass du TUcal verwendest! :D"
 
 msgctxt "email"
 msgid "Verify account"
-msgstr "Servus!\n"
-       "\n"
-       "Gehe auf den folgenden Link um dein TUcal-Konto zu verifizieren.\n"
-       "\n"
-       "%s\n"
-       "\n"
-       "Danke, dass du TUcal verwendest! :D"
+msgstr ""
+"Servus!\n"
+"\n"
+"Gehe auf den folgenden Link um dein TUcal-Konto zu verifizieren.\n"
+"\n"
+"%s\n"
+"\n"
+"Danke, dass du TUcal verwendest! :D"
