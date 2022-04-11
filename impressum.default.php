@@ -5,7 +5,7 @@ $email = $CONFIG['email']['contact'];
 $hostname = $CONFIG['tucal']['hostname'];
 $contact = "https://$hostname/contact";
 ?>
-<p class="legal">
+<p class="legal" lang="de-AT">
     Informationspflicht laut
     <a href="https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20001703&Paragraf=5" target="_blank">
         <strong>§5&nbsp;ECG</strong>
@@ -17,9 +17,9 @@ $contact = "https://$hostname/contact";
     </a>
     (<a href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10000719" target="_blank">Mediengesetz</a>).
 </p>
-<p>
+<p lang="de-AT">
     <strong>Inhaber und Betreiber von TUcal (<a href="https://<?php echo $hostname; ?>/"><?php echo $hostname; ?></a>):</strong>
-</p>
+</p lang="de-AT">
 <p class="info">
     <strong>Max Mustermann</strong><br/>
     <br/>
