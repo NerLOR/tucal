@@ -111,7 +111,7 @@ if ($STATUS >= 400 && $STATUS < 600) {
                 </div>
                 <div><a href="/account/"><?php echo _('Settings'); ?></a></div>
                 <?php if (!$USER['verified']) { ?><div><a href="/account/verify"><?php echo _('Verify account'); ?></a></div><?php }
-                else { ?><div><a href="/account/sync"><?php echo _('Sync TU account'); ?></a></div><?php }?>
+                else { ?><div><a href="/account/sync"><?php echo _('Sync TU account'); ?></a></div><?php } ?>
 
                 <hr/>
                 <div><a href="/search"><?php echo _('Search (for)'); ?></a></div>
@@ -134,9 +134,9 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <main class="w1">
         <section class="status error">
             <h1><?php echo $STATUS; ?></h1>
-            <h2><?php echo _ctx('http', $msg)?> :&#xFEFF;(</h2>
-            <p><?php echo _ctx('http', "${msg} (description)")?></p>
-            <p><?php echo htmlspecialchars($ERROR)?></p>
+            <h2><?php echo _ctx('http', $msg); ?> :&#xFEFF;(</h2>
+            <p><?php echo _ctx('http', "${msg} (description)"); ?></p>
+            <p><?php echo htmlspecialchars($ERROR); ?></p>
         </section>
     </main>
 <?php

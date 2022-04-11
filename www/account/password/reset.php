@@ -81,7 +81,7 @@ require "../../.php/header.php";
 <main class="w1">
     <section>
         <h1><?php echo _('Reset Password'); ?></h1>
-<?php if ($status === null) {?>
+<?php if ($status === null) { ?>
 
         <form class="panel" action="/account/password/reset" method="post">
             <p><?php echo _('Reset password (description)'); ?></p>

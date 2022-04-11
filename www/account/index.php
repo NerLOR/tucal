@@ -157,15 +157,15 @@ require "../.php/header.php";
         <form name="account-settings" action="/account/" method="post" class="table" enctype="multipart/form-data">
             <div>
                 <label for="username"><?php echo _('Username'); ?></label>
-                <input name="username" id="username" type="text" value="<?php echo htmlentities($USER['username'])?>" pattern="\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>
+                <input name="username" id="username" type="text" value="<?php echo htmlentities($USER['username']); ?>" pattern="\p{L}[0-9\p{L}_ -]{1,30}[0-9\p{L}]" required/>
             </div>
             <div>
                 <label for="mnr"><?php echo _('Matriculation number'); ?></label>
-                <input name="mnr" id="mnr" type="text" value="<?php echo htmlentities($USER['mnr'])?>" readonly disabled/>
+                <input name="mnr" id="mnr" type="text" value="<?php echo htmlentities($USER['mnr']); ?>" readonly disabled/>
             </div>
             <div>
                 <label for="email-address-1"><?php echo _('Email address'); ?></label>
-                <input name="email-address-1" id="email-address-1" type="text" value="<?php echo htmlentities($USER['email_address_1'])?>" readonly disabled/>
+                <input name="email-address-1" id="email-address-1" type="text" value="<?php echo htmlentities($USER['email_address_1']); ?>" readonly disabled/>
             </div>
             <div>
                 <label for="locale"><?php echo _('Locale'); ?></label>

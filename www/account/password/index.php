@@ -144,7 +144,7 @@ require "../../.php/header.php";
 <?php if (!$tokenInvalid) { ?>
 
         <form name="change-password" action="/account/password/<?php if ($token !== null) echo "?token=" . htmlspecialchars($token); ?>" method="post" class="panel">
-<?php if ($token === null) {?>
+<?php if ($token === null) { ?>
 
             <div class="text<?php echo $errors['pwd'] ? " error" : ""; ?>">
                 <input type="password" name="current-password" id="current-password" placeholder=" " value="<?php echo htmlspecialchars($_POST['current-password'] ?? ''); ?>" required/>
