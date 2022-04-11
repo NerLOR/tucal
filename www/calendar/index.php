@@ -96,7 +96,8 @@ if (!isset($STATUS) || $STATUS === 200) {
             FROM tucal.calendar_export e
                 LEFT JOIN tucal.account a ON e.subject_mnr = a.mnr
                 LEFT JOIN tucal.friend f ON (f.account_nr_1, f.account_nr_2) = (:nr, a.account_nr)
-            WHERE e.account_nr = :nr", [
+            WHERE e.account_nr = :nr
+            ORDER BY f.nickname, a.username, e.options->'name'", [
         'nr' => $USER['nr'],
     ]);
 }
@@ -140,11 +141,11 @@ require "../.php/header.php";
         </div>
     </section>
     <section>
-        <h2><?php echo _('Exported calendars'); ?></h2>
+        <h2 id="exports"><?php echo _('Exported calendars'); ?></h2>
         <div class="calendar-exports-wrapper">
         <table class="calendar-exports">
             <thead>
-                <tr><th><?php echo _('User'); ?></th><th><?php echo _('Link'); ?></th><th><?php echo _('Settings'); ?></th><th><?php echo _('Remove'); ?></th></tr>
+                <tr><th><?php echo _('Calendar'); ?></th><th><?php echo _('Settings'); ?></th><th><?php echo _('Remove'); ?></th></tr>
             </thead>
             <tbody>
 <?php
@@ -163,24 +164,24 @@ while ($row = $stmt->fetch()) {
     <tr>
         <td>
             <?php echo_account($row, "/calendar/$row[subject_mnr]/"); ?><br/>
-            <?php echo $opts['name'] ?? ''; ?>
         </td>
-        <td><a href="<?php echo $path; ?>" class="copy-link"><?php echo _("Open link"); ?></a></td>
-        <td>
+        <td rowspan="3">
             <form action="/calendar/export/update?id=<?php echo $row['export_id']; ?>" method="post">
                 <div class="flex">
-                    <fieldset>
-                        <legend><?php echo _('Tasks/Deadlines'); ?></legend>
-                        <label><input type="radio" name="todos" value="omitted"<?php echo ($todos === 'omitted') ? ' checked' : ''; ?>/> <?php echo _('Do not export'); ?></label><br/>
-                        <label><input type="radio" name="todos" value="as-events"<?php echo ($todos === 'as_events') ? ' checked' : ''; ?>/> <?php echo _('Export as events'); ?></label><br/>
-                        <label><input type="radio" name="todos" value="as-todos"<?php echo ($todos === 'as_todos') ? ' checked' : ''; ?>/> <?php echo _('Export as tasks'); ?></label>
-                    </fieldset>
-                    <fieldset>
-                        <legend><?php echo _('Export events'); ?></legend>
-                        <label><input type="checkbox" name="export-course-events"<?php echo in_array('course', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Course events'); ?></label><br/>
-                        <label><input type="checkbox" name="export-group-events"<?php echo in_array('group', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Group events'); ?></label><br/>
-                        <label><input type="checkbox" name="export-other-events"<?php echo in_array('other', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Other events'); ?></label>
-                    </fieldset>
+                    <div class="sub-flex">
+                        <fieldset>
+                            <legend><?php echo _('Tasks/Deadlines'); ?></legend>
+                            <label><input type="radio" name="todos" value="omitted"<?php echo ($todos === 'omitted') ? ' checked' : ''; ?>/> <?php echo _('Do not export'); ?></label><br/>
+                            <label><input type="radio" name="todos" value="as-events"<?php echo ($todos === 'as_events') ? ' checked' : ''; ?>/> <?php echo _('Export as events'); ?></label><br/>
+                            <label><input type="radio" name="todos" value="as-todos"<?php echo ($todos === 'as_todos') ? ' checked' : ''; ?>/> <?php echo _('Export as tasks'); ?></label>
+                        </fieldset>
+                        <fieldset>
+                            <legend><?php echo _('Export events'); ?></legend>
+                            <label><input type="checkbox" name="export-course-events"<?php echo in_array('course', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Course events'); ?></label><br/>
+                            <label><input type="checkbox" name="export-group-events"<?php echo in_array('group', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Group events'); ?></label><br/>
+                            <label><input type="checkbox" name="export-other-events"<?php echo in_array('other', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Other events'); ?></label>
+                        </fieldset>
+                    </div>
                     <fieldset>
                         <legend><?php echo _('Event location'); ?></legend>
                         <label><input type="radio" name="location" value="room-abbr"<?php echo ($loc === 'room_abbr') ? ' checked' : ''; ?>/> <?php echo _('Room name abbreviation'); ?></label><br/>
@@ -190,20 +191,29 @@ while ($row = $stmt->fetch()) {
                         <label><input type="radio" name="location" value="full-addr"<?php echo ($loc === 'full_addr') ? ' checked' : ''; ?>/> <?php echo _('Full address'); ?></label><br/>
                         <label><input type="checkbox" name="tuw-maps"<?php echo $tuwMaps ? ' checked' : ''; ?>/> <?php echo _('Include TUW-Maps link'); ?></label>
                     </fieldset>
-                    <fieldset>
-                        <legend><?php echo _('Event categories'); ?></legend>
-                        <label><input type="radio" name="categories" value="event-type"<?php echo ($cat === 'event_type' ? ' checked' : ''); ?>/> <?php echo _('By event type'); ?></label><br/>
-                        <label><input type="radio" name="categories" value="course"<?php echo ($cat === 'course' ? ' checked' : ''); ?>/> <?php echo _('By course'); ?></label>
-                    </fieldset>
+                    <div class="sub-flex">
+                        <fieldset>
+                            <legend><?php echo _('Event categories'); ?></legend>
+                            <label><input type="radio" name="categories" value="event-type"<?php echo ($cat === 'event_type' ? ' checked' : ''); ?>/> <?php echo _('By event type'); ?></label><br/>
+                            <label><input type="radio" name="categories" value="course"<?php echo ($cat === 'course' ? ' checked' : ''); ?>/> <?php echo _('By course'); ?></label>
+                        </fieldset>
+                        <input type="text" name="name" value="<?php echo htmlentities($opts['name'] ?? ''); ?>" placeholder="<?php echo _('Name'); ?>"/>
+                    </div>
                 </div>
                 <button type="submit"><?php echo _('Save'); ?></button>
             </form>
         </td>
-        <td>
+        <td rowspan="3">
             <form action="/calendar/export/remove?id=<?php echo $row['export_id']; ?>" method="post">
                 <button type="submit"><?php echo _('Remove'); ?></button>
             </form>
         </td>
+    </tr>
+    <tr>
+        <td><?php echo htmlentities($opts['name'] ?? ''); ?></td>
+    </tr>
+    <tr>
+        <td><a href="<?php echo $path; ?>" class="copy-link"><?php echo _("Open link"); ?></a></td>
     </tr>
 <?php } ?>
             </tbody>

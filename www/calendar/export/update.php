@@ -61,11 +61,12 @@ try {
 
     db_exec("
             UPDATE tucal.calendar_export
-            SET options = jsonb_set(options, '{ical}', :opts, true)
+            SET options = jsonb_set(jsonb_set(options, '{ical}', :opts, true), '{name}', :name, true)
             WHERE account_nr = :nr AND export_id = :id", [
         'id' => $id,
         'nr' => $USER['nr'],
         'opts' => json_encode($opts),
+        'name' => json_encode($_POST['name'] ?? null),
     ]);
 } catch (Exception $e) {
     db_rollback();
@@ -85,4 +86,5 @@ if (substr($ref, 0, strlen($refQuery)) !== $refQuery) {
     $ref = '/calendar/' . substr($ref, strlen($refQuery));
 }
 
+$ref .= '#exports';
 redirect($ref);

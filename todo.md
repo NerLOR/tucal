@@ -2,7 +2,6 @@
 TODOs
 =====
 
-* Calendar export name
 * Start page: Feature list
 * Admin panel
   * Jobs

@@ -215,10 +215,12 @@ function initCopyLink() {
         if (!a.classList.contains("copy-link")) continue;
         const link = a.href;
         a.innerText = _("Copy link");
+        a.classList.add("button");
 
         a.addEventListener('click', (evt) => {
             evt.preventDefault();
             navigator.clipboard.writeText(link).then();
+            alert(_('Copied calendar export link to clipboard.'));
         });
     }
 }

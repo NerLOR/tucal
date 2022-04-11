@@ -36,6 +36,14 @@ table.calendar-exports form div.flex {
     margin: 0.5em 0;
 }
 
+table.calendar-exports form div.sub-flex {
+    display: flex;
+    gap: 0.5em;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+}
+
 table.calendar-exports form fieldset {
     text-align: left;
     font-size: 0.75em;

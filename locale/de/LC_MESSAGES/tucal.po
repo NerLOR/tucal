@@ -343,6 +343,9 @@ msgstr "Nur online"
 msgid "Copy link"
 msgstr "Link kopieren"
 
+msgid "Copied calendar export link to clipboard."
+msgstr "Kalender-Export-Link in die Zwischenablage kopiert."
+
 msgid "Next (step)"
 msgstr "Weiter"
 

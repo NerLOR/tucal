@@ -204,7 +204,7 @@ class WeekSchedule {
             history.replaceState({
                 year: this.week.year,
                 week: this.week.week,
-            }, '', `/calendar/${this.subject}/${this.week.year}/W${this.week.week}/${this.eventId ?? ''}`);
+            }, '', `/calendar/${this.subject}/${this.week.year}/W${this.week.week}/${this.eventId ?? ''}${location.hash}`);
         }
 
         this.timer = setInterval(() => {

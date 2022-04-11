@@ -343,6 +343,9 @@ msgstr "Nua onlein"
 msgid "Copy link"
 msgstr "Link kopian"
 
+msgid "Copied calendar export link to clipboard."
+msgstr "Kalenda-Expoat-Link in de Zwischnobloge kopiat."
+
 msgid "Next (step)"
 msgstr "Weida"
 
