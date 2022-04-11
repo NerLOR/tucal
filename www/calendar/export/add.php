@@ -53,4 +53,5 @@ if (substr($ref, 0, strlen($refQuery)) !== $refQuery) {
     $ref = '/calendar/' . substr($ref, strlen($refQuery));
 }
 
+$ref .= '#exports';
 redirect($ref);
