@@ -259,8 +259,7 @@ def send_emails():
         return
 
     cur.execute("""SELECT email_address_1 FROM tucal.v_account ORDER BY account_nr LIMIT 2""")
-    rows = cur.fetch_all()
-    addresses = [address for address, in rows]
+    addresses = [address for address, in cur.fetch_all()]
 
     msgs = []
     for msg_nr, msg_id, to, subj, content, reply_to, from_name, submit in rows:
