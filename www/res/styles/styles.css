@@ -290,6 +290,10 @@ hr {
     margin: 1em 0;
 }
 
+hr.narrow {
+    margin: 0.5em 0;
+}
+
 hr[data-content] {
     height: 1.5rem;
     line-height: 1em;

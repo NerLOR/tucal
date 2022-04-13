@@ -23,7 +23,7 @@ require "../.php/header.php";
             <a class="button margin" href="/admin/acronyms"><?php echo _('Course acronyms'); ?></a>
             <a class="button margin" href="/admin/message"><?php echo _('Message all users'); ?></a>
         </div>
-        <hr/>
+        <hr class="narrow"/>
         <div class="center">
             <a class="button margin" href="/admin/sync-courses"><?php echo _('Sync courses'); ?></a>
         </div>
