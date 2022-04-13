@@ -238,7 +238,7 @@ class SyncUserTuwel(tucal.Sync):
     access_time: datetime.datetime = None
     user_id: int = None
     cal_token: str = None
-    courses: Dict[str, tuwien.tuwel.Course] = None
+    courses: Dict[int, tuwien.tuwel.Course] = None
     groups: Dict[int, List] = None
     events: List[Dict[str, Any]] = None
 

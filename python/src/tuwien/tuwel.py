@@ -46,7 +46,7 @@ class Course:
 class Session:
     _session: requests.Session
     _sso: tuwien.sso.Session
-    _courses: Optional[Dict[str, Course]]
+    _courses: Optional[Dict[int, Course]]
     _user_id: Optional[int]
     _sess_key: Optional[str]
     _calendar_token: Optional[str]
@@ -105,7 +105,7 @@ class Session:
         })
         return AUTH_TOKEN.findall(r.text)[0]
 
-    def _get_courses(self) -> Dict[str, Course]:
+    def _get_courses(self) -> Dict[int, Course]:
         data1 = self.ajax('core_course_get_enrolled_courses_by_timeline_classification',
                           classification='all', limit=0, offset=0, sort='fullname')
         data2 = self.ajax('core_course_get_enrolled_courses_by_timeline_classification',
@@ -121,7 +121,7 @@ class Session:
                 num, sem = None, None
             m = COURSE_NR.match(c['fullname'])
             name = html.unescape(m.group(1)) if m else c['fullname']
-            courses[c['idnumber']] = Course(c['id'], sem, num, name, c['shortname'])
+            courses[c['id']] = Course(c['id'], sem, num, name, c['shortname'])
         return courses
 
     def get_course_user_groups(self, course_id: int) -> List[Tuple[int, str]]:
@@ -149,7 +149,7 @@ class Session:
         return groups
 
     @property
-    def courses(self) -> Dict[str, Course]:
+    def courses(self) -> Dict[int, Course]:
         if self._courses is None:
             self._courses = self._get_courses()
         return self._courses
