@@ -19,6 +19,7 @@ TISS_URL = f'https://{TISS_DOMAIN}'
 OPTION_BUILDING = re.compile(r'<option value="([A-Z]+)".*?>([A-Z]+) - (.*?) \(([^()]*?)\)</option>')
 OPTION_ROOM = re.compile(r'<option value="([^"]+)"[^>]*>(.*?)( \(([0-9]+)\))?</option>')
 OPTION_INSTITUTE = re.compile(r'<option value="(E[0-9]{3}[^"]*)">(.*?)</option>')
+OPTION_SEMESTER = re.compile(r'<option value="([0-9]{4}[WS])">\1</option>')
 
 COURSE_TITLE = re.compile(r'<h1>[^<>]*<span[^>]*>[^<>]*</span>\s*(.*?)\s*<', re.MULTILINE | re.UNICODE)
 COURSE_META = re.compile(r'<div id="subHeader" class="clearfix">'
@@ -327,8 +328,12 @@ class Session:
             'javax.faces.behavior.event': 'action',
             'javax.faces.partial.event': 'click',
         }
-        self.post('/course/courseList.xhtml', data1, ajax=True)
+        self.get('/course/courseList.xhtml')
         r = self.post('/course/courseList.xhtml', data1, ajax=True)
+
+        semesters = [Semester(opt.group(1)) for opt in OPTION_SEMESTER.finditer(r.text)]
+        if semester_to > semesters[0]:
+            semester_to = semesters[0]
 
         institutes = [opt.group(1) for opt in OPTION_INSTITUTE.finditer(r.text)]
         course_nrs = set()
@@ -336,8 +341,8 @@ class Session:
             data = {
                 'courseList:institutes': institute,
                 'courseList_SUBMIT': '1',
-                'courseList:semFrom': semester,
-                'courseList:semTo': semester_to or semester,
+                'courseList:semFrom': str(semester),
+                'courseList:semTo': str(semester_to or semester),
                 'courseList:cSearchBtn': 'Suchen',
             }
             self._view_state = None
