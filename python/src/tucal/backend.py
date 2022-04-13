@@ -307,7 +307,7 @@ def schedule_job(job_args: Iterable[str]) -> Tuple[int, str, int]:
     del client
     if res.startswith('error:'):
         raise RuntimeError(res[6:].strip())
-    res = res.strip().split(' ')
+    res = res.split('\n')[0].strip().split(' ')
     # job_nr, job_id, PID
     return int(res[0]), res[1], int(res[2])
 
