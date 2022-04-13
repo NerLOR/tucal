@@ -268,20 +268,22 @@ def send_emails():
         msg['Date'] = submit.strftime('%a, %d %b %Y %H:%M:%S %z')
         msg['Message-ID'] = f'{msg_id}@{EMAIL_HOSTNAME}'
         msg['Subject'] = subj
+        to_addresses = []
         if to:
             msg['To'] = to
+            to_addresses.append(to)
         else:
-            msg['Bcc'] = addresses
+            to_addresses += addresses
         if reply_to:
             msg['Reply-To'] = reply_to
-        msgs.append((msg_nr, msg))
+        msgs.append((msg_nr, msg, to_addresses))
 
     server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
     print(f'Connected to SMTP host {SMTP_HOST}:{SMTP_PORT} ({SMTP_USER})', flush=True)
     server.starttls()
     server.login(SMTP_USER, SMTP_PASSWORD)
-    for msg_nr, msg in msgs:
-        server.send_message(msg)
+    for msg_nr, msg, to_addresses in msgs:
+        server.send_message(msg, to_addrs=to_addresses)
         cur.execute("UPDATE tucal.message SET send_ts = now() WHERE message_nr = %s", (msg_nr,))
         print(f'Sent Msg#{msg_nr}', flush=True)
 
