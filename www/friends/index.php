@@ -5,10 +5,9 @@ global $USER;
 
 require "../.php/session.php";
 force_user_login();
+require "../.php/main.php";
 
 $TITLE = [_('My Friends')];
-
-require "../.php/main.php";
 require "../.php/header.php";
 ?>
 <main class="w2">

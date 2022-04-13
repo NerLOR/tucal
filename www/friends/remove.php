@@ -6,10 +6,7 @@ global $STATUS;
 require "../.php/session.php";
 force_user_login('/friends/');
 
-if (!isset($_GET['id'])) {
-    $STATUS = 400;
-}
-
+if (!isset($_GET['id'])) $STATUS = 400;
 require "../.php/main.php";
 
 $stmt = db_exec("

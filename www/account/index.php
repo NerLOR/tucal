@@ -22,7 +22,6 @@ $AVATAR_PATH = "$_SERVER[DOCUMENT_ROOT]$AVATAR_URI";
 
 require "../.php/session.php";
 force_user_login(null, false);
-
 require "../.php/main.php";
 
 $error = false;

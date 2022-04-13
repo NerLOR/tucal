@@ -7,7 +7,6 @@ global $TUCAL;
 
 require "../.php/session.php";
 force_user_login(null, false);
-
 require "../.php/main.php";
 
 if ($USER['verified']) {

@@ -7,10 +7,9 @@ global $CONFIG;
 
 require "../.php/session.php";
 force_user_login();
+require "../.php/main.php";
 
 $TITLE = [_('My Courses')];
-
-require "../.php/main.php";
 require "../.php/header.php";
 
 function echoCourse($course) {

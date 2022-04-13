@@ -7,7 +7,6 @@ global $STATUS;
 
 require "../.php/session.php";
 force_user_login('/account/');
-
 require "../.php/main.php";
 
 $errorMsg = null;

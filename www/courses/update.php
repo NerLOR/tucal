@@ -4,7 +4,6 @@ global $USER;
 
 require "../.php/session.php";
 force_user_login('/courses/');
-
 require "../.php/main.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
