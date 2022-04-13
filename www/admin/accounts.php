@@ -8,7 +8,6 @@ require "../.php/session.php";
 
 force_user_login();
 if (!$USER['administrator']) $STATUS = 403;
-
 require "../.php/main.php";
 
 $stmt = db_exec("SELECT * FROM tucal.v_account ORDER BY account_nr;");
