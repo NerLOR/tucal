@@ -10,6 +10,11 @@ section.admin table th,
 section.admin table td {
     border: 1px solid var(--border-color);
     padding: 0.25em 0.5em;
+    max-width: 500px;
+}
+
+section.admin td.ts a {
+    color: unset;
 }
 
 section.admin td.id {
@@ -44,4 +49,8 @@ section.admin td.ts {
 
 section.admin td.light {
     color: var(--grey-80);
+}
+
+section.admin td.scroll {
+    overflow-x: scroll;
 }

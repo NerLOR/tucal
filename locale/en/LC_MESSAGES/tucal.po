@@ -73,11 +73,29 @@ msgstr "Admin panel"
 msgid "Admin Panel"
 msgstr "Admin Panel"
 
+msgid "Accounts"
+msgstr "Accounts"
+
+msgid "Jobs"
+msgstr "Jobs"
+
+msgid "Course acronyms"
+msgstr "Course acronyms"
+
+msgid "Course Acronyms"
+msgstr "Course acronyms"
+
+msgid "Message all users"
+msgstr "Message all users"
+
+msgid "Message all Users"
+msgstr "Message all Users"
+
 msgid "Nr."
 msgstr "Nr."
 
-msgid "Id"
-msgstr "Id"
+msgid "ID"
+msgstr "ID"
 
 msgid "MNr."
 msgstr "MNr."
@@ -96,6 +114,9 @@ msgstr "yes"
 
 msgid "no"
 msgstr "no"
+
+msgid "Reload"
+msgstr "Reload"
 
 msgid "Home"
 msgstr "Home"

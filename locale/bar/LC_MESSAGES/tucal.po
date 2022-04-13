@@ -73,11 +73,29 @@ msgstr "Admin-Panel"
 msgid "Admin Panel"
 msgstr "Admin-Panel"
 
+msgid "Accounts"
+msgstr "Kontn"
+
+msgid "Jobs"
+msgstr "Jobs"
+
+msgid "Course acronyms"
+msgstr "LVA-Kürzel"
+
+msgid "Course Acronyms"
+msgstr "LVA-Kiazl"
+
+msgid "Message all users"
+msgstr "Nochricht on olle Benutza"
+
+msgid "Message all Users"
+msgstr "Nochricht on olle Benutza"
+
 msgid "Nr."
 msgstr "Nr."
 
-msgid "Id"
-msgstr "Id"
+msgid "ID"
+msgstr "ID"
 
 msgid "MNr."
 msgstr "MNr."
@@ -96,6 +114,9 @@ msgstr "jo"
 
 msgid "no"
 msgstr "na"
+
+msgid "Reload"
+msgstr "Neilona"
 
 msgid "Home"
 msgstr "Start"

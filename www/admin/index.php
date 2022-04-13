@@ -7,10 +7,7 @@ global $TITLE;
 require "../.php/session.php";
 
 force_user_login();
-
-if (!$USER['administrator']) {
-    $STATUS = 403;
-}
+if (!$USER['administrator']) $STATUS = 403;
 
 require "../.php/main.php";
 

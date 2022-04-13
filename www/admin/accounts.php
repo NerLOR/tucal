@@ -7,10 +7,7 @@ global $TITLE;
 require "../.php/session.php";
 
 force_user_login();
-
-if (!$USER['administrator']) {
-    $STATUS = 403;
-}
+if (!$USER['administrator']) $STATUS = 403;
 
 require "../.php/main.php";
 
@@ -38,7 +35,7 @@ require "../.php/header.php";
             <thead>
             <tr>
                 <th><?php echo _('Nr.'); ?></th>
-                <th><?php echo _('Id'); ?></th>
+                <th><?php echo _('ID'); ?></th>
                 <th><?php echo _('Username'); ?></th>
                 <th><?php echo _('MNr.'); ?></th>
                 <th><?php echo _('Email address'); ?></th>
@@ -84,7 +81,7 @@ require "../.php/header.php";
     echo "<td><a href='mailto:$a[email_address_1]'>$email</a></td>";
     echo "<td class='bool $ver_c'>$ver</td><td class='bool $adm_c'>$adm</td><td class='bool $sso_c'>$sso</td>";
     echo "<td class='ts' title='$cre2'>$cre1</td><td class='ts' title='$log2'>$log1</td>";
-    echo "<td class='ts $act_c' title='$act2'>$act1</td><td class='ts $syn_c' title='$syn2'>$syn1</td>";
+    echo "<td class='ts $act_c' title='$act2'>$act1</td><td class='ts $syn_c' title='$syn2'><a href='/admin/jobs?mnr=$a[mnr_normal]'>$syn1</a></td>";
     echo "</tr>\n";
 } ?>
             </tbody>

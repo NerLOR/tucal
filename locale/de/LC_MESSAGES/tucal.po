@@ -73,11 +73,29 @@ msgstr "Admin-Panel"
 msgid "Admin Panel"
 msgstr "Admin-Panel"
 
+msgid "Accounts"
+msgstr "Konten"
+
+msgid "Jobs"
+msgstr "Jobs"
+
+msgid "Course acronyms"
+msgstr "LVA-Kürzel"
+
+msgid "Course Acronyms"
+msgstr "LVA-Kürzel"
+
+msgid "Message all users"
+msgstr "Nachricht an alle Benutzer"
+
+msgid "Message all Users"
+msgstr "Nachricht an alle Benutzer"
+
 msgid "Nr."
 msgstr "Nr."
 
-msgid "Id"
-msgstr "Id"
+msgid "ID"
+msgstr "ID"
 
 msgid "MNr."
 msgstr "MNr."
@@ -96,6 +114,9 @@ msgstr "ja"
 
 msgid "no"
 msgstr "nein"
+
+msgid "Reload"
+msgstr "Neuladen"
 
 msgid "Home"
 msgstr "Start"
@@ -591,7 +612,7 @@ msgstr ""
 
 msgid "Course acronym suggestion (description)"
 msgstr ""
-"Bei Änderungswünschen oder -vorschlägen für die LVA-Abkürzungen bitte via <a "
+"Bei Änderungswünschen oder -vorschlägen für die LVA-Kürzel bitte via <a "
 "href='%s'>Kontaktformular</a> oder <a href='mailto:%s'>E-Mail</a> melden. "
 "Alternativ auch per <a href='%s' target='_blank'>GitHub-Pull-Request</a>."
 
