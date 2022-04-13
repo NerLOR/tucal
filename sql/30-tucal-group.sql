@@ -10,9 +10,10 @@ DROP FUNCTION IF EXISTS tucal.get_group;
 CREATE TABLE tucal.group
 (
     group_nr   BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
-    group_id   TEXT DEFAULT NULL,
+    group_id   TEXT                                         DEFAULT NULL,
 
     group_name TEXT                                NOT NULL,
+    public     BOOLEAN                             NOT NULL DEFAULT FALSE,
 
     CONSTRAINT pk_group PRIMARY KEY (group_nr),
     CONSTRAINT sk_group_id UNIQUE (group_id)

@@ -336,7 +336,7 @@ body main > section > hr {
     }
 }
 
-a.account {
+.account {
     display: inline-block;
     padding: 0.25em;
     margin: 0 0.25em;
@@ -347,30 +347,30 @@ a.account {
     cursor: pointer;
 }
 
-a.account:hover,
-a.account:focus {
+.account:hover,
+.account:focus {
     background-color: var(--grey-F0);
 }
 
-.theme-dark a.account:hover,
-.theme-dark a.account:focus {
+.theme-dark .account:hover,
+.theme-dark .account:focus {
     background-color: var(--grey-D0);
 }
 
-a.account > div {
+.account > div {
     display: flex;
     gap: 0.5em;
     align-items: center;
     text-align: left;
 }
 
-a.account img {
+.account img {
     width: 32px;
     height: 32px;
     border-radius: var(--border-radius);
 }
 
-a.account span.name {
+.account span.name {
     font-size: 1rem;
     display: block;
     border: none;
@@ -381,33 +381,33 @@ a.account span.name {
     border-radius: var(--border-radius);
 }
 
-a.account span.name[contenteditable="true"]:hover,
-a.account span.name[contenteditable="true"]:focus {
+.account span.name[contenteditable="true"]:hover,
+.account span.name[contenteditable="true"]:focus {
     background-color: var(--input-bg-color);
     cursor: text;
 }
 
-a.account .sub {
+.account .sub {
     font-size: 0.675rem;
     color: var(--grey-80);
     display: block;
     min-width: 4.5em;
 }
 
-a.account span.username {
+.account span.username {
     margin-left: -4.5em;
 }
 
-a.account:not(:hover):not(:focus) *:not(.has-nickname) > span.username,
-a.account:not(:hover):not(:focus) .has-nickname > span.mnr,
-a.account:hover *:not(.has-nickname) > span.username,
-a.account:hover .has-nickname > span.username,
-a.account:focus *:not(.has-nickname) > span.username,
-a.account:focus .has-nickname > span.username {
+.account:not(:hover):not(:focus) *:not(.has-nickname) > span.username,
+.account:not(:hover):not(:focus) .has-nickname > span.mnr,
+.account:hover *:not(.has-nickname) > span.username,
+.account:hover .has-nickname > span.username,
+.account:focus *:not(.has-nickname) > span.username,
+.account:focus .has-nickname > span.username {
     opacity: 0;
 }
 
-a.account span.verified {
+.account span.verified {
     font-size: 1rem;
     color: var(--green);
 }

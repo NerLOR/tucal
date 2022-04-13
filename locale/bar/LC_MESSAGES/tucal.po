@@ -40,6 +40,12 @@ msgstr "Gruppn"
 msgid "Join Groups"
 msgstr "Gruppn beitretn"
 
+msgid "Public Groups"
+msgstr "Öffentliche Gruppn"
+
+msgid "Member"
+msgstr "Mitglied"
+
 msgid "Never ignored"
 msgstr "Imma onzeign"
 

@@ -40,6 +40,12 @@ msgstr "Groups"
 msgid "Join Groups"
 msgstr "Join Groups"
 
+msgid "Public Groups"
+msgstr "Public Groups"
+
+msgid "Member"
+msgstr "Member"
+
 msgid "Never ignored"
 msgstr "Always shown"
 

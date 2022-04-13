@@ -112,6 +112,22 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $last = $row['course_nr'] . '-' . $row['semester'];
 }
 
+$stmt = db_exec("
+            SELECT g.group_nr, group_id, group_name, m.account_nr IS NOT NULL
+            FROM tucal.group g
+                LEFT JOIN tucal.group_member m ON m.group_nr = g.group_nr AND m.account_nr = :nr
+            WHERE public = TRUE", ['nr' => $USER['nr']]);
+
+$groups = [];
+while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+    $groups[] = [
+        'nr' => $row[0],
+        'id' => $row[1],
+        'name' => $row[2],
+        'member' => $row[3],
+    ];
+}
+
 $github = 'https://github.com/NerLOR/tucal/blob/master/data/course_acronyms.csv';
 $mailto = $CONFIG['email']['contact_direct'] . '?subject=Vorschlag für LVA-Abkürzug(en) bei TUcal';
 $contact = '/contact?subject=LVA-Abkürzungen';
@@ -124,38 +140,22 @@ $contact = '/contact?subject=LVA-Abkürzungen';
         <?php foreach ($courses as $course) if ($course['semester'] == $maxSem) echoCourse($course); ?>
     </section>
     <section class="group-list">
-        <h1><?php echo _('Groups'); ?></h1>
-        <?php
-
-        $stmt = db_exec("
-                    SELECT *
-                    FROM tucal.v_account_group
-                    WHERE account_nr = :nr AND course_nr IS NULL", [
-            'nr' => $USER['nr']
-        ]);
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            echo "<hr/><div>";
-            echo "<h2><span class='course-name'>$row[group_name]</span></h2>";
-            echo "</div>\n";
-        }
-
-        ?>
-        <hr/>
-        <h1><?php echo _('Join Groups'); ?></h1>
-        <?php
-
-        $stmt = db_exec("
-                    SELECT *
-                    FROM tucal.group g 
-                        LEFT JOIN tucal.group_link gl ON gl.group_nr = g.group_nr
-                    WHERE gl.course_nr IS NULL");
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            echo "<hr/><div>";
-            echo "<h2><span class='course-name'>$row[group_name]</span></h2>";
-            echo "</div>\n";
-        }
-
-        ?>
+        <h1><?php echo _('Public Groups'); ?></h1>
+        <form action="/courses/update-membership" method="post" class="groups">
+            <table>
+                <tr>
+                    <th><?php echo _('Group'); ?></th>
+                    <th><?php echo _('Member'); ?></th>
+                </tr>
+<?php foreach ($groups as $group) { ?>
+    <tr>
+        <td><?php echo htmlentities($group['name']); ?></td>
+        <td><input type="checkbox" name="group-<?php echo $group['id']; ?>" value="member"<?php if ($group['member']) echo " checked"; ?>/></td>
+    </tr>
+<?php } ?>
+            </table>
+            <button type="submit"><?php echo _('Save'); ?></button>
+        </form>
     </section>
     <section class="course-list">
         <h1><?php echo _('Old Courses'); ?></h1>

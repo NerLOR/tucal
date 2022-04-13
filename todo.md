@@ -10,7 +10,6 @@ TODOs
   * Messages (email to all or specific users)
   * Login as other user (`$_SESSION`, ...)
 * `planned_ts`
-* Manually join groups (HTU events, ...)
 * Manage updates in TISS groups
 * Exams
   * Day-events

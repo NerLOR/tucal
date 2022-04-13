@@ -95,3 +95,28 @@ section.course-list form div.ignore-mode input {
         margin-right: -0.5em;
     }
 }
+
+section.group-list table {
+    width: 100%;
+    max-width: 400px;
+    border-collapse: collapse;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    margin: 1em auto;
+}
+
+section.group-list table th,
+section.group-list table td {
+    border: 1px solid var(--border-color);
+    padding: 0.25em 1em;
+}
+
+section.group-list button {
+    margin: auto;
+    display: block;
+}
+
+section.group-list table th:last-child,
+section.group-list table td:last-child {
+    width: 100px;
+}
