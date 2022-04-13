@@ -258,7 +258,10 @@ def send_emails():
         cur.close()
         return
 
-    cur.execute("""SELECT email_address_1 FROM tucal.v_account ORDER BY account_nr LIMIT 2""")
+    cur.execute("""
+        SELECT DISTINCT email_address_1
+        FROM tucal.v_account
+        WHERE verified = TRUE AND email_address_1 IS NOT NULL""")
     addresses = [address for address, in cur.fetch_all()]
 
     msgs = []
