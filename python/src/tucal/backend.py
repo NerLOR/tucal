@@ -258,6 +258,10 @@ def send_emails():
         cur.close()
         return
 
+    cur.execute("""SELECT email_address_1 FROM tucal.v_account ORDER BY account_nr LIMIT 2""")
+    rows = cur.fetch_all()
+    addresses = [address for address, in rows]
+
     msgs = []
     for msg_nr, msg_id, to, subj, content, reply_to, from_name, submit in rows:
         msg = MIMEText(content, 'plain', 'UTF-8')
@@ -265,7 +269,10 @@ def send_emails():
         msg['Date'] = submit.strftime('%a, %d %b %Y %H:%M:%S %z')
         msg['Message-ID'] = f'{msg_id}@{EMAIL_HOSTNAME}'
         msg['Subject'] = subj
-        msg['To'] = to
+        if to:
+            msg['To'] = to
+        else:
+            msg['Bcc'] = addresses
         if reply_to:
             msg['Reply-To'] = reply_to
         msgs.append((msg_nr, msg))

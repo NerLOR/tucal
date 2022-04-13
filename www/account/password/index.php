@@ -65,24 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         db_transaction();
 
         if ($cur !== null) {
-            $stmt = db_exec("
-                        SELECT (pwd_hash = crypt(:pwd, pwd_salt)) AS pwd_match
-                        FROM tucal.password p
-                        WHERE account_nr = :nr", [
-                    'pwd' => $cur,
-                    'nr' => $USER['nr'],
-            ]);
-
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if (sizeof($data) === 0) {
-                db_rollback();
-                $errorMsg = _('Unknown error');
-                header("Status: 500");
-                goto doc;
-            }
-
-            $row = $data[0];
-            if (!$row['pwd_match']) {
+            if (!check_password($cur)) {
                 db_rollback();
                 $errors['pwd'] = 'Wrong';
                 header("Status: 401");

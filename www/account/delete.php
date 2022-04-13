@@ -31,21 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = true;
     }
 
-    $stmt = db_exec("
-                SELECT (pwd_hash = crypt(:pwd, pwd_salt)) AS pwd_match
-                FROM tucal.password p
-                WHERE account_nr = :nr", [
-        'nr' => $USER['nr'],
-        'pwd' => $pw,
-    ]);
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if (sizeof($data) === 0) {
-        header("Status: 500");
-        goto doc;
-    }
-
-    $row = $data[0];
-    if (!$row['pwd_match']) {
+    if (!check_password($pw)) {
         $errors['pw'] = 'Wrong';
         header("Status: 403");
         $error = true;

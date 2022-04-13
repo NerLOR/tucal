@@ -145,7 +145,7 @@ function echo_job(string $jobId, string $successUrl, string $errorUrl) {
     echo '></div>';
 }
 
-function send_email(string $address, string $subject, string $msg, string $reply_to = null, string $from_name = null, string $details = null): bool {
+function send_email(?string $address, string $subject, string $msg, string $reply_to = null, string $from_name = null, string $details = null): bool {
     global $TUCAL;
 
     $msg .= "\n\n-- \n" .
@@ -175,4 +175,27 @@ function send_email(string $address, string $subject, string $msg, string $reply
             return true;
     }
     return false;
+}
+
+function check_password(string $password): bool {
+    global $USER;
+
+    $stmt = db_exec("
+                SELECT (pwd_hash = crypt(:pwd, pwd_salt)) AS pwd_match
+                FROM tucal.password p
+                WHERE account_nr = :nr", [
+        'nr' => $USER['nr'],
+        'pwd' => $password,
+    ]);
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (sizeof($data) === 0) {
+        return false;
+    }
+
+    $row = $data[0];
+    if (!$row['pwd_match']) {
+        return false;
+    }
+
+    return true;
 }

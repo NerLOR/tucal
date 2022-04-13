@@ -54,3 +54,23 @@ section.admin td.light {
 section.admin td.scroll {
     overflow-x: scroll;
 }
+
+section.admin form.message {
+    display: flex;
+    gap: 0.5em;
+    flex-direction: column;
+    margin: 1em 0;
+}
+
+section.admin form.message input {
+    display: block;
+}
+
+section.admin form.message textarea {
+    display: block;
+}
+
+section.admin form.message button {
+    display: block;
+    margin: 1em auto 0 auto;
+}
