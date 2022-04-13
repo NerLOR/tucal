@@ -1,0 +1,47 @@
+
+section.admin table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--border-color);
+    margin: 1em auto;
+}
+
+section.admin table th,
+section.admin table td {
+    border: 1px solid var(--border-color);
+    padding: 0.25em 0.5em;
+}
+
+section.admin td.id {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75em;
+    text-align: center;
+}
+
+section.admin td.nr {
+    text-align: right;
+}
+
+section.admin td.bool {
+    text-align: center;
+}
+
+section.admin td.bool.t {
+    color: var(--green);
+}
+
+section.admin td.bool.f {
+    color: var(--red);
+}
+
+section.admin td.center {
+    text-align: center;
+}
+
+section.admin td.ts {
+    text-align: center;
+}
+
+section.admin td.light {
+    color: var(--grey-80);
+}

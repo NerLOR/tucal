@@ -110,11 +110,16 @@ if ($STATUS >= 400 && $STATUS < 600) {
                     <span class="arrow">▾</span>
                 </div>
                 <div><a href="/account/"><?php echo _('Settings'); ?></a></div>
-                <?php if (!$USER['verified']) { ?><div><a href="/account/verify"><?php echo _('Verify account'); ?></a></div><?php }
-                else { ?><div><a href="/account/sync"><?php echo _('Sync TU account'); ?></a></div><?php } ?>
-
+<?php if (!$USER['verified']) { ?>
+                <div><a href="/account/verify"><?php echo _('Verify account'); ?></a></div>
+<?php } else { ?>
+                <div><a href="/account/sync"><?php echo _('Sync TU account'); ?></a></div>
+<?php } ?>
                 <hr/>
                 <div><a href="/search"><?php echo _('Search (for)'); ?></a></div>
+<?php if ($USER['administrator']) { ?>
+                <div><a href="/admin/"><?php echo _('Admin panel'); ?></a></div>
+<?php } ?>
                 <hr/>
                 <div>
                     <form action="/account/logout" method="post" name="logout"></form>

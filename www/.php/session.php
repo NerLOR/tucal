@@ -63,6 +63,7 @@ if (isset($_COOKIE['tucal_session'])) {
                 'email_address_1' => $s['email_address_1'],
                 'email_address_2' => $s['email_address_2'],
                 'verified' => $s['verified'],
+                'administrator' => $s['administrator'],
                 'sso_credentials' => $s['sso_credentials'],
                 'avatar_uri' => $s['avatar_uri'],
                 'opts' => json_decode($s['account_opts'], true),

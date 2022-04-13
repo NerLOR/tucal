@@ -67,6 +67,36 @@ msgstr "Search"
 msgid "Search (for)"
 msgstr "Search"
 
+msgid "Admin panel"
+msgstr "Admin panel"
+
+msgid "Admin Panel"
+msgstr "Admin Panel"
+
+msgid "Nr."
+msgstr "Nr."
+
+msgid "Id"
+msgstr "Id"
+
+msgid "MNr."
+msgstr "MNr."
+
+msgid "Verified"
+msgstr "Verified"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "SSO"
+msgstr "SSO"
+
+msgid "yes"
+msgstr "yes"
+
+msgid "no"
+msgstr "no"
+
 msgid "Home"
 msgstr "Home"
 

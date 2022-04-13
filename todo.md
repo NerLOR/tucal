@@ -5,7 +5,6 @@ TODOs
 * Start page: Feature list
 * Admin panel
   * Jobs
-  * Accounts
   * Course acronyms (+csv export)
   * Messages (email to all or specific users)
   * Login as other user (`$_SESSION`, ...)
