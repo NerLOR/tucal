@@ -91,6 +91,12 @@ msgstr "Nachricht an alle Benutzer"
 msgid "Message all Users"
 msgstr "Nachricht an alle Benutzer"
 
+msgid "Sync courses"
+msgstr "LVAs syncen"
+
+msgid "Sync Courses"
+msgstr "LVAs syncen"
+
 msgid "Nr."
 msgstr "Nr."
 

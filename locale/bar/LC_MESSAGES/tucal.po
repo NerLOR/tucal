@@ -91,6 +91,12 @@ msgstr "Nochricht on olle Benutza"
 msgid "Message all Users"
 msgstr "Nochricht on olle Benutza"
 
+msgid "Sync courses"
+msgstr "LVAs syncen"
+
+msgid "Sync Courses"
+msgstr "LVAs syncen"
+
 msgid "Nr."
 msgstr "Nr."
 
