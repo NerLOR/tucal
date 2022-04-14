@@ -237,15 +237,11 @@ function update() {
             'data' => $dataUserStr,
         ]);
 
-        if (isset($_POST['planned_start']) && strlen($_POST['planned_start']) === 5) {
-            $plannedStart = clone $start;
+        if (array_key_exists('planned_start', $_POST)) {
             $startTime = $_POST['planned_start'];
-            $plannedStart->setTime(substr($startTime, 0, 2), substr($startTime, 3, 2));
-            if ($plannedStart === $start) {
-                db_exec("UPDATE tucal.event SET planned_start_ts = NULL WHERE event_nr = ANY(:enrs)", [
-                    'enrs' => $enrsStr,
-                ]);
-            } else {
+            if (strlen($startTime) === 5) {
+                $plannedStart = clone $start;
+                $plannedStart->setTime(substr($startTime, 0, 2), substr($startTime, 3, 2));
                 db_exec("
                         UPDATE tucal.event
                         SET planned_start_ts = date_trunc('day', start_ts) + :psts
@@ -253,24 +249,28 @@ function update() {
                     'enrs' => $enrsStr,
                     'psts' => "$startTime:00",
                 ]);
+            } else if ($startTime === null) {
+                db_exec("UPDATE tucal.event SET planned_start_ts = NULL WHERE event_nr = ANY(:enrs)", [
+                    'enrs' => $enrsStr,
+                ]);
             }
         }
 
-        if (isset($_POST['planned_end']) && strlen($_POST['planned_end'])) {
-            $plannedEnd = clone $end;
+        if (array_key_exists('planned_end', $_POST)) {
             $endTime = $_POST['planned_end'];
-            $plannedEnd->setTime(substr($endTime, 0, 2), substr($endTime, 3, 2));
-            if ($plannedEnd === $end) {
-                db_exec("UPDATE tucal.event SET planned_end_ts = NULL WHERE event_nr = ANY(:enrs)", [
-                    'enrs' => $enrsStr,
-                ]);
-            } else {
+            if (strlen($endTime) === 5) {
+                $plannedEnd = clone $end;
+                $plannedEnd->setTime(substr($endTime, 0, 2), substr($endTime, 3, 2));
                 db_exec("
                         UPDATE tucal.event
                         SET planned_end_ts = date_trunc('day', end_ts) + :pets
                         WHERE event_nr = ANY(:enrs)", [
                     'enrs' => $enrsStr,
                     'pets' => "$endTime:00",
+                ]);
+            } else if ($endTime === null) {
+                db_exec("UPDATE tucal.event SET planned_end_ts = NULL WHERE event_nr = ANY(:enrs)", [
+                    'enrs' => $enrsStr,
                 ]);
             }
         }
