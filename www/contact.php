@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $res = send_email($CONFIG['email']['contact'], $subject, $msg, $email, $name, $details);
     redirect('/contact?status=' . ($res ? 'sent' : 'sending'));
-} else if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
+} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
     header("Allow: HEAD, GET, POST");
     $STATUS = 405;
 }
@@ -59,7 +59,7 @@ $mailto = $CONFIG['email']['contact_direct'];
 $subj = isset($_GET['subject']) ? $subjects[$_GET['subject']] ?? null : null;
 if (isset($_GET['subject']) && $subj === null) {
     redirect("/contact");
-} else if ($subj !== null) {
+} elseif ($subj !== null) {
     $mailto .= "?subject=$subj";
 }
 

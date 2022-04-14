@@ -249,7 +249,7 @@ function update() {
                     'enrs' => $enrsStr,
                     'psts' => "$startTime:00",
                 ]);
-            } else if ($startTime === null) {
+            } elseif ($startTime === null) {
                 db_exec("UPDATE tucal.event SET planned_start_ts = NULL WHERE event_nr = ANY(:enrs)", [
                     'enrs' => $enrsStr,
                 ]);
@@ -268,7 +268,7 @@ function update() {
                     'enrs' => $enrsStr,
                     'pets' => "$endTime:00",
                 ]);
-            } else if ($endTime === null) {
+            } elseif ($endTime === null) {
                 db_exec("UPDATE tucal.event SET planned_end_ts = NULL WHERE event_nr = ANY(:enrs)", [
                     'enrs' => $enrsStr,
                 ]);

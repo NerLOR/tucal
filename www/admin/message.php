@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($pwd === null || $subject === null || $msg === null) {
         header("Status: 400");
         goto doc;
-    } else if (!check_password($pwd)) {
+    } elseif (!check_password($pwd)) {
         header("Status: 403");
         goto doc;
     }
