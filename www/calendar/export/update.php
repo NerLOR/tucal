@@ -57,6 +57,7 @@ try {
         'location' => str_replace('-', '_', $_POST['location'] ?? 'room-abbr'),
         'location_tuw_maps' => ($_POST['tuw-maps'] ?? '0') === 'on',
         'categories' => [str_replace('-', '_', $_POST['categories'] ?? 'event-type')],
+        'planned' => ($_POST['planned'] ?? '0') === 'on',
     ];
 
     db_exec("

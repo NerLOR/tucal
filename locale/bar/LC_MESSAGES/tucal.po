@@ -346,8 +346,14 @@ msgstr "Persänlich"
 msgid "Hide"
 msgstr "Vabeagn"
 
+msgid "Planned times"
+msgstr "Geplante Zeitn"
+
 msgid "Show hidden events"
 msgstr "Vaboagene Teamine onzeign"
+
+msgid "Use c.t. times"
+msgstr "c.t.-Zeitn vawendn"
 
 msgid "Apply"
 msgstr "Übanemma"

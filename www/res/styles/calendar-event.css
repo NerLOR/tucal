@@ -67,6 +67,7 @@ div.calendar .event-detail div.container {
 
 div.calendar .event-detail div.container > div:nth-child(1) {
     flex: 7.5em 0 0;
+    align-self: center;
 }
 
 div.calendar .event-detail div.container > div:nth-child(2) {
@@ -193,11 +194,14 @@ div.calendar .event-detail .url {
 }
 
 div.calendar .event-detail input.line {
-    display: block;
     margin: 0.25rem;
     height: 2em;
-    width: calc(100% - 0.5em);
     font-size: 1em;
+}
+
+div.calendar .event-detail input.line.block {
+    display: block;
+    width: calc(100% - 0.5em);
 }
 
 div.calendar .event-detail select {

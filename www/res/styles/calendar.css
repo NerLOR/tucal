@@ -122,6 +122,10 @@ div.calendar div.settings {
     text-align: left;
 }
 
+div.calendar div.settings label {
+    margin-right: 1em;
+}
+
 div.calendar > table td.today {
     background-color: var(--color-lighter) !important;
 }
@@ -321,17 +325,25 @@ div.calendar div.event {
     display: block;
     font-size: 0.75em;
     cursor: pointer;
-    overflow: hidden;
-    border: 1px solid var(--evt-border);
+    border: 1px solid var(--evt-color);
     border-radius: var(--border-radius);
-    background-color: var(--evt-color);
     margin: var(--margin);
     box-sizing: border-box;
-    padding: 0.25em;
     width: calc((100% * (var(--part2) - var(--part1)) / var(--parts)) - var(--margin) * 2);
     left: calc(var(--part1) / var(--parts) * 100%);
     top: calc((var(--start) - var(--time-start)) / (var(--time-end) - var(--time-start)) * 100% + 1px);
     height: calc((var(--end) - var(--start)) / (var(--time-end) - var(--time-start)) * 100% - 1px - var(--margin) * 2);
+}
+
+div.calendar div.event-data {
+    box-sizing: border-box;
+    padding: 0.25em;
+    border: 1px solid var(--evt-border);
+    border-radius: var(--border-radius);
+    background-color: var(--evt-color);
+    left: -1px;
+    width: calc(100% + 2px);
+    overflow: hidden;
 }
 
 div.calendar div.event > * {
@@ -343,6 +355,7 @@ section.calendar-legend div.legend {
     --evt-color: var(--grey-D8);
     --evt-border: var(--grey-60);
     --evt-light: var(--grey-F0);
+    --evt-light-trans: var(--white-trans);
 }
 
 div.calendar div.event.group,
@@ -355,6 +368,7 @@ section.calendar-legend div.legend.course {
     --l: 87.5%;
     --evt-color: hsl(var(--hue), calc(100% - (87.5% - var(--l)) * 2), var(--l));
     --evt-light: hsl(var(--hue), calc(100% - (87.5% - var(--l)) * 2), calc(var(--l) + 6.25%));
+    --evt-light-trans: hsl(var(--hue), calc(100% - (87.5% - var(--l)) * 2), calc(var(--l) + 6.25%), 0);
     --evt-border: hsl(var(--hue), 50%, 50%);
 }
 
@@ -373,6 +387,7 @@ section.calendar-legend div.legend.course {
     --l: 12.5% !important;
     --evt-color: hsl(var(--hue), calc(100% - (12.5% - var(--l)) * 2), var(--l));
     --evt-light: hsl(var(--hue), calc(100% - (12.5% - var(--l)) * 2), calc(var(--l) + 3.125%));
+    --evt-light-trans: hsl(var(--hue), calc(100% - (12.5% - var(--l)) * 2), calc(var(--l) + 3.125%), 0);
     --evt-border: hsl(var(--hue), 50%, 50%);
 }
 
@@ -415,7 +430,7 @@ div.calendar div.event:hover {
     z-index: 5;
 }
 
-div.calendar div.event:not(.cancelled).now {
+div.calendar div.event:not(.cancelled).now .event-data {
     box-shadow: 0 0 4px var(--glow);
 }
 
@@ -433,12 +448,16 @@ div.calendar div.event > div.post {
 
 div.calendar div.event > div.pre {
     top: 0;
-    background: linear-gradient(var(--white), var(--evt-light));
+    background: linear-gradient(var(--evt-light-trans), var(--evt-light));
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
 }
 
 div.calendar div.event > div.post {
     bottom: 0;
-    background: linear-gradient(var(--evt-light), var(--white));
+    background: linear-gradient(var(--evt-light), var(--evt-light-trans));
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
 }
 
 div.calendar div.event div.time {

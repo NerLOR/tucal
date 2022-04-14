@@ -107,8 +107,9 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 }
 
 $stmt = db_exec("
-        SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.create_ts, e.update_ts, e.update_seq, e.room_nr, e.data,
-               d.data AS user_data, l.course_nr, l.semester, l.name, g.group_id
+        SELECT e.event_nr, e.event_id, e.create_ts, e.update_ts, e.update_seq, e.room_nr, e.data,
+               d.data AS user_data, l.course_nr, l.semester, l.name, g.group_id,
+               e.start_ts, e.end_ts, e.planned_start_ts, e.planned_end_ts, e.real_start_ts, e.real_end_ts
         FROM tucal.event e
             LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
             JOIN tucal.group_member m ON m.group_nr = e.group_nr
@@ -173,6 +174,8 @@ $first = true;
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $start = new DateTime($row['start_ts']);
     $end = new DateTime($row['end_ts']);
+    $plannedStart = $row['planned_start_ts'] ? new DateTime($row['planned_start_ts']) : null;
+    $plannedEnd = $row['planned_end_ts'] ? new DateTime($row['planned_end_ts']) : null;
     $update = new DateTime($row['update_ts']);
     $create = new DateTime($row['create_ts']);
 
@@ -180,6 +183,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $tz = new DateTimeZone("Europe/Vienna");
     $start->setTimezone($tz);
     $end->setTimezone($tz);
+    if ($plannedStart !== null) $plannedStart->setTimezone($tz);
+    if ($plannedEnd !== null) $plannedEnd->setTimezone($tz);
     $update->setTimezone($tz);
     $create->setTimezone($tz);
 
@@ -239,15 +244,16 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $todos = $icalOpts['todos'] ?? 'as_todos';
         $isTodo = ($todo && $todos == 'as_todos');
 
+        $usePlanned = $icalOpts['planned'] ?? true;
         if ($isTodo) {
             ical_line("BEGIN", ["VTODO"]);
-            ical_line("DUE", [$start->format($format)], ["TZID=Europe/Vienna"]);
+            ical_line("DUE", [($usePlanned ? ($plannedStart ?? $start) : $start)->format($format)], ["TZID=Europe/Vienna"]);
         } elseif ($todo && $todos === 'omitted') {
             continue;
         } else {
             ical_line("BEGIN", ["VEVENT"]);
-            ical_line("DTSTART", [$start->format($format)], ["TZID=Europe/Vienna"]);
-            ical_line("DTEND", [$end->format($format)], ["TZID=Europe/Vienna"]);
+            ical_line("DTSTART", [($usePlanned ? ($plannedStart ?? $start) : $start)->format($format)], ["TZID=Europe/Vienna"]);
+            ical_line("DTEND", [($usePlanned ? ($plannedEnd ?? $end) : $end)->format($format)], ["TZID=Europe/Vienna"]);
         }
 
         $summary = "";

@@ -346,8 +346,14 @@ msgstr "Custom"
 msgid "Hide"
 msgstr "Hide"
 
+msgid "Planned times"
+msgstr "Planned times"
+
 msgid "Show hidden events"
 msgstr "Show hidden events"
+
+msgid "Use c.t. times"
+msgstr "Use c.t. times"
 
 msgid "Apply"
 msgstr "Apply"

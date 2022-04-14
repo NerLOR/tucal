@@ -159,6 +159,7 @@ while ($row = $stmt->fetch()) {
     $loc = $icalOpts['location'] ?? 'room_abbr';
     $tuwMaps = $icalOpts['tuw_maps'] ?? true;
     $cat = ($icalOpts['categories'] ?? ['event_type'])[0];
+    $planned = $icalOpts['planned'] ?? true;
 
 ?>
     <tr>
@@ -196,6 +197,9 @@ while ($row = $stmt->fetch()) {
                             <legend><?php echo _('Event categories'); ?></legend>
                             <label><input type="radio" name="categories" value="event-type"<?php echo ($cat === 'event_type' ? ' checked' : ''); ?>/> <?php echo _('By event type'); ?></label><br/>
                             <label><input type="radio" name="categories" value="course"<?php echo ($cat === 'course' ? ' checked' : ''); ?>/> <?php echo _('By course'); ?></label>
+                        </fieldset>
+                        <fieldset>
+                            <label><input type="checkbox" name="planned" <?php echo $planned ? ' checked' : ''?>/> <?php echo _('Use c.t. times'); ?></label>
                         </fieldset>
                         <input type="text" name="name" value="<?php echo htmlentities($opts['name'] ?? ''); ?>" placeholder="<?php echo _('Name'); ?>"/>
                     </div>

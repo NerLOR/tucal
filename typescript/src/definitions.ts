@@ -40,6 +40,10 @@ interface TucalEventJSON {
     deleted: boolean | null,
     start: string,
     end: string,
+    planned_start: string | null,
+    planned_end: string | null,
+    real_start: string | null,
+    real_end: string | null,
     course: {
         nr: string,
         group: string,
@@ -292,6 +296,10 @@ class TucalEvent {
     dayEvent: boolean;
     start: Date;
     end: Date;
+    plannedStart: Date | null;
+    plannedEnd: Date | null;
+    realStart: Date | null;
+    realEnd: Date | null;
     courseNr: string | null;
     semester: string | null;
     courseGroup: string | null;
@@ -320,6 +328,11 @@ class TucalEvent {
         this.dayEvent = event.data.day_event || false;
         this.start = asTimezone(new Date(Date.parse(event.start)), TIMEZONE);
         this.end = asTimezone(new Date(Date.parse(event.end)), TIMEZONE);
+
+        this.plannedStart = (event.planned_start) ? asTimezone(new Date(Date.parse(event.planned_start)), TIMEZONE) : null;
+        this.plannedEnd = (event.planned_end) ? asTimezone(new Date(Date.parse(event.planned_end)), TIMEZONE) : null;
+        this.realStart = (event.real_start) ? asTimezone(new Date(Date.parse(event.real_start)), TIMEZONE) : null;
+        this.realEnd = (event.real_end) ? asTimezone(new Date(Date.parse(event.real_end)), TIMEZONE) : null;
 
         if (event.course) {
             this.courseNr = event.course.nr;

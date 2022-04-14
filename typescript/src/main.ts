@@ -6,7 +6,7 @@ const _MNR: string | null = document.documentElement.dataset['mnr'] || null;
 const MNR: string | null = (_MNR && _MNR.length > 0) ? _MNR : null;
 
 const _USER_OPTS = document.getElementsByName("user-options")[0];
-const USER_OPTS: {[index: string]: string} | null = _USER_OPTS && JSON.parse(_USER_OPTS.getAttribute("content") || 'null') || null;
+const USER_OPTS: {[index: string]: any} | null = _USER_OPTS && JSON.parse(_USER_OPTS.getAttribute("content") || 'null') || null;
 const LT_PROVIDER: string = USER_OPTS && USER_OPTS['lt_provider'] || 'live-video-tuwien';
 
 let COURSE_DEF: {[index: string]: CourseDef} | null = null;
@@ -49,21 +49,7 @@ function initCalendar() {
     const eventId = (!parts[5] || parts[5].length === 0) ? null : parts[5];
 
     CALENDAR = new WeekSchedule(main, subject, eventId);
-    /*CALENDAR.setCurrentEventCb((events) => {
-        const navLive = document.getElementById("nav-live");
-        const liveButtons = navLive.getElementsByClassName("live");
-        for (const btn of liveButtons) btn.href = '';
-
-        console.log(events);
-        for (let i = 0, j = 0; i < events.length; i++) {
-            const evt = events[i];
-            if (evt.live && evt.liveUrl) {
-                const btn = liveButtons[j++];
-                btn.href = evt.liveUrl;
-                btn.getElementsByTagName("span")[0].innerText = evt.courseShort || evt.courseNr;
-            }
-        }
-    });*/
+    if (USER_OPTS) CALENDAR.planned = USER_OPTS['planned'] ?? true;
     CALENDAR.setWeek(new Week(year, week));
 }
 

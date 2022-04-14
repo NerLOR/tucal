@@ -68,9 +68,13 @@ html {
     --td-black: #FFFFFF;
     --tl-black-alpha: #00000080;
     --td-black-alpha: #FFFFFF80;
+    --tl-black-trans: #00000000;
+    --td-black-trans: #FFFFFF00;
 
     --tl-white: #FFFFFF;
     --td-white: #000000;
+    --tl-white-trans: #FFFFFF00;
+    --td-white-trans: #00000000;
 
     --tl-grey-40: #404040;
     --tl-grey-60: #606060;
@@ -126,7 +130,10 @@ html:not(.theme-light):not(.theme-dark):not(.theme-black) {
 
     --black: var(--tl-black);
     --black-alpha: var(--tl-black-alpha);
+    --black-trans: var(--tl-black-trans);
     --white: var(--tl-white);
+    --white-trans: var(--tl-white-trans);
+
     --grey-40: var(--tl-grey-40);
     --grey-60: var(--tl-grey-60);
     --grey-80: var(--tl-grey-80);
@@ -163,7 +170,10 @@ html.theme-black {
 
     --black: var(--td-black);
     --black-alpha: var(--td-black-alpha);
+    --black-trans: var(--td-black-trans);
     --white: var(--td-white);
+    --white-trans: var(--td-white-trans);
+
     --grey-40: var(--td-grey-40);
     --grey-60: var(--td-grey-60);
     --grey-80: var(--td-grey-80);

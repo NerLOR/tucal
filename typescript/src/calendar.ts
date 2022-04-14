@@ -35,6 +35,7 @@ class WeekSchedule {
         },
     } = {};
     showHidden: boolean = false;
+    planned: boolean = true;
 
     constructor(element: Element, subject: string, eventId: string | null = null) {
         this.subject = subject;
@@ -98,14 +99,21 @@ class WeekSchedule {
         th.colSpan = 7;
         const settings = document.createElement("div");
         settings.classList.add('settings');
-        settings.innerHTML = `<label><input type="checkbox" id="show-hidden"/> ${_('Show hidden events')}</label>`;
+        settings.innerHTML =
+            `<label><input type="checkbox" id="show-hidden"/> ${_('Show hidden events')}</label>` +
+            `<label><input type="checkbox" id="show-planned" checked/> ${_('Use c.t. times')}</label>`;
         th.appendChild(settings);
         tfoot.appendChild(th);
 
         const showHidden = settings.getElementsByTagName("input")[0];
-        if (!showHidden) throw new Error();
+        const showPlanned = settings.getElementsByTagName("input")[1];
+        if (!showHidden || !showPlanned) throw new Error();
         showHidden.addEventListener("input", () => {
             this.showHidden = showHidden.checked;
+            this.reloadEvents(true);
+        });
+        showPlanned.addEventListener("input", () => {
+            this.planned = showPlanned.checked;
             this.reloadEvents(true);
         });
 
@@ -536,8 +544,8 @@ class WeekSchedule {
                     this.setEventId(event.id);
                 });
 
-                const startFmt = formatter.format(start);
-                const endFmt = formatter.format(end);
+                const startFmt = formatter.format(this.planned ? event.plannedStart || start : start);
+                const endFmt = formatter.format(this.planned ? event.plannedEnd || end : end);
                 const course = event.getCourse();
                 const room = event.getRoom();
                 const ltLink = room && room.getLectureTubeLink() || null;
@@ -552,13 +560,15 @@ class WeekSchedule {
                 evt.innerHTML =
                     '<div class="pre"></div>' +
                     '<div class="post"></div>' +
+                    '<div class="event-data">' +
                     (event.lectureTube && ltLink ? `<a class="live" href="${ltLink}" target="_blank" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
                     (event.zoom !== null ? `<a class="live" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
                     `<div class="course"><span class="course">${course?.getName() || event.groupName}</span>` +
                     (room !== null ? ` - <span class="room">${room.getName()}</span>` : '') + '</div><div class="group">' +
                     (cGroup !== null ? `<span class="group">${cGroup}</span>` : '') + '</div>' +
-                    (event.summary !== null ? `<div class="summary"></div>` : '');
+                    (event.summary !== null ? `<div class="summary"></div>` : '') +
+                    '</div>';
 
                 const aLive = evt.getElementsByClassName('live')[0];
                 if (aLive && event.zoom) aLive.setAttribute('href', event.zoom);
@@ -569,11 +579,19 @@ class WeekSchedule {
                 const evtMinutes = (end.valueOf() - start.valueOf()) / 60_000;
                 const pre = <HTMLElement> evt.getElementsByClassName("pre")[0];
                 const post = <HTMLElement> evt.getElementsByClassName("post")[0];
-                if (!pre || !post) throw new Error();
+                const data = <HTMLElement> evt.getElementsByClassName("event-data")[0];
+                if (!pre || !post || !data) throw new Error();
 
-                // TODO add planned_start/end_ts and real_start/end_ts
-                pre.style.height =`${0 / evtMinutes * 100}%`;
-                post.style.height = `${0 / evtMinutes * 100}%`;
+                let preMin = 0, postMin = 0;
+                if (this.planned) {
+                    if (event.plannedStart) preMin = (event.plannedStart.getTime() - event.start.getTime()) / 60_000;
+                    if (event.plannedEnd) postMin = (event.end.getTime() - event.plannedEnd.getTime()) / 60_000;
+                }
+
+                pre.style.height =`${preMin / evtMinutes * 100}%`;
+                post.style.height = `${postMin / evtMinutes * 100}%`;
+                data.style.height = `calc(${(evtMinutes - preMin - postMin) / evtMinutes * 100}% + 2px)`;
+                data.style.top = `calc(${preMin / evtMinutes * 100}% - 1px)`;
 
                 day.appendChild(evt);
             }
@@ -641,7 +659,11 @@ class WeekSchedule {
             minute: "2-digit",
         })
 
-        html += `<h4>` +
+        html += `<h4>`;
+        if (evt.plannedStart || evt.plannedEnd) {
+            html += `<span class="time">${formatterTime.format(evt.plannedStart || evt.start)}-${formatterTime.format(evt.plannedEnd || evt.end)}</span> / `;
+        }
+        html +=
             `<span class="time">${formatterTime.format(evt.start)}-${formatterTime.format(evt.end)}</span> ` +
             `<span class="day">(${formatterDay.format(evt.start)})</span>`;
 
@@ -698,7 +720,7 @@ class WeekSchedule {
             `<label class="radio"><input type="radio" name="live" value="false" checked/> ${_('Not live')}</label>` +
             `<label class="radio"><input type="radio" name="live" value="lt"/> LectureTube</label>` +
             `<label class="radio"><input type="radio" name="live" value="zoom"/> Zoom</label>` +
-            `<div class="url hidden"><input type="url" name="live-url" placeholder="URL" class="line" required/></div>` +
+            `<div class="url hidden"><input type="url" name="live-url" placeholder="URL" class="line block" required/></div>` +
             `</div></div>`;
 
         html += `<div class="container"><div>${_('Status')}:</div><div>` +
@@ -719,8 +741,13 @@ class WeekSchedule {
             `<select name="room"><option value="none">${_('No room')}</option></select>` +
             `</div></div>`;
 
+        html += `<div class="container"><div>${_('Planned times')}:</div><div>` +
+            `<input type="time" name="planned-start" class="line" pattern="[0-9]{2}:[0-9]{2}"/>` +
+            `<input type="time" name="planned-end" class="line" pattern="[0-9]{2}:[0-9]{2}"/>` +
+            `</div></div>`;
+
         html += `<div class="container"><div>${_('Summary')}:</div><div>` +
-            `<input type="text" name="summary" class="line" placeholder="${_('Summary')}"/>` +
+            `<input type="text" name="summary" class="line block" placeholder="${_('Summary')}"/>` +
             `</div></div>`;
 
         html += '</div><hr class="form-pre hidden"/><button type="button">&blacktriangledown;</button>' +
@@ -754,6 +781,8 @@ class WeekSchedule {
         const status = form['status'];
         const mode = form['mode'];
         const hidden = (<HTMLInputElement> <unknown> form['hidden']) || null;
+        const plannedStart = form['planned-start'];
+        const plannedEnd = form['planned-end'];
         let manual = false;
 
         if (ROOMS) {
@@ -811,6 +840,13 @@ class WeekSchedule {
             return hidden && evt.userHidden !== hidden.checked;
         }
 
+        const hasPlannedTimesChanges = (): boolean => {
+            return (
+                !((evt.plannedStart && plannedStart.value && formatterTime.format(evt.plannedStart) === plannedStart.value) || (!evt.plannedStart && !plannedStart.value)) ||
+                !((evt.plannedEnd && plannedEnd.value && formatterTime.format(evt.plannedEnd) === plannedEnd.value) || (!evt.plannedEnd && !plannedEnd.value))
+            );
+        }
+
         const hasChanged = (): boolean => {
             return hasLiveChanged() ||
                 hasLiveUrlChanged() ||
@@ -818,7 +854,8 @@ class WeekSchedule {
                 hasStatusChanged() ||
                 hasModeChanged() ||
                 hasSummaryChanged() ||
-                hasHiddenChanged();
+                hasHiddenChanged() ||
+                hasPlannedTimesChanges();
         }
 
         const onChange = () => {
@@ -865,6 +902,8 @@ class WeekSchedule {
         if (evt.status) status.value = evt.status;
         if (evt.mode) mode.value = evt.mode.replace(/_/g, '-');
         if (evt.userHidden && hidden) hidden.checked = true;
+        if (evt.plannedStart) plannedStart.value = formatterTime.format(evt.plannedStart);
+        if (evt.plannedEnd) plannedEnd.value = formatterTime.format(evt.plannedEnd);
 
         form.addEventListener('input', onChange);
         onChange();
@@ -877,38 +916,47 @@ class WeekSchedule {
             if (form['all-following'].checked) urlData['following'] = 'true';
 
             const data: {[index: string]: any} = {};
+            const dataUser: {[index: string]: any} = {};
             const user: {[index: string]: any} = {};
 
             if (hasLiveChanged() || hasLiveUrlChanged()) {
                 if (live.value === 'lt') {
-                    data['lt'] = true;
-                    data['zoom'] = null;
+                    dataUser['lt'] = true;
+                    dataUser['zoom'] = null;
                 } else if (live.value === 'zoom') {
-                    data['lt'] = false;
-                    data['zoom'] = liveUrl.value.trim();
+                    dataUser['lt'] = false;
+                    dataUser['zoom'] = liveUrl.value.trim();
                 } else {
-                    data['lt'] = false;
-                    data['zoom'] = null;
+                    dataUser['lt'] = false;
+                    dataUser['zoom'] = null;
                 }
             }
 
             if (hasStatusChanged()) {
-                data['status'] = (status.value !== 'unknown') ? status.value : null;
+                dataUser['status'] = (status.value !== 'unknown') ? status.value : null;
             }
 
             if (hasModeChanged()) {
-                data['mode'] = (mode.value !== 'unknown') ? mode.value.replace(/-/g, '_') : null;
+                dataUser['mode'] = (mode.value !== 'unknown') ? mode.value.replace(/-/g, '_') : null;
             }
 
             if (hasSummaryChanged()) {
-                data['summary'] = (summary.value !== '') ? summary.value.trim() : null;
+                dataUser['summary'] = (summary.value !== '') ? summary.value.trim() : null;
             }
 
             if (hasHiddenChanged() && hidden) {
                 user['hidden'] = hidden.checked;
             }
 
-            api('/calendar/update', urlData, {'data': {'user': data}, 'user': user}).then(() => {
+            if (hasPlannedTimesChanges()) {
+                data['planned_start'] = plannedStart.value || null;
+                data['planned_end'] = plannedEnd.value || null;
+            }
+
+            data['data'] = data['data'] || {};
+            data['data']['user'] = dataUser;
+            data['user'] = user
+            api('/calendar/update', urlData, data).then(() => {
                 // wait for event merger to update events
                 sleep(1000).then(() => {
                     if (urlData['previous'] || urlData['following']) {

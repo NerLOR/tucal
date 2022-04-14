@@ -49,6 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    $USER['opts']['planned'] = ($_POST['planned'] === 'on');
+
     if (isset($_POST['theme'])) {
         $theme = $_POST['theme'];
         if (in_array($theme, ['browser', 'light', 'dark', 'black'])) {
@@ -182,6 +184,10 @@ require "../.php/header.php";
                     <option value="live-video-tuwien"<?php echo $USER['opts']['lt_provider'] === "live-video-tuwien" ? " selected" : ""; ?>>live.video.tuwien.ac.at</option>
                     <option value="hs-streamer"<?php echo $USER['opts']['lt_provider'] === "hs-streamer" ? " selected" : ""; ?>>HS-Streamer</option>
                 </select>
+            </div>
+            <div>
+                <label for="planned"><?php echo _('Use c.t. times'); ?></label>
+                <input type="checkbox" name="planned" id="planned"<?php echo (!isset($USER['opts']['planned']) || $USER['opts']['planned']) ? " checked" : ""; ?>/>
             </div>
             <div>
                 <label for="theme"><?php echo _('Theme'); ?></label>

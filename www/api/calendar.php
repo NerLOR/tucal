@@ -67,8 +67,9 @@ function calendar() {
     }
 
     $stmt = db_exec("
-            SELECT e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.data, d.data AS user_data,
-                   l.course_nr, l.semester, l.name, g.group_id, g.group_name, e.deleted
+            SELECT e.event_nr, e.event_id, e.room_nr, e.data, d.data AS user_data,
+                   l.course_nr, l.semester, l.name, g.group_id, g.group_name, e.deleted,
+                   e.start_ts, e.end_ts, e.planned_start_ts, e.planned_end_ts, e.real_start_ts, e.real_end_ts
             FROM tucal.event e
                 LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
                 JOIN tucal.group_member m ON m.group_nr = e.group_nr
@@ -106,6 +107,14 @@ function calendar() {
         }
         $start = strtotime($row['start_ts']);
         $end = strtotime($row['end_ts']);
+        $planned_start = null;
+        $planned_end = null;
+        $real_start = null;
+        $real_end = null;
+        if ($row['planned_start_ts']) $planned_start = strtotime($row['planned_start_ts']);
+        if ($row['planned_end_ts']) $planned_end = strtotime($row['planned_end_ts']);
+        if ($row['real_start_ts']) $real_start = strtotime($row['real_start_ts']);
+        if ($row['real_end_ts']) $real_end = strtotime($row['real_end_ts']);
 
         $course = null;
         if ($row['course_nr'] !== null) {
@@ -120,6 +129,10 @@ function calendar() {
             'id' => $row['event_id'],
             'start' => date('c', $start),
             'end' => date('c', $end),
+            'planned_start' => ($planned_start !== null) ? date('c', $planned_start) : null,
+            'planned_end' => ($planned_end !== null) ? date('c', $planned_end) : null,
+            'real_start' => ($real_start !== null) ? date('c', $real_start) : null,
+            'real_end' => ($real_end !== null) ? date('c', $real_end) : null,
             'deleted' => $row['deleted'],
             'room_nr' => $row['room_nr'],
             'course' => $course,
@@ -223,6 +236,44 @@ function update() {
             'enrs' => $enrsStr,
             'data' => $dataUserStr,
         ]);
+
+        if (isset($_POST['planned_start']) && strlen($_POST['planned_start']) === 5) {
+            $plannedStart = clone $start;
+            $startTime = $_POST['planned_start'];
+            $plannedStart->setTime(substr($startTime, 0, 2), substr($startTime, 3, 2));
+            if ($plannedStart === $start) {
+                db_exec("UPDATE tucal.event SET planned_start_ts = NULL WHERE event_nr = ANY(:enrs)", [
+                    'enrs' => $enrsStr,
+                ]);
+            } else {
+                db_exec("
+                        UPDATE tucal.event
+                        SET planned_start_ts = date_trunc('day', start_ts) + :psts
+                        WHERE event_nr = ANY(:enrs)", [
+                    'enrs' => $enrsStr,
+                    'psts' => "$startTime:00",
+                ]);
+            }
+        }
+
+        if (isset($_POST['planned_end']) && strlen($_POST['planned_end'])) {
+            $plannedEnd = clone $end;
+            $endTime = $_POST['planned_end'];
+            $plannedEnd->setTime(substr($endTime, 0, 2), substr($endTime, 3, 2));
+            if ($plannedEnd === $end) {
+                db_exec("UPDATE tucal.event SET planned_end_ts = NULL WHERE event_nr = ANY(:enrs)", [
+                    'enrs' => $enrsStr,
+                ]);
+            } else {
+                db_exec("
+                        UPDATE tucal.event
+                        SET planned_end_ts = date_trunc('day', end_ts) + :pets
+                        WHERE event_nr = ANY(:enrs)", [
+                    'enrs' => $enrsStr,
+                    'pets' => "$endTime:00",
+                ]);
+            }
+        }
 
         foreach ($enrs as $enr) {
             db_exec("

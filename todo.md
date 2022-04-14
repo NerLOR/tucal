@@ -6,7 +6,6 @@ TODOs
 * Admin panel
   * Course acronyms (+csv export)
   * Login as other user (`$_SESSION`, ...)
-* `planned_ts`
 * Exams
   * Day-events
   * Slots

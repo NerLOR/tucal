@@ -346,8 +346,14 @@ msgstr "Persönlich"
 msgid "Hide"
 msgstr "Verbergen"
 
+msgid "Planned times"
+msgstr "Geplante Zeiten"
+
 msgid "Show hidden events"
 msgstr "Verborgene Termine anzeigen"
+
+msgid "Use c.t. times"
+msgstr "c.t.-Zeiten verwenden"
 
 msgid "Apply"
 msgstr "Übernehmen"
