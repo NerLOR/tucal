@@ -428,6 +428,7 @@ section.calendar-legend div.legend.lecture {
 
 div.calendar div.event:hover {
     z-index: 5;
+    border-color: var(--evt-border);
 }
 
 div.calendar div.event:not(.cancelled).now .event-data {
