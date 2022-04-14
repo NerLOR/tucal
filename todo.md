@@ -7,7 +7,6 @@ TODOs
   * Course acronyms (+csv export)
   * Login as other user (`$_SESSION`, ...)
 * `planned_ts`
-* Manage updates in TISS groups
 * Exams
   * Day-events
   * Slots
