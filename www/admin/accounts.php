@@ -30,6 +30,7 @@ require "../.php/header.php";
         <div class="center">
             <a class="button margin" href="/admin/"><?php echo _('Back'); ?></a>
         </div>
+        <div class="table-wrapper">
         <table>
             <thead>
             <tr>
@@ -85,6 +86,7 @@ require "../.php/header.php";
 } ?>
             </tbody>
         </table>
+        </div>
     </section>
 </main>
 <?php

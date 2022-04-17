@@ -435,6 +435,10 @@ main section.red h1 {
     color: var(--red);
 }
 
+.table-wrapper {
+    overflow-x: scroll;
+}
+
 @media screen and (min-device-width: 480px) {
     *::-webkit-scrollbar {
         width: 15px;

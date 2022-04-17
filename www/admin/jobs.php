@@ -36,6 +36,7 @@ require "../.php/header.php";
             <a class="button margin" href="<?php echo $_SERVER['REQUEST_URI']; ?>"><?php echo _('Reload'); ?></a>
             <a class="button margin" href="/admin/"><?php echo _('Back'); ?></a>
         </div>
+        <div class="table-wrapper">
         <table>
             <thead>
             <tr>
@@ -75,6 +76,7 @@ require "../.php/header.php";
 } ?>
             </tbody>
         </table>
+        </div>
     </section>
 </main>
 <?php

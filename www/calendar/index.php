@@ -142,7 +142,7 @@ require "../.php/header.php";
     </section>
     <section>
         <h2 id="exports"><?php echo _('Exported calendars'); ?></h2>
-        <div class="calendar-exports-wrapper">
+        <div class="table-wrapper">
         <table class="calendar-exports">
             <thead>
                 <tr><th><?php echo _('Calendar'); ?></th><th><?php echo _('Settings'); ?></th><th><?php echo _('Remove'); ?></th></tr>

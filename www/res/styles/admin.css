@@ -3,6 +3,9 @@ section.admin table {
     width: 100%;
     border-collapse: collapse;
     border: 1px solid var(--border-color);
+}
+
+section.admin .table-wrapper {
     margin: 1em auto;
 }
 

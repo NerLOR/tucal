@@ -6,10 +6,6 @@
     justify-content: center;
 }
 
-.calendar-exports-wrapper {
-    overflow-x: scroll;
-}
-
 table.calendar-exports {
     width: 100%;
     border-collapse: collapse;
