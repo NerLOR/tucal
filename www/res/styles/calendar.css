@@ -553,8 +553,13 @@ section.calendar-legend div.legend > span.color-name {
     div.calendar thead th.day-header {
         font-size: 0.625em;
     }
+
     div.calendar thead li {
         font-size: 0.75em;
+    }
+
+    div.calendar div.settings label {
+        display: block;
     }
 }
 
@@ -563,6 +568,7 @@ section.calendar-legend div.legend > span.color-name {
     div.calendar div.event div.group {
         font-size: 0.75em;
     }
+
     div.calendar > table thead {
         position: unset;
     }
