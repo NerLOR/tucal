@@ -101,13 +101,15 @@ class WeekSchedule {
         settings.classList.add('settings');
         settings.innerHTML =
             `<label><input type="checkbox" id="show-hidden"/> ${_('Show hidden events')}</label>` +
-            `<label><input type="checkbox" id="show-planned" checked/> ${_('Use c.t. times')}</label>`;
+            `<label><input type="checkbox" id="show-planned"/> ${_('Use c.t. times')}</label>`;
         th.appendChild(settings);
         tfoot.appendChild(th);
 
         const showHidden = settings.getElementsByTagName("input")[0];
         const showPlanned = settings.getElementsByTagName("input")[1];
         if (!showHidden || !showPlanned) throw new Error();
+        showHidden.checked = this.showHidden;
+        showPlanned.checked = this.planned;
         showHidden.addEventListener("input", () => {
             this.showHidden = showHidden.checked;
             this.reloadEvents(true);
@@ -230,6 +232,20 @@ class WeekSchedule {
             week: this.week.week,
         }, '', `/calendar/${this.subject}/${this.week.year}/W${this.week.week}/${this.eventId ?? ''}`);
         this.displayEventDetail();
+    }
+
+    setShowHidden(showHidden: boolean) {
+        this.showHidden = showHidden;
+        const showHiddenInput = <HTMLInputElement> document.getElementById("show-hidden");
+        if (!showHiddenInput) throw new Error();
+        showHiddenInput.checked = this.showHidden;
+    }
+
+    setPlanned(planned: boolean) {
+        this.planned = planned;
+        const showPlannedInput = <HTMLInputElement> document.getElementById("show-planned");
+        if (!showPlannedInput) throw new Error();
+        showPlannedInput.checked = this.planned;
     }
 
     updateTime() {

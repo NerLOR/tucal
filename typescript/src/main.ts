@@ -49,7 +49,7 @@ function initCalendar() {
     const eventId = (!parts[5] || parts[5].length === 0) ? null : parts[5];
 
     CALENDAR = new WeekSchedule(main, subject, eventId);
-    if (USER_OPTS) CALENDAR.planned = USER_OPTS['planned'] ?? true;
+    if (USER_OPTS) CALENDAR.setPlanned(USER_OPTS['planned'] ?? true);
     CALENDAR.setWeek(new Week(year, week));
 }
 
