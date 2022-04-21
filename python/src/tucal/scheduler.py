@@ -1,10 +1,8 @@
-
 from socketserver import UnixStreamServer, StreamRequestHandler, ThreadingMixIn
 import subprocess
 import os
 import time
 import json
-import atexit
 import signal
 import base64
 import re
@@ -24,15 +22,12 @@ def cleanup():
     CLEANUP_STARTED = True
 
     print('cleaning up child processes', flush=True)
-    cur = tucal.db.cursor()
     for pid, data in CHILDREN.items():
         proc = data['proc']
-        job_nr = data['job_nr']
         print(f'killing {proc.pid}...', flush=True)
         proc.terminate()
-        cur.execute("UPDATE tucal.job SET status = 'aborted', pid = NULL WHERE job_nr = %s", (job_nr,))
-    tucal.db.commit()
     print('cleanup complete', flush=True)
+    time.sleep(1)
     exit(0)
 
 
@@ -154,6 +149,7 @@ class Handler(StreamRequestHandler):
                 SET data = %(data)s, status = %(status)s, start_ts = %(start)s, time = %(time)s, name = %(name)s
                 WHERE job_nr = %(nr)s""", data)
             tucal.db.commit()
+        code: int = proc.returncode or -1
 
         proc.stdout.read()
         err = proc.stderr.read().decode('utf8')
@@ -173,9 +169,15 @@ class Handler(StreamRequestHandler):
             d['error'] = err
             data['data'] = json.dumps(d)
 
-        data['status'] = 'success' if proc.returncode == 0 else 'error'
+        if code == 0:
+            data['status'] = 'success'
+        elif code > 0:
+            data['status'] = 'error'
+        else:
+            data['status'] = 'aborted'
+
         try:
-            self.wfile.write(f'status:{proc.returncode}\n'.encode('utf8'))
+            self.wfile.write(f'status:{code}\n'.encode('utf8'))
         except BrokenPipeError:
             pass
 
@@ -189,7 +191,7 @@ class Handler(StreamRequestHandler):
         proc.stderr.close()
         proc.terminate()
 
-        print(f'[{job_nr:8}] terminated', flush=True)
+        print(f'[{job_nr:8}] terminated ({code})', flush=True)
         del CHILDREN[pid]
         self.wfile.close()
         self.rfile.close()
