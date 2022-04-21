@@ -31,7 +31,6 @@ def cleanup():
         print(f'killing {proc.pid}...', flush=True)
         proc.terminate()
         cur.execute("UPDATE tucal.job SET status = 'aborted', pid = NULL WHERE job_nr = %s", (job_nr,))
-        del CHILDREN[pid]
     tucal.db.commit()
     print('cleanup complete', flush=True)
 
