@@ -128,7 +128,12 @@ class Handler(StreamRequestHandler):
             'err': None,
         }
 
-        while proc.returncode is None:
+        code: int
+        while True:
+            code = proc.returncode
+            if code is not None:
+                break
+
             line = proc.stdout.readline().decode('utf8')
             if len(line) > 0:
                 try:
@@ -149,7 +154,6 @@ class Handler(StreamRequestHandler):
                 SET data = %(data)s, status = %(status)s, start_ts = %(start)s, time = %(time)s, name = %(name)s
                 WHERE job_nr = %(nr)s""", data)
             tucal.db.commit()
-        code: int = proc.returncode or -1
 
         proc.stdout.read()
         err = proc.stderr.read().decode('utf8')

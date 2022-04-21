@@ -328,6 +328,9 @@ msgstr "Föhla"
 msgid "Unknown error"
 msgstr "Unbekonnta Föhla"
 
+msgid "Job has been aborted"
+msgstr "Job is obrochn wuan"
+
 msgid "Room"
 msgstr "Raum"
 

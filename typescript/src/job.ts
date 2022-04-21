@@ -121,9 +121,10 @@ class Job {
         const statusText = container.getElementsByTagName("span")[0];
         if (!progressBar || !statusText) throw new Error();
 
-        if (!this.elem.classList.contains('error') && !this.elem.classList.contains('success')) {
-            if (job.status === 'error') {
-                this.elem.classList.add('error');
+        const classList = this.elem.classList;
+        if (job.status !== 'running' && !classList.contains('error') && !classList.contains('success')) {
+            if (job.status !== 'success') {
+                classList.add('error');
 
                 const href = this.elem.dataset['errorHref'];
                 if (href && this.elem.getElementsByTagName("button").length === 0) {
@@ -137,8 +138,8 @@ class Job {
                 if (this.onError !== null) {
                     this.onError();
                 }
-            } else if (job.status === 'success') {
-                this.elem.classList.add('success');
+            } else {
+                classList.add('success');
 
                 const href = this.elem.dataset['successHref'];
                 if (href && this.elem.getElementsByTagName("button").length === 0) {
@@ -174,10 +175,8 @@ class Job {
             }
         }
 
-        if (progress >= 1 || job.status !== 'running') {
-            progress = 1;
-            if (this.timerUpdate) clearInterval(this.timerUpdate);
-        }
+        if (progress >= 1 || job.status === 'success') progress = 1;
+        if (job.status !== 'running' && this.timerUpdate) clearInterval(this.timerUpdate);
 
         if (progress >= this.progress) {
             this.progress = progress;
@@ -195,27 +194,27 @@ class Job {
         const step = this.getCurrentStep();
 
         let status = `${(this.progress * 100).toFixed(0)}%`;
-        if (step && this.progress < 1) {
-            status += `<br/>${step.name}`;
+        let status2 = null;
+        if (job.status === 'error') {
+            const error = job.error || _('Unknown error');
+            console.error(error);
+            status2 = _('Error') + `: ${error}`;
+        } else if (job.status === 'aborted') {
+            console.error('Job aborted')
+            status2 = _('Job has been aborted');
+        } else if (step && this.progress < 1) {
+            status2 = step.name;
+        }
+
+        if (status2) {
+            status += `<br/>${status2}`;
             statusText.style.marginTop = '';
         } else {
             statusText.style.marginTop = '10px';
         }
+
         progressBar.style.width = `${this.progress * 100}%`;
         progressBar.style.display = 'unset';
-
-        if (job.status === 'error' && job.error) {
-            console.error(job.error);
-            if (job.error.startsWith('Traceback (most recent call last):')) {
-                const lines = job.error.split('\n');
-                const errDesc = lines.filter((line, idx) => idx > 0 && !line.startsWith(' '));
-                if (errDesc[0]) {
-                    const err = errDesc[0].substring(errDesc[0].indexOf(':') + 1).trim();
-                    status = _('Error') + `: ${err.trim()}`;
-                }
-            }
-        }
-
         statusText.innerHTML = status;
     }
 

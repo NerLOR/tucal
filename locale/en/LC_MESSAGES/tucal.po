@@ -328,6 +328,9 @@ msgstr "Error"
 msgid "Unknown error"
 msgstr "Unknown error"
 
+msgid "Job has been aborted"
+msgstr "Job has been aborted"
+
 msgid "Room"
 msgstr "Room"
 
