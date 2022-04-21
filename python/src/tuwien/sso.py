@@ -33,8 +33,9 @@ class Session:
 
     def login(self, url: str = 'https://login.tuwien.ac.at/') -> bool:
         r = self._session.get(url)
-
-        if not r.url.startswith(SSO_URL):
+        if r.status_code != 200:
+            raise tucal.LoginError(r.reason)
+        elif not r.url.startswith(SSO_URL):
             return True
 
         if '<title>TU Wien Login</title>' in r.text:
@@ -48,7 +49,7 @@ class Session:
             })
 
             if r.status_code != 200:
-                raise tucal.LoginError('unable to log in')
+                raise tucal.LoginError(r.reason)
             elif '<h3>Benutzername oder Passwort falsch.</h3>' in r.text:
                 raise tucal.InvalidCredentialsError('invalid credentials')
 
@@ -70,7 +71,7 @@ class Session:
         })
 
         if r.status_code != 200:
-            raise tucal.LoginError('unable to log in')
+            raise tucal.LoginError(r.reason)
 
         return True
 
