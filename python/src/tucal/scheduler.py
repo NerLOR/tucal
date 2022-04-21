@@ -33,6 +33,7 @@ def cleanup():
         cur.execute("UPDATE tucal.job SET status = 'aborted', pid = NULL WHERE job_nr = %s", (job_nr,))
     tucal.db.commit()
     print('cleanup complete', flush=True)
+    exit(0)
 
 
 def signal_exit(signal_num: int, frame):
@@ -203,7 +204,6 @@ if __name__ == '__main__':
     signal.signal(signal.SIGHUP, signal_exit)
     signal.signal(signal.SIGABRT, signal_exit)
     signal.signal(signal.SIGTERM, signal_exit)
-    atexit.register(cleanup)
 
     try:
         os.unlink('/var/tucal/scheduler.sock')
