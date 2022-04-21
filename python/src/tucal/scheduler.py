@@ -5,6 +5,7 @@ import os
 import time
 import json
 import atexit
+import signal
 import base64
 import re
 
@@ -13,19 +14,30 @@ import tucal.db
 
 
 CHILDREN = {}
+CLEANUP_STARTED = False
 
 
-def on_exit():
+def cleanup():
+    global CLEANUP_STARTED
+    if CLEANUP_STARTED:
+        return
+    CLEANUP_STARTED = True
+
     print('cleaning up child processes', flush=True)
     cur = tucal.db.cursor()
     for pid, data in CHILDREN.items():
         proc = data['proc']
         job_nr = data['job_nr']
         print(f'killing {proc.pid}...', flush=True)
-        cur.execute("UPDATE tucal.job SET status = 'aborted', pid = NULL WHERE job_nr = %s", (job_nr,))
         proc.terminate()
+        cur.execute("UPDATE tucal.job SET status = 'aborted', pid = NULL WHERE job_nr = %s", (job_nr,))
+        del CHILDREN[pid]
     tucal.db.commit()
     print('cleanup complete', flush=True)
+
+
+def signal_exit(signal_num: int, frame):
+    cleanup()
 
 
 class Handler(StreamRequestHandler):
@@ -188,7 +200,12 @@ class ThreadedUnixStreamServer(ThreadingMixIn, UnixStreamServer):
 
 
 if __name__ == '__main__':
-    atexit.register(on_exit)
+    signal.signal(signal.SIGINT, signal_exit)
+    signal.signal(signal.SIGHUP, signal_exit)
+    signal.signal(signal.SIGABRT, signal_exit)
+    signal.signal(signal.SIGTERM, signal_exit)
+    atexit.register(cleanup)
+
     try:
         os.unlink('/var/tucal/scheduler.sock')
     except FileNotFoundError:
