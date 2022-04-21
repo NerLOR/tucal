@@ -110,15 +110,22 @@ function job() {
         error(400, "missing field 'id'");
     }
 
-    $stmt = db_exec("SELECT data, status FROM tucal.v_job WHERE job_id = ?", [$jobId]);
+    $stmt = db_exec("SELECT job_id, status, error_msg, data FROM tucal.v_job WHERE job_id = ?", [$jobId]);
     $rows = $stmt->fetchAll();
     if (sizeof($rows) === 0) {
         error(404);
     }
 
+    $row = $rows[0];
+    $rawData = json_decode($row[3], true);
+    $data = [
+        'id' => $row[0],
+        'status' => $row[1],
+        'error_msg' => $row[2],
+        'data' => $rawData !== [] ? $rawData : null,
+    ];
+
     echo '{"status":"success","message":null,"data":' . "\n";
-    $data = json_decode($rows[0][0], true);
-    $data['status'] = $rows[0][1];
     echo json_encode($data, JSON_FLAGS);
     echo "\n}\n";
 

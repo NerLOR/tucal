@@ -75,6 +75,29 @@ interface TucalEventJSON {
     },
 }
 
+interface JobStepJSON {
+    name: string | null | undefined,
+    is_running: boolean | null | undefined,
+    time: number | null | undefined,
+    steps: JobStepJSON[] | null | undefined,
+    comments: string[] | undefined,
+}
+
+interface BaseJobStepJSON extends JobStepJSON {
+    remaining: number | null | undefined,
+    start_ts: string | null | undefined,
+    eta_ts: string | null | undefined,
+    progress: number | null | undefined,
+    error: string | null | undefined,
+}
+
+interface JobJSON {
+    id: string,
+    status: string,
+    error_msg: string | null,
+    data: BaseJobStepJSON | null,
+}
+
 class Building {
     id: string;
     name: string | null;

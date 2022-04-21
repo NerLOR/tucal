@@ -128,13 +128,19 @@ function echo_account($row, $uri = null, $editable = false) {
 function echo_job(string $jobId, string $successUrl, string $errorUrl) {
     echo "<div class='job-viewer' data-job-id='$jobId'";
 
-    $stmt = db_exec("SELECT data, status FROM tucal.v_job WHERE job_id = ?", [$jobId]);
+    $stmt = db_exec("SELECT job_id, status, error_msg, data FROM tucal.v_job WHERE job_id = ?", [$jobId]);
     $rows = $stmt->fetchAll();
     if (sizeof($rows) === 0) {
         echo ' data-job-invalid="1"';
     } else {
-        $data = json_decode($rows[0]['data'], true);
-        $data['status'] = $rows[0]['status'];
+        $row = $rows[0];
+        $rawData = json_decode($row[3], true);
+        $data = [
+            'id' => $row[0],
+            'status' => $row[1],
+            'error_msg' => $row[2],
+            'data' => $rawData !== [] ? $rawData : null,
+        ];
     }
 
     echo ' data-success-href="' . htmlspecialchars($successUrl) . '"';
