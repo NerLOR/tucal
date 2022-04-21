@@ -116,7 +116,7 @@ function job() {
         error(404);
     }
 
-    echo '{"status":"success","message":"work in progress","data":' . "\n";
+    echo '{"status":"success","message":null,"data":' . "\n";
     $data = json_decode($rows[0][0], true);
     $data['status'] = $rows[0][1];
     echo json_encode($data, JSON_FLAGS);
@@ -171,7 +171,7 @@ function courses() {
         echo json_encode($data, JSON_FLAGS);
     }
 
-    echo '{"status":"success","message":"work in progress","data":{"personal":[' . "\n";
+    echo '{"status":"success","message":null,"data":{"personal":[' . "\n";
     $first = true;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         if ($first) {
@@ -243,7 +243,7 @@ function nickname() {
         'mnr' => $mnr,
     ]);
 
-    echo '{"status":"success","message":"work in progress","data":null}' . "\n";
+    echo '{"status":"success","message":null,"data":null}' . "\n";
 
     tucal_exit();
 }

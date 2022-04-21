@@ -92,7 +92,7 @@ function calendar() {
         'end' => date('c', $end),
     ]);
 
-    echo '{"status":"success","message":"work in progress","data":{' . "\n";
+    echo '{"status":"success","message":null,"data":{' . "\n";
     echo '"timestamp":"' . date('c') .
         '","start":"' . date('c', $start) .
         '","end":"' . date('c', $end) .
@@ -293,6 +293,6 @@ function update() {
 
     db_commit();
 
-    echo '{"status":"success","message":"work in progress","data":{}}' . "\n";
+    echo '{"status":"success","message":null,"data":{}}' . "\n";
     tucal_exit();
 }
