@@ -309,8 +309,15 @@ class SyncUserTuwel(tucal.Sync):
             'token': self.cal_token
         })
 
+        cur.execute("SELECT course_nr, semester FROM tiss.course")
+        courses = [(str(cnr), str(sem)) for cnr, sem in cur.fetch_all()]
+
         cur.execute("DELETE FROM tuwel.course_user WHERE user_id = %s", (self.user_id,))
         for c in self.courses.values():
+            if c.nr is not None and c.semester is not None and (c.nr, str(c.semester)) not in courses:
+                print(f'Warning: TUWEL course {c.nr}-{c.semester} not in database')
+                continue
+
             data = {
                 'cid': c.id,
                 'cnr': c.nr,
