@@ -9,7 +9,7 @@ if [[ -z "$dir" || -z "$in" || -z "$out" ]]; then
   exit 1
 fi
 
-msgids=$(grep -ohe "_(['\"].*['\"])" typescript/src/* | sed "s/_([\"']\|[\"'])//g" | sort | uniq)
+msgids=$(grep -ohe "_(['\"][^'\"]*['\"])" typescript/src/* | sed "s/_([\"']\|[\"'])//g" | sort | uniq)
 
 rm -rf "$tmp"
 first1="t"
