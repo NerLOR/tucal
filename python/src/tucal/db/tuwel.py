@@ -30,6 +30,7 @@ def upsert_ical_events(events: List[ical.Event], user_id: int = None) -> List[in
             rows_update.append(data)
         else:
             rows_insert.append(data)
+            evt_ids.append(data['id'])
 
     if len(rows_insert) > 0:
         cur.execute_values("""
@@ -118,6 +119,7 @@ def upsert_events(events: List[Dict[str, Any]], access_time: datetime.datetime, 
             rows_update.append(data)
         else:
             rows_insert.append(data)
+            evt_ids.append(data['id'])
 
     if len(rows_insert) > 0:
         cur.execute_values("""
