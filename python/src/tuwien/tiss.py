@@ -353,22 +353,27 @@ class Session:
 
         institutes = [opt.group(1) for opt in OPTION_INSTITUTE.finditer(r.text)]
         course_nrs = set()
-        for institute in institutes:
-            data = {
-                'courseList:institutes': institute,
-                'courseList_SUBMIT': '1',
-                'courseList:semFrom': str(semester),
-                'courseList:semTo': str(semester_to or semester),
-                'courseList:cSearchBtn': 'Suchen',
-            }
-            self._view_state = None
-            self.get('/course/courseList.xhtml')
-            self.post('/course/courseList.xhtml', data1, ajax=True)
-            r = self.post('/course/courseList.xhtml', data)
-            for tr in TABLE_TR.finditer(r.text):
-                row = [td.group(1) for td in TABLE_TD.finditer(tr.group(1))]
-                if len(row) > 0:
-                    course_nrs.add((row[0].replace('.', ''), Semester(row[5])))
+        for sem in range(int(semester), int(semester_to) + 1):
+            semester = Semester.from_int(sem)
+            for institute in institutes:
+                data = {
+                    'courseList:institutes': institute,
+                    'courseList_SUBMIT': '1',
+                    'courseList:semFrom': str(semester),
+                    'courseList:semTo': str(semester),
+                    'courseList:cSearchBtn': 'Suchen',
+                }
+                self._view_state = None
+                self.get('/course/courseList.xhtml')
+                self.post('/course/courseList.xhtml', data1, ajax=True)
+                r = self.post('/course/courseList.xhtml', data)
+                if 'bitte verfeinern Sie Ihre Eingabe' in r.text:
+                    raise RuntimeError('TISS search returned too many results')
+
+                for tr in TABLE_TR.finditer(r.text):
+                    row = [td.group(1) for td in TABLE_TD.finditer(tr.group(1))]
+                    if len(row) > 0:
+                        course_nrs.add((row[0].replace('.', ''), Semester(row[5])))
 
         yield len(course_nrs)
         for course in course_nrs - skip:

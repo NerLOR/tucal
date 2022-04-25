@@ -207,6 +207,10 @@ class Semester:
             return None
 
     @staticmethod
+    def from_int(num: int) -> Semester:
+        return Semester(f'{num // 2}{"W" if num % 2 == 1 else "S"}')
+
+    @staticmethod
     def current() -> Semester:
         return Semester.from_date(now())
 
