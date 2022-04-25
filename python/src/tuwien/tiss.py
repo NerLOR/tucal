@@ -629,76 +629,72 @@ class Session:
         # LVA-An/-Abmeldung
         uri = f'/education/course/courseRegistration.xhtml?semester={course.semester}&courseNr={course.nr}'
         r = self.get(uri)
-        if r.status_code != 200:
-            raise tucal.CourseNotFoundError()
-
-        course_begin = LI_BEGIN.findall(r.text)
-        course_end = LI_END.findall(r.text)
-        course_deregend = LI_DEREGEND.findall(r.text)
-        if len(course_begin) > 0:
-            ts = datetime.datetime.strptime(course_begin[0], '%d.%m.%Y, %H:%M')
-            events.append({
-                'id': f'{course.nr}-{course.semester}-LVA-anmeldung',
-                'start': ts,
-                'end': ts,
-                'name': 'Beginn LVA-Anmeldung',
-                'url': TISS_URL + uri,
-            })
-        if len(course_end) > 0 and len(course_deregend) > 0 and course_end[0] == course_deregend[0]:
-            ts = datetime.datetime.strptime(course_end[0], '%d.%m.%Y, %H:%M')
-            events.append({
-                'id': f'{course.nr}-{course.semester}-LVA-an-abmeldung-ende',
-                'start': ts,
-                'end': ts,
-                'name': 'Ende LVA-An/-Abmeldung',
-                'url': TISS_URL + uri,
-            })
-        else:
-            if len(course_end) > 0:
+        if r.status_code == 200:
+            course_begin = LI_BEGIN.findall(r.text)
+            course_end = LI_END.findall(r.text)
+            course_deregend = LI_DEREGEND.findall(r.text)
+            if len(course_begin) > 0:
+                ts = datetime.datetime.strptime(course_begin[0], '%d.%m.%Y, %H:%M')
+                events.append({
+                    'id': f'{course.nr}-{course.semester}-LVA-anmeldung',
+                    'start': ts,
+                    'end': ts,
+                    'name': 'Beginn LVA-Anmeldung',
+                    'url': TISS_URL + uri,
+                })
+            if len(course_end) > 0 and len(course_deregend) > 0 and course_end[0] == course_deregend[0]:
                 ts = datetime.datetime.strptime(course_end[0], '%d.%m.%Y, %H:%M')
                 events.append({
-                    'id': f'{course.nr}-{course.semester}-LVA-anmeldung-ende',
+                    'id': f'{course.nr}-{course.semester}-LVA-an-abmeldung-ende',
                     'start': ts,
                     'end': ts,
-                    'name': 'Ende LVA-Anmeldung',
+                    'name': 'Ende LVA-An/-Abmeldung',
                     'url': TISS_URL + uri,
                 })
-            if len(course_deregend) > 0:
-                ts = datetime.datetime.strptime(course_deregend[0], '%d.%m.%Y, %H:%M')
-                events.append({
-                    'id': f'{course.nr}-{course.semester}-LVA-abmeldung-ende',
-                    'start': ts,
-                    'end': ts,
-                    'name': 'Ende LVA-Abmeldung',
-                    'url': TISS_URL + uri,
-                })
+            else:
+                if len(course_end) > 0:
+                    ts = datetime.datetime.strptime(course_end[0], '%d.%m.%Y, %H:%M')
+                    events.append({
+                        'id': f'{course.nr}-{course.semester}-LVA-anmeldung-ende',
+                        'start': ts,
+                        'end': ts,
+                        'name': 'Ende LVA-Anmeldung',
+                        'url': TISS_URL + uri,
+                    })
+                if len(course_deregend) > 0:
+                    ts = datetime.datetime.strptime(course_deregend[0], '%d.%m.%Y, %H:%M')
+                    events.append({
+                        'id': f'{course.nr}-{course.semester}-LVA-abmeldung-ende',
+                        'start': ts,
+                        'end': ts,
+                        'name': 'Ende LVA-Abmeldung',
+                        'url': TISS_URL + uri,
+                    })
 
         # Gruppenan/-abmeldungen
         uri = f'/education/course/groupList.xhtml?semester={course.semester}&courseNr={course.nr}'
         r = self.get(uri)
-        if r.status_code != 200:
-            raise tucal.CourseNotFoundError()
-
-        begins = set(LI_APP_BEGIN.findall(r.text))
-        ends = set(LI_APP_END.findall(r.text))
-        for b in begins:
-            ts = datetime.datetime.strptime(b, '%d.%m.%Y, %H:%M')
-            events.append({
-                'id': f'{course.nr}-{course.semester}-group-anmeldung-{b}',
-                'start': ts,
-                'end': ts,
-                'name': 'Beginn Gruppenanmeldung',
-                'url': TISS_URL + uri,
-            })
-        for e in ends:
-            ts = datetime.datetime.strptime(e, '%d.%m.%Y, %H:%M')
-            events.append({
-                'id': f'{course.nr}-{course.semester}-group-anmeldung-{e}',
-                'start': ts,
-                'end': ts,
-                'name': 'Ende Gruppenanmeldung',
-                'url': TISS_URL + uri,
-            })
+        if r.status_code == 200:
+            begins = set(LI_APP_BEGIN.findall(r.text))
+            ends = set(LI_APP_END.findall(r.text))
+            for b in begins:
+                ts = datetime.datetime.strptime(b, '%d.%m.%Y, %H:%M')
+                events.append({
+                    'id': f'{course.nr}-{course.semester}-group-anmeldung-{b}',
+                    'start': ts,
+                    'end': ts,
+                    'name': 'Beginn Gruppenanmeldung',
+                    'url': TISS_URL + uri,
+                })
+            for e in ends:
+                ts = datetime.datetime.strptime(e, '%d.%m.%Y, %H:%M')
+                events.append({
+                    'id': f'{course.nr}-{course.semester}-group-anmeldung-{e}',
+                    'start': ts,
+                    'end': ts,
+                    'name': 'Ende Gruppenanmeldung',
+                    'url': TISS_URL + uri,
+                })
 
         # Prüfungsan/-abmeldungen
         #uri = f'/education/course/examDateList.xhtml?semester={course.semester}&courseNr={course.nr}'
