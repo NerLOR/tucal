@@ -125,7 +125,7 @@ function echo_account($row, $uri = null, $editable = false) {
     echo "</div></div></div></a>";
 }
 
-function echo_job(string $jobId, string $successUrl, string $errorUrl) {
+function echo_job(string $jobId, string $successUrl = null, string $errorUrl = null) {
     echo "<div class='job-viewer' data-job-id='$jobId'";
 
     $stmt = db_exec("SELECT job_id, status, error_msg, data FROM tucal.v_job WHERE job_id = ?", [$jobId]);
@@ -143,8 +143,8 @@ function echo_job(string $jobId, string $successUrl, string $errorUrl) {
         ];
     }
 
-    echo ' data-success-href="' . htmlspecialchars($successUrl) . '"';
-    echo ' data-error-href="' . htmlspecialchars($errorUrl) . '"';
+    if ($successUrl) echo ' data-success-href="' . htmlspecialchars($successUrl) . '"';
+    if ($errorUrl) echo ' data-error-href="' . htmlspecialchars($errorUrl) . '"';
     if (isset($data)) {
         echo ' data-job="' . htmlspecialchars(json_encode($data, JSON_FLAGS)) . '"';
     }

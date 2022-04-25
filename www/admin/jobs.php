@@ -67,7 +67,7 @@ require "../.php/header.php";
     $error = $j['error_msg'];
     if ($error === '') $error = $data['error'];
     echo "<tr>";
-    echo "<td class='nr'>$j[job_nr]</td><td class='id'>$j[job_id]</td>";
+    echo "<td class='nr'>$j[job_nr]</td><td class='id'><a href='/admin/job?id=$j[job_id]'>$j[job_id]</a></td>";
     echo "<td>$j[name]</td><td class='nr'>" . ($j['pid'] ?? '-') . "</td><td class='nr'>" . ($j['mnr'] ?? '-') . "</td>";
     echo "<td>$j[status]</td><td class='scroll'>" . (($error !== null) ? ("<pre>" . htmlentities($error) . "</pre>") : '-') . "</td>";
     echo "<td class='ts' title='$start2'>$start1</td><td class='ts' title='$eta2'>$eta1</td>";
