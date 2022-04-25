@@ -330,6 +330,9 @@ class SyncUserTuwel(tucal.Sync):
                 INSERT INTO tuwel.course_user (course_id, user_id) VALUES (%s, %s)
                 ON CONFLICT DO NOTHING""", (c.id, self.user_id))
 
+            if c.nr is None or c.semester is None:
+                continue
+
             for group_id, group_name in self.groups[c.id]:
                 if group_name.startswith('Gruppe ') or group_name.startswith('Kohorte '):
                     name_normal = group_name
