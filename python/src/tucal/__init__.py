@@ -39,6 +39,14 @@ class JobFormatError(Exception):
     pass
 
 
+class CourseNotFoundError(Exception):
+    pass
+
+
+class RoomNotFoundError(Exception):
+    pass
+
+
 class Plugin:
     @staticmethod
     def sync() -> Optional[Sync]:

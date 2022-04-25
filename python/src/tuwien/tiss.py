@@ -214,6 +214,11 @@ class Session:
         r = self._session.get(f'{TISS_URL}{self.update_endpoint(endpoint)}', headers=headers,
                               allow_redirects=allow_redirects, timeout=self._timeout)
         self._update_view_state(r.text)
+
+        pos = r.url.find('errorCode=')
+        if pos != -1:
+            r.status_code = int(r.url[pos + 10:pos + 13])
+
         return r
 
     def post(self, endpoint: str, data: Dict[str, object], headers: Dict[str, object] = None,
@@ -237,6 +242,10 @@ class Session:
         r = self._session.post(f'{TISS_URL}{endpoint}', data=data, headers=headers,
                                timeout=self._timeout, allow_redirects=allow_redirects)
         self._update_view_state(r.text, ajax=ajax)
+
+        pos = r.url.find('errorCode=')
+        if pos != -1:
+            r.status_code = int(r.url[pos + 10:pos + 13])
 
         return r
 
@@ -302,14 +311,21 @@ class Session:
                 room.global_id = room.id
             room.capacity = int(row[1].strip())
 
-    def _get_course(self, course_nr: str, semester: Semester) -> Course:
+    def get_course(self, course_nr: str, semester: Semester) -> Course:
+        semester = Semester(str(semester))
         course_nr = course_nr.replace('.', '')
 
         r = self.get(f'/course/courseDetails.xhtml?courseNr={course_nr}&semester={semester}&locale=de')
+        if r.status_code != 200:
+            raise tucal.CourseNotFoundError()
+
         title_de = html.unescape(COURSE_TITLE.findall(r.text)[0].strip())
         meta = COURSE_META.findall(r.text)[0]
 
         r = self.get(f'/course/courseDetails.xhtml?courseNr={course_nr}&semester={semester}&locale=en')
+        if r.status_code != 200:
+            raise tucal.CourseNotFoundError()
+
         title_en = html.unescape(COURSE_TITLE.findall(r.text)[0].strip())
 
         course_type = meta[0]
@@ -356,7 +372,7 @@ class Session:
 
         yield len(course_nrs)
         for course in course_nrs - skip:
-            yield course[0], course[1], lambda: self._get_course(course[0], course[1])
+            yield course[0], course[1], lambda: self.get_course(course[0], course[1])
 
     def _get_courses(self, semester: Semester, semester_to: Semester = None) -> Dict[str, Course]:
         gen = self.course_generator(semester, semester_to)
@@ -405,7 +421,10 @@ class Session:
             'calendarForm:schedule_start': int(time.mktime(tucal.Semester.last().first_day.timetuple()) * 1000),
             'calendarForm:schedule_end': int(time.mktime(tucal.Semester.next().last_day.timetuple()) * 1000),
         }
-        self.get(f'/events/roomSchedule.xhtml?roomCode={room_code.replace(" ", "+")}')
+        r = self.get(f'/events/roomSchedule.xhtml?roomCode={room_code.replace(" ", "+")}')
+        if r.status_code != 200:
+            raise tucal.RoomNotFoundError()
+
         r = self.post('/events/roomSchedule.xhtml', data, ajax=True)
         for cdata in CDATA.finditer(r.text):
             cd = cdata.group(1)
@@ -502,6 +521,9 @@ class Session:
 
     def get_groups(self, course: Course) -> Dict[str, Dict[str, Any]]:
         r = self.get(f'/education/course/groupList.xhtml?semester={course.semester}&courseNr={course.nr}')
+        if r.status_code != 200:
+            raise tucal.CourseNotFoundError()
+
         groups = {}
         for g_html in GROUP_DIV.finditer(r.text):
             text = g_html.group(1).strip()
@@ -549,7 +571,9 @@ class Session:
         return groups
 
     def get_course_events(self, course: Course) -> List[Dict[str, Any]]:
-        self.get(f'/course/educationDetails.xhtml?semester={course.semester}&courseNr={course.nr}')
+        r = self.get(f'/course/educationDetails.xhtml?semester={course.semester}&courseNr={course.nr}')
+        if r.status_code != 200:
+            raise tucal.CourseNotFoundError()
 
         data = {
             'javax.faces.source': 'j_id_4n:eventDetailDateTable',
@@ -604,6 +628,9 @@ class Session:
         # LVA-An/-Abmeldung
         uri = f'/education/course/courseRegistration.xhtml?semester={course.semester}&courseNr={course.nr}'
         r = self.get(uri)
+        if r.status_code != 200:
+            raise tucal.CourseNotFoundError()
+
         course_begin = LI_BEGIN.findall(r.text)
         course_end = LI_END.findall(r.text)
         course_deregend = LI_DEREGEND.findall(r.text)
@@ -648,6 +675,9 @@ class Session:
         # Gruppenan/-abmeldungen
         uri = f'/education/course/groupList.xhtml?semester={course.semester}&courseNr={course.nr}'
         r = self.get(uri)
+        if r.status_code != 200:
+            raise tucal.CourseNotFoundError()
+
         begins = set(LI_APP_BEGIN.findall(r.text))
         ends = set(LI_APP_END.findall(r.text))
         for b in begins:
