@@ -130,7 +130,7 @@ class Session:
         if p1 != -1:
             p2 = r.text.find('</select>', p1)
             data = r.text[p1:p2]
-            groups = [(int(opt.group(1)), opt.group(2)) for opt in GROUP_OPTION.finditer(data)]
+            groups = [(int(opt.group(1)), html.unescape(opt.group(2))) for opt in GROUP_OPTION.finditer(data)]
             if '<option value="-1">Keine Gruppe</option>' not in data \
                     and '<option value="-1">No group</option>' not in data:
                 return groups
