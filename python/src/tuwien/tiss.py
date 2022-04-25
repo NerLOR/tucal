@@ -601,7 +601,8 @@ class Session:
                     event = [d.group(1) for d in TABLE_TD.finditer(row.group(1))]
                     if len(event) == 0:
                         continue
-                    day, date, time_from_to, location, comment = event
+                    day, date, time_from_to, location = event[:4]
+                    comment = event[-1]
                     m = ROOM_CODE.findall(location)
                     room_code = None
                     if len(m) > 0:
