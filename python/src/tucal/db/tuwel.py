@@ -6,7 +6,7 @@ import tucal.icalendar as ical
 import tucal.db as db
 
 
-def upsert_ical_events(events: List[ical.Event], user_id: int = None):
+def upsert_ical_events(events: List[ical.Event], user_id: int = None) -> List[int]:
     cur = db.cursor()
 
     cur.execute("SELECT event_id FROM tuwel.event")
@@ -50,12 +50,13 @@ def upsert_ical_events(events: List[ical.Event], user_id: int = None):
         cur.execute_values("""
             INSERT INTO tuwel.event_user (event_id, user_id)
             VALUES (%s, %s)
-            ON CONFLICT DO NOTHING""", [(evt['id'], user_id) for evt in rows_insert + rows_update])
+            ON CONFLICT DO NOTHING""", [(evt['id'], user_id) for evt in (rows_insert + rows_update)])
 
     cur.close()
+    return [evt['id'] for evt in (rows_insert + rows_update)]
 
 
-def upsert_events(events: List[Dict[str, Any]], access_time: datetime.datetime, user_id: int = None):
+def upsert_events(events: List[Dict[str, Any]], access_time: datetime.datetime, user_id: int = None) -> List[int]:
     cur = db.cursor()
 
     cur.execute("SELECT event_id FROM tuwel.event")
@@ -155,5 +156,4 @@ def upsert_events(events: List[Dict[str, Any]], access_time: datetime.datetime, 
             ON CONFLICT DO NOTHING""", [(evt['id'], user_id) for evt in (rows_insert + rows_update)])
 
     cur.close()
-    return
-
+    return [evt['id'] for evt in (rows_insert + rows_update)]

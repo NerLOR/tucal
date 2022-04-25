@@ -144,14 +144,6 @@ class SyncCalendar(tucal.Sync):
             if cal is None:
                 cur.execute("UPDATE tuwel.user SET auth_token = NULL WHERE user_id = %s", (user_id,))
                 continue
-
-            cur.execute("""
-                DELETE FROM tuwel.event_user eu
-                WHERE user_id = %s AND
-                      (SELECT start_ts >= now()
-                       FROM tuwel.event e
-                       WHERE e.event_id = eu.event_id)""", (user_id,))
-
             tucal.db.tuwel.upsert_ical_events(cal.events, user_id)
 
         self.job.end(1)
