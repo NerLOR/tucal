@@ -537,9 +537,9 @@ class SyncUser(tucal.Sync):
             self._delete_user_group(cur)
             self.job.end(2)
 
-        self.job.exec(3, self.cal.store, False, cur=cur)
         self.job.exec(3, self.tiss.store, False, cur=cur)
         self.job.exec(3, self.tuwel.store, False, cur=cur)
+        self.job.exec(3, self.cal.store, False, cur=cur)  # TUWEL courses need to be created first
 
         self.job.begin('store plugin calendars')
         for plugin in self.plugins:
