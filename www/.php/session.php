@@ -80,10 +80,10 @@ if (isset($_COOKIE['tucal_session'])) {
                 'administrator' => $u['administrator'],
                 'sso_credentials' => $u['sso_credentials'],
                 'avatar_uri' => $u['avatar_uri'],
-                'opts' => json_decode($u['account_opts'], true),
-                'create_ts' => $u['account_create_ts'],
-                'login_ts' => $u['account_login_ts'],
-                'sync_ts' => $u['account_sync_ts'],
+                'opts' => json_decode($u['account_opts'] ?? $u['options'], true),
+                'create_ts' => $u['account_create_ts'] ?? $u['create_ts'],
+                'login_ts' => $u['account_login_ts'] ?? $u['login_ts'],
+                'sync_ts' => $u['account_sync_ts'] ?? $u['sync_ts'],
                 'impersonated' => ($a !== null),
             ];
         }
