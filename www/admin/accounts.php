@@ -47,6 +47,7 @@ require "../.php/header.php";
                 <th><?php echo _('Login TS'); ?></th>
                 <th><?php echo _('Active TS'); ?></th>
                 <th><?php echo _('Sync TS'); ?></th>
+                <th><?php echo _('Impersonate'); ?></th>
             </tr>
             </thead>
             <tbody>
@@ -85,6 +86,7 @@ require "../.php/header.php";
     echo "<td class='bool $ver_c'>$ver</td><td class='bool $adm_c'>$adm</td><td class='bool $sso_c'>$sso</td><td class='bool $tfa_c'>$tfa</td>";
     echo "<td class='ts' title='$cre2'>$cre1</td><td class='ts' title='$log2'>$log1</td>";
     echo "<td class='ts $act_c' title='$act2'>$act1</td><td class='ts $syn_c' title='$syn2'><a href='/admin/jobs?mnr=$a[mnr_normal]'>$syn1</a></td>";
+    echo "<td class='button'><form action='/admin/impersonate' method='post'><input type='hidden' name='account' value='$a[account_id]'/><button type='submit'>" . _('Impersonate') . "</button></form></td";
     echo "</tr>\n";
 } ?>
             </tbody>

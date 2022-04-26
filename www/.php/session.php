@@ -12,7 +12,7 @@ function tucal_exit() {
     global $USER;
     _db_exec("UPDATE tucal.session SET account_nr = :acc_nr, options = :opts WHERE session_nr = :nr", [
         'nr' => $_SESSION['nr'],
-        'acc_nr' => isset($USER) ? $USER['nr'] : null,
+        'acc_nr' => isset($USER) ? $USER['_nr'] : null,
         'opts' => json_encode($_SESSION['opts']),
     ]);
     if (isset($USER) && isset($USER['opts'])) {
@@ -47,29 +47,44 @@ if (isset($_COOKIE['tucal_session'])) {
 
     if (sizeof($sessions) > 0) {
         $s = $sessions[0];
+        $a = null;
         $_SESSION = [
             'nr' => $s['session_nr'],
             'token' => $s['token'],
             'opts' => json_decode($s['session_opts'], true),
         ];
-        if ($s['mnr'] !== null) {
+
+        if ($s['administrator'] && isset($_SESSION['opts']['impersonate_account_nr'])) {
+            $stmt = _db_exec("SELECT * FROM tucal.v_account WHERE account_nr = ?", [$_SESSION['opts']['impersonate_account_nr']]);
+            $accounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (sizeof($accounts) > 0) {
+                $a = $accounts[0];
+            }
+        }
+
+        if ($a === null) unset($_SESSION['opts']['impersonate_account_nr']);
+
+        if (!isset($USER) && $s['account_nr'] !== null) {
             _db_exec("LOCK TABLE tucal.account IN ROW EXCLUSIVE MODE");
+            $u = $a ?? $s;
             $USER = [
-                'nr' => $s['account_nr'],
-                'id' => $s['account_id'],
-                'mnr' => $s['mnr_normal'],
-                'mnr_int' => $s['mnr'],
-                'username' => $s['username'],
-                'email_address_1' => $s['email_address_1'],
-                'email_address_2' => $s['email_address_2'],
-                'verified' => $s['verified'],
-                'administrator' => $s['administrator'],
-                'sso_credentials' => $s['sso_credentials'],
-                'avatar_uri' => $s['avatar_uri'],
-                'opts' => json_decode($s['account_opts'], true),
-                'create_ts' => $s['account_create_ts'],
-                'login_ts' => $s['account_login_ts'],
-                'sync_ts' => $s['account_sync_ts'],
+                'nr' => $u['account_nr'],
+                '_nr' => $s['account_nr'],
+                'id' => $u['account_id'],
+                'mnr' => $u['mnr_normal'],
+                'mnr_int' => $u['mnr'],
+                'username' => $u['username'],
+                'email_address_1' => $u['email_address_1'],
+                'email_address_2' => $u['email_address_2'],
+                'verified' => $u['verified'],
+                'administrator' => $u['administrator'],
+                'sso_credentials' => $u['sso_credentials'],
+                'avatar_uri' => $u['avatar_uri'],
+                'opts' => json_decode($u['account_opts'], true),
+                'create_ts' => $u['account_create_ts'],
+                'login_ts' => $u['account_login_ts'],
+                'sync_ts' => $u['account_sync_ts'],
+                'impersonated' => ($a !== null),
             ];
         }
     }

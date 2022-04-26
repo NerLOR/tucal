@@ -66,6 +66,18 @@ section.admin td.scroll {
     overflow-x: scroll;
 }
 
+section.admin td.button {
+    padding: 0;
+}
+
+section.admin td.button button {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
 section.admin form.message {
     display: flex;
     gap: 0.5em;
