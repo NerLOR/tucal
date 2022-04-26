@@ -42,6 +42,7 @@ require "../.php/header.php";
                 <th><?php echo _('Verified'); ?></th>
                 <th><?php echo _('Admin'); ?></th>
                 <th><?php echo _('SSO'); ?></th>
+                <th><?php echo _('2FA'); ?></th>
                 <th><?php echo _('Create TS'); ?></th>
                 <th><?php echo _('Login TS'); ?></th>
                 <th><?php echo _('Active TS'); ?></th>
@@ -56,6 +57,8 @@ require "../.php/header.php";
     $adm_c = $a['administrator'] ? 't' : 'f';
     $sso = $a['sso_credentials'] ? _('yes') : _('no');
     $sso_c = $a['sso_credentials'] ? 't' : 'f';
+    $tfa = $a['sso_tfa'] ? _('yes') : _('no');
+    $tfa_c = $a['sso_tfa'] ? 't' : 'f';
     $email = substr($a['email_address_1'], 0, 17);
     $create_ts = null;
     $login_ts = null;
@@ -79,7 +82,7 @@ require "../.php/header.php";
     echo "<td class='nr'>$a[account_nr]</td><td class='id'>$a[account_id]</td>";
     echo "<td><a href='/search?r=users&q=$a[username]'>$a[username]</a></td><td class='nr'>$a[mnr_normal]</td>";
     echo "<td><a href='mailto:$a[email_address_1]'>$email</a></td>";
-    echo "<td class='bool $ver_c'>$ver</td><td class='bool $adm_c'>$adm</td><td class='bool $sso_c'>$sso</td>";
+    echo "<td class='bool $ver_c'>$ver</td><td class='bool $adm_c'>$adm</td><td class='bool $sso_c'>$sso</td><td class='bool $tfa_c'>$tfa</td>";
     echo "<td class='ts' title='$cre2'>$cre1</td><td class='ts' title='$log2'>$log1</td>";
     echo "<td class='ts $act_c' title='$act2'>$act1</td><td class='ts $syn_c' title='$syn2'><a href='/admin/jobs?mnr=$a[mnr_normal]'>$syn1</a></td>";
     echo "</tr>\n";
