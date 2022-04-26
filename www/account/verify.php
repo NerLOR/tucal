@@ -52,7 +52,11 @@ if ($token !== null) {
 
     $nr = $row[0];
     if (!isset($USER) || $USER['nr'] !== $nr) {
-        $USER = ['nr' => $nr];
+        if ($USER['impersonated']) {
+            $_SESSION['opts']['impersonate_account_nr'] = $nr;
+        } else {
+            $USER = ['nr' => $nr];
+        }
         redirect("/account/verify?token=$token");
     }
 
