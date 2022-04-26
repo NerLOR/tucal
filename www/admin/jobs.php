@@ -26,7 +26,7 @@ $now12 = $now - 12 * 60 * 60;
 $TITLE = [_('Jobs'), _('Admin Panel')];
 require "../.php/header.php";
 ?>
-<main class="w5">
+<main class="w4">
     <section class="admin">
         <h1><?php echo _('Jobs'); ?></h1>
         <div class="center">
@@ -46,7 +46,6 @@ require "../.php/header.php";
                 <th><?php echo _('PID'); ?></th>
                 <th><?php echo _('MNr.'); ?></th>
                 <th><?php echo _('Status'); ?></th>
-                <th><?php echo _('Error message'); ?></th>
                 <th><?php echo _('Start TS'); ?></th>
                 <th><?php echo _('ETA TS'); ?></th>
                 <th><?php echo _('Time'); ?></th>
@@ -66,12 +65,14 @@ require "../.php/header.php";
     $eta2 = date($fmt2, $eta_ts);
     $error = $j['error_msg'];
     if ($error === '') $error = $data['error'];
+    $rs = ($error !== null ? " rowspan='2'" : "");
     echo "<tr>";
-    echo "<td class='nr'>$j[job_nr]</td><td class='id'><a href='/admin/job?id=$j[job_id]'>$j[job_id]</a></td>";
+    echo "<td class='nr'$rs>$j[job_nr]</td><td class='id'$rs><a href='/admin/job?id=$j[job_id]'>$j[job_id]</a></td>";
     echo "<td>$j[name]</td><td class='nr'>" . ($j['pid'] ?? '-') . "</td><td class='nr'>" . ($j['mnr'] ?? '-') . "</td>";
-    echo "<td>$j[status]</td><td class='scroll'>" . (($error !== null) ? ("<pre>" . htmlentities($error) . "</pre>") : '-') . "</td>";
+    echo "<td class='status $j[status]'>$j[status]</td>";
     echo "<td class='ts' title='$start2'>$start1</td><td class='ts' title='$eta2'>$eta1</td>";
     echo "<td class='nr'>$j[time]</td><td class='nr'>$j[time_remaining]</td>";
+    if ($error !== null) echo "</tr><tr><td class='scroll' colspan='8'><pre>" . htmlentities($error) . "</pre></td>";
     echo "</tr>\n";
 } ?>
             </tbody>

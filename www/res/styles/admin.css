@@ -16,6 +16,10 @@ section.admin table td {
     max-width: 500px;
 }
 
+section.admin table tbody tr:nth-child(2n + 1) {
+    background-color: #00000040;
+}
+
 section.admin td.ts a {
     color: unset;
 }
@@ -30,15 +34,19 @@ section.admin td.nr {
     text-align: right;
 }
 
-section.admin td.bool {
+section.admin td.bool,
+section.admin td.status {
     text-align: center;
 }
 
-section.admin td.bool.t {
+section.admin td.bool.t,
+section.admin td.status.success {
     color: var(--green);
 }
 
-section.admin td.bool.f {
+section.admin td.bool.f,
+section.admin td.status.error,
+section.admin td.status.aborted {
     color: var(--red);
 }
 
