@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = generate_token(16, 'tucal.token');
     $stmt = db_exec("
                     INSERT INTO tucal.token (account_nr, usage, token, token_short, valid_ts)
-                    VALUES (:nr, 'verfiy-account', :token, NULL, now() + INTERVAL '15 minutes')", [
+                    VALUES (:nr, 'verify-account', :token, NULL, now() + INTERVAL '15 minutes')", [
         'nr' => $USER['nr'],
         'token' => $token,
     ]);
