@@ -76,6 +76,7 @@ section.admin td.button button {
     height: 100%;
     border-radius: 0;
     box-sizing: border-box;
+    padding: 0.3333em 0.6667em;
 }
 
 section.admin form.message {
