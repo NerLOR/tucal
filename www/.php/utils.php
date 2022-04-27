@@ -161,9 +161,9 @@ function send_email(?string $address, string $subject, string $msg, string $repl
     if ($details !== null) $msg .= "\n\n$details";
 
     $stmt = db_exec("
-                INSERT INTO tucal.message (reply_to_address, to_address, from_name, subject, message)
-                VALUES (:reply, :to, :from, :subj, :msg)
-                RETURNING message_nr", [
+            INSERT INTO tucal.message (reply_to_address, to_address, from_name, subject, message)
+            VALUES (:reply, :to, :from, :subj, :msg)
+            RETURNING message_nr", [
         'reply' => $reply_to,
         'to' => $address,
         'from' => $from_name,
@@ -187,9 +187,9 @@ function check_password(string $password): bool {
     global $USER;
 
     $stmt = db_exec("
-                SELECT (pwd_hash = crypt(:pwd, pwd_salt)) AS pwd_match
-                FROM tucal.password p
-                WHERE account_nr = :nr", [
+            SELECT (pwd_hash = crypt(:pwd, pwd_salt)) AS pwd_match
+            FROM tucal.password p
+            WHERE account_nr = :nr", [
         'nr' => $USER['nr'],
         'pwd' => $password,
     ]);

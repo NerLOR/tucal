@@ -66,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($username !== $USER['username']) {
 
             $stmt = db_exec("
-                SELECT mnr, username
-                FROM tucal.account
-                WHERE username = ?", [$username]);
+                    SELECT mnr, username
+                    FROM tucal.account
+                    WHERE username = ?", [$username]);
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             if (sizeof($data) > 0) {
                 foreach ($data as $row) {

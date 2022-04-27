@@ -28,9 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     db_transaction();
     try {
         $stmt = db_exec("
-                    SELECT account_nr, email_address_1, options
-                    FROM tucal.v_account
-                    WHERE mnr = ?", [$mnr]);
+                SELECT account_nr, email_address_1, options
+                FROM tucal.v_account
+                WHERE mnr = ?", [$mnr]);
         $data = $stmt->fetchAll();
         if (sizeof($data) === 0) {
             db_rollback();
@@ -45,10 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $token = generate_token(16, 'tucal.token');
         $stmt = db_exec("
-                    INSERT INTO tucal.token (account_nr, usage, token, token_short, valid_ts)
-                    VALUES (:nr, 'reset-password', :token, NULL, now() + INTERVAL '15 minutes')", [
-                'nr' => $nr,
-                'token' => $token,
+                INSERT INTO tucal.token (account_nr, usage, token, token_short, valid_ts)
+                VALUES (:nr, 'reset-password', :token, NULL, now() + INTERVAL '1 hours')", [
+            'nr' => $nr,
+            'token' => $token,
         ]);
     } catch (Exception $e) {
         db_rollback();

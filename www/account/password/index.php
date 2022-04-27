@@ -86,20 +86,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $stmt = db_exec("
-                    UPDATE tucal.password
-                    SET pwd_salt = gen_salt('bf'),
-                        pwd_hash = NULL,
-                        update_ts = now()
-                    WHERE account_nr = :nr", [
-                'nr' => $USER['nr'],
+                UPDATE tucal.password
+                SET pwd_salt = gen_salt('bf'),
+                    pwd_hash = NULL,
+                    update_ts = now()
+                WHERE account_nr = :nr", [
+            'nr' => $USER['nr'],
         ]);
 
         $stmt = db_exec("
-                    UPDATE tucal.password
-                    SET pwd_hash = crypt(:pwd, pwd_salt)
-                    WHERE account_nr = :nr", [
-                'nr' => $USER['nr'],
-                'pwd' => $pw1,
+                UPDATE tucal.password
+                SET pwd_hash = crypt(:pwd, pwd_salt)
+                WHERE account_nr = :nr", [
+            'nr' => $USER['nr'],
+            'pwd' => $pw1,
         ]);
 
         if ($token !== null) $USER['verified'] = true;

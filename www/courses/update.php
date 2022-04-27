@@ -45,20 +45,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($groupId !== null) {
         $data['gid'] = $groupId;
         $stmt = db_exec("
-                    UPDATE tucal.group_member
-                    SET ignore_until = :until, ignore_from = :from
-                    WHERE account_nr = :anr AND
-                          group_nr = (SELECT group_nr FROM tucal.group WHERE group_id = :gid)", $data);
+                UPDATE tucal.group_member
+                SET ignore_until = :until, ignore_from = :from
+                WHERE account_nr = :anr AND
+                      group_nr = (SELECT group_nr FROM tucal.group WHERE group_id = :gid)", $data);
     } else {
         $data['cnr'] = $courseNr ?? null;
         $data['sem'] = $semester ?? null;
         $stmt = db_exec("
-                    UPDATE tucal.group_member
-                    SET ignore_until = :until, ignore_from = :from
-                    WHERE account_nr = :anr AND
-                          group_nr = ANY(SELECT group_nr
-                                         FROM tucal.group_link
-                                         WHERE (course_nr, semester) = (:cnr, :sem))", $data);
+                UPDATE tucal.group_member
+                SET ignore_until = :until, ignore_from = :from
+                WHERE account_nr = :anr AND
+                      group_nr = ANY(SELECT group_nr
+                                     FROM tucal.group_link
+                                     WHERE (course_nr, semester) = (:cnr, :sem))", $data);
     }
 
     redirect('/courses/');

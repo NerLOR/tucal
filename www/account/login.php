@@ -33,11 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $subj = substr($subj, 1);
         }
         $stmt = db_exec("
-                    SELECT a.account_nr, mnr, username, (pwd_hash = crypt(:pwd, pwd_salt)) AS pwd_match, verified
-                    FROM tucal.account a
-                        LEFT JOIN tucal.password p ON p.account_nr = a.account_nr
-                    WHERE mnr::text = :subj OR
-                          lower(username) = lower(:subj::text)", [
+                SELECT a.account_nr, mnr, username, (pwd_hash = crypt(:pwd, pwd_salt)) AS pwd_match, verified
+                FROM tucal.account a
+                    LEFT JOIN tucal.password p ON p.account_nr = a.account_nr
+                WHERE mnr::text = :subj OR
+                      lower(username) = lower(:subj::text)", [
             'subj' => $subj,
             'pwd' => $pwd,
         ]);

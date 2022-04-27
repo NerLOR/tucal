@@ -78,15 +78,15 @@ function echoCourse($course) {
 
 
 $stmt = db_exec("
-            SELECT c.course_nr, c.semester, c.ects, cd.name_de, cd.name_en, cd.type, ca.acronym_1, ca.acronym_2,
-                   ca.short, m.name, m.ignore_until, m.ignore_from, m.group_id, tc.course_id
-            FROM tucal.v_account_group m
-                JOIN tiss.course c ON (c.course_nr, c.semester) = (m.course_nr, m.semester)
-                JOIN tiss.course_def cd ON cd.course_nr = c.course_nr
-                LEFT JOIN tucal.course_acronym ca ON ca.course_nr = c.course_nr
-                LEFT JOIN tuwel.course tc ON (tc.course_nr, tc.semester) = (m.course_nr, m.semester)
-            WHERE account_nr = :nr
-            ORDER BY c.semester DESC, c.course_nr", [
+        SELECT c.course_nr, c.semester, c.ects, cd.name_de, cd.name_en, cd.type, ca.acronym_1, ca.acronym_2,
+               ca.short, m.name, m.ignore_until, m.ignore_from, m.group_id, tc.course_id
+        FROM tucal.v_account_group m
+            JOIN tiss.course c ON (c.course_nr, c.semester) = (m.course_nr, m.semester)
+            JOIN tiss.course_def cd ON cd.course_nr = c.course_nr
+            LEFT JOIN tucal.course_acronym ca ON ca.course_nr = c.course_nr
+            LEFT JOIN tuwel.course tc ON (tc.course_nr, tc.semester) = (m.course_nr, m.semester)
+        WHERE account_nr = :nr
+        ORDER BY c.semester DESC, c.course_nr", [
     'nr' => $USER['nr']
 ]);
 
@@ -112,10 +112,10 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 }
 
 $stmt = db_exec("
-            SELECT g.group_nr, group_id, group_name, m.account_nr IS NOT NULL
-            FROM tucal.group g
-                LEFT JOIN tucal.group_member m ON m.group_nr = g.group_nr AND m.account_nr = :nr
-            WHERE public = TRUE", ['nr' => $USER['nr']]);
+        SELECT g.group_nr, group_id, group_name, m.account_nr IS NOT NULL
+        FROM tucal.group g
+            LEFT JOIN tucal.group_member m ON m.group_nr = g.group_nr AND m.account_nr = :nr
+        WHERE public = TRUE", ['nr' => $USER['nr']]);
 
 $groups = [];
 while ($row = $stmt->fetch(PDO::FETCH_NUM)) {

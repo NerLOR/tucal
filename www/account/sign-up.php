@@ -48,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         db_exec("LOCK TABLE tucal.account IN EXCLUSIVE MODE");
 
         $stmt = db_exec("
-                    SELECT mnr, username
-                    FROM tucal.account
-                    WHERE mnr = ? OR username = ?", [$mnr, $username]);
+                SELECT mnr, username
+                FROM tucal.account
+                WHERE mnr = ? OR username = ?", [$mnr, $username]);
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (sizeof($data) > 0) {
             foreach ($data as $row) {
@@ -71,17 +71,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $stmt = db_exec("
-                    INSERT INTO tucal.account (mnr, username)
-                    VALUES (:mnr, :username)
-                    RETURNING account_nr", [
+                INSERT INTO tucal.account (mnr, username)
+                VALUES (:mnr, :username)
+                RETURNING account_nr", [
             'mnr' => $mnr,
             'username' => $username,
         ]);
         $nr = $stmt->fetch()[0];
 
         $stmt = db_exec("
-                    INSERT INTO tucal.password (account_nr, pwd_salt, pwd_hash)
-                    VALUES (:nr, gen_salt('bf'), NULL)", [
+                INSERT INTO tucal.password (account_nr, pwd_salt, pwd_hash)
+                VALUES (:nr, gen_salt('bf'), NULL)", [
             'nr' => $nr,
         ]);
 
