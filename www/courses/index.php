@@ -139,6 +139,7 @@ $contact = '/contact?subject=LVA-Abkürzungen';
         <?php foreach ($courses as $course) if ($course['semester'] == $maxSem) echoCourse($course); ?>
     </section>
     <section class="group-list">
+        <a id="public-groups" class="anchor"></a>
         <h1><?php echo _('Public Groups'); ?></h1>
         <form action="/courses/update-membership" method="post" class="groups">
             <table>

@@ -439,6 +439,16 @@ main section.red h1 {
     overflow-x: scroll;
 }
 
+section.features > ul {
+    width: fit-content;
+    width: -moz-fit-content;
+    margin: auto;
+}
+
+section.features > ul > li {
+    margin-bottom: 0.5em;
+}
+
 @media screen and (min-device-width: 480px) {
     *::-webkit-scrollbar {
         width: 15px;

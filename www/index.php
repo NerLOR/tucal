@@ -76,6 +76,66 @@ require ".php/header.php";
             </div>
         </div>
     </section>
+    <section class="features">
+        <h1>Features</h1>
+        <ul>
+            <li>
+                TISS- und TUWEL-Kalender
+                <ul>
+                    <li>Synchronisierung im Hintergrund</li>
+                    <li>Alle Termine aus deinem <a href="https://tiss.tuwien.ac.at/events/personSchedule.xhtml" target="_blank">TISS-Kalender</a> und <a href="https://tuwel.tuwien.ac.at/calendar/view.php?view=month" target="_blank">TUWEL-Kalender</a></li>
+                    <li>Aufgaben und Deadlines aus deinem TUWEL-Kalender inklusive Links zu TUWEL</li>
+                    <li>Bei passenden Terminen rechts oben ein Link zu LectureTube oder Zoom</li>
+                    <li>Einzelne Termine können im persönlichen Kalender verborgen werden</li>
+                    <li>Zum Anzeigen werden LVA-Kürzel verwendet, statt kryptischer LVA-Nummern und ewig langer Namen</li>
+                </ul>
+            </li>
+            <li>
+                Konto
+                <ul>
+                    <li>Per TU-Wien-SSO verifizieren</li>
+                    <li>Per <a href="https://mail.student.tuwien.ac.at/webmail/" target="_blank">TU-Wien-Studierenden-E-Mail</a> verifizieren</li>
+                    <li>Möglichkeit dein SSO-Passwort verschlüsselt auf dem TUcal-Server zu speichern</li>
+                    <li>Sitzungen bis zu 6 Monate gültig, kein ständiges Anmelden erforderlich wie bei TISS/TUWEL/...</li>
+                </ul>
+            </li>
+            <li>
+                Nutzbar...
+                <ul>
+                    <li>...überall im Browser</li>
+                    <li>...auf Mobilgeräten als Shortcut auf der Startseite</li>
+                </ul>
+            </li>
+            <li>
+                Studi-Schwarmintelligenz
+                <ul>
+                    <li>Jeder kann Termine editieren</li>
+                    <li>Jeder sieht eingetragene Änderungen</li>
+                    <li>Termine, die nicht stattfinden, können als abgesagt markiert werden</li>
+                </ul>
+            </li>
+            <li>
+                Freunde
+                <ul>
+                    <li><a href="/account">Profilbild hochladen</a></li>
+                    <li><a href="/friends/">Freunde hinzufügen</a></li>
+                    <li><a href="/friends/">Kalender deiner Freunde ansehen</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="/courses/#public-groups">Öffentliche Gruppen</a>
+                <ul>
+                    <li>Integrierung von <a href="https://events.htu.at/" target="_blank">events.htu.at</a></li>
+                </ul>
+            </li>
+            <li>
+                Kalender exportieren
+                <ul>
+                    <li><a href="/calendar/#exports">Als ICal-Link exportieren</a> und überall verwenden</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
 </main>
 <?php
 require ".php/footer.php";

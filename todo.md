@@ -2,9 +2,9 @@
 TODOs
 =====
 
-* Start page: Feature list
 * Admin panel
   * Course acronyms (+csv export)
+  * Outgoing messages/emails
 * Exams
   * Day-events
   * Slots

@@ -28,7 +28,7 @@ section.course-list h3 {
     color: var(--black);
 }
 
-section.course-list .anchor {
+section .anchor {
     position: relative;
     top: -12em;
     visibility: hidden;
