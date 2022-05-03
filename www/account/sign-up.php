@@ -95,7 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $USER = [
             'nr' => $nr,
+            '_nr' => $nr,
             'username' => $username,
+            'verified' => false,
+            'avatar' => null,
             'opts' => [
                 'locale' => $LOCALE,
                 'lt_provider' => 'live-video-tuwien',
