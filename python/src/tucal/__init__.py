@@ -123,8 +123,14 @@ class Semester:
     _sem: str
 
     def __init__(self, semester: str):
-        self._year = int(semester[:4])
-        self._sem = semester[-1].upper()
+        if semester[1] == 'S':
+            self._year = int(semester[2:])
+            if self._year < 100:
+                self._year += 2000
+            self._sem = semester[0].upper()
+        else:
+            self._year = int(semester[:4])
+            self._sem = semester[-1].upper()
         if self._sem not in 'WS':
             raise ValueError(f"invalid semester '{semester}'")
 
