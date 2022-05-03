@@ -51,31 +51,6 @@ require ".php/header.php";
             Studenten die Termine bearbeiten können, um eventuell falsche Informationen zu korrigieren.
         </p>
     </section>
-    <section class="stats">
-        <h1>Benutzerzahlen</h1>
-        <div>
-            <div>
-                <h2><?php echo $formatter->format($todayNum); ?></h2>
-                <h3>Heute aktiv<br/>(ab 04:00)</h3>
-            </div>
-            <div>
-                <h2><?php echo $formatter->format($avgDayNum); ?></h2>
-                <h3>Durchschnittlich pro Tag aktiv (7 Tage)</h3>
-            </div>
-            <div>
-                <h2><?php echo $formatter->format($weeklyNum); ?></h2>
-                <h3>In den letzten 7 Tagen aktiv</h3>
-            </div>
-            <div>
-                <h2><?php echo $formatter->format($credNum); ?></h2>
-                <h3>SSO-Zugangsdaten hinterlegt</h3>
-            </div>
-            <div>
-                <h2><?php echo $formatter->format($userNum); ?></h2>
-                <h3>Insgesamt verifiziert</h3>
-            </div>
-        </div>
-    </section>
     <section class="features">
         <h1>Features</h1>
         <ul>
@@ -135,6 +110,35 @@ require ".php/header.php";
                 </ul>
             </li>
         </ul>
+    </section>
+    <section class="demo-images">
+        <a href="/res/images/demo-1.png" target="_blank"><img src="/res/images/demo-1.png" alt="Demo"/></a>
+        <a href="/res/images/demo-2.png" target="_blank"><img src="/res/images/demo-2.png" alt="Demo"/></a>
+    </section>
+    <section class="stats">
+        <h1>Benutzerzahlen</h1>
+        <div>
+            <div>
+                <h2><?php echo $formatter->format($todayNum); ?></h2>
+                <h3>Heute aktiv<br/>(ab 04:00)</h3>
+            </div>
+            <div>
+                <h2><?php echo $formatter->format($avgDayNum); ?></h2>
+                <h3>Durchschnittlich pro Tag aktiv (7 Tage)</h3>
+            </div>
+            <div>
+                <h2><?php echo $formatter->format($weeklyNum); ?></h2>
+                <h3>In den letzten 7 Tagen aktiv</h3>
+            </div>
+            <div>
+                <h2><?php echo $formatter->format($credNum); ?></h2>
+                <h3>SSO-Zugangsdaten hinterlegt</h3>
+            </div>
+            <div>
+                <h2><?php echo $formatter->format($userNum); ?></h2>
+                <h3>Insgesamt verifiziert</h3>
+            </div>
+        </div>
     </section>
 </main>
 <?php

@@ -445,8 +445,24 @@ section.features > ul {
     margin: auto;
 }
 
-section.features > ul > li {
-    margin-bottom: 0.5em;
+section.features > ul li {
+    margin-bottom: 0.25em;
+}
+
+section.demo-images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1em;
+    background-color: var(--grey-F8);
+}
+
+section.demo-images a {
+    width: calc(50% - 0.5em);
+}
+
+section.demo-images img {
+    width: 100%;
 }
 
 @media screen and (min-device-width: 480px) {
