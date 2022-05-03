@@ -26,7 +26,6 @@ CREATE TABLE tuwel.course
     short     TEXT   NOT NULL,
 
     CONSTRAINT pk_course PRIMARY KEY (course_id),
-    CONSTRAINT sk_course UNIQUE (course_nr, semester),
     CONSTRAINT sk_course_short UNIQUE (short)
 );
 
