@@ -55,7 +55,7 @@ if ($token !== null) {
         if ($USER['impersonated']) {
             $_SESSION['opts']['impersonate_account_nr'] = $nr;
         } else {
-            $USER = ['nr' => $nr];
+            $USER = ['_nr' => $nr];
         }
         redirect("/account/verify?token=$token");
     }
