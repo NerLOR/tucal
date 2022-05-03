@@ -35,11 +35,7 @@ if ($token !== null) {
 
     $nr = $row[0];
     if (!isset($USER) || $USER['nr'] !== $nr) {
-        if ($USER['impersonated']) {
-            $_SESSION['opts']['impersonate_account_nr'] = $nr;
-        } else {
-            $USER = ['_nr' => $nr];
-        }
+        login($nr);
         redirect("/account/password/?token=$token");
     }
 }

@@ -11,13 +11,8 @@ if (!isset($USER)) {
 require "../.php/main.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if ($USER['impersonated']) {
-        unset($_SESSION['opts']['impersonate_account_nr']);
-        redirect("/admin/accounts");
-    } else {
-        unset($USER);
-        redirect($_SERVER['HTTP_REFERER'] ?? '/');
-    }
+    $impersonated = logout();
+    redirect($impersonated ? "/admin/accounts" : ($_SERVER['HTTP_REFERER'] ?? '/'));
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
     $STATUS = 405;
     header("Allow: HEAD, GET, POST");

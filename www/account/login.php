@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             goto doc;
         }
 
-        $USER = ['_nr' => $row['account_nr']];
+        login($row['account_nr']);
         if (!$row['verified']) {
             redirect('/account/verify');
         } else {

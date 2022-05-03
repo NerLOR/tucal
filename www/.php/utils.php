@@ -205,3 +205,25 @@ function check_password(string $password): bool {
 
     return true;
 }
+
+function login(int $accountNr) {
+    global $USER;
+    if (isset($USER) && $USER['administrator']) {
+        $USER['opts']['impersonate_account_nr'] = $accountNr;
+    } else {
+        $USER = ['_nr' => $accountNr];
+    }
+}
+
+function logout(): bool {
+    global $USER;
+    if (!isset($USER)) {
+        return false;
+    } elseif ($USER['impersonated']) {
+        unset($_SESSION['opts']['impersonate_account_nr']);
+        return true;
+    } else {
+        unset($GLOBALS['USER']);
+        return false;
+    }
+}
