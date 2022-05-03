@@ -21,6 +21,7 @@ CREATE TABLE tucal.account
     login_ts      TIMESTAMPTZ NOT NULL DEFAULT now(),
     active_ts     TIMESTAMPTZ NOT NULL DEFAULT now(),
     sync_ts       TIMESTAMPTZ          DEFAULT NULL,
+    sync_try_ts   TIMESTAMPTZ          DEFAULT NULL,
 
     options       JSONB       NOT NULL DEFAULT '{}'::jsonb,
 
@@ -170,6 +171,7 @@ SELECT a.account_nr,
        a.login_ts,
        a.active_ts,
        a.sync_ts,
+       a.sync_try_ts,
        a.options
 FROM tucal.account a
          LEFT JOIN tucal.sso_credential sso ON sso.account_nr = a.account_nr;

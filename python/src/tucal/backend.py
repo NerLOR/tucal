@@ -324,6 +324,7 @@ def sync_users():
         FROM tucal.v_account a
             LEFT JOIN tucal.v_job j ON (j.mnr = a.mnr AND j.name = 'sync user')
         WHERE (a.sync_ts IS NULL OR a.sync_ts < now() - INTERVAL '6 hours') AND
+              (a.sync_try_ts IS NULL OR a.sync_try_ts < now() - INTERVAL '30 minutes') AND
               a.sso_credentials = TRUE
         GROUP BY a.mnr, j.mnr
         HAVING 'running' != ALL(array_agg(j.status)) OR

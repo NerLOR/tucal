@@ -394,6 +394,7 @@ class SyncUser(tucal.Sync):
     def login(self, pwd_from_db: bool = False, pwd_store_db: bool = False):
         tucal.db.rollback()
         cur = tucal.db.cursor()
+        cur.execute("UPDATE tucal.account SET sync_try_ts = now() WHERE mnr = %s", (self.mnr_int,))
 
         tfa_token, tfa_gen = None, None
         if not pwd_from_db:
