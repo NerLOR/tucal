@@ -1017,12 +1017,15 @@ function placeDayEvents(dayEvents: TucalEvent[]) {
     const hour = 60 * 60 * 1000;
     for (const evt1 of parsed) {
         const start1 = evt1.event.start.getTime();
+        const end1 = evt1.event.end.getTime();
+        const len = end1 - start1;
 
         for (const evt2 of parsed) {
             if (evt2 === evt1) continue;
             const start2 = evt2.event.start.getTime();
+            const end2 = evt2.event.end.getTime();
 
-            if (Math.abs(start1 - start2) < hour) {
+            if (Math.abs(start1 - start2) < Math.min(hour, len, end2 - start2)) {
                 evt1.concurrent.push(evt2);
             }
         }
