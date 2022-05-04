@@ -17,7 +17,7 @@ INPUT_SESS_KEY = re.compile(r'<input name="sesskey" type="hidden" value="([^"]*)
 USER_ID = re.compile(r'data-userid="([0-9]+)"')
 SESS_KEY = re.compile(r'"sesskey":"([^"]*)"')
 
-COURSE_NR = re.compile(r'^[A-z0-9]{3}\.[A-Z0-9]{3} (.*)$')
+COURSE_NR = re.compile(r'^[A-Z0-9]{3}\.[A-Z0-9]{3} (.*)$')
 SPAN = re.compile(r'<span class="media-body font-weight-bold">\s*([^<>]*)\s*</span>')
 GROUP_OPTION = re.compile(r'<option value="([0-9]+)">([^<]*)</option>')
 GROUP_TOOL_LINK = re.compile(r'href="https://tuwel\.tuwien\.ac\.at/mod/grouptool/view\.php\?id=([0-9]+)"')
@@ -36,7 +36,7 @@ class Course:
     def __init__(self, course_id: int, semester: Optional[Semester], nr: Optional[str], name: str, short: str):
         self.id = course_id
         self.semester = Semester(str(semester)) if semester else None
-        self.nr = nr.replace('.', '') if nr else None
+        self.nr = nr.replace('.', '').strip() if nr else None
         name = name.rsplit(' (', 1)
         self.name = name[0].strip()
         self.suffix = name[1].replace(')', '').strip() if len(name) > 1 else None
