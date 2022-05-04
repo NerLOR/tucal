@@ -312,10 +312,12 @@ class SyncUserTuwel(tucal.Sync):
         cur.execute("SELECT course_nr, semester FROM tiss.course")
         courses = [(str(cnr), str(sem)) for cnr, sem in cur.fetch_all()]
 
+        removed_courses = []
         cur.execute("DELETE FROM tuwel.course_user WHERE user_id = %s", (self.user_id,))
         for c in self.courses.values():
             if c.nr is not None and c.semester is not None and (c.nr, str(c.semester)) not in courses:
-                print(f'Warning: TUWEL course {c.nr}-{c.semester} not in database')
+                print(f'Warning: TUWEL course {c.nr}-{c.semester} not in database (id {c.id})')
+                removed_courses.append(c.id)
                 continue
 
             data = {
@@ -363,11 +365,16 @@ class SyncUserTuwel(tucal.Sync):
                     VALUES (%(gid)s, %(uid)s)
                     ON CONFLICT DO NOTHING""", data)
 
+        events = [e for e in self.events if e['course']['id'] not in removed_courses]
+        num_skipped_events = len([e for e in self.events if e['course']['id'] in removed_courses])
+        if num_skipped_events > 0:
+            print(f'Warning: had to skip {num_skipped_events} event(s)')
+
         cur.execute("""
             DELETE FROM tuwel.event_user
             WHERE user_id = (SELECT user_id FROM tuwel.user WHERE mnr = %s) AND
                   event_id = ANY(SELECT event_id FROM tuwel.event WHERE start_ts >= now())""", (self.mnr_int,))
-        tucal.db.tuwel.upsert_events(self.events, self.access_time, self.user_id)
+        tucal.db.tuwel.upsert_events(events, self.access_time, self.user_id)
 
         self.job.end(1)
 
