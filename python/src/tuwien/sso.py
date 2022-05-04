@@ -40,7 +40,6 @@ class Session:
 
         if '<title>TU Wien Login</title>' in r.text:
             auth_state = INPUT_AUTH_STATE.findall(r.text)[0]
-
             r = self._session.post(f'{SSO_URL}/simplesaml/module.php/core/loginuserpass.php', {
                 'username': self._username or '',
                 'password': self._password or '',
@@ -52,6 +51,13 @@ class Session:
                 raise tucal.LoginError(r.reason)
             elif '<h3>Benutzername oder Passwort falsch.</h3>' in r.text:
                 raise tucal.InvalidCredentialsError('invalid credentials')
+
+        if '<title>Hohes Passwortalter</title>' in r.text:
+            state_id = INPUT_STATE_ID.findall(r.text)[0]
+            r = self._session.post(f'{SSO_URL}/simplesaml/module.php/oldPW/confirmOldPW.php', {
+                'yes': '',
+                'StateId': state_id,
+            })
 
         if '<title>Zustimmung zur Weitergabe persönlicher Daten</title>' in r.text:
             state_id = INPUT_STATE_ID.findall(r.text)[0]
