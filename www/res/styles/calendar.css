@@ -397,7 +397,7 @@ section.calendar-legend div.legend.appointment {
     --evt-border: hsl(var(--hue), 50%, 50%);
 }
 
-div.calendar div.event.online,
+div.calendar div.event.online div.event-data,
 section.calendar-legend div.legend.online > div {
     background: repeating-linear-gradient(
             45deg,
