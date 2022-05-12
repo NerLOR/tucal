@@ -277,6 +277,9 @@ msgstr "General course event"
 msgid "Group event"
 msgstr "Group event"
 
+msgid "Appointment"
+msgstr "Appointment"
+
 msgid "Other event"
 msgstr "Other event"
 
@@ -294,6 +297,9 @@ msgstr "Purple"
 
 msgid "Green"
 msgstr "Green"
+
+msgid "Orange"
+msgstr "Orange"
 
 msgid "Grey"
 msgstr "Grey"

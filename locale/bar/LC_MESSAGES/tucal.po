@@ -277,6 +277,9 @@ msgstr "Oigemeina LVA-Teamin"
 msgid "Group event"
 msgstr "Gruppnteamin"
 
+msgid "Appointment"
+msgstr "Anzlteamin"
+
 msgid "Other event"
 msgstr "Ondara Teamin"
 
@@ -294,6 +297,9 @@ msgstr "Violett"
 
 msgid "Green"
 msgstr "Grea"
+
+msgid "Orange"
+msgstr "Orange"
 
 msgid "Grey"
 msgstr "Grau"

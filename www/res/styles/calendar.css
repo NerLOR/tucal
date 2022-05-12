@@ -361,9 +361,11 @@ section.calendar-legend div.legend {
 div.calendar div.event.group,
 div.calendar div.event.lecture,
 div.calendar div.event.course,
+div.calendar div.event.appointment,
 section.calendar-legend div.legend.group,
 section.calendar-legend div.legend.lecture,
-section.calendar-legend div.legend.course {
+section.calendar-legend div.legend.course,
+section.calendar-legend div.legend.appointment {
     --hue: 0deg;
     --l: 87.5%;
     --evt-color: hsl(var(--hue), calc(100% - (87.5% - var(--l)) * 2), var(--l));
@@ -375,15 +377,19 @@ section.calendar-legend div.legend.course {
 .theme-dark div.calendar div.event.group,
 .theme-dark div.calendar div.event.lecture,
 .theme-dark div.calendar div.event.course,
+.theme-dark div.calendar div.event.appointment,
 .theme-dark section.calendar-legend div.legend.group,
 .theme-dark section.calendar-legend div.legend.lecture,
 .theme-dark section.calendar-legend div.legend.course,
+.theme-dark section.calendar-legend div.legend.appointment,
 .theme-black div.calendar div.event.group,
 .theme-black div.calendar div.event.lecture,
 .theme-black div.calendar div.event.course,
+.theme-black div.calendar div.event.appointment,
 .theme-black section.calendar-legend div.legend.group,
 .theme-black section.calendar-legend div.legend.lecture,
-.theme-black section.calendar-legend div.legend.course {
+.theme-black section.calendar-legend div.legend.course,
+.theme-black section.calendar-legend div.legend.appointment {
     --l: 12.5% !important;
     --evt-color: hsl(var(--hue), calc(100% - (12.5% - var(--l)) * 2), var(--l));
     --evt-light: hsl(var(--hue), calc(100% - (12.5% - var(--l)) * 2), calc(var(--l) + 3.125%));
@@ -424,6 +430,11 @@ section.calendar-legend div.legend.group {
 div.calendar div.event.lecture,
 section.calendar-legend div.legend.lecture {
     --hue: 220deg;
+}
+
+div.calendar div.event.appointment,
+section.calendar-legend div.legend.appointment {
+    --hue: 30deg;
 }
 
 div.calendar div.event:hover {

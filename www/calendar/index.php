@@ -122,6 +122,11 @@ require "../.php/header.php";
             <span class="color-name"><?php echo _('Green'); ?></span>
             <span><?php echo _('Group event'); ?></span>
         </div>
+        <div class="legend appointment">
+            <div></div>
+            <span class="color-name"><?php echo _('Orange'); ?></span>
+            <span><?php echo _('Appointment'); ?></span>
+        </div>
         <div class="legend other">
             <div></div>
             <span class="color-name"><?php echo _('Grey'); ?></span>

@@ -277,6 +277,9 @@ msgstr "Allgemeiner LVA-Termin"
 msgid "Group event"
 msgstr "Gruppentermin"
 
+msgid "Appointment"
+msgstr "Einzeltermin"
+
 msgid "Other event"
 msgstr "Sonstiger Termin"
 
@@ -294,6 +297,9 @@ msgstr "Violett"
 
 msgid "Green"
 msgstr "Grün"
+
+msgid "Orange"
+msgstr "Orange"
 
 msgid "Grey"
 msgstr "Grau"

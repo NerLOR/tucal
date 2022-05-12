@@ -96,7 +96,14 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         mod = tuwel['module_name']
         typ = tuwel['event_type']
         if mod == 'organizer':
-            data['type'] = 'deadline'
+            if typ == 'Appointment':
+                data['type'] = 'appointment'
+                name = tuwel['name'][tuwel['name'].find('/'):].strip()
+                if name.endswith(': Einzeltermin'):
+                    name = name[:-14]
+                data['summary'] = name
+            elif typ == 'Instance':
+                data['type'] = 'deadline'
         elif mod == 'quiz' and typ == 'close':
             data['type'] = 'assignment'
         elif mod == 'assign' and typ == 'due':
