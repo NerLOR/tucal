@@ -683,11 +683,14 @@ class WeekSchedule {
             `<span class="time">${formatterTime.format(evt.start)}-${formatterTime.format(evt.end)}</span> ` +
             `<span class="day">(${formatterDay.format(evt.start)})</span>`;
 
-        if (this.subject === MNR && evt.tissUrl) {
-            html += `<a class="link" href="${evt.tissUrl}" target="_blank">TISS</a>`;
+        const tissUrl = (evt.url && evt.url.startsWith('https://tiss.tuwien.ac.at/')) ? evt.url : evt.tissUrl;
+        const tuwelUrl = (evt.url && evt.url.startsWith('https://tuwel.tuwien.ac.at/')) ? evt.url : evt.tuwelUrl;
+
+        if (this.subject === MNR && tissUrl) {
+            html += `<a class="link" href="${tissUrl}" target="_blank">TISS</a>`;
         }
-        if (this.subject === MNR && evt.tuwelUrl) {
-            html += `<a class="link" href="${evt.tuwelUrl}" target="_blank">TUWEL</a>`;
+        if (this.subject === MNR && tuwelUrl) {
+            html += `<a class="link" href="${tuwelUrl}" target="_blank">TUWEL</a>`;
         }
         if (evt.sourceUrl) {
             html += `<a class="link" href="${evt.sourceUrl}" target="_blank">${evt.sourceName || evt.groupName}</a>`;
