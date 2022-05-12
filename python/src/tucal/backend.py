@@ -98,7 +98,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         if mod == 'organizer':
             if typ == 'Appointment':
                 data['type'] = 'appointment'
-                name = tuwel['name'][tuwel['name'].find('/'):].strip()
+                name = tuwel['name'][tuwel['name'].find('/') + 1:].strip()
                 if name.endswith(': Einzeltermin'):
                     name = name[:-14]
                 data['summary'] = name
