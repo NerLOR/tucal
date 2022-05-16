@@ -464,10 +464,7 @@ class WeekSchedule {
     drawEvents(all_events: TucalEvent[]) {
         all_events.sort((a, b) => {
             const diff = a.start.valueOf() - b.start.valueOf();
-            if (diff === 0) {
-                return a.end.valueOf() - b.end.valueOf();
-            }
-            return diff;
+            return (diff === 0) ? (a.end.valueOf() - b.end.valueOf()) : diff;
         });
 
         const formatter = new Intl.DateTimeFormat('de-AT', {
@@ -544,7 +541,8 @@ class WeekSchedule {
                 if (event.userHidden) evt.classList.add("hidden");
 
                 const startMinute = start.getHours() * 60 + start.getMinutes();
-                const endMinute = end.getHours() * 60 + end.getMinutes();
+                let endMinute = end.getHours() * 60 + end.getMinutes();
+                while (endMinute < startMinute) endMinute += 24 * 60;
 
                 evt.style.setProperty("--start", `${startMinute}`);
                 evt.style.setProperty("--end", `${endMinute}`);
