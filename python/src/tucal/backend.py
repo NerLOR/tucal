@@ -239,6 +239,19 @@ def merge_external_events():
                 HAVING %s != ALL(array_agg(coalesce(x.source, '<NULL>')))""",
                         (group_nr, room_nr, room_nr, start_ts, end_ts, source))
             event_rows = cur.fetch_all()
+        elif not global_event:
+            cur.execute("""
+               SELECT e.event_nr, array_agg(x.source)
+               FROM tucal.event e
+                   LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
+               WHERE e.group_nr = %s AND
+                     (e.room_nr IS NULL OR %s IS NULL OR coalesce(e.room_nr, -1) = coalesce(%s, -1)) AND
+                     (%s = e.start_ts AND e.end_ts = %s) AND
+                     NOT e.global AND
+                     x.source IS NULL
+               GROUP BY e.event_nr""",
+                        (group_nr, room_nr, room_nr, start_ts, end_ts, source))
+            event_rows = cur.fetch_all()
 
         if event_rows is None or len(event_rows) == 0:
             cur.execute("""
