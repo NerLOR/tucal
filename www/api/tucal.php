@@ -25,15 +25,15 @@ try {
         default: error(404);
     }
 } catch (Exception $e) {
-    error(500, $e->getMessage(), $e instanceof PDOException);
+    error(500, $e->getMessage());
 }
 
-function error(int $status, string $message = null, bool $db_error = false) {
+function error(int $status, string $message = null) {
     $content = '{"status":"error","message":' . json_encode($message, JSON_FLAGS) .'}' . "\n";
     header("Status: $status");
     header("Content-Length: " . strlen($content));
     echo $content;
-    tucal_exit($db_error);
+    tucal_exit();
 }
 
 function rooms() {
