@@ -233,7 +233,8 @@ def merge_external_events():
                 WHERE e.group_nr = %s AND
                       e.end_ts > e.start_ts AND
                       (e.room_nr IS NULL OR %s IS NULL OR coalesce(e.room_nr, -1) = coalesce(%s, -1)) AND
-                      (%s - e.start_ts <= INTERVAL '30' MINUTE AND e.end_ts - %s <= INTERVAL '60' MINUTE)
+                      (%s - e.start_ts <= INTERVAL '30' MINUTE AND e.end_ts - %s <= INTERVAL '60' MINUTE) AND
+                      e.global
                 GROUP BY e.event_nr
                 HAVING %s != ALL(array_agg(coalesce(x.source, '<NULL>')))""",
                         (group_nr, room_nr, room_nr, start_ts, end_ts, source))

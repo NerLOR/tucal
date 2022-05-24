@@ -266,7 +266,7 @@ BEGIN
     VALUES ('tuwel', NEW.event_id::text, NULL, NEW.start_ts, NEW.end_ts, NULL,
             tucal.get_group((SELECT course_nr FROM tuwel.course WHERE course_id = NEW.course_id),
                             (SELECT semester FROM tuwel.course WHERE course_id = NEW.course_id),
-                            'LVA'), FALSE,
+                            'LVA'), NEW.f_course_event,
             jsonb_build_object('tuwel', tuwel));
     RETURN NEW;
 END;
@@ -305,6 +305,7 @@ BEGIN
                 (SELECT course_nr FROM tuwel.course WHERE course_id = NEW.course_id),
                 (SELECT semester FROM tuwel.course WHERE course_id = NEW.course_id),
                 'LVA'),
+        global   = NEW.f_course_event,
         data     = jsonb_build_object('tuwel', tuwel)
     WHERE (source, event_id) = ('tuwel', NEW.event_id::text);
     RETURN NEW;
