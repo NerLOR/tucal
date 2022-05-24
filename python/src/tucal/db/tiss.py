@@ -239,7 +239,7 @@ def upsert_course_events(events: List[Dict[str, Any]], course: Course, access_ti
     rows_update = []
     for evt in events:
         data = {
-            'name': course.name_de,
+            'name': f'{course.nr} {course.type} {course.name_de}',
             'type': 1,
             'cnr': course.nr,
             'sem': str(course.semester),
