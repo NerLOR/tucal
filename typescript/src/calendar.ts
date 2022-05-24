@@ -403,6 +403,7 @@ class WeekSchedule {
     async fetch(start: Date, end: Date, weeks: string[] = []) {
         if (!this.week) throw new Error();
 
+        // TODO error handling for 503 error etc.
         const json = await api('/calendar/calendar', {
             'subject': this.subject,
             'start': start.toISOString(),

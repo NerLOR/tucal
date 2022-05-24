@@ -106,6 +106,20 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $courses[$row['course_nr']] = $row;
 }
 
+for ($i = 0; $i < 21; $i++) {
+    $stmt = db_exec("SELECT COUNT(*) FROM tucal.event WHERE NOT updated");
+    $num = $stmt->fetchAll()[0][0];
+    if ($num === 0) {
+        break;
+    } elseif ($i === 20) {
+        header("Status: 503");
+        header("Content-Length: 0");
+        exit();
+    } else {
+        usleep(500_000);
+    }
+}
+
 $stmt = db_exec("
         SELECT e.event_nr, e.event_id, e.create_ts, e.update_ts, e.update_seq, e.room_nr, e.data,
                d.data AS user_data, l.course_nr, l.semester, l.name, g.group_id,

@@ -66,6 +66,18 @@ function calendar() {
         }
     }
 
+    for ($i = 0; $i < 21; $i++) {
+        $stmt = db_exec("SELECT COUNT(*) FROM tucal.event WHERE NOT updated");
+        $num = $stmt->fetchAll()[0][0];
+        if ($num === 0) {
+            break;
+        } elseif ($i === 20) {
+            error(503);
+        } else {
+            usleep(500_000);
+        }
+    }
+
     $stmt = db_exec("
             SELECT e.event_nr, e.event_id, e.room_nr, e.data, d.data AS user_data,
                    l.course_nr, l.semester, l.name, g.group_id, g.group_name, e.deleted,
