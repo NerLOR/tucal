@@ -216,16 +216,16 @@ def merge_external_events():
     cur = tucal.db.cursor()
     cur.execute("LOCK TABLE tucal.event, tucal.external_event IN SHARE ROW EXCLUSIVE MODE")
     cur.execute("""
-        SELECT source, event_id, start_ts, end_ts, group_nr, room_nr
+        SELECT source, event_id, start_ts, end_ts, group_nr, room_nr, global
         FROM tucal.external_event
         WHERE event_nr IS NULL""")
     rows = cur.fetch_all()
 
-    for source, evt_id, start_ts, end_ts, group_nr, room_nr in rows:
+    for source, evt_id, start_ts, end_ts, group_nr, room_nr, global_event in rows:
         # FIXME better equality check
 
         event_rows = None
-        if end_ts > start_ts:
+        if global_event and end_ts > start_ts:
             cur.execute("""
                 SELECT e.event_nr, array_agg(x.source)
                 FROM tucal.event e
@@ -242,9 +242,9 @@ def merge_external_events():
 
         if event_rows is None or len(event_rows) == 0:
             cur.execute("""
-                INSERT INTO tucal.event (start_ts, end_ts, room_nr, group_nr)
-                VALUES (%s, %s, NULL, %s)
-                RETURNING event_nr""", (start_ts, end_ts, group_nr))
+                INSERT INTO tucal.event (start_ts, end_ts, room_nr, group_nr, global)
+                VALUES (%s, %s, NULL, %s, %s)
+                RETURNING event_nr""", (start_ts, end_ts, group_nr, global_event))
             evt_nr = cur.fetch_all()[0][0]
         else:
             evt_nr = event_rows[0][0]
