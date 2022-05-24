@@ -250,7 +250,7 @@ def merge_external_events():
                      NOT e.global AND
                      x.source IS NULL
                GROUP BY e.event_nr""",
-                        (group_nr, room_nr, room_nr, start_ts, end_ts, source))
+                        (group_nr, room_nr, room_nr, start_ts, end_ts))
             event_rows = cur.fetch_all()
 
         if event_rows is None or len(event_rows) == 0:
