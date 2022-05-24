@@ -247,11 +247,13 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         }
 
         $type = $data['type'];
-        $types = $icalOpts['event_types'] ?? ['course', 'lecture', 'group'];
+        $types = $icalOpts['event_types'] ?? ['course', 'lecture', 'group', 'appointment'];
         if ($type === 'course' || $type === 'lecture') {
             if (!in_array('course', $types)) continue;
         } elseif ($type === 'group') {
             if (!in_array('group', $types)) continue;
+        } elseif ($type === 'appointment') {
+            if (!in_array('appointment', $types)) continue;
         } elseif ($type !== 'deadline' && $type !== 'assignment') {
             if (!in_array('other', $types)) continue;
         }

@@ -160,7 +160,7 @@ while ($row = $stmt->fetch()) {
     $opts = json_decode($row['options'], true);
     $icalOpts = $opts['ical'] ?? [];
     $todos = $icalOpts['todos'] ?? 'as_todos';
-    $exportEvents = $icalOpts['event_types'] ?? ['course', 'group'];
+    $exportEvents = $icalOpts['event_types'] ?? ['course', 'group', 'appointment'];
     $loc = $icalOpts['location'] ?? 'room_abbr';
     $tuwMaps = $icalOpts['tuw_maps'] ?? true;
     $cat = ($icalOpts['categories'] ?? ['event_type'])[0];
@@ -185,6 +185,7 @@ while ($row = $stmt->fetch()) {
                             <legend><?php echo _('Export events'); ?></legend>
                             <label><input type="checkbox" name="export-course-events"<?php echo in_array('course', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Course events'); ?></label><br/>
                             <label><input type="checkbox" name="export-group-events"<?php echo in_array('group', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Group events'); ?></label><br/>
+                            <label><input type="checkbox" name="export-appointment-events"<?php echo in_array('appointment', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Appointment'); ?></label><br/>
                             <label><input type="checkbox" name="export-other-events"<?php echo in_array('other', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Other events'); ?></label>
                         </fieldset>
                     </div>
