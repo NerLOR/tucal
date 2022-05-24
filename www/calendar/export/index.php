@@ -114,6 +114,7 @@ for ($i = 0; $i < 21; $i++) {
     } elseif ($i === 20) {
         header("Status: 503");
         header("Content-Length: 0");
+        header("Retry-After: 60");
         exit();
     } else {
         usleep(500_000);
