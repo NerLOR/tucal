@@ -107,35 +107,51 @@ require "../.php/header.php";
 <main class="wcal">
     <!--Calendar-->
     <section class="calendar-legend">
-        <div class="legend lecture">
-            <div></div>
-            <span class="color-name"><?php echo _('Blue'); ?></span>
-            <span><?php echo _('Lecture'); ?></span>
-        </div>
-        <div class="legend course">
-            <div></div>
-            <span class="color-name"><?php echo _('Purple'); ?></span>
-            <span><?php echo _('General course event'); ?></span>
-        </div>
-        <div class="legend group">
-            <div></div>
-            <span class="color-name"><?php echo _('Green'); ?></span>
-            <span><?php echo _('Group event'); ?></span>
-        </div>
-        <div class="legend appointment">
-            <div></div>
-            <span class="color-name"><?php echo _('Orange'); ?></span>
-            <span><?php echo _('Appointment'); ?></span>
-        </div>
-        <div class="legend other">
-            <div></div>
-            <span class="color-name"><?php echo _('Grey'); ?></span>
-            <span><?php echo _('Other event'); ?></span>
-        </div>
-        <div class="legend online">
-            <div></div>
-            <span class="color-name"><?php echo _('Striped'); ?></span>
-            <span><?php echo _('Online-only event'); ?></span>
+        <div class="legend-wrapper">
+            <div>
+                <div class="legend lecture explicit">
+                    <div></div>
+                    <span class="color-name"><?php echo _('Blue'); ?></span>
+                    <span><?php echo _('Lecture'); ?></span>
+                </div>
+                <div class="legend course explicit">
+                    <div></div>
+                    <span class="color-name"><?php echo _('Purple'); ?></span>
+                    <span><?php echo _('General course event'); ?></span>
+                </div>
+                <div class="legend group explicit">
+                    <div></div>
+                    <span class="color-name"><?php echo _('Green'); ?></span>
+                    <span><?php echo _('Group event'); ?></span>
+                </div>
+                <div class="legend appointment explicit">
+                    <div></div>
+                    <span class="color-name"><?php echo _('Orange'); ?></span>
+                    <span><?php echo _('Appointment'); ?></span>
+                </div>
+            </div>
+            <div>
+                <div class="legend exam explicit">
+                    <div></div>
+                    <span class="color-name"><?php echo _('Red'); ?></span>
+                    <span><?php echo _('Exam'); ?></span>
+                </div>
+                <div class="legend holiday explicit">
+                    <div></div>
+                    <span class="color-name"><?php echo _('Yellow'); ?></span>
+                    <span><?php echo _('Holiday'); ?></span>
+                </div>
+                <div class="legend other">
+                    <div></div>
+                    <span class="color-name"><?php echo _('Grey'); ?></span>
+                    <span><?php echo _('Other event'); ?></span>
+                </div>
+                <div class="legend online">
+                    <div></div>
+                    <span class="color-name"><?php echo _('Striped'); ?></span>
+                    <span><?php echo _('Online-only event'); ?></span>
+                </div>
+            </div>
         </div>
         <hr/>
         <div class="button-wrapper">

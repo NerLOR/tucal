@@ -298,6 +298,9 @@ class Week {
             i = this.add(0);
             end = this.add(n)
         }
+        if (step === 0 || (step > 0 && i.valueOf() > end.valueOf()) || (step < 0 && i.valueOf() < end.valueOf())) {
+            throw new Error("Invalid call to Week.iterate()");
+        }
         return {
             *[Symbol.iterator]() {
                 while (true) {
@@ -308,7 +311,7 @@ class Week {
                     i = i.add(step);
                 }
             }
-        }
+        };
     }
 }
 
@@ -398,8 +401,14 @@ class TucalEvent {
         return this.courseNr && COURSE_DEF[this.courseNr] || null;
     }
 
-    getWeek(): Week {
-        return Week.fromDate(this.start);
+    getWeeks(): Week[] {
+        const w1 = Week.fromDate(this.start);
+        const w2 = Week.fromDate(new Date(Math.max(this.start.valueOf(), this.end.valueOf() - 1)));
+        const weeks = [];
+        for (const week of w1.iterate(w2)) {
+            weeks.push(week);
+        }
+        return weeks;
     }
 
     getStartMinutes(): number {

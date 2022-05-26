@@ -280,6 +280,12 @@ msgstr "Group event"
 msgid "Appointment"
 msgstr "Appointment"
 
+msgid "Exam"
+msgstr "Exam"
+
+msgid "Holiday"
+msgstr "Holiday"
+
 msgid "Other event"
 msgstr "Other event"
 
@@ -300,6 +306,12 @@ msgstr "Green"
 
 msgid "Orange"
 msgstr "Orange"
+
+msgid "Red"
+msgstr "Red"
+
+msgid "Yellow"
+msgstr "Yellow"
 
 msgid "Grey"
 msgstr "Grey"

@@ -58,7 +58,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
     if 'user' not in data:
         data['user'] = {}
 
-    tuwel, tiss, tiss_extra, aurora, htu = None, None, None, None, None
+    tuwel, tiss, tiss_extra, aurora, htu, holidays = None, None, None, None, None, None
 
     # FIXME better event merge
     cur = tucal.db.cursor()
@@ -75,6 +75,8 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             aurora = xdata['aurora']
         if 'htu' in xdata:
             htu = xdata['htu']
+        if 'holidays' in xdata:
+            holidays = xdata['holidays']
 
     if tuwel:
         unix_ts = int(time.mktime(start_ts.timetuple()))
@@ -183,6 +185,11 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
     if tuwel:
         if data['type'] is None:
             data['type'] = 'course'
+
+    if holidays:
+        data['day_event'] = True
+        data['summary'] = holidays['name']
+        data['type'] = 'holiday'
 
     # delete redundant data['user'] keys
     data_items = {(k, v) for k, v in data.items() if v.__hash__}

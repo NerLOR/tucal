@@ -280,6 +280,12 @@ msgstr "Gruppnteamin"
 msgid "Appointment"
 msgstr "Anzlteamin"
 
+msgid "Exam"
+msgstr "Prüfungsteamin"
+
+msgid "Holiday"
+msgstr "Ferien"
+
 msgid "Other event"
 msgstr "Ondara Teamin"
 
@@ -300,6 +306,12 @@ msgstr "Grea"
 
 msgid "Orange"
 msgstr "Orange"
+
+msgid "Red"
+msgstr "Rod"
+
+msgid "Yellow"
+msgstr "Göb"
 
 msgid "Grey"
 msgstr "Grau"

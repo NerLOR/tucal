@@ -63,7 +63,7 @@ class WeekSchedule {
         const theadTr2 = document.createElement("tr");
         for (let j = 1; j <= 7; j++) {
             const th = document.createElement("th");
-            th.innerHTML = `<div><ul></ul></div>`;
+            th.innerHTML = `<div class="special-event-wrapper"></div><div class="deadlines"><ul></ul></div>`;
             th.rowSpan = 4;
             theadTr2.appendChild(th);
         }
@@ -423,9 +423,14 @@ class WeekSchedule {
 
         for (const evtJson of json.data.events) {
             const evt = new TucalEvent(evtJson);
-            const w = this.weeks[evt.getWeek().toString()];
-            if (!w) throw new Error();
-            w.events.push(evt);
+            const evtWeeks = evt.getWeeks();
+            for (const week of evtWeeks) {
+                const ws = week.toString();
+                if (!weeks.includes(ws)) continue;
+                const w = this.weeks[ws];
+                if (!w) throw new Error();
+                w.events.push(evt);
+            }
         }
 
         if (weeks.includes(this.week.toString())) {
@@ -434,6 +439,15 @@ class WeekSchedule {
     }
 
     clearEvents(loading = false) {
+        const specialEvents = this.cal.getElementsByClassName("special-event");
+        while (specialEvents[0]) specialEvents[0].remove();
+
+        for (const wrapper of this.cal.getElementsByClassName("special-event-wrapper")) {
+            const p = wrapper.parentElement;
+            if (!p) throw new Error();
+            p.style.setProperty("--height", '0');
+        }
+
         const wrapper = this.cal.getElementsByClassName("event-wrapper")[0];
         if (!wrapper) throw new Error();
 
@@ -463,6 +477,7 @@ class WeekSchedule {
     }
 
     drawEvents(all_events: TucalEvent[]) {
+        if (!this.week) throw new Error();
         all_events.sort((a, b) => {
             const diff = a.start.valueOf() - b.start.valueOf();
             return (diff === 0) ? (a.end.valueOf() - b.end.valueOf()) : diff;
@@ -484,7 +499,7 @@ class WeekSchedule {
 
             if (event.start.getTime() === event.end.getTime()) {
                 deadlines.push(event);
-            } else if (event.end.valueOf() - event.start.valueOf() > 43_200_000) {
+            } else if (event.dayEvent || event.end.valueOf() - event.start.valueOf() >= 43_200_000) {
                 special.push(event);
             } else {
                 day.push(event);
@@ -496,6 +511,87 @@ class WeekSchedule {
 
         const theadTr = thead.getElementsByTagName("tr")[1];
         if (!theadTr) throw new Error();
+
+        const specialParsed: {
+            start: number,
+            end: number,
+            len: number,
+            pos: number | null,
+            event: TucalEvent,
+        }[] = []
+        const startDate = this.week.startDate();
+        const endDate = this.week.endDate();
+        for (const event of special) {
+            const start = (event.start < startDate) ? 0 : ((event.start.getDay() + 6) % 7);
+            const end = (event.end > endDate) ? 6 : ((new Date(event.end.getTime() - 1).getDay() + 6) % 7);
+            specialParsed.push({
+                start: start,
+                end: end,
+                len: end - start + 1,
+                pos: null,
+                event: event,
+            });
+        }
+        specialParsed.sort((a, b) => {
+            const d1 = b.len - a.len;
+            const d2 = a.start - b.start;
+            return (d1 === 0) ? (d2 === 0) ? a.event.id.localeCompare(b.event.id) : d2 : d1;
+        });
+
+        const usage = [0, 0, 0, 0, 0, 0, 0];
+        for (const meta of specialParsed) {
+            let max = 0;
+            for (let i = meta.start; i <= meta.end; i++) {
+                max = Math.max(max, usage[i] || 0);
+            }
+            meta.pos = max;
+            for (let i = meta.start; i <= meta.end; i++) {
+                usage[i] = max + 1;
+            }
+        }
+
+        const specialEventWrappers = this.cal.getElementsByClassName("special-event-wrapper");
+        for (let i = 0; i < 7; i++) {
+            const w = <HTMLElement> specialEventWrappers[i]?.parentElement;
+            if (!w) throw new Error();
+            w.style.setProperty("--height", `${usage[i]}`);
+        }
+        for (const meta of specialParsed) {
+            const event = meta.event;
+            const evt = document.createElement("div");
+
+            evt.classList.add("special-event");
+            if (event.type) evt.classList.add(event.type, "explicit");
+            if (event.mode === 'online_only') evt.classList.add("online");
+            if (event.status === 'cancelled') evt.classList.add("cancelled");
+            if (event.userHidden) evt.classList.add("hidden");
+
+            evt.id = `event-${event.id}`;
+            evt.style.setProperty("--len", `${meta.end - meta.start + 1}`);
+            evt.style.setProperty("--pos", `${meta.pos}`);
+
+            evt.addEventListener("click", (evt) => {
+                for (const elem of evt.composedPath()) {
+                    if ((<HTMLElement> elem).tagName === 'A') return;
+                }
+                evt.stopImmediatePropagation();
+                this.setEventId(event.id);
+            });
+
+            const groupName = (event.courseNr === null) ? ((event.groupName === 'Holidays') ? null : event.groupName) : event.getCourse()?.getName();
+
+            let html = '';
+            if (groupName !== null) html += `<span class="course">${groupName}</span> - `;
+            if (event.summary !== null) html += `<span class="summary"></span>`;
+            evt.innerHTML = html;
+
+            const spanSummary = <HTMLElement> evt.getElementsByClassName('summary')[0];
+            if (spanSummary && event.summary !== null) spanSummary.innerText = event.summary;
+
+            const wrapper = specialEventWrappers[meta.start];
+            if (!wrapper) throw new Error();
+            wrapper.appendChild(evt);
+        }
 
         for (const deadline of deadlines) {
             const time = deadline.start;
@@ -518,6 +614,9 @@ class WeekSchedule {
             day.appendChild(el);
         }
 
+        const wrapper = this.cal.getElementsByClassName("event-wrapper")[0];
+        if (!wrapper) throw new Error();
+
         for (const day of events) {
             for (const eventData of placeDayEvents(day)) {
                 const event = eventData.event;
@@ -526,9 +625,6 @@ class WeekSchedule {
 
                 if (event.deleted) continue;
 
-                const wrapper = this.cal.getElementsByClassName("event-wrapper")[0];
-                if (!wrapper) throw new Error();
-
                 const day = wrapper.getElementsByClassName("day")[(start.getDay() + 6) % 7];
                 if (!day) throw new Error();
 
@@ -536,7 +632,7 @@ class WeekSchedule {
                 evt.id = `event-${event.id}`;
 
                 evt.classList.add("event");
-                if (event.type) evt.classList.add(event.type);
+                if (event.type) evt.classList.add(event.type, "explicit");
                 if (event.mode === 'online_only') evt.classList.add("online");
                 if (event.status === 'cancelled') evt.classList.add("cancelled");
                 if (event.userHidden) evt.classList.add("hidden");
@@ -672,15 +768,33 @@ class WeekSchedule {
         const formatterTime = new Intl.DateTimeFormat(LOCALE, {
             hour: "2-digit",
             minute: "2-digit",
-        })
+        });
+        const formatterDateTime = new Intl.DateTimeFormat(LOCALE, {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+        const formatterDate = new Intl.DateTimeFormat(LOCALE, {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
 
         html += `<h4>`;
-        if (evt.plannedStart || evt.plannedEnd) {
-            html += `<span class="time">${formatterTime.format(evt.plannedStart || evt.start)}-${formatterTime.format(evt.plannedEnd || evt.end)}</span> / `;
+        if (evt.dayEvent) {
+            html += `<span class="time">${formatterDate.format(evt.start)} – ${formatterDate.format(evt.end)}</span>`;
+        } else if (evt.end.valueOf() - evt.start.valueOf() >= 86_400_000) {
+            html += `<span class="time">${formatterDateTime.format(evt.start)} – ${formatterDateTime.format(evt.end)}</span>`;
+        } else {
+            if (evt.plannedStart || evt.plannedEnd) {
+                html += `<span class="time">${formatterTime.format(evt.plannedStart || evt.start)}-${formatterTime.format(evt.plannedEnd || evt.end)}</span> / `;
+            }
+            html +=
+                `<span class="time">${formatterTime.format(evt.start)}-${formatterTime.format(evt.end)}</span> ` +
+                `<span class="day">(${formatterDay.format(evt.start)})</span>`;
         }
-        html +=
-            `<span class="time">${formatterTime.format(evt.start)}-${formatterTime.format(evt.end)}</span> ` +
-            `<span class="day">(${formatterDay.format(evt.start)})</span>`;
 
         const tissUrl = (evt.url && evt.url.startsWith('https://tiss.tuwien.ac.at/')) ? evt.url : evt.tissUrl;
         const tuwelUrl = (evt.url && evt.url.startsWith('https://tuwel.tuwien.ac.at/')) ? evt.url : evt.tuwelUrl;
@@ -975,9 +1089,9 @@ class WeekSchedule {
             data['data']['user'] = dataUser;
             data['user'] = user
             api('/calendar/update', urlData, data).then(() => {
-                // wait for event merger to update events
+                // wait for backend to update events
                 sleep(1000).then(() => {
-                    if (urlData['previous'] || urlData['following']) {
+                    if (urlData['previous'] || urlData['following'] || evt.getWeeks().length > 1) {
                         this.weeks = {};
                     } else if (this.week) {
                         delete this.weeks[this.week.toString()];

@@ -21,6 +21,8 @@ div.calendar {
     --row-size: 25px;
     --time-start: calc(7 * 60);
     --time-end: calc(22 * 60);
+    --evt-height: 20px;
+    --height: 0;
 }
 
 @media screen and (min-height: 1080px) {
@@ -191,11 +193,11 @@ div.calendar div.panel span.week-header {
     flex: 20px 1 0;
 }
 
-div.calendar thead tr:nth-child(2) th > div {
+div.calendar div.deadlines {
     overflow-y: scroll;
     overflow-x: hidden;
     width: 100%;
-    height: calc(var(--header-size) - var(--row-size));
+    height: calc(var(--header-size) - var(--row-size) - var(--height) * var(--evt-height));
 }
 
 div.calendar thead ul {
@@ -286,6 +288,38 @@ div.calendar div.event-wrapper div.day {
     left: calc((100%) / 7 * var(--n));
 }
 
+div.calendar div.special-event-wrapper {
+    position: relative;
+    height: calc(var(--height) * var(--evt-height));
+}
+
+div.calendar div.special-event {
+    --len: 1;
+    --pos: 0;
+    margin: 1px 3px;
+    position: absolute;
+    display: block;
+    cursor: pointer;
+    box-sizing: border-box;
+    width: calc((100% + 1px) * var(--len) - 7px);
+    height: calc(var(--evt-height) - 2px);
+    left: calc((100% - 1px) / 7 * var(--start));
+    top: calc(var(--evt-height) * var(--pos));
+    border: 1px solid var(--evt-border);
+    border-radius: var(--border-radius);
+    background-color: var(--evt-color);
+    z-index: 21;
+    font-size: 0.75em;
+    text-align: left;
+    overflow: hidden;
+    padding: 1px 4px;
+    white-space: nowrap;
+}
+
+div.calendar div.special-event span.course {
+    font-weight: bold;
+}
+
 div.calendar div.event-wrapper div.day:nth-of-type(1) {
     --n: 0;
 }
@@ -351,6 +385,7 @@ div.calendar div.event > * {
 }
 
 div.calendar div.event,
+div.calendar div.special-event,
 section.calendar-legend div.legend {
     --evt-color: var(--grey-D8);
     --evt-border: var(--grey-60);
@@ -358,14 +393,9 @@ section.calendar-legend div.legend {
     --evt-light-trans: var(--white-trans);
 }
 
-div.calendar div.event.group,
-div.calendar div.event.lecture,
-div.calendar div.event.course,
-div.calendar div.event.appointment,
-section.calendar-legend div.legend.group,
-section.calendar-legend div.legend.lecture,
-section.calendar-legend div.legend.course,
-section.calendar-legend div.legend.appointment {
+div.calendar div.event.explicit,
+div.calendar div.special-event.explicit,
+section.calendar-legend div.legend.explicit {
     --hue: 0deg;
     --l: 87.5%;
     --evt-color: hsl(var(--hue), calc(100% - (87.5% - var(--l)) * 2), var(--l));
@@ -374,22 +404,12 @@ section.calendar-legend div.legend.appointment {
     --evt-border: hsl(var(--hue), 50%, 50%);
 }
 
-.theme-dark div.calendar div.event.group,
-.theme-dark div.calendar div.event.lecture,
-.theme-dark div.calendar div.event.course,
-.theme-dark div.calendar div.event.appointment,
-.theme-dark section.calendar-legend div.legend.group,
-.theme-dark section.calendar-legend div.legend.lecture,
-.theme-dark section.calendar-legend div.legend.course,
-.theme-dark section.calendar-legend div.legend.appointment,
-.theme-black div.calendar div.event.group,
-.theme-black div.calendar div.event.lecture,
-.theme-black div.calendar div.event.course,
-.theme-black div.calendar div.event.appointment,
-.theme-black section.calendar-legend div.legend.group,
-.theme-black section.calendar-legend div.legend.lecture,
-.theme-black section.calendar-legend div.legend.course,
-.theme-black section.calendar-legend div.legend.appointment {
+.theme-dark div.calendar div.event.explicit,
+.theme-dark div.calendar div.special-event.explicit,
+.theme-dark section.calendar-legend div.legend.explicit,
+.theme-black div.calendar div.event.explicit,
+.theme-black div.calendar div.special-event.explicit,
+.theme-black section.calendar-legend div.legend.explicit {
     --l: 12.5% !important;
     --evt-color: hsl(var(--hue), calc(100% - (12.5% - var(--l)) * 2), var(--l));
     --evt-light: hsl(var(--hue), calc(100% - (12.5% - var(--l)) * 2), calc(var(--l) + 3.125%));
@@ -408,33 +428,51 @@ section.calendar-legend div.legend.online > div {
     );
 }
 
-div.calendar div.event.cancelled {
+div.calendar div.event.cancelled,
+div.calendar div.special-event.cancelled {
     opacity: 0.25;
 }
 
-div.calendar div.event.hidden {
+div.calendar div.event.hidden,
+div.calendar div.special-event.hidden {
     opacity: 0.5;
 }
 
 div.calendar div.event.course,
+div.calendar div.special-event.course,
 section.calendar-legend div.legend.course {
     --hue: 270deg;
 }
 
 div.calendar div.event.group,
+div.calendar div.special-event.group,
 section.calendar-legend div.legend.group {
     --l: 84.375%;
     --hue: 120deg;
 }
 
 div.calendar div.event.lecture,
+div.calendar div.special-event.lecture,
 section.calendar-legend div.legend.lecture {
     --hue: 220deg;
 }
 
 div.calendar div.event.appointment,
+div.calendar div.special-event.appointment,
 section.calendar-legend div.legend.appointment {
     --hue: 30deg;
+}
+
+div.calendar div.event.holiday,
+div.calendar div.special-event.holiday,
+section.calendar-legend div.legend.holiday {
+    --hue: 60deg;
+}
+
+div.calendar div.event.exam,
+div.calendar div.special-event.exam,
+section.calendar-legend div.legend.exam {
+    --hue: 0deg;
 }
 
 div.calendar div.event:hover {
@@ -503,9 +541,18 @@ section.calendar-legend {
 
 }
 
+section.calendar-legend .legend-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+section.calendar-legend .legend-wrapper > div {
+    flex: 500px 1 0;
+}
+
 section.calendar-legend div.legend {
     display: flex;
-    margin: 0.5em;
+    margin: 0.5em 0.5em 0 0.5em;
     gap: 0.5em;
     align-items: center;
 }

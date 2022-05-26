@@ -2,6 +2,7 @@
 from typing import Optional, List, Dict, Any
 import datetime
 import re
+import json
 
 import tucal.db
 import tucal.db as db
@@ -47,6 +48,48 @@ def get_course(name: str) -> Optional[str]:
     return None
 
 
+def get_holiday_group_nr() -> int:
+    cur = tucal.db.cursor()
+    cur.execute("SELECT group_nr FROM tucal.group WHERE group_name = 'Holidays'")
+    rows = cur.fetch_all()
+    if len(rows) > 0:
+        cur.close()
+        return rows[0][0]
+
+    cur.execute("INSERT INTO tucal.group (group_name, public) VALUES ('Holidays', TRUE) RETURNING group_nr")
+    rows = cur.fetch_all()
+    cur.close()
+    return rows[0][0]
+
+
+def upsert_holidays(events: List[Dict[str, Any]]):
+    cur = db.cursor()
+    group_nr = get_holiday_group_nr()
+
+    for evt in events:
+        norm = f'{evt["start"]}-{evt["name"].split(",")[0].replace(" ", "-").lower()}'
+        data = {
+            'id': norm,
+            'start': tucal.date_to_datetime(evt['start'], True),
+            'end': tucal.date_to_datetime(evt['end'], True),
+            'group': group_nr,
+            'data': json.dumps({
+                'holidays': {
+                    'name': evt['name'],
+                },
+            }),
+        }
+        print(evt['name'], evt['start'], evt['end'])
+        print(data)
+        cur.execute("""
+            INSERT INTO tucal.external_event (source, event_id, start_ts, end_ts, group_nr, data)
+            VALUES ('holidays', %(id)s, %(start)s, %(end)s, %(group)s, %(data)s)
+            ON CONFLICT ON CONSTRAINT pk_external_event DO UPDATE
+            SET start_ts = %(start)s, end_ts = %(end)s, group_nr = %(group)s, data = %(data)s""", data)
+
+    cur.close()
+
+
 def upsert_ical_events(events: List[ical.Event], room_code: str = None, mnr: int = None):
     cur = db.cursor()
 
@@ -57,8 +100,14 @@ def upsert_ical_events(events: List[ical.Event], room_code: str = None, mnr: int
     locations = {}
     rows_insert = []
     rows_update = []
+    holidays = []
     for evt in events:
         if evt.categories[0] == 'HOLIDAY':
+            holidays.append({
+                'name': evt.summary,
+                'start': evt.start,
+                'end': evt.end,
+            })
             continue
 
         location = None
@@ -136,6 +185,9 @@ def upsert_ical_events(events: List[ical.Event], room_code: str = None, mnr: int
             VALUES (%s, %s)
             ON CONFLICT DO NOTHING""", [(evt, mnr) for evt in evt_nrs])
 
+    if len(holidays) > 0:
+        upsert_holidays(holidays)
+
     cur.close()
     return None
 
@@ -146,9 +198,15 @@ def upsert_events(events: List[Dict[str, Any]], access_time: datetime.datetime, 
     courses = {}
     rows_insert = []
     rows_update = []
+    holidays = []
     for evt in events:
         classes = evt['className'].split(' ')
         if classes[0] == 'holiday':
+            holidays.append({
+                'name': evt['title'],
+                'start': tucal.parse_iso_timestamp(evt['start'], True).date(),
+                'end': tucal.parse_iso_timestamp(evt['end'], True).date(),
+            })
             continue
 
         data = {
@@ -204,6 +262,9 @@ def upsert_events(events: List[Dict[str, Any]], access_time: datetime.datetime, 
             INSERT INTO tiss.event_user (event_nr, mnr) 
             VALUES (%s, %s)
             ON CONFLICT DO NOTHING""", [(evt, mnr) for evt in evt_nrs])
+
+    if len(holidays) > 0:
+        upsert_holidays(holidays)
 
     cur.close()
     return None

@@ -153,7 +153,7 @@ def get_group_nr() -> int:
         cur.close()
         return rows[0][0]
 
-    cur.execute("INSERT INTO tucal.group (group_name) VALUES ('HTU Events') RETURNING group_nr")
+    cur.execute("INSERT INTO tucal.group (group_name, public) VALUES ('HTU Events', TRUE) RETURNING group_nr")
     rows = cur.fetch_all()
     cur.close()
     return rows[0][0]

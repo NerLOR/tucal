@@ -280,6 +280,12 @@ msgstr "Gruppentermin"
 msgid "Appointment"
 msgstr "Einzeltermin"
 
+msgid "Exam"
+msgstr "Prüfungstermin"
+
+msgid "Holiday"
+msgstr "Ferien"
+
 msgid "Other event"
 msgstr "Sonstiger Termin"
 
@@ -300,6 +306,12 @@ msgstr "Grün"
 
 msgid "Orange"
 msgstr "Orange"
+
+msgid "Red"
+msgstr "Rot"
+
+msgid "Yellow"
+msgstr "Gelb"
 
 msgid "Grey"
 msgstr "Grau"

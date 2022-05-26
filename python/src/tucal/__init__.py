@@ -90,6 +90,17 @@ def parse_iso_timestamp(iso: str, default: bool = False, tz: str = None) -> date
     return dt
 
 
+def date_to_datetime(date: datetime.date, default: bool = False, tz: str = None) -> datetime.datetime:
+    dt = datetime.datetime.combine(date, datetime.datetime.min.time())
+    if tz is not None:
+        dt = pytz.timezone(tz).localize(dt)
+    elif default:
+        dt = pytz.timezone('Europe/Vienna').localize(dt)
+    else:
+        dt = dt.astimezone()
+    return dt
+
+
 def now() -> datetime.datetime:
     return datetime.datetime.now().astimezone()
 

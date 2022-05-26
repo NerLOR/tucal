@@ -89,8 +89,12 @@ function calendar() {
                 LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
                 LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
                 LEFT JOIN tucal.event_user_data d ON (d.event_nr, d.account_nr) = (e.event_nr, a.account_nr)
-            WHERE e.start_ts >= :start AND e.start_ts < :end AND
-                  a.mnr = :mnr AND
+            WHERE a.mnr = :mnr AND
+                  (
+                      (e.start_ts >= :start AND e.start_ts < :end) OR
+                      (e.end_ts >= :start AND e.end_ts < :end) OR
+                      (e.start_ts < :start AND e.end_ts >= :end)
+                  ) AND
                   (e.global OR (:mnr = ANY(SELECT u.mnr FROM tuwel.event_user eu
                                            JOIN tuwel.user u ON u.user_id = eu.user_id
                                            WHERE eu.event_id::text = x.event_id))) AND
