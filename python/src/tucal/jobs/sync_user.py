@@ -224,8 +224,7 @@ class SyncUserTiss(tucal.Sync):
                       event_id LIKE '{course.nr}-{course.semester}-%%' AND
                       event_id != ALL(%s)""", ([pk[1] for pk in pks],))
 
-        for evt in self.personal_schedule['events']:
-            tucal.db.tiss.upsert_event(evt, self.access_time, mnr=self.mnr_int)
+        tucal.db.tiss.upsert_events(self.personal_schedule['events'], self.access_time, mnr=self.mnr_int)
 
         self.job.end(1)
 

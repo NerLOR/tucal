@@ -47,132 +47,170 @@ def get_course(name: str) -> Optional[str]:
     return None
 
 
-def upsert_ical_event(evt: ical.Event, room_code: str = None, mnr: int = None) -> Optional[int]:
-    if evt.categories[0] == 'HOLIDAY':
-        return
-
+def upsert_ical_events(events: List[ical.Event], room_code: str = None, mnr: int = None):
     cur = db.cursor()
 
-    location = None
-    if room_code is None and evt.location is not None:
-        cur.execute("SELECT code FROM tiss.room WHERE name_full = %s", (evt.location,))
-        codes = cur.fetch_all()
-        if len(codes) > 0:
-            room_code = codes[0][0] if len(codes) > 0 else None
+    cur.execute("SELECT event_id, event_nr FROM tiss.event")
+    evt_ids = {evt[0]: evt[1] for evt in cur.fetch_all()}
+
+    courses = {}
+    locations = {}
+    rows_insert = []
+    rows_update = []
+    for evt in events:
+        if evt.categories[0] == 'HOLIDAY':
+            continue
+
+        location = None
+        room = room_code
+        if room_code is None and evt.location is not None:
+            if evt.location in locations:
+                room = locations[evt.location]
+            else:
+                cur.execute("SELECT code FROM tiss.room WHERE name_full = %s", (evt.location,))
+                codes = cur.fetch_all()
+                if len(codes) > 0:
+                    room = codes[0][0] if len(codes) > 0 else None
+                else:
+                    location = evt.location
+                    room = None
+                locations[evt.location] = room
+
+        data = {
+            'mnr': mnr,
+            'id': int(evt.uid.split('@')[0].split('-')[1]),
+            'type': CATEGORY_TYPES[evt.categories[0]],
+            'name': evt.summary,
+            'desc': evt.description,
+            'room': room,
+            'loc': location,
+            'start': evt.start,
+            'end': evt.end,
+            'access': evt.access,
+        }
+        data['course'] = data['name'] in courses and courses[data['name']] or get_course(data['name'])
+        courses[data['name']] = data['course']
+
+        if data['id'] in evt_ids:
+            data['nr'] = evt_ids[data['id']]
+            rows_update.append(data)
         else:
-            location = evt.location
-            room_code = None
+            cur.execute("""
+                SELECT event_nr FROM tiss.event
+                WHERE event_id IS NULL AND
+                      (room_code IS NULL OR %(room)s IS NULL OR COALESCE(room_code, '') = COALESCE(%(room)s, '')) AND
+                      (type, name, start_ts, end_ts) = (%(type)s, %(name)s, %(start)s, %(end)s)""", data)
+            event_nrs = cur.fetch_all()
 
-    data = {
-        'mnr': mnr,
-        'id': int(evt.uid.split('@')[0].split('-')[1]),
-        'type': CATEGORY_TYPES[evt.categories[0]],
-        'name': evt.summary,
-        'desc': evt.description,
-        'room': room_code,
-        'loc': location,
-        'start': evt.start,
-        'end': evt.end,
-        'access': evt.access,
-    }
-    data['course'] = get_course(data['name'])
+            if len(event_nrs) > 0:
+                data['nr'] = event_nrs[0][0]
+                rows_update.append(data)
+            else:
+                rows_insert.append(data)
 
-    cur.execute("""
-        SELECT event_nr FROM tiss.event
-        WHERE event_id = %(id)s
-        UNION ALL
-        SELECT event_nr FROM tiss.event
-        WHERE event_id IS NULL AND
-        (room_code IS NULL OR %(room)s IS NULL OR COALESCE(room_code, '') = COALESCE(%(room)s, '')) AND
-        (type, name, start_ts, end_ts) = (%(type)s, %(name)s, %(start)s, %(end)s)""", data)
-    events = cur.fetch_all()
-
-    if len(events) > 0:
-        data['nr'] = events[0][0]
-        cur.execute("""
-            UPDATE tiss.event SET event_id = %(id)s, type = %(type)s, start_ts = %(start)s, end_ts = %(end)s,
-                access_ts = %(access)s, name = %(name)s, description = %(desc)s, course_nr = %(course)s,
-                location = %(loc)s
-            WHERE event_nr = %(nr)s""", data)
+    if len(rows_update) > 0:
+        cur.execute_values("""
+            UPDATE tiss.event SET event_id = d.id, type = d.type, start_ts = d.start_ts, end_ts = d.end_ts,
+                access_ts = d.access, name = d.name, description = d.description, course_nr = d.course,
+                location = d.loc
+            FROM (VALUES (%(nr)s, %(id)s, %(type)s, %(start)s, %(end)s, %(access)s, %(name)s, %(desc)s, %(course)s,
+                          %(loc)s)) AS
+                 d (nr, id, type, start_ts, end_ts, access, name, description, course, loc)
+            WHERE event_nr = d.nr""", rows_update)
         if room_code is not None:
-            cur.execute("UPDATE tiss.event SET room_code = %(room)s WHERE event_nr = %(nr)s", data)
-    else:
-        cur.execute("""
+            cur.execute_values("UPDATE tiss.event SET room_code = %(room)s WHERE event_nr = %(nr)s", rows_update)
+
+    inserted = []
+    if len(rows_insert) > 0:
+        cur.execute_values("""
             INSERT INTO tiss.event (event_id, type, room_code, start_ts, end_ts, access_ts, name, description,
                 course_nr, location)
             VALUES (%(id)s, %(type)s, %(room)s, %(start)s, %(end)s, %(access)s, %(name)s, %(desc)s, %(course)s, %(loc)s)
-            RETURNING event_nr""", data)
-        events = cur.fetch_all()
-        data['nr'] = events[0][0]
+            RETURNING event_nr""", rows_insert)
+        inserted = cur.fetch_all()
+    evt_nrs = inserted + [evt['nr'] for evt in rows_update]
 
-    if mnr is not None:
-        cur.execute("""
+    if mnr and len(evt_nrs) > 0:
+        cur.execute_values("""
             INSERT INTO tiss.event_user (event_nr, mnr)
-            VALUES (%(nr)s, %(mnr)s)
-            ON CONFLICT DO NOTHING""", data)
+            VALUES (%s, %s)
+            ON CONFLICT DO NOTHING""", [(evt, mnr) for evt in evt_nrs])
 
     cur.close()
-    return data['nr']
+    return None
 
 
-def upsert_event(evt: Dict[str, Any], access_time: datetime.datetime, room_code: str = None,
-                 mnr: int = None) -> Optional[int]:
-    classes = evt['className'].split(' ')
-    if classes[0] == 'holiday':
-        return None
-
+def upsert_events(events: List[Dict[str, Any]], access_time: datetime.datetime, room_code: str = None, mnr: int = None):
     cur = db.cursor()
 
-    data = {
-        'mnr': mnr,
-        'type': CATEGORY_TYPES[classes[0]],
-        'live': 'livestream' in classes,
-        'online': 'no_attendance' in classes,
-        'start': tucal.parse_iso_timestamp(evt['start'], True),
-        'end': tucal.parse_iso_timestamp(evt['end'], True),
-        'access': access_time,
-        'name': evt['title'],
-        'room': room_code,
-    }
-    data['course'] = get_course(data['name'])
+    courses = {}
+    rows_insert = []
+    rows_update = []
+    for evt in events:
+        classes = evt['className'].split(' ')
+        if classes[0] == 'holiday':
+            continue
 
-    cur.execute("""
-        SELECT event_nr FROM tiss.event
-        WHERE (room_code IS NULL OR %(room)s IS NULL OR COALESCE(room_code, '') = COALESCE(%(room)s, '')) AND
-        (type, name, start_ts, end_ts, course_nr) = (%(type)s, %(name)s, %(start)s, %(end)s, %(course)s)""", data)
-    events = cur.fetch_all()
+        data = {
+            'mnr': mnr,
+            'type': CATEGORY_TYPES[classes[0]],
+            'live': 'livestream' in classes,
+            'online': 'no_attendance' in classes,
+            'start': tucal.parse_iso_timestamp(evt['start'], True),
+            'end': tucal.parse_iso_timestamp(evt['end'], True),
+            'access': access_time,
+            'name': evt['title'],
+            'room': room_code,
+        }
+        data['course'] = data['name'] in courses and courses[data['name']] or get_course(data['name'])
+        courses[data['name']] = data['course']
 
-    if len(events) > 0:
-        data['nr'] = events[0][0]
         cur.execute("""
+            SELECT event_nr FROM tiss.event
+            WHERE (room_code IS NULL OR %(room)s IS NULL OR COALESCE(room_code, '') = COALESCE(%(room)s, '')) AND
+            (type, name, start_ts, end_ts, course_nr) = (%(type)s, %(name)s, %(start)s, %(end)s, %(course)s)""", data)
+        event_nrs = cur.fetch_all()
+
+        if len(event_nrs) > 0:
+            data['nr'] = event_nrs[0][0]
+            rows_update.append(data)
+        else:
+            rows_insert.append(data)
+
+    if len(rows_update) > 0:
+        cur.execute_values("""
             UPDATE tiss.event
-            SET type = %(type)s, start_ts = %(start)s, end_ts = %(end)s, access_ts = %(access)s, name = %(name)s,
-                livestream = %(live)s, online_only = %(online)s, course_nr = %(course)s
-            WHERE event_nr = %(nr)s""", data)
+            SET type = d.type, start_ts = d.start_ts, end_ts = d.end_ts, access_ts = d.access, name = d.name,
+                livestream = d.live, online_only = d.online, course_nr = d.course
+            FROM (VALUES (%(nr)s, %(type)s, %(start)s, %(end)s, %(access)s, %(name)s, %(live)s, %(online)s, %(course)s))
+                 AS d (nr, type, start_ts, end_ts, access, name, live, online, course)
+            WHERE event_nr = d.nr""", rows_update)
         if room_code is not None:
-            cur.execute("UPDATE tiss.event SET room_code = %(room)s WHERE event_nr = %(nr)s", data)
-    else:
-        cur.execute("""
+            cur.execute_values("UPDATE tiss.event SET room_code = %(room)s WHERE event_nr = %(nr)s", rows_update)
+
+    inserted = []
+    if len(rows_insert) > 0:
+        cur.execute_values("""
             INSERT INTO tiss.event (type, room_code, start_ts, end_ts, access_ts, name, description,
                                     livestream, online_only, course_nr)
             VALUES (%(type)s, %(room)s, %(start)s, %(end)s, %(access)s, %(name)s, NULL, %(live)s, %(online)s,
                     %(course)s)
-            RETURNING event_nr""", data)
-        events = cur.fetch_all()
-        data['nr'] = events[0][0]
+            RETURNING event_nr""", rows_insert)
+        inserted = cur.fetch_all()
+    evt_nrs = inserted + [evt['nr'] for evt in rows_update]
 
-    if mnr is not None:
-        cur.execute("""
+    if mnr and len(evt_nrs) > 0:
+        cur.execute_values("""
             INSERT INTO tiss.event_user (event_nr, mnr) 
-            VALUES (%(nr)s, %(mnr)s)
-            ON CONFLICT DO NOTHING""", data)
+            VALUES (%s, %s)
+            ON CONFLICT DO NOTHING""", [(evt, mnr) for evt in evt_nrs])
 
     cur.close()
-    return data['nr']
+    return None
 
 
 def upsert_group_events(events: List[Dict[str, Any]], group: Dict[str, Any], course: Course,
-                        access_time: datetime.datetime, mnr: int = None) -> Optional[int]:
+                        access_time: datetime.datetime, mnr: int = None):
     cur = tucal.db.cursor()
     rows_insert = []
     rows_update = []

@@ -118,12 +118,10 @@ class SyncCalendar(tucal.Sync):
 
         if not self.mnr_int:
             for room_code, cal in self.tiss_room_calendars.items():
-                for evt in cal.events:
-                    tucal.db.tiss.upsert_ical_event(evt, room_code)
+                tucal.db.tiss.upsert_ical_events(cal.events, room_code)
 
             for room_code, cal in self.tiss_room_schedules.items():
-                for evt in cal['events']:
-                    tucal.db.tiss.upsert_event(evt, self.access_time, room_code)
+                tucal.db.tiss.upsert_events(cal['events'], self.access_time, room_code)
 
         for mnr, cal in self.tiss_user_calendars.items():
             if cal is None:
@@ -137,8 +135,7 @@ class SyncCalendar(tucal.Sync):
                        FROM tiss.event e
                        WHERE e.event_nr = eu.event_nr) >= %s""", (mnr, Semester.current().first_day))
 
-            for evt in cal.events:
-                tucal.db.tiss.upsert_ical_event(evt, mnr=mnr)
+            tucal.db.tiss.upsert_ical_events(cal.events, mnr=mnr)
 
         for user_id, cal in self.tuwel_calendars.items():
             if cal is None:
