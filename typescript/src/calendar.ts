@@ -784,7 +784,13 @@ class WeekSchedule {
 
         html += `<h4>`;
         if (evt.dayEvent) {
-            html += `<span class="time">${formatterDate.format(evt.start)} – ${formatterDate.format(evt.end)}</span>`;
+            const start = formatterDate.format(evt.start);
+            const end = formatterDate.format(new Date(Math.max(evt.end.valueOf() - 1, evt.start.valueOf())));
+            if (start !== end) {
+                html += `<span class="time">${start} – ${end}</span>`;
+            } else {
+                html += `<span class="time">${start}</span>`;
+            }
         } else if (evt.end.valueOf() - evt.start.valueOf() >= 86_400_000) {
             html += `<span class="time">${formatterDateTime.format(evt.start)} – ${formatterDateTime.format(evt.end)}</span>`;
         } else {
