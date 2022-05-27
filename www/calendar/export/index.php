@@ -239,21 +239,26 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $icalOpts = $opts['ical'] ?? [];
         $format = "Ymd\\THis";
         $formatZ = "$format\\Z";
+        $formatDate = "Ymd";
 
         if ($userData['hidden'] ?? false) {
             continue;
-        } elseif ($end < $start || $end->getTimestamp() - $start->getTimestamp() > 43_200) {
+        } elseif ($end < $start) {
             continue;
         }
 
         $type = $data['type'];
-        $types = $icalOpts['event_types'] ?? ['course', 'lecture', 'group', 'appointment'];
+        $types = $icalOpts['event_types'] ?? ['course', 'group', 'appointment', 'exam'];
         if ($type === 'course' || $type === 'lecture') {
             if (!in_array('course', $types)) continue;
         } elseif ($type === 'group') {
             if (!in_array('group', $types)) continue;
         } elseif ($type === 'appointment') {
             if (!in_array('appointment', $types)) continue;
+        } elseif ($type === 'exam') {
+            if (!in_array('exam', $types)) continue;
+        } elseif ($type === 'holiday') {
+            if (!in_array('holiday', $types)) continue;
         } elseif ($type !== 'deadline' && $type !== 'assignment') {
             if (!in_array('other', $types)) continue;
         }
@@ -262,11 +267,15 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $isTodo = ($todo && $todos == 'as_todos');
 
         $usePlanned = $icalOpts['planned'] ?? true;
-        if ($isTodo) {
+        if ($todo && $todos === 'omitted') {
+            continue;
+        } elseif ($isTodo) {
             ical_line("BEGIN", ["VTODO"]);
             ical_line("DUE", [($usePlanned ? ($plannedStart ?? $start) : $start)->format($format)], ["TZID=Europe/Vienna"]);
-        } elseif ($todo && $todos === 'omitted') {
-            continue;
+        } elseif ($data['day_event']) {
+            ical_line("BEGIN", ["VEVENT"]);
+            ical_line("DTSTART", [($usePlanned ? ($plannedStart ?? $start) : $start)->format($formatDate)], ["VALUE=DATE"]);
+            ical_line("DTEND", [($usePlanned ? ($plannedEnd ?? $end) : $end)->format($formatDate)], ["VALUE=DATE"]);
         } else {
             ical_line("BEGIN", ["VEVENT"]);
             ical_line("DTSTART", [($usePlanned ? ($plannedStart ?? $start) : $start)->format($format)], ["TZID=Europe/Vienna"]);

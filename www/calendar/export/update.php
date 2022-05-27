@@ -46,7 +46,7 @@ try {
     }
 
     $types = [];
-    foreach (['course', 'group', 'appointment', 'other'] as $t) {
+    foreach (['course', 'group', 'appointment', 'exam', 'holiday', 'other'] as $t) {
         if (($_POST["export-$t-events"] ?? '0') === 'on')
             $types[] = $t;
     }
