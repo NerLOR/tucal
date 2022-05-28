@@ -314,7 +314,7 @@ div.calendar div.special-event {
     font-size: 0.75em;
     text-align: left;
     overflow: hidden;
-    padding: 1px 4px;
+    padding: 1px 0.25em;
     white-space: nowrap;
 }
 
@@ -637,6 +637,18 @@ section.calendar-legend div.legend > span.color-name {
     div.calendar div.settings label {
         display: block;
     }
+
+    div.calendar {
+        --evt-height: 16.6667px;
+    }
+
+    div.calendar div.special-event {
+        font-size: 0.625em;
+    }
+
+    section.calendar-legend .legend-wrapper > div {
+        flex-shrink: 1;
+    }
 }
 
 @media screen and (max-width: 500px) {
@@ -654,5 +666,9 @@ section.calendar-legend div.legend > span.color-name {
     div.calendar {
         font-size: 0.75em;
         --left-size: 40px;
+    }
+
+    div.calendar {
+        --evt-height: 15px;
     }
 }
