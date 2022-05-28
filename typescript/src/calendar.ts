@@ -516,6 +516,8 @@ class WeekSchedule {
             start: number,
             end: number,
             len: number,
+            overL: boolean,
+            overR: boolean,
             pos: number | null,
             event: TucalEvent,
         }[] = []
@@ -528,6 +530,8 @@ class WeekSchedule {
                 start: start,
                 end: end,
                 len: end - start + 1,
+                overL: (event.start < startDate),
+                overR: (event.end > endDate),
                 pos: null,
                 event: event,
             });
@@ -562,6 +566,8 @@ class WeekSchedule {
 
             evt.classList.add("special-event");
             if (event.type) evt.classList.add(event.type, "explicit");
+            if (meta.overL) evt.classList.add("overhang-left");
+            if (meta.overR) evt.classList.add("overhang-right");
             if (event.mode === 'online_only') evt.classList.add("online");
             if (event.status === 'cancelled') evt.classList.add("cancelled");
             if (event.userHidden) evt.classList.add("hidden");

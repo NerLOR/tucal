@@ -296,12 +296,14 @@ div.calendar div.special-event-wrapper {
 div.calendar div.special-event {
     --len: 1;
     --pos: 0;
+    --px-r: 3px;
+    --px-l: 3px;
     margin: 1px 3px;
     position: absolute;
     display: block;
     cursor: pointer;
     box-sizing: border-box;
-    width: calc((100% + 1px) * var(--len) - 7px);
+    width: calc((100% + 1px) * var(--len) - 1px - var(--px-l) - var(--px-r));
     height: calc(var(--evt-height) - 2px);
     left: calc((100% - 1px) / 7 * var(--start));
     top: calc(var(--evt-height) * var(--pos));
@@ -314,6 +316,22 @@ div.calendar div.special-event {
     overflow: hidden;
     padding: 1px 4px;
     white-space: nowrap;
+}
+
+div.calendar div.special-event.overhang-left {
+    --px-l: 0px;
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: 0;
+}
+
+div.calendar div.special-event.overhang-right {
+    --px-r: 0px;
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-right: 0;
 }
 
 div.calendar div.special-event span.course {
