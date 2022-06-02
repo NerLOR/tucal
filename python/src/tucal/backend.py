@@ -386,6 +386,7 @@ def sync_users():
             print(f'Informed scheduler: {job_nr} {job_id} (PID {pid})', flush=True)
         except RuntimeError as e:
             print(f'Error: {e}', flush=True)
+        cur_delay += cur_sync_interval
 
 
 def sync_plugins():
