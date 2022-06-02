@@ -15,6 +15,13 @@ CHILDREN = {}
 CLEANUP_STARTED = False
 
 
+def cleanup_jobs():
+    cur = tucal.db.cursor()
+    cur.execute("UPDATE tucal.job SET status = 'aborted', pid = NULL WHERE status = ANY('waiting', 'running')")
+    cur.close()
+    tucal.db.commit()
+
+
 def cleanup():
     global CLEANUP_STARTED
     if CLEANUP_STARTED:
@@ -26,8 +33,13 @@ def cleanup():
         proc = data['proc']
         print(f'killing {proc.pid}...', flush=True)
         proc.terminate()
-    print('cleanup complete', flush=True)
+
     time.sleep(1)
+
+    print('cleaning up jobs', flush=True)
+    cleanup_jobs()
+
+    print('cleanup complete', flush=True)
     exit(0)
 
 
@@ -228,6 +240,8 @@ if __name__ == '__main__':
     signal.signal(signal.SIGHUP, signal_exit)
     signal.signal(signal.SIGABRT, signal_exit)
     signal.signal(signal.SIGTERM, signal_exit)
+
+    cleanup_jobs()
 
     try:
         os.unlink('/var/tucal/scheduler.sock')
