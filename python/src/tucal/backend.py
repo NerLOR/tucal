@@ -333,21 +333,35 @@ def clear_invalid_tokens():
     cur.close()
 
 
-def schedule_job(job_args: List[str], delay: int = 0) -> Tuple[int, str, int]:
+def schedule_job(job_args: List[str], delay: int = 0) -> Tuple[int, str, Optional[int]]:
     client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     try:
         client.connect('/var/tucal/scheduler.sock')
     except FileNotFoundError:
         raise RuntimeError('unable to contact scheduler')
     client.send((' '.join([str(delay)] + job_args) + '\n').encode('utf8'))
+
     res = client.recv(64).decode('utf8')
+    if res.startswith('error:'):
+        client.close()
+        del client
+        raise RuntimeError(res[6:].strip())
+
+    lines = res.split('\n')
+    res = lines[0].strip().split(' ')
+    pid = None
+    if len(lines) > 1:
+        pid = int(lines[1])
+    elif delay < 1:
+        res = client.recv(64).decode('utf8')
+        lines += res.split('\n')
+        pid = int(lines[1])
+
     client.close()
     del client
-    if res.startswith('error:'):
-        raise RuntimeError(res[6:].strip())
-    res = res.split('\n')[0].strip().split(' ')
-    # job_nr, job_id, PID
-    return int(res[0]), res[1], int(res[2])
+
+    # job_nr, job_id
+    return int(res[0]), res[1], pid
 
 
 def sync_users():

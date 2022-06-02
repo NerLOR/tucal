@@ -120,6 +120,8 @@ class Handler(StreamRequestHandler):
         data['nr'] = job_nr
         data['id'] = job_id
 
+        self.wfile.write(f'{job_nr} {job_id}\n'.encode('utf8'))
+
         if delay > 0:
             print(f'[{job_nr:8}] {job_name} - delay {delay} seconds', flush=True)
             time.sleep(delay)
@@ -139,7 +141,10 @@ class Handler(StreamRequestHandler):
             WHERE job_nr = %(nr)s""", data)
 
         print(f'[{job_nr:8}] {job_name} - PID {pid} - {" ".join(cmd)}', flush=True)
-        self.wfile.write(f'{job_nr} {job_id} {pid}\n'.encode('utf8'))
+        try:
+            self.wfile.write(f'{pid}\n'.encode('utf8'))
+        except BrokenPipeError:
+            pass
 
         reader = tucal.JobStatus()
         data['time'] = reader.time
