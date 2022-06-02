@@ -379,7 +379,7 @@ def sync_users():
     cur_delay = max(0.0, cur_sync_interval - last_sync_diff)
 
     for mnr, diff in rows:
-        delay = min(cur_delay, SYNC_MAX_MINUTES * 60 - float(diff))
+        delay = min(cur_delay, SYNC_MAX_MINUTES * 60 - float(diff or 0))
         print(f'Syncing user {mnr}... (delay {delay / 60:.1f}m)', flush=True)
         try:
             job_nr, job_id, pid = schedule_job(['sync-user', 'keep', str(mnr)], delay=int(delay))
