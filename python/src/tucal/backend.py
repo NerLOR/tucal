@@ -350,7 +350,7 @@ def schedule_job(job_args: List[str], delay: int = 0) -> Tuple[int, str, Optiona
     lines = res.split('\n')
     res = lines[0].strip().split(' ')
     pid = None
-    if len(lines) > 1:
+    if len(lines) > 1 and len(lines[1].strip()) > 0:
         pid = int(lines[1])
     elif delay < 1:
         res = client.recv(64).decode('utf8')
