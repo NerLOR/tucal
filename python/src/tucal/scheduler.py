@@ -139,6 +139,7 @@ class Handler(StreamRequestHandler):
             UPDATE tucal.job
             SET status = %(status)s, pid = %(pid)s
             WHERE job_nr = %(nr)s""", data)
+        tucal.db.commit()
 
         print(f'[{job_nr:8}] {job_name} - PID {pid} - {" ".join(cmd)}', flush=True)
         try:

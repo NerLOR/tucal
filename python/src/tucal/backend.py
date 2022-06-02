@@ -380,7 +380,7 @@ def sync_users():
               (a.sync_try_ts IS NULL OR a.sync_try_ts < now() - INTERVAL '{SYNC_RETRY_MINUTES} minutes') AND
               a.sso_credentials = TRUE
         GROUP BY a.mnr, a.sync_ts, a.sync_try_ts, j.mnr
-        HAVING ('running' != ALL(array_agg(j.status)) AND 'waiting' != ALL(array_agg(j.status))) OR
+        HAVING (NOT ('running' = ANY(array_agg(j.status)) OR 'waiting' = ANY(array_agg(j.status)))) OR
                j.mnr IS NULL
         ORDER BY a.sync_try_ts""")
     rows = cur.fetch_all()
