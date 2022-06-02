@@ -148,7 +148,6 @@ class Handler(StreamRequestHandler):
         cur.execute("""
             UPDATE tucal.job
             SET data = %(data)s,
-                start_ts = %(start)s,
                 time = %(time)s,
                 name = %(name)s
             WHERE job_nr = %(nr)s""", data)
