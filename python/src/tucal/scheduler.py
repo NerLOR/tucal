@@ -120,7 +120,9 @@ class Handler(StreamRequestHandler):
         data['nr'] = job_nr
         data['id'] = job_id
 
-        time.sleep(delay)
+        if delay > 0:
+            print(f'[{job_nr:8}] {job_name} - delay {delay} seconds', flush=True)
+            time.sleep(delay)
 
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         pid = proc.pid
