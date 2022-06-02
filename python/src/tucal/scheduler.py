@@ -105,7 +105,7 @@ class Handler(StreamRequestHandler):
             return
 
         data = {
-            'name': job_name.replace('_', ' '),
+            'name': job_name.replace('-', ' '),
             'pid': None,
             'mnr': mnr,
             'status': 'waiting',
