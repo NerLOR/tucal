@@ -17,7 +17,7 @@ CLEANUP_STARTED = False
 
 def cleanup_jobs():
     cur = tucal.db.cursor()
-    cur.execute("UPDATE tucal.job SET status = 'aborted', pid = NULL WHERE status = ANY('waiting', 'running')")
+    cur.execute("UPDATE tucal.job SET status = 'aborted', pid = NULL WHERE status = ANY('{waiting, running}')")
     cur.close()
     tucal.db.commit()
 
