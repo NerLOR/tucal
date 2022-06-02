@@ -378,10 +378,10 @@ def sync_users():
     cur_sync_interval = min(sync_interval, sync_interval_usable)
     cur_delay = max(0.0, cur_sync_interval - last_sync_diff)
 
-    for mnr, in rows:
+    for mnr, diff in rows:
         print(f'Syncing user {mnr}...', flush=True)
         try:
-            delay = min(cur_delay, SYNC_MAX_MINUTES * 60 - row[1])
+            delay = min(cur_delay, SYNC_MAX_MINUTES * 60 - float(diff))
             job_nr, job_id, pid = schedule_job(['sync-user', 'keep', str(mnr)], delay=int(delay))
             print(f'Informed scheduler: {job_nr} {job_id} (PID {pid})', flush=True)
         except RuntimeError as e:
