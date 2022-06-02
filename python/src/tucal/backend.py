@@ -354,7 +354,7 @@ def sync_users():
     cur = tucal.db.cursor()
     cur.execute("SELECT SUM(sso_credentials::int), MIN(EXTRACT(EPOCH FROM (now() - sync_try_ts))) FROM tucal.v_account")
     row = cur.fetch_all()[0]
-    num_users, last_sync_diff = row
+    num_users, last_sync_diff = row[0], float(row[1])
     sync_interval = SYNC_MINUTES / num_users * 60
 
     cur.execute(f"""
