@@ -1,5 +1,5 @@
 
-from typing import Dict, Any, Optional, Iterable, Tuple
+from typing import Dict, Any, Optional, List, Tuple
 import time
 import json
 import datetime
@@ -10,6 +10,11 @@ import smtplib
 from email.mime.text import MIMEText
 
 import tucal.db
+
+
+SYNC_MINUTES = 6 * 60
+SYNC_MAX_MINUTES = 8 * 60
+SYNC_RETRY_MINUTES = 30
 
 
 ZOOM_LINK = re.compile(r'https?://([a-z]*\.zoom\.us[A-Za-z0-9/?=]*)')
@@ -328,13 +333,13 @@ def clear_invalid_tokens():
     cur.close()
 
 
-def schedule_job(job_args: Iterable[str]) -> Tuple[int, str, int]:
+def schedule_job(job_args: List[str], delay: int = 0) -> Tuple[int, str, int]:
     client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     try:
         client.connect('/var/tucal/scheduler.sock')
     except FileNotFoundError:
         raise RuntimeError('unable to contact scheduler')
-    client.send((' '.join(job_args) + '\n').encode('utf8'))
+    client.send((' '.join([str(delay)] + job_args) + '\n').encode('utf8'))
     res = client.recv(64).decode('utf8')
     client.close()
     del client
@@ -347,22 +352,35 @@ def schedule_job(job_args: Iterable[str]) -> Tuple[int, str, int]:
 
 def sync_users():
     cur = tucal.db.cursor()
-    cur.execute("""
-        SELECT a.mnr
+    cur.execute("SELECT SUM(sso_credentials::int), MIN(EXTRACT(EPOCH FROM (now() - sync_try_ts))) FROM tucal.v_account")
+    row = cur.fetch_all()[0]
+    num_users, last_sync_diff = row
+    sync_interval = SYNC_MINUTES / num_users * 60
+
+    cur.execute(f"""
+        SELECT a.mnr, EXTRACT(EPOCH FROM (now() - a.sync_try_ts)) AS diff
         FROM tucal.v_account a
             LEFT JOIN tucal.v_job j ON (j.mnr = a.mnr AND j.name = 'sync user')
-        WHERE (a.sync_ts IS NULL OR a.sync_ts < now() - INTERVAL '6 hours') AND
-              (a.sync_try_ts IS NULL OR a.sync_try_ts < now() - INTERVAL '30 minutes') AND
+        WHERE (a.sync_ts IS NULL OR a.sync_ts < now() - INTERVAL '{SYNC_MINUTES} minutes') AND
+              (a.sync_try_ts IS NULL OR a.sync_try_ts < now() - INTERVAL '{SYNC_RETRY_MINUTES} minutes') AND
               a.sso_credentials = TRUE
-        GROUP BY a.mnr, j.mnr
-        HAVING 'running' != ALL(array_agg(j.status)) OR
+        GROUP BY a.mnr, a.sync_ts, a.sync_try_ts, j.mnr
+        HAVING ('running' != ALL(array_agg(j.status)) AND 'waiting' != ALL(array_agg(j.status))) OR
                j.mnr IS NULL
-        LIMIT 2""")
+        ORDER BY a.sync_try_ts""")
     rows = cur.fetch_all()
+
+    time_usable = rows[0][1] - rows[-1][1] + (SYNC_MAX_MINUTES - SYNC_MINUTES) * 60
+    sync_interval_usable = time_usable / len(rows)
+
+    cur_sync_interval = min(sync_interval, sync_interval_usable)
+    cur_delay = max(0.0, cur_sync_interval - last_sync_diff)
+
     for mnr, in rows:
         print(f'Syncing user {mnr}...', flush=True)
         try:
-            job_nr, job_id, pid = schedule_job(['sync-user', 'keep', str(mnr)])
+            delay = min(cur_delay, SYNC_MAX_MINUTES * 60 - row[1])
+            job_nr, job_id, pid = schedule_job(['sync-user', 'keep', str(mnr)], delay=int(delay))
             print(f'Informed scheduler: {job_nr} {job_id} (PID {pid})', flush=True)
         except RuntimeError as e:
             print(f'Error: {e}', flush=True)

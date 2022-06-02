@@ -42,7 +42,7 @@ class Handler(StreamRequestHandler):
             self.wfile.write(b'error: no input\n')
             return
         job = re.sub(r'\s+', ' ', job.decode('utf8').strip()).split(' ')
-        job_name, job = job[0], job[1:]
+        delay, job_name, job = int(job[0]), job[1], job[2:]
         cur = tucal.db.cursor()
 
         cmd = ['python3', '-m']
@@ -92,18 +92,12 @@ class Handler(StreamRequestHandler):
             self.wfile.write(b'error: unknown job type\n')
             return
 
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-        pid = proc.pid
-        CHILDREN[pid] = {'proc': proc}
-        proc.stdin.write(stdin.encode('utf8'))
-        proc.stdin.close()
-
         data = {
-            'name': f'',
-            'pid': pid,
+            'name': job_name.replace('_', ' '),
+            'pid': None,
             'mnr': mnr,
-            'status': 'running',
-            'data': '{}'
+            'status': 'waiting',
+            'data': '{}',
         }
         cur.execute("""
             INSERT INTO tucal.job (name, pid, mnr, status)
@@ -111,22 +105,42 @@ class Handler(StreamRequestHandler):
             RETURNING job_nr, job_id""", data)
         tucal.db.commit()
         job_nr, job_id = cur.fetch_all()[0]
+        data['nr'] = job_nr
+        data['id'] = job_id
 
+        time.sleep(delay)
+
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        pid = proc.pid
+        CHILDREN[pid] = {'proc': proc}
+        proc.stdin.write(stdin.encode('utf8'))
+        proc.stdin.close()
         CHILDREN[pid]['job_nr'] = job_nr
+
+        data['status'] = 'running'
+        data['pid'] = pid
+        cur.execute("""
+            UPDATE tucal.job
+            SET status = %(status)s, pid = %(pid)s
+            WHERE job_nr = %(nr)s""", data)
 
         print(f'[{job_nr:8}] {job_name} - PID {pid} - {" ".join(cmd)}', flush=True)
         self.wfile.write(f'{job_nr} {job_id} {pid}\n'.encode('utf8'))
 
         reader = tucal.JobStatus()
-        data = {
-            'nr': job_nr,
-            'status': 'running',
-            'name': None,
-            'time': reader.time,
-            'start': reader.start.isoformat() if reader.start else None,
-            'data': reader.json(),
-            'err': None,
-        }
+        data['time'] = reader.time
+        data['start'] = reader.start.isoformat() if reader.start else None
+        data['data'] = reader.json(),
+        data['err'] = None
+
+        cur.execute("""
+            UPDATE tucal.job
+            SET data = %(data)s,
+                start_ts = %(start)s,
+                time = %(time)s,
+                name = %(name)s
+            WHERE job_nr = %(nr)s""", data)
+        tucal.db.commit()
 
         code: int
         while True:
@@ -151,7 +165,11 @@ class Handler(StreamRequestHandler):
             data['data'] = reader.json()
             cur.execute("""
                 UPDATE tucal.job
-                SET data = %(data)s, status = %(status)s, start_ts = %(start)s, time = %(time)s, name = %(name)s
+                SET data = %(data)s,
+                    status = %(status)s,
+                    start_ts = %(start)s,
+                    time = %(time)s,
+                    name = %(name)s
                 WHERE job_nr = %(nr)s""", data)
             tucal.db.commit()
 
