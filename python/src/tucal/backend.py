@@ -369,6 +369,8 @@ def sync_users():
                j.mnr IS NULL
         ORDER BY a.sync_try_ts""")
     rows = cur.fetch_all()
+    if len(rows) == 0:
+        return
 
     time_usable = rows[0][1] - rows[-1][1] + (SYNC_MAX_MINUTES - SYNC_MINUTES) * 60
     sync_interval_usable = time_usable / len(rows)
