@@ -1,8 +1,9 @@
 # https://events.htu.at/
 
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 import requests
 import json
+import datetime
 
 import tucal
 import tucal.db
@@ -181,7 +182,7 @@ class Sync(tucal.Sync):
             'id': event['id'],
             'group': group_nr,
             'start': tucal.parse_iso_timestamp(event['beginsOn'], True),
-            'end': tucal.parse_iso_timestamp(event['endsOn'], True),
+            'end': tucal.parse_iso_timestamp(event['endsOn'], True) if event['endsOn'] else tucal.parse_iso_timestamp(event['beginsOn'], True) + datetime.timedelta(hours=1),
             'data': json.dumps({'htu': event}),
         } for event in self.events]
 
