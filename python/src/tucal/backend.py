@@ -348,7 +348,7 @@ def schedule_job(job_args: List[str], delay: int = 0) -> Tuple[int, str, Optiona
         raise RuntimeError(res[6:].strip())
 
     lines = res.split('\n')
-    res = lines[0].strip().split(' ')
+    res_parts = lines[0].strip().split(' ')
     pid = None
     if len(lines) > 1 and len(lines[1].strip()) > 0:
         pid = int(lines[1])
@@ -362,7 +362,7 @@ def schedule_job(job_args: List[str], delay: int = 0) -> Tuple[int, str, Optiona
     del client
 
     # job_nr, job_id, pid
-    return int(res[0]), res[1], pid
+    return int(res_parts[0]), res_parts[1], pid
 
 
 def sync_users():

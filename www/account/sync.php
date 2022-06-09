@@ -26,7 +26,11 @@ try {
     [$jobNr, $jobId, $pid] = schedule_job(['sync-user', 'keep', $USER['mnr']]);
 } catch (RuntimeException $e) {
     $STATUS = 500;
-    $ERROR = _('Error') . ": " . $e->getMessage();
+    if ($e->getMessage() === '') {
+        $ERROR = _('Unknown error');
+    } else {
+        $ERROR = _('Error') . ": " . $e->getMessage();
+    }
     goto doc;
 }
 
