@@ -6,3 +6,4 @@ dest/
 /*.ini
 /*.php
 !/*.default.*
+/test.*
