@@ -292,6 +292,24 @@ msgstr "Sonstiger Termin"
 msgid "Online-only event"
 msgstr "Termin findet ausschließlich online statt"
 
+msgid "LectureTube"
+msgstr "LectureTube"
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "YouTube"
+msgstr "YouTube"
+
+msgid "Zoom URL"
+msgstr "Zoom-URL"
+
+msgid "YouTube URL"
+msgstr "YouTube-URL"
+
+msgid "LectureTube livestream"
+msgstr "LectureTube-Livestream"
+
 msgid "Striped"
 msgstr "Gestreift"
 

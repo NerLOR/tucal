@@ -292,6 +292,24 @@ msgstr "Ondara Teamin"
 msgid "Online-only event"
 msgstr "Nua onlein"
 
+msgid "LectureTube"
+msgstr "LectureTube"
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "YouTube"
+msgstr "YouTube"
+
+msgid "Zoom URL"
+msgstr "Zoom-URL"
+
+msgid "YouTube URL"
+msgstr "YouTube-URL"
+
+msgid "LectureTube livestream"
+msgstr "LectureTube-Livestream"
+
 msgid "Striped"
 msgstr "Gstreift"
 

@@ -430,6 +430,24 @@ msgstr "Hybrid"
 msgid "Online-only"
 msgstr "Online-only"
 
+msgid "LectureTube"
+msgstr "LectureTube"
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "YouTube"
+msgstr "YouTube"
+
+msgid "Zoom URL"
+msgstr "Zoom URL"
+
+msgid "YouTube URL"
+msgstr "YouTube URL"
+
+msgid "LectureTube livestream"
+msgstr "LectureTube livestream"
+
 msgid "Copy link"
 msgstr "Copy link"
 

@@ -254,9 +254,7 @@ function initUsernames() {
     }
 }
 
-async function api(endpoint: string,
-                   urlData: {[index: string]: any} | null = null,
-                   data: {[index: string]: any} | null = null) {
+async function api(endpoint: string, urlData: {[index: string]: any} | null = null, data: {[index: string]: any} | null = null) {
     let info = {};
     if (data !== null) {
         info = {

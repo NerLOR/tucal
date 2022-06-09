@@ -61,6 +61,7 @@ interface TucalEventJSON {
         day_event: boolean | null | undefined,
         zoom: string | null | undefined,
         lt: boolean | null | undefined,
+        yt: string | null | undefined,
         url: string | null | undefined,
         type: string | null | undefined,
         mode: string | null | undefined,
@@ -336,6 +337,7 @@ class TucalEvent {
     roomNr: number | null;
     zoom: string | null;
     lectureTube: boolean | null;
+    youtube: string | null;
     url: string | null;
     tissUrl: string | null;
     tuwelUrl: string | null;
@@ -376,6 +378,7 @@ class TucalEvent {
         this.desc = event.data.desc || null;
         this.zoom = event.data.zoom || null;
         this.lectureTube = event.data.lt || null;
+        this.youtube = event.data.yt || null;
         this.url = event.data.url || null;
         this.tissUrl = event.data.tiss_url || null;
         this.tuwelUrl = event.data.tuwel_url || null;

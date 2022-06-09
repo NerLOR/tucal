@@ -6,6 +6,12 @@ const END_TIME = 22 * 60;  // 22:00 [min]
 const CACHE_EVENTS = 15;  // 15 [min]
 const LOOK_AHEAD = 8;  // 8 [week]
 
+const TISS_URL = "https://tiss.tuwien.ac.at/";
+const TUWEL_URL = "https://tuwel.tuwien.ac.at/";
+
+const ZOOM_PATTERN = "https://(tuwien\\.)?zoom.us/.*";
+const YOUTUBE_PATTERN = "(https://youtu\\.be/.*)|(https://www.youtube.com/.*)";
+
 const EVENT_STATUSES: {[index: string]: string} = {
     "confirmed": "Confirmed",
     "tentative": "Tentative",
@@ -678,8 +684,9 @@ class WeekSchedule {
                     '<div class="pre"></div>' +
                     '<div class="post"></div>' +
                     '<div class="event-data">' +
-                    (event.lectureTube && ltLink ? `<a class="live" href="${ltLink}" target="_blank" title="LectureTube Livestream"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
-                    (event.zoom !== null ? `<a class="live" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>` : '') +
+                    (event.lectureTube && ltLink ? `<a class="live lt" href="${ltLink}" target="_blank" title="${_('LectureTube livestream')}"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
+                    (event.zoom !== null ? `<a class="live zoom" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="${_('Zoom')}"/></a>` : '') +
+                    (event.youtube !== null ? `<a class="live yt" target="_blank" title="Zoom"><img src="/res/icons/youtube.png" alt="${_('YouTube')}"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
                     `<div class="course"><span class="course">${course?.getName() || event.groupName}</span>` +
                     (room !== null ? ` - <span class="room">${room.getName()}</span>` : '') + '</div><div class="group">' +
@@ -687,8 +694,10 @@ class WeekSchedule {
                     (event.summary !== null ? `<div class="summary"></div>` : '') +
                     '</div>';
 
-                const aLive = evt.getElementsByClassName('live')[0];
-                if (aLive && event.zoom) aLive.setAttribute('href', event.zoom);
+                const aZoom = evt.getElementsByClassName('zoom')[0];
+                if (aZoom && event.zoom) aZoom.setAttribute('href', event.zoom);
+                const aYt = evt.getElementsByClassName('yt')[0];
+                if (aYt && event.youtube) aYt.setAttribute('href', event.youtube);
 
                 const divSummary = <HTMLElement> evt.getElementsByClassName('summary')[0];
                 if (divSummary && event.summary !== null) divSummary.innerText = event.summary;
@@ -744,12 +753,14 @@ class WeekSchedule {
 
         const ltLink = room && room.getLectureTubeLink() || null;
         if (evt.lectureTube && ltLink) {
-            html += `<a class="live" href="${ltLink}" target="_blank" title="LectureTube">` +
-                `<img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>`;
+            html += `<a class="live lt" href="${ltLink}" target="_blank" title="${_('LectureTube livestream')}">` +
+                `<img src="/res/icons/lecturetube-live.png" alt="${_('LectureTube livestream')}"/></a>`;
         }
-
         if (evt.zoom) {
-            html += `<a class="live" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="Zoom"/></a>`;
+            html += `<a class="live zoom" href="${evt.zoom}" target="_blank" title="${_('Zoom')}"><img src="/res/icons/zoom.png" alt="${_('Zoom')}"/></a>`;
+        }
+        if (evt.youtube) {
+            html += `<a class="live yt" href="${evt.youtube}" target="_blank" title="${_('YouTube')}"><img src="/res/icons/youtube.png" alt="${_('YouTube')}"/></a>`;
         }
 
         if (course) {
@@ -808,8 +819,8 @@ class WeekSchedule {
                 `<span class="day">(${formatterDay.format(evt.start)})</span>`;
         }
 
-        const tissUrl = (evt.url && evt.url.startsWith('https://tiss.tuwien.ac.at/')) ? evt.url : evt.tissUrl;
-        const tuwelUrl = (evt.url && evt.url.startsWith('https://tuwel.tuwien.ac.at/')) ? evt.url : evt.tuwelUrl;
+        const tissUrl = (evt.url && evt.url.startsWith(TISS_URL)) ? evt.url : evt.tissUrl;
+        const tuwelUrl = (evt.url && evt.url.startsWith(TUWEL_URL)) ? evt.url : evt.tuwelUrl;
 
         if (this.subject === MNR && tissUrl) {
             html += `<a class="link" href="${tissUrl}" target="_blank">TISS</a>`;
@@ -861,10 +872,11 @@ class WeekSchedule {
         html += '<hr/><div class="form-pre hidden">';
 
         html += `<div class="container"><div>${_('Live')}:</div><div>` +
-            `<label class="radio"><input type="radio" name="live" value="false" checked/> ${_('Not live')}</label>` +
-            `<label class="radio"><input type="radio" name="live" value="lt"/> LectureTube</label>` +
-            `<label class="radio"><input type="radio" name="live" value="zoom"/> Zoom</label>` +
-            `<div class="url hidden"><input type="url" name="live-url" placeholder="URL" class="line block" required/></div>` +
+            `<label class="radio"><input type="checkbox" name="lt"/> ${_('LectureTube')}</label>` +
+            `<label class="radio"><input type="checkbox" name="zoom"/> ${_('Zoom')}</label>` +
+            `<label class="radio"><input type="checkbox" name="yt"/> ${_('YouTube')}</label>` +
+            `<div class="url hidden"><input type="url" name="zoom-url" placeholder="${_('Zoom URL')}" class="line block" required pattern="${ZOOM_PATTERN}"/></div>` +
+            `<div class="url hidden"><input type="url" name="yt-url" placeholder="${_('YouTube URL')}" class="line block" required pattern="${YOUTUBE_PATTERN}"/></div>` +
             `</div></div>`;
 
         html += `<div class="container"><div>${_('Status')}:</div><div>` +
@@ -917,9 +929,13 @@ class WeekSchedule {
         const formPre = div.getElementsByClassName("form-pre");
         if (!button || !submitButton || !form || !formDiv) throw new Error();
 
-        const live = form['live'];
-        const liveUrl = form['live-url'];
-        const liveUrlDiv = liveUrl.parentElement;
+        const useLt = form['lt'];
+        const useZoom = form['zoom'];
+        const useYt = form['yt'];
+        const zoomUrl = form['zoom-url'];
+        const ytUrl = form['yt-url'];
+        const zoomUrlDiv = zoomUrl.parentElement;
+        const ytUrlDiv = ytUrl.parentElement;
         const roomSelect = form['room'];
         const summary = form['summary'];
         const status = form['status'];
@@ -955,13 +971,11 @@ class WeekSchedule {
         });
 
         const hasLiveChanged = (): boolean => {
-            return (evt.zoom && live.value !== 'zoom') ||
-                (evt.lectureTube && live.value !== 'lt') ||
-                (!evt.zoom && !evt.lectureTube && live.value !== 'false');
-        }
-
-        const hasLiveUrlChanged = (): boolean => {
-            return evt.zoom && (evt.zoom !== liveUrl.value) || false;
+            return (!!evt.zoom !== useZoom.checked) ||
+                (useZoom.checked && evt.zoom !== zoomUrl.value) ||
+                (!!evt.lectureTube !== useLt.checked) ||
+                (!!evt.youtube !== useYt.checked) ||
+                (useYt.checked && evt.youtube !== ytUrl.value);
         }
 
         const hasRoomChanged = (): boolean => {
@@ -993,7 +1007,6 @@ class WeekSchedule {
 
         const hasChanged = (): boolean => {
             return hasLiveChanged() ||
-                hasLiveUrlChanged() ||
                 hasRoomChanged() ||
                 hasStatusChanged() ||
                 hasModeChanged() ||
@@ -1006,21 +1019,24 @@ class WeekSchedule {
             // disable LectureTube
             if (roomSelect.value && ROOMS) {
                 const room = ROOMS[parseInt(roomSelect.value)];
-                live[1].disabled = (!room || !room.ltName);
+                useLt.disabled = (!room || !room.ltName);
             } else {
-                live[1].disabled = true;
+                useLt.disabled = true;
             }
 
-            if (live[1].disabled && live.value === 'lt') {
-                live.value = 'false';
-            }
-
-            if (live.value === 'zoom') {
-                if (liveUrlDiv.classList.contains('hidden')) liveUrlDiv.classList.remove('hidden');
-                liveUrl.required = 'required';
+            if (useZoom.checked) {
+                if (zoomUrlDiv.classList.contains('hidden')) zoomUrlDiv.classList.remove('hidden');
+                zoomUrl.required = 'required';
             } else {
-                if (!liveUrlDiv.classList.contains('hidden')) liveUrlDiv.classList.add('hidden');
-                liveUrl.required = undefined;
+                if (!zoomUrlDiv.classList.contains('hidden')) zoomUrlDiv.classList.add('hidden');
+                zoomUrl.required = undefined;
+            }
+            if (useYt.checked) {
+                if (ytUrlDiv.classList.contains('hidden')) ytUrlDiv.classList.remove('hidden');
+                ytUrl.required = 'required';
+            } else {
+                if (!ytUrlDiv.classList.contains('hidden')) ytUrlDiv.classList.add('hidden');
+                ytUrl.required = undefined;
             }
 
             if (hasChanged()) {
@@ -1033,12 +1049,15 @@ class WeekSchedule {
         }
 
         if (evt.zoom) {
-            live.value = 'zoom';
-            liveUrl.value = evt.zoom;
-        } else if (evt.lectureTube) {
-            live.value = 'lt';
-        } else {
-            form['live'].value = 'false';
+            useZoom.checked = true;
+            zoomUrl.value = evt.zoom;
+        }
+        if (evt.lectureTube) {
+            useLt.checked = true;
+        }
+        if (evt.youtube) {
+            useYt.checked = true;
+            ytUrl.value = evt.youtube;
         }
 
         if (room) roomSelect.value = `${room.nr}`;
@@ -1063,17 +1082,10 @@ class WeekSchedule {
             const dataUser: {[index: string]: any} = {};
             const user: {[index: string]: any} = {};
 
-            if (hasLiveChanged() || hasLiveUrlChanged()) {
-                if (live.value === 'lt') {
-                    dataUser['lt'] = true;
-                    dataUser['zoom'] = null;
-                } else if (live.value === 'zoom') {
-                    dataUser['lt'] = false;
-                    dataUser['zoom'] = liveUrl.value.trim();
-                } else {
-                    dataUser['lt'] = false;
-                    dataUser['zoom'] = null;
-                }
+            if (hasLiveChanged()) {
+                dataUser['lt'] = !!useLt.checked;
+                dataUser['zoom'] = (useZoom.checked) ? zoomUrl.value.trim() : null;
+                dataUser['yt'] = (useYt.checked) ? ytUrl.value.trim() : null;
             }
 
             if (hasStatusChanged()) {
