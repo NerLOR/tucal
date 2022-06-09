@@ -53,7 +53,8 @@ class Sync(tucal.Sync):
         super().__init__(session)
 
     def fetch(self):
-        r = requests.get(WEBCAL)
+        session = self.session.session
+        r = session.get(WEBCAL)
         if r.status_code != 200:
             return
 

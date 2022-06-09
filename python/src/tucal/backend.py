@@ -51,6 +51,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         'desc': None,
         'zoom': None,
         'lt': False,
+        'yt': None,
         'url': None,
         'type': None,
         'mode': None,
@@ -63,7 +64,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
     if 'user' not in data:
         data['user'] = {}
 
-    tuwel, tiss, tiss_extra, aurora, htu, holidays = None, None, None, None, None, None
+    tuwel, tiss, tiss_extra, aurora, htu, holidays, tuwien = None, None, None, None, None, None, None
 
     # FIXME better event merge
     cur = tucal.db.cursor()
@@ -82,6 +83,8 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             htu = xdata['htu']
         if 'holidays' in xdata:
             holidays = xdata['holidays']
+        if 'tuwien' in xdata:
+            tuwien = xdata['tuwien']
 
     if tuwel:
         unix_ts = int(time.mktime(start_ts.timetuple()))
@@ -195,6 +198,13 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
         data['day_event'] = True
         data['summary'] = holidays['name']
         data['type'] = 'holiday'
+
+    if tuwien:
+        data['day_event'] = tuwien['day_event']
+        data['summary'] = tuwien['summary']
+        data['desc'] = tuwien['description']
+        data['source_name'] = 'TU Events'
+        data['source_url'] = tuwien['url']
 
     # delete redundant data['user'] keys
     data_items = {(k, v) for k, v in data.items() if v.__hash__}

@@ -167,7 +167,8 @@ class Sync(tucal.Sync):
         super().__init__(session)
 
     def fetch(self):
-        r = requests.post(f'{EVENTS_HTU}/api', json=QUERY)
+        session = self.session.session
+        r = session.post(f'{EVENTS_HTU}/api', json=QUERY)
         if r.status_code != 200:
             raise RuntimeError()
 
