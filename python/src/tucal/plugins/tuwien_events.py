@@ -37,7 +37,11 @@ def repair_ics(data: str) -> str:
             parts = line.split(':', 1)
             if 'T' in parts[1]:
                 continue
-            lines[i] = parts[0].split(';')[0] + ';VALUE=DATE:' + parts[1]
+            date = parts[1]
+            if line.startswith('DTEND'):
+                dt = datetime.date.fromisoformat(f'{date[:4]}-{date[4:6]}-{date[6:8]}') + datetime.timedelta(days=1)
+                date = dt.strftime('%Y%m%d')
+            lines[i] = parts[0].split(';')[0] + ';VALUE=DATE:' + date
         repaired += '\r\n'.join(lines + [''])
     repaired += 'END:VCALENDAR\r\n'
     return repaired
