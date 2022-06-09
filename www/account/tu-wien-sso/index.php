@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         [$jobNr, $jobId, $pid] = schedule_job($data);
     } catch (RuntimeException $e) {
         header("Status: 500");
-        if ($e->getMessage() === '') {
+        if (!$e->getMessage()) {
             $errorMsg = _('Unknown error');
         } else {
             $errorMsg = _('Error') . ": " . $e->getMessage();
