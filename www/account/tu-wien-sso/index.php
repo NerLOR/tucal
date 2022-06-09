@@ -28,6 +28,8 @@ if ($jobId === null) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mode = $_POST['mode'] ?? null;
 
+    $data = ['sync-user'];
+
     if ($mode === 'store') {
         $checkbox = $_POST['sso-store'] ?? null;
         if ($checkbox !== 'accept') {
@@ -37,12 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pwd = $_POST['password-store'] ?? null;
         $tfaGen = $_POST['2fa-generator'] ?? null;
         $tfaToken = null;
-        $store = 'store';
+        $data[] = 'store';
     } elseif ($mode === 'no-store') {
         $pwd = $_POST['password-no-store'] ?? null;
         $tfaToken = $_POST['2fa-token'] ?? null;
         $tfaGen = null;
-        $store = '';
     } else {
         header("Status: 400");
         goto doc;
@@ -53,14 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         goto doc;
     }
 
-    $sock = fsockopen('unix:///var/tucal/scheduler.sock', -1, $errno, $errstr);
-    if (!$sock) {
-        header("Status: 500");
-        $errorMsg = _('Unable to open unix socket') . ": $errstr";
-        goto doc;
-    }
+    $data[] = 'keep';
+    $data[] = $USER['mnr'];
+    $data[] = base64_encode($pwd);
 
-    $pwd64 = base64_encode($pwd);
     if ($tfaGen !== null) {
         $len = strlen($tfaGen);
         if ($len >= 103 && $len <= 109) {
@@ -77,31 +74,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors['2fa-gen'] = _('Invalid format');
             goto doc;
         }
-        $tfa = base64_encode($tfaGen);
+        $data[] = base64_encode($tfaGen);
     } elseif ($tfaToken !== null) {
-        $tfa = str_replace(' ', '', $tfaToken);
-    } else {
-        $tfa = '';
+        $data[] = str_replace(' ', '', $tfaToken);
     }
 
-    $data = "sync-user $store keep $USER[mnr] $pwd64 $tfa";
-    fwrite($sock, "$data\n");
-    $res = fread($sock, 64);
-
-    if (substr($res, 0, 6) === 'error:') {
+    try {
+        [$jobNr, $jobId, $pid] = schedule_job($data);
+    } catch (RuntimeException $e) {
         header("Status: 500");
-        $errorMsg = _('Error') . ": " . trim(substr($res, 6));
+        $errorMsg = _('Error') . ": " . $e->getMessage();
         goto doc;
     }
 
-    $res = explode(' ', $res);
-    if (sizeof($res) < 2) {
-        header("Status: 500");
-        $errorMsg = _('Unknown error');
-        goto doc;
-    }
-
-   redirect("/account/tu-wien-sso/?job=$res[1]");
+   redirect("/account/tu-wien-sso/?job=$jobId");
 } elseif ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
     $STATUS = 405;
     header("Allow: HEAD, GET, POST");

@@ -22,31 +22,15 @@ if (sizeof($rows) > 0) {
     redirect("/account/tu-wien-sso?job=$jobId");
 }
 
-$sock = fsockopen('unix:///var/tucal/scheduler.sock', -1, $errno, $errstr);
-if (!$sock) {
+try {
+    [$jobNr, $jobId, $pid] = schedule_job(['sync-user', 'keep', $USER['mnr']]);
+} catch (RuntimeException $e) {
     $STATUS = 500;
-    $ERROR = _('Unable to open unix socket') . ": $errstr";
+    $ERROR = _('Error') . ": " . $e->getMessage();
     goto doc;
 }
 
-$data = "sync-user keep $USER[mnr]";
-fwrite($sock, "$data\n");
-$res = fread($sock, 64);
-
-if (substr($res, 0, 6) === 'error:') {
-    $STATUS = 500;
-    $ERROR = _('Error') . ": " . trim(substr($res, 6));
-    goto doc;
-}
-
-$res = explode(' ', $res);
-if (sizeof($res) < 2) {
-    $STATUS = 500;
-    $ERROR = _('Unknown error');
-    goto doc;
-}
-
-redirect("/account/tu-wien-sso?job=$res[1]");
+redirect("/account/tu-wien-sso?job=$jobId");
 
 doc:
 require "../.php/main.php";

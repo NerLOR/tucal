@@ -341,7 +341,7 @@ def schedule_job(job_args: List[str], delay: int = 0) -> Tuple[int, str, Optiona
         raise RuntimeError('unable to contact scheduler')
     client.send((' '.join([str(delay)] + job_args) + '\n').encode('utf8'))
 
-    res = client.recv(64).decode('utf8')
+    res = client.recv(256).decode('utf8')
     if res.startswith('error:'):
         client.close()
         del client
@@ -353,7 +353,7 @@ def schedule_job(job_args: List[str], delay: int = 0) -> Tuple[int, str, Optiona
     if len(lines) > 1 and len(lines[1].strip()) > 0:
         pid = int(lines[1])
     elif delay < 1:
-        res = client.recv(64).decode('utf8')
+        res = client.recv(256).decode('utf8')
         lines += res.split('\n')
         pid = lines[1].strip()
         pid = int(pid) if len(pid) > 0 else None
@@ -361,7 +361,7 @@ def schedule_job(job_args: List[str], delay: int = 0) -> Tuple[int, str, Optiona
     client.close()
     del client
 
-    # job_nr, job_id
+    # job_nr, job_id, pid
     return int(res[0]), res[1], pid
 
 

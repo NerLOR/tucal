@@ -227,3 +227,40 @@ function logout(): bool {
         return false;
     }
 }
+
+function schedule_job(array $job_args, int $delay = 0): array {
+    $sock = fsockopen('unix:///var/tucal/scheduler.sock', -1, $errno, $errstr);
+    if (!$sock)
+        throw new RuntimeException("Unable to contact scheduler: $errstr");
+
+    $data = "";
+    if ($delay > 0) $data .= "$delay ";
+    $data .= implode(" ", $job_args);
+
+    fwrite($sock, "$data\n");
+    $res = fread($sock, 256);
+
+    if (substr($res, 0, 6) === 'error:')
+        throw new RuntimeException(trim(substr($res, 6)));
+
+    $lines = explode("\n", $res);
+    $res = explode(' ', trim($lines[0]));
+    $pid = null;
+    if (sizeof($lines) > 1 && strlen(trim($lines[1])) > 0) {
+        $pid = (int) $lines[1];
+    } elseif ($delay < 1) {
+        $res = fread($sock, 256);
+        $lines = array_merge($lines, explode("\n", $res));
+        $pid = trim($lines[1]);
+        if (strlen($pid) > 0) {
+            $pid = (int) $pid;
+        } else {
+            $pid = null;
+        }
+    }
+
+    fclose($sock);
+
+    // job_nr, job_id, pid
+    return [(int) $res[0], $res[1], $pid];
+}
