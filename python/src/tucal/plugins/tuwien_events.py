@@ -65,8 +65,8 @@ class Sync(tucal.Sync):
             ical = tucal.icalendar.parse_ical(repair_ics(r.text))
             self.events += ical.events
 
-    def store(self, cursor: tucal.db.Cursor):
-        group_nr = tucal.get_group_nr(cursor, 'TU Events', True)
+    def store(self, cur: tucal.db.Cursor):
+        group_nr = tucal.get_group_nr(cur, 'TU Events', True)
 
         rows = [{
             'source': 'tuwien-events',
@@ -92,6 +92,23 @@ class Sync(tucal.Sync):
             'data': 'data',
         }
         tucal.db.upsert_values('tucal.external_event', rows, fields, ('source', 'event_id'), {'data': 'jsonb'})
+        ids_now = {row['id'] for row in rows}
+
+        start_min = min([datetime.datetime.fromordinal(e['start'].toordinal()) for e in rows])
+
+        cur.execute("LOCK TABLE tucal.external_event IN SHARE ROW EXCLUSIVE MODE")
+        cur.execute("""
+            SELECT event_id
+            FROM tucal.external_event
+            WHERE source = 'tuwien-events' AND NOT deleted AND
+                  start_ts >= %s""", (start_min,))
+        ids_db = {row[0] for row in cur.fetch_all()}
+
+        ids_del = ids_db - ids_now
+        cur.execute("""
+            UPDATE tucal.external_event
+            SET deleted = true
+            WHERE source = 'tuwien-events' AND event_id = ANY(%s)""", (list(ids_del),))
 
 
 class Plugin(tucal.Plugin):

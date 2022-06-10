@@ -501,7 +501,7 @@ class WeekSchedule {
             const weekDay = (event.start.getDay() + 6) % 7;
             const day = events[weekDay];
             if (!day) throw new Error();
-            if (event.userHidden && !this.showHidden) continue;
+            if (event.deleted || (event.userHidden && !this.showHidden)) continue;
 
             if (event.start.getTime() === event.end.getTime()) {
                 deadlines.push(event);
@@ -634,8 +634,6 @@ class WeekSchedule {
                 const event = eventData.event;
                 const start = event.start;
                 const end = event.end;
-
-                if (event.deleted) continue;
 
                 const day = wrapper.getElementsByClassName("day")[(start.getDay() + 6) % 7];
                 if (!day) throw new Error();

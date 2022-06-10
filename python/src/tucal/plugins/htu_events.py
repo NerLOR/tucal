@@ -160,8 +160,8 @@ class Sync(tucal.Sync):
         raw_events = r.json()
         self.events = raw_events['data']['searchEvents']['elements']
 
-    def store(self, cursor: tucal.db.Cursor):
-        group_nr = tucal.get_group_nr(cursor, 'HTU Events', True)
+    def store(self, cur: tucal.db.Cursor):
+        group_nr = tucal.get_group_nr(cur, 'HTU Events', True)
 
         rows = [{
             'source': 'htu-events',
@@ -181,6 +181,23 @@ class Sync(tucal.Sync):
             'data': 'data',
         }
         tucal.db.upsert_values('tucal.external_event', rows, fields, ('source', 'event_id'), {'data': 'jsonb'})
+        ids_now = {row['id'] for row in rows}
+
+        start_min = min([datetime.datetime.fromordinal(e['start'].toordinal()) for e in rows])
+
+        cur.execute("LOCK TABLE tucal.external_event IN SHARE ROW EXCLUSIVE MODE")
+        cur.execute("""
+            SELECT event_id
+            FROM tucal.external_event
+            WHERE source = 'htu-events' AND NOT deleted AND
+                  start_ts >= %s""", (start_min,))
+        ids_db = {row[0] for row in cur.fetch_all()}
+
+        ids_del = ids_db - ids_now
+        cur.execute("""
+            UPDATE tucal.external_event
+            SET deleted = true
+            WHERE source = 'htu-events' AND event_id = ANY(%s)""", (list(ids_del),))
 
 
 class Plugin(tucal.Plugin):
