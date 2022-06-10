@@ -79,8 +79,6 @@ def upsert_holidays(events: List[Dict[str, Any]]):
                 },
             }),
         }
-        print(evt['name'], evt['start'], evt['end'])
-        print(data)
         cur.execute("""
             INSERT INTO tucal.external_event (source, event_id, start_ts, end_ts, group_nr, data)
             VALUES ('holidays', %(id)s, %(start)s, %(end)s, %(group)s, %(data)s)
