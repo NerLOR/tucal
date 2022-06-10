@@ -71,7 +71,7 @@ class Sync(tucal.Sync):
     def fetch(self):
         session = self.session.session
         now = tucal.now()
-        for year in range(now.year - 1, now.year + 1):
+        for year in range(now.year - 1, now.year + 2):
             r = session.get(get_calendarize_url('', {'year': year, 'format': 'ics'}))
             if r.status_code != 200:
                 continue
