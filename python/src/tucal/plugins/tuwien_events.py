@@ -47,20 +47,6 @@ def repair_ics(data: str) -> str:
     return repaired
 
 
-def get_group_nr() -> int:
-    cur = tucal.db.cursor()
-    cur.execute("SELECT group_nr FROM tucal.group WHERE group_name = 'TU Events'")
-    rows = cur.fetch_all()
-    if len(rows) > 0:
-        cur.close()
-        return rows[0][0]
-
-    cur.execute("INSERT INTO tucal.group (group_name, public) VALUES ('TU Events', TRUE) RETURNING group_nr")
-    rows = cur.fetch_all()
-    cur.close()
-    return rows[0][0]
-
-
 class Sync(tucal.Sync):
     events: List[tucal.icalendar.Event] = None
 
@@ -74,13 +60,13 @@ class Sync(tucal.Sync):
         for year in range(now.year - 1, now.year + 2):
             r = session.get(get_calendarize_url('', {'year': year, 'format': 'ics'}))
             if r.status_code != 200:
-                continue
+                raise RuntimeError()
 
             ical = tucal.icalendar.parse_ical(repair_ics(r.text))
             self.events += ical.events
 
     def store(self, cursor: tucal.db.Cursor):
-        group_nr = get_group_nr()
+        group_nr = tucal.get_group_nr(cursor, 'TU Events', True)
 
         rows = [{
             'source': 'tuwien-events',

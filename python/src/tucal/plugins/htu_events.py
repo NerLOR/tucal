@@ -1,7 +1,6 @@
 # https://events.htu.at/
 
 from typing import List, Dict, Any
-import requests
 import json
 import datetime
 
@@ -146,20 +145,6 @@ EVENTS_HTU_HOST = 'events.htu.at'
 EVENTS_HTU = f'https://{EVENTS_HTU_HOST}'
 
 
-def get_group_nr() -> int:
-    cur = tucal.db.cursor()
-    cur.execute("SELECT group_nr FROM tucal.group WHERE group_name = 'HTU Events'")
-    rows = cur.fetch_all()
-    if len(rows) > 0:
-        cur.close()
-        return rows[0][0]
-
-    cur.execute("INSERT INTO tucal.group (group_name, public) VALUES ('HTU Events', TRUE) RETURNING group_nr")
-    rows = cur.fetch_all()
-    cur.close()
-    return rows[0][0]
-
-
 class Sync(tucal.Sync):
     events: List[Dict[str, Any]] = None
 
@@ -176,7 +161,7 @@ class Sync(tucal.Sync):
         self.events = raw_events['data']['searchEvents']['elements']
 
     def store(self, cursor: tucal.db.Cursor):
-        group_nr = get_group_nr()
+        group_nr = tucal.get_group_nr(cursor, 'HTU Events', True)
 
         rows = [{
             'source': 'htu-events',

@@ -1,6 +1,6 @@
 # 187.B12 VU Denkweisen der Informatik
 
-from typing import Optional, Dict
+from typing import Dict
 import requests
 import requests.cookies
 import json
@@ -28,24 +28,6 @@ AURORA = f'https://{AURORA_HOST}'
 LITTLE_AURORA = f'https://{REVIEW_HOST}'
 
 
-def get_group_nr(semester: tucal.Semester) -> Optional[int]:
-    cur = tucal.db.cursor()
-    cur.execute("SELECT group_nr FROM tucal.group_link WHERE (course_nr, semester, name) = ('187B12', %s, 'LVA')",
-                (str(semester),))
-    rows = cur.fetch_all()
-    if len(rows) > 0:
-        cur.close()
-        return rows[0][0]
-
-    cur.execute("INSERT INTO tucal.group (group_name) VALUES (%s) RETURNING group_nr", (f'187B12-{semester} LVA',))
-    rows = cur.fetch_all()
-    group_nr = rows[0][0]
-    cur.execute("INSERT INTO tucal.group_link (group_nr, course_nr, semester, name) VALUES (%s, '187B12', %s, 'LVA')",
-                (group_nr, str(semester)))
-    cur.close()
-    return group_nr
-
-
 class Sync(tucal.Sync):
     cal: tucal.icalendar.Calendar = None
 
@@ -56,12 +38,12 @@ class Sync(tucal.Sync):
         session = self.session.session
         r = session.get(WEBCAL)
         if r.status_code != 200:
-            return
+            raise RuntimeError()
 
         self.cal = tucal.icalendar.parse_ical(r.text)
 
     def store(self, cur: tucal.db.Cursor):
-        group_nr = get_group_nr(tucal.Semester('2021W'))
+        group_nr = tucal.get_course_group_nr(cur, '187B12', tucal.Semester('2021W'))
 
         rows = []
         for evt in self.cal.events:

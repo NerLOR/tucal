@@ -105,6 +105,8 @@ def now() -> datetime.datetime:
     return datetime.datetime.now().astimezone()
 
 
+# FIXME not up to date socket interface
+# FIXME used anywhere?
 def schedule_job(name: str, *args):
     reader = JobStatus()
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
@@ -127,6 +129,38 @@ def schedule_job(name: str, *args):
             elif line.startswith(b'status:') or len(line) == 0:
                 fin = True
             yield reader, fin
+
+
+def get_group_nr(cursor, group_name: str, public_group: bool = False):
+    cursor.execute("SELECT group_nr FROM tucal.group WHERE group_name = %s", (group_name,))
+    rows = cursor.fetch_all()
+    if len(rows) > 0:
+        cursor.close()
+        return rows[0][0]
+
+    cursor.execute("INSERT INTO tucal.group (group_name, public) VALUES (%s, %s) RETURNING group_nr",
+                   (group_name, public_group))
+    rows = cursor.fetch_all()
+    cursor.close()
+    return rows[0][0]
+
+
+def get_course_group_nr(cursor, course_nr: str, semester: Semester):
+    cursor.execute("SELECT group_nr FROM tucal.group_link WHERE (course_nr, semester, name) = (%s, %s, 'LVA')",
+                   (str(course_nr), str(semester)))
+    rows = cursor.fetch_all()
+    if len(rows) > 0:
+        cursor.close()
+        return rows[0][0]
+
+    cursor.execute("INSERT INTO tucal.group (group_name) VALUES (%s) RETURNING group_nr",
+                   (f'{course_nr}-{semester} LVA',))
+    rows = cursor.fetch_all()
+    group_nr = rows[0][0]
+    cursor.execute("INSERT INTO tucal.group_link (group_nr, course_nr, semester, name) VALUES (%s, %s, %s, 'LVA')",
+                   (group_nr, str(course_nr), str(semester)))
+    cursor.close()
+    return group_nr
 
 
 class Semester:
