@@ -173,7 +173,7 @@ class SyncAuth(tucal.Sync):
 
     def store(self, cur: tucal.db.Cursor):
         # TODO (LITTLE) AURORA HAS TO BE EXTERMINATED
-        group_nr = get_group_nr(tucal.Semester('2021W'))
+        group_nr = tucal.get_course_group_nr(cur, '187B12', tucal.Semester('2021W'))
 
         rows = []
         for name, event in self.events.items():
