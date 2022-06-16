@@ -867,53 +867,60 @@ class WeekSchedule {
                 `</div></div>`;
         }
 
-        html += '<hr/><div class="form-pre hidden">';
+        if (MNR !== null) {
+            html += '<hr/><div class="form-pre hidden">';
 
-        html += `<div class="container"><div>${_('Live')}:</div><div>` +
-            `<label class="radio"><input type="checkbox" name="lt"/> ${_('LectureTube')}</label>` +
-            `<label class="radio"><input type="checkbox" name="zoom"/> ${_('Zoom')}</label>` +
-            `<label class="radio"><input type="checkbox" name="yt"/> ${_('YouTube')}</label>` +
-            `<div class="url hidden"><input type="url" name="zoom-url" placeholder="${_('Zoom URL')}" class="line block" required pattern="${ZOOM_PATTERN}"/></div>` +
-            `<div class="url hidden"><input type="url" name="yt-url" placeholder="${_('YouTube URL')}" class="line block" required pattern="${YOUTUBE_PATTERN}"/></div>` +
-            `</div></div>`;
+            html += `<div class="container"><div>${_('Live')}:</div><div>` +
+                `<label class="radio"><input type="checkbox" name="lt"/> ${_('LectureTube')}</label>` +
+                `<label class="radio"><input type="checkbox" name="zoom"/> ${_('Zoom')}</label>` +
+                `<label class="radio"><input type="checkbox" name="yt"/> ${_('YouTube')}</label>` +
+                `<div class="url hidden"><input type="url" name="zoom-url" placeholder="${_('Zoom URL')}" class="line block" required pattern="${ZOOM_PATTERN}"/></div>` +
+                `<div class="url hidden"><input type="url" name="yt-url" placeholder="${_('YouTube URL')}" class="line block" required pattern="${YOUTUBE_PATTERN}"/></div>` +
+                `</div></div>`;
 
-        html += `<div class="container"><div>${_('Status')}:</div><div>` +
-            `<label class="radio"><input type="radio" name="status" value="confirmed"/> ${_('Confirmed')}</label>` +
-            `<label class="radio"><input type="radio" name="status" value="tentative"/> ${_('Tentative')}</label>` +
-            `<label class="radio"><input type="radio" name="status" value="cancelled"/> ${_('Cancelled')}</label>` +
-            `<label class="radio"><input type="radio" name="status" value="unknown" checked/> ${_('Unknown')}</label>` +
-            `</div></div>`;
+            html += `<div class="container"><div>${_('Status')}:</div><div>` +
+                `<label class="radio"><input type="radio" name="status" value="confirmed"/> ${_('Confirmed')}</label>` +
+                `<label class="radio"><input type="radio" name="status" value="tentative"/> ${_('Tentative')}</label>` +
+                `<label class="radio"><input type="radio" name="status" value="cancelled"/> ${_('Cancelled')}</label>` +
+                `<label class="radio"><input type="radio" name="status" value="unknown" checked/> ${_('Unknown')}</label>` +
+                `</div></div>`;
 
-        html += `<div class="container"><div>${_('Mode')}:</div><div>` +
-            `<label class="radio"><input type="radio" name="mode" value="on-site-only"/> ${_('On-site-only')}</label>` +
-            `<label class="radio"><input type="radio" name="mode" value="hybrid"/> ${_('Hybrid')}</label>` +
-            `<label class="radio"><input type="radio" name="mode" value="online-only"/> ${_('Online-only')}</label>` +
-            `<label class="radio"><input type="radio" name="mode" value="unknown" checked/> ${_('Unknown')}</label>` +
-            `</div></div>`;
+            html += `<div class="container"><div>${_('Mode')}:</div><div>` +
+                `<label class="radio"><input type="radio" name="mode" value="on-site-only"/> ${_('On-site-only')}</label>` +
+                `<label class="radio"><input type="radio" name="mode" value="hybrid"/> ${_('Hybrid')}</label>` +
+                `<label class="radio"><input type="radio" name="mode" value="online-only"/> ${_('Online-only')}</label>` +
+                `<label class="radio"><input type="radio" name="mode" value="unknown" checked/> ${_('Unknown')}</label>` +
+                `</div></div>`;
 
-        html += `<div class="container"><div>${_('Room')}:</div><div>` +
-            `<select name="room"><option value="none">${_('No room')}</option></select>` +
-            `</div></div>`;
+            html += `<div class="container"><div>${_('Room')}:</div><div>` +
+                `<select name="room"><option value="none">${_('No room')}</option></select>` +
+                `</div></div>`;
 
-        html += `<div class="container"><div>${_('Planned times')}:</div><div>` +
-            `<input type="time" name="planned-start" class="line" pattern="[0-9]{2}:[0-9]{2}"/>` +
-            `<input type="time" name="planned-end" class="line" pattern="[0-9]{2}:[0-9]{2}"/>` +
-            `</div></div>`;
+            html += `<div class="container"><div>${_('Planned times')}:</div><div>` +
+                `<input type="time" name="planned-start" class="line" pattern="[0-9]{2}:[0-9]{2}"/>` +
+                `<input type="time" name="planned-end" class="line" pattern="[0-9]{2}:[0-9]{2}"/>` +
+                `</div></div>`;
 
-        html += `<div class="container"><div>${_('Summary')}:</div><div>` +
-            `<input type="text" name="summary" class="line block" placeholder="${_('Summary')}"/>` +
-            `</div></div>`;
+            html += `<div class="container"><div>${_('Summary')}:</div><div>` +
+                `<input type="text" name="summary" class="line block" placeholder="${_('Summary')}"/>` +
+                `</div></div>`;
 
-        html += '</div><hr class="form-pre hidden"/><button type="button">&blacktriangledown;</button>' +
-            `<div class="form-save hidden">` +
-            `<label><input type="checkbox" name="all-previous"/> ${_('Apply changes for all previous events')}</label>` +
-            `<label><input type="checkbox" name="all-following"/> ${_('Apply changes for all following events')}</label>` +
-            `<button type="submit">${_('Apply')}</button></div>`;
+            html += '</div><hr class="form-pre hidden"/><button type="button">&blacktriangledown;</button>' +
+                `<div class="form-save hidden">` +
+                `<label><input type="checkbox" name="all-previous"/> ${_('Apply changes for all previous events')}</label>` +
+                `<label><input type="checkbox" name="all-following"/> ${_('Apply changes for all following events')}</label>` +
+                `<button type="submit">${_('Apply')}</button></div>`;
+        }
 
         html += '</form>';
-
         div.innerHTML = html;
 
+        if (MNR !== null) this.initEventDetailForm(evt, room, div, formatterTime);
+
+        this.cal.appendChild(wrapper);
+    }
+
+    private initEventDetailForm(evt: TucalEvent, room: Room | null, div: HTMLElement, formatterTime: Intl.DateTimeFormat) {
         const aLive = div.getElementsByClassName("live")[0];
         if (aLive && evt.zoom) aLive.setAttribute('href', evt.zoom.toString());
 
@@ -1072,7 +1079,7 @@ class WeekSchedule {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const urlData: {[index: string]: any} = {id: eventId};
+            const urlData: {[index: string]: any} = {id: this.eventId};
             if (form['all-previous'].checked) urlData['previous'] = 'true';
             if (form['all-following'].checked) urlData['following'] = 'true';
 
@@ -1122,8 +1129,6 @@ class WeekSchedule {
                 });
             });
         });
-
-        this.cal.appendChild(wrapper);
     }
 
     clearEventDetail() {
