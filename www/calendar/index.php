@@ -7,7 +7,6 @@ global $USE_PATH_INFO;
 global $STATUS;
 
 require "../.php/session.php";
-force_user_login();
 
 $parts = explode('/', $_SERVER['PATH_INFO']);
 
@@ -16,8 +15,13 @@ $ref = strtotime((4 - date('N', $ref)) . ' day', $ref);
 $year = date('Y', $ref);
 $week = 'W' . (int) date('W', $ref);
 
-if (sizeof($parts) < 2 || strlen($parts[1]) === 0)
-    redirect("/calendar/$USER[mnr]/$year/$week/");
+if (sizeof($parts) < 2 || strlen($parts[1]) === 0) {
+    if (isset($USER)) {
+        redirect("/calendar/$USER[mnr]/$year/$week/");
+    } else {
+        force_user_login();
+    }
+}
 
 $subject = $parts[1];
 if (sizeof($parts) < 3 || strlen($parts[2]) === 0)
@@ -67,29 +71,39 @@ if ($_SERVER['REQUEST_URI'] !== $wanted_uri) {
 
 $TITLE = [];
 
-if ($subject === $USER['mnr']) {
-    $TITLE[] = _('My Calendar');
+if ($subject === 'tuwien') {
+    $TITLE[] = _('Veranstaltungen');
+    $TITLE[] = _('TU Wien');
+} elseif ($subject === 'demo') {
+    $STATUS = 501;
 } else {
-    $stmt = db_exec("
-            SELECT a.username, f2.nickname
-            FROM tucal.friend f1
-                JOIN tucal.v_account a ON a.account_nr = f1.account_nr_1
-                LEFT JOIN tucal.friend f2 ON f2.account_nr_1 = :nr AND f2.account_nr_2 = f1.account_nr_1
-            WHERE (a.mnr, f1.account_nr_2) = (:mnr, :nr)", [
-        'mnr' => $subject,
-        'nr' => $USER['nr'],
-    ]);
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if (sizeof($rows) === 0) {
-        $STATUS = 403;
+    force_user_login();
+    if ($subject === $USER['mnr']) {
+        $TITLE[] = _('My Calendar');
+    } elseif (is_numeric($subject)) {
+        $stmt = db_exec("
+                SELECT a.username, f2.nickname
+                FROM tucal.friend f1
+                    JOIN tucal.v_account a ON a.account_nr = f1.account_nr_1
+                    LEFT JOIN tucal.friend f2 ON f2.account_nr_1 = :nr AND f2.account_nr_2 = f1.account_nr_1
+                WHERE (a.mnr, f1.account_nr_2) = (:mnr, :nr)", [
+            'mnr' => $subject,
+            'nr' => $USER['nr'],
+        ]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (sizeof($rows) === 0) {
+            $STATUS = 403;
+        } else {
+            $TITLE[] = htmlspecialchars($rows[0]['nickname'] ?? $rows[0]['username']);
+        }
+        $TITLE[] = _('Calendar');
     } else {
-        $TITLE[] = htmlspecialchars($rows[0]['nickname'] ?? $rows[0]['username']);
+        $STATUS = 404;
     }
-    $TITLE[] = _('Calendar');
 }
 
 
-if (!isset($STATUS) || $STATUS === 200) {
+if (isset($USER) && (!isset($STATUS) || $STATUS === 200)) {
     $stmt = db_exec("
             SELECT e.export_nr, e.export_id, e.token, e.account_nr, e.subject_mnr, e.create_ts, e.active_ts, e.options,
                    a.mnr, a.username, f.nickname
@@ -153,6 +167,7 @@ require "../.php/header.php";
                 </div>
             </div>
         </div>
+<?php if (isset($USER) && $subject !== 'tuwien' && $subject !== 'demo') { ?>
         <hr/>
         <div class="button-wrapper">
             <form class="single" action="/calendar/export/add?subject=<?php echo htmlspecialchars($subject); ?>" method="post">
@@ -160,7 +175,9 @@ require "../.php/header.php";
             </form>
             <a class="button" href="/account/sync"><?php echo _('Synchronize calendar'); ?></a>
         </div>
+<?php } ?>
     </section>
+<?php if (isset($USER)) { ?>
     <section>
         <h2 id="exports"><?php echo _('Exported calendars'); ?></h2>
         <div class="table-wrapper">
@@ -201,9 +218,9 @@ while ($row = $stmt->fetch()) {
                             <legend><?php echo _('Export events'); ?></legend>
                             <label><input type="checkbox" name="export-course-events"<?php echo in_array('course', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Course events'); ?></label><br/>
                             <label><input type="checkbox" name="export-group-events"<?php echo in_array('group', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Group events'); ?></label><br/>
-                            <label><input type="checkbox" name="export-appointment-events"<?php echo in_array('appointment', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Appointment'); ?></label><br/>
-                            <label><input type="checkbox" name="export-exam-events"<?php echo in_array('exam', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Exam'); ?></label><br/>
-                            <label><input type="checkbox" name="export-holiday-events"<?php echo in_array('holiday', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Holiday'); ?></label><br/>
+                            <label><input type="checkbox" name="export-appointment-events"<?php echo in_array('appointment', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Appointments'); ?></label><br/>
+                            <label><input type="checkbox" name="export-exam-events"<?php echo in_array('exam', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Exams'); ?></label><br/>
+                            <label><input type="checkbox" name="export-holiday-events"<?php echo in_array('holiday', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Holidays'); ?></label><br/>
                             <label><input type="checkbox" name="export-other-events"<?php echo in_array('other', $exportEvents) ? ' checked' : ''; ?>/> <?php echo _('Other events'); ?></label>
                         </fieldset>
                     </div>
@@ -248,6 +265,7 @@ while ($row = $stmt->fetch()) {
         </table>
         </div>
     </section>
+<?php } ?>
 </main>
 <?php
 require "../.php/footer.php";

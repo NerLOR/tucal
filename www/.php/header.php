@@ -18,8 +18,10 @@ header("X-Content-Type-Options: nosniff");
 header("X-Frame-Options: SAMEORIGIN");
 header("X-XSS-Protection: 1; mode=block");
 
-function uri_active(string $uri, bool $exact = false): string {
-    if ($exact) {
+function uri_active($uri, bool $exact = false): string {
+    if ($uri === null) {
+        return '';
+    } elseif ($exact) {
         return $_SERVER['REQUEST_URI'] === $uri ? 'active' : '';
     } else {
         return substr($_SERVER['REQUEST_URI'], 0, strlen($uri)) === $uri ? 'active' : '';
@@ -27,6 +29,7 @@ function uri_active(string $uri, bool $exact = false): string {
 }
 
 $cal_uri = isset($USER) ? "/calendar/$USER[mnr]/" : "/calendar/";
+$cal_uri_active = isset($USER) ? "/calendar/$USER[mnr]/" : null;
 
 $icon = "tucal";
 
@@ -91,7 +94,8 @@ if ($STATUS >= 400 && $STATUS < 600) {
     </div>
     <div id="nav-center">
         <div class="link" id="nav-home-explicit"><a href="/" class="<?php echo uri_active('/', true); ?>"><?php echo _('Home'); ?></a></div>
-        <div class="link"><a href="<?php echo $cal_uri; ?>" class="<?php echo uri_active($cal_uri); ?>"><?php echo _('My Calendar'); ?></a></div>
+        <div class="link"><a href="/calendar/tuwien/" class="<?php echo uri_active('/calendar/tuwien')?>"><?php echo _('Veranstaltungen'); ?></a></div>
+        <div class="link"><a href="<?php echo $cal_uri; ?>" class="<?php echo uri_active($cal_uri_active); ?>"><?php echo _('My Calendar'); ?></a></div>
         <div class="link"><a href="/friends/" class="<?php echo uri_active('/friends/', true); ?>"><?php echo _('My Friends'); ?></a></div>
         <div class="link"><a href="/courses/" class="<?php echo uri_active('/courses/'); ?>"><?php echo _('My Courses'); ?></a></div>
     </div>

@@ -7,6 +7,12 @@ msgstr ""
 msgid "My Calendar"
 msgstr "My Calendar"
 
+msgid "Veranstaltungen"
+msgstr "Events"
+
+msgid "TU Wien"
+msgstr "TU Wien"
+
 msgid "Calendar"
 msgstr "Calendar"
 
@@ -537,6 +543,15 @@ msgstr "Course events"
 
 msgid "Group events"
 msgstr "Group events"
+
+msgid "Appointments"
+msgstr "Appointments"
+
+msgid "Exams"
+msgstr "Exams"
+
+msgid "Holidays"
+msgstr "Holidays"
 
 msgid "Other events"
 msgstr "Other events"

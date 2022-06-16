@@ -49,11 +49,15 @@ function calendar() {
     $start = strtotime($start);
     $end = strtotime($end);
 
-    if (!isset($USER)) {
+    if ($subject === 'tuwien') {
+        // Nothing to do
+    } elseif ($subject === 'demo') {
+        error(501);
+    } elseif (!isset($USER)) {
         error(401);
     } elseif ($USER['mnr'] !== $subject) {
         $stmt = db_exec("
-            SELECT a.username
+            SELECT COUNT(*)
             FROM tucal.friend f
                 JOIN tucal.v_account a ON a.account_nr = f.account_nr_1
             WHERE (a.mnr, account_nr_2) = (:mnr, :nr)", [
@@ -61,7 +65,7 @@ function calendar() {
             'nr' => $USER['nr'],
         ]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if (sizeof($rows) === 0) {
+        if ($rows[0][0] === 0) {
             error(403);
         }
     }
@@ -78,35 +82,58 @@ function calendar() {
         }
     }
 
-    $stmt = db_exec("
-            SELECT e.event_nr, e.event_id, e.room_nr, e.data, d.data AS user_data,
-                   l.course_nr, l.semester, l.name, g.group_id, g.group_name, e.deleted,
-                   e.start_ts, e.end_ts, e.planned_start_ts, e.planned_end_ts, e.real_start_ts, e.real_end_ts
-            FROM tucal.event e
-                LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
-                JOIN tucal.group_member m ON m.group_nr = e.group_nr
-                JOIN tucal.account a ON a.account_nr = m.account_nr
-                LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
-                LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
-                LEFT JOIN tucal.event_user_data d ON (d.event_nr, d.account_nr) = (e.event_nr, a.account_nr)
-            WHERE a.mnr = :mnr AND
-                  (
-                      (e.start_ts >= :start AND e.start_ts < :end) OR
-                      (e.end_ts >= :start AND e.end_ts < :end) OR
-                      (e.start_ts < :start AND e.end_ts >= :end)
-                  ) AND
-                  (e.global OR (:mnr = ANY(SELECT u.mnr FROM tuwel.event_user eu
-                                           JOIN tuwel.user u ON u.user_id = eu.user_id
-                                           WHERE eu.event_id::text = x.event_id))) AND
-                  (m.ignore_from IS NULL OR e.start_ts < m.ignore_from) AND
-                  (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
-            GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data, d.data,
-                     l.course_nr, l.semester, l.name, g.group_id, g.group_name
-            ORDER BY e.start_ts, length(l.name), e.data -> 'summary'", [
-        'mnr' => $subject,
-        'start' => date('c', $start),
-        'end' => date('c', $end),
-    ]);
+    if ($subject === 'tuwien') {
+        $stmt = db_exec("
+                SELECT e.event_nr, e.event_id, e.room_nr, e.data, NULL AS user_data,
+                       l.course_nr, l.semester, l.name, g.group_id, g.group_name, e.deleted,
+                       e.start_ts, e.end_ts, e.planned_start_ts, e.planned_end_ts, e.real_start_ts, e.real_end_ts
+                FROM tucal.event e
+                    LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
+                    LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
+                    LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
+                WHERE (
+                          (e.start_ts >= :start AND e.start_ts < :end) OR
+                          (e.end_ts >= :start AND e.end_ts < :end) OR
+                          (e.start_ts < :start AND e.end_ts >= :end)
+                      ) AND
+                      g.public
+                GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data,
+                         l.course_nr, l.semester, l.name, g.group_id, g.group_name
+                ORDER BY e.start_ts, length(l.name), e.data -> 'summary'", [
+            'start' => date('c', $start),
+            'end' => date('c', $end),
+        ]);
+    } else {
+        $stmt = db_exec("
+                SELECT e.event_nr, e.event_id, e.room_nr, e.data, d.data AS user_data,
+                       l.course_nr, l.semester, l.name, g.group_id, g.group_name, e.deleted,
+                       e.start_ts, e.end_ts, e.planned_start_ts, e.planned_end_ts, e.real_start_ts, e.real_end_ts
+                FROM tucal.event e
+                    LEFT JOIN tucal.external_event x ON x.event_nr = e.event_nr
+                    JOIN tucal.group_member m ON m.group_nr = e.group_nr
+                    JOIN tucal.account a ON a.account_nr = m.account_nr
+                    LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
+                    LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
+                    LEFT JOIN tucal.event_user_data d ON (d.event_nr, d.account_nr) = (e.event_nr, a.account_nr)
+                WHERE a.mnr = :mnr AND
+                      (
+                          (e.start_ts >= :start AND e.start_ts < :end) OR
+                          (e.end_ts >= :start AND e.end_ts < :end) OR
+                          (e.start_ts < :start AND e.end_ts >= :end)
+                      ) AND
+                      (e.global OR (:mnr = ANY(SELECT u.mnr FROM tuwel.event_user eu
+                                               JOIN tuwel.user u ON u.user_id = eu.user_id
+                                               WHERE eu.event_id::text = x.event_id))) AND
+                      (m.ignore_from IS NULL OR e.start_ts < m.ignore_from) AND
+                      (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
+                GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data, d.data,
+                         l.course_nr, l.semester, l.name, g.group_id, g.group_name
+                ORDER BY e.start_ts, length(l.name), e.data -> 'summary'", [
+            'mnr' => $subject,
+            'start' => date('c', $start),
+            'end' => date('c', $end),
+        ]);
+    }
 
     echo '{"status":"success","message":null,"data":{' . "\n";
     echo '"timestamp":"' . date('c') .

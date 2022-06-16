@@ -23,6 +23,10 @@ if ($subject === null) {
     header("Status: 400");
     header("Content-Length: 0");
     tucal_exit();
+} elseif (!is_numeric($subject)) {
+    header("Status: 501");
+    header("Content-Length: 0");
+    tucal_exit();
 }
 
 db_transaction();

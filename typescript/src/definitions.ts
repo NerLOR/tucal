@@ -400,8 +400,7 @@ class TucalEvent {
     }
 
     getCourse(): CourseDef | null {
-        if (!COURSE_DEF) throw new Error();
-        return this.courseNr && COURSE_DEF[this.courseNr] || null;
+        return COURSE_DEF && this.courseNr && COURSE_DEF[this.courseNr] || null;
     }
 
     getWeeks(): Week[] {

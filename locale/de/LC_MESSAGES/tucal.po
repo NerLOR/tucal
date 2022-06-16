@@ -7,6 +7,12 @@ msgstr ""
 msgid "My Calendar"
 msgstr "Mein Kalender"
 
+msgid "Veranstaltungen"
+msgstr "Veranstaltungen"
+
+msgid "TU Wien"
+msgstr "TU Wien"
+
 msgid "Calendar"
 msgstr "Kalender"
 
@@ -537,6 +543,15 @@ msgstr "LVA-Termine"
 
 msgid "Group events"
 msgstr "Gruppentermine"
+
+msgid "Appointments"
+msgstr "Einzeltermine"
+
+msgid "Exams"
+msgstr "Prüfungstermine"
+
+msgid "Holidays"
+msgstr "Ferien"
 
 msgid "Other events"
 msgstr "Sonstige Termine"

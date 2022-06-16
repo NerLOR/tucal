@@ -7,6 +7,12 @@ msgstr ""
 msgid "My Calendar"
 msgstr "Mei Kalenda"
 
+msgid "Veranstaltungen"
+msgstr "Veaonstoitungen"
+
+msgid "TU Wien"
+msgstr "TU Wien"
+
 msgid "Calendar"
 msgstr "Kalenda"
 
@@ -538,6 +544,15 @@ msgstr "LVA-Teamine"
 msgid "Group events"
 msgstr "Gruppnteamine"
 
+msgid "Appointments"
+msgstr "Anzlteamine"
+
+msgid "Exams"
+msgstr "Prüfungsteamine"
+
+msgid "Holidays"
+msgstr "Ferien"
+
 msgid "Other events"
 msgstr "Ondare Teamine"
 
@@ -556,7 +571,6 @@ msgstr "Campus"
 msgid "Building"
 msgstr "Gebäde"
 
-#, fuzzy
 msgid "Full address"
 msgstr "Volle Adress"
 
