@@ -49,10 +49,8 @@ function calendar() {
     $start = strtotime($start);
     $end = strtotime($end);
 
-    if ($subject === 'tuwien') {
+    if ($subject === 'tuwien' || $subject === 'demo') {
         // Nothing to do
-    } elseif ($subject === 'demo') {
-        error(501);
     } elseif (!isset($USER)) {
         error(401);
     } elseif ($USER['mnr'] !== $subject) {
@@ -82,7 +80,7 @@ function calendar() {
         }
     }
 
-    if ($subject === 'tuwien') {
+    if ($subject === 'tuwien' || $subject === 'demo') {
         $stmt = db_exec("
                 SELECT e.event_nr, e.event_id, e.room_nr, e.data, NULL AS user_data,
                        l.course_nr, l.semester, l.name, g.group_id, g.group_name, e.deleted,
@@ -141,52 +139,57 @@ function calendar() {
         '","end":"' . date('c', $end) .
         '","events":[' . "\n";
 
-    $first = true;
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        if ($first) {
-            $first = false;
-        } else {
-            echo ",\n";
-        }
-        $start = strtotime($row['start_ts']);
-        $end = strtotime($row['end_ts']);
-        $planned_start = null;
-        $planned_end = null;
-        $real_start = null;
-        $real_end = null;
-        if ($row['planned_start_ts']) $planned_start = strtotime($row['planned_start_ts']);
-        if ($row['planned_end_ts']) $planned_end = strtotime($row['planned_end_ts']);
-        if ($row['real_start_ts']) $real_start = strtotime($row['real_start_ts']);
-        if ($row['real_end_ts']) $real_end = strtotime($row['real_end_ts']);
+    if ($subject === 'demo') {
+        $public_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        generate_demo_events($start, $end, $public_events);
+    } else {
+        $first = true;
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            if ($first) {
+                $first = false;
+            } else {
+                echo ",\n";
+            }
+            $start = strtotime($row['start_ts']);
+            $end = strtotime($row['end_ts']);
+            $planned_start = null;
+            $planned_end = null;
+            $real_start = null;
+            $real_end = null;
+            if ($row['planned_start_ts']) $planned_start = strtotime($row['planned_start_ts']);
+            if ($row['planned_end_ts']) $planned_end = strtotime($row['planned_end_ts']);
+            if ($row['real_start_ts']) $real_start = strtotime($row['real_start_ts']);
+            if ($row['real_end_ts']) $real_end = strtotime($row['real_end_ts']);
 
-        $course = null;
-        if ($row['course_nr'] !== null) {
-            $course = [
-                'nr' => $row['course_nr'],
-                'semester' => $row['semester'],
-                'group' => $row['name'],
+            $course = null;
+            if ($row['course_nr'] !== null) {
+                $course = [
+                    'nr' => $row['course_nr'],
+                    'semester' => $row['semester'],
+                    'group' => $row['name'],
+                ];
+            }
+
+            $data = [
+                'id' => $row['event_id'],
+                'start' => date('c', $start),
+                'end' => date('c', $end),
+                'planned_start' => ($planned_start !== null) ? date('c', $planned_start) : null,
+                'planned_end' => ($planned_end !== null) ? date('c', $planned_end) : null,
+                'real_start' => ($real_start !== null) ? date('c', $real_start) : null,
+                'real_end' => ($real_end !== null) ? date('c', $real_end) : null,
+                'deleted' => $row['deleted'],
+                'room_nr' => $row['room_nr'],
+                'course' => $course,
+                'group' => [
+                    'id' => $row['group_id'],
+                    'name' => $row['group_name'],
+                ],
+                'data' => json_decode($row['data']),
+                'user' => $row['user_data'] ? json_decode($row['user_data']) : null,
             ];
+            echo json_encode($data, JSON_FLAGS);
         }
-
-        $data = [
-            'id' => $row['event_id'],
-            'start' => date('c', $start),
-            'end' => date('c', $end),
-            'planned_start' => ($planned_start !== null) ? date('c', $planned_start) : null,
-            'planned_end' => ($planned_end !== null) ? date('c', $planned_end) : null,
-            'real_start' => ($real_start !== null) ? date('c', $real_start) : null,
-            'real_end' => ($real_end !== null) ? date('c', $real_end) : null,
-            'deleted' => $row['deleted'],
-            'room_nr' => $row['room_nr'],
-            'course' => $course,
-            'group' => [
-                'id' => $row['group_id'],
-                'name' => $row['group_name'],
-            ],
-            'data' => json_decode($row['data']),
-            'user' => $row['user_data'] ? json_decode($row['user_data']) : null,
-        ];
-        echo json_encode($data, JSON_FLAGS);
     }
 
     echo "\n]}}\n";
@@ -338,4 +341,11 @@ function update() {
 
     echo '{"status":"success","message":null,"data":{}}' . "\n";
     tucal_exit();
+}
+
+function generate_demo_events($start, $end, $public_events) {
+    function generate_week_schedule($week) {
+        // TODO implement
+    }
+    // TODO implement
 }

@@ -75,6 +75,7 @@ if ($subject === 'tuwien') {
     $TITLE[] = _('Veranstaltungen');
     $TITLE[] = _('TU Wien');
 } elseif ($subject === 'demo') {
+    $TITLE[] = 'Demo';
     $STATUS = 501;
 } else {
     force_user_login();
