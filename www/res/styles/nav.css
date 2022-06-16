@@ -235,14 +235,11 @@ body > nav div.link a.active {
     width: 100%;
 }
 
-@media screen and (max-width: 1000px) {
-    body > nav a {
+@media screen and (max-width: 1100px) {
+    body > nav div.link a {
         padding-left: 1em;
         padding-right: 1em;
     }
-}
-
-@media screen and (max-width: 1000px) {
     body > nav div.link a {
         width: unset;
     }
