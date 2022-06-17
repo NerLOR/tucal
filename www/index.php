@@ -98,9 +98,10 @@ require ".php/header.php";
                 </ul>
             </li>
             <li>
-                <a href="/courses/#public-groups">Öffentliche Gruppen</a>
+                <a href="/courses/#public-groups">Öffentliche Gruppen</a> bzw. <a href="/calendar/tuwien/">Veranstaltungskalender</a>
                 <ul>
                     <li>Integrierung von <a href="https://events.htu.at/" target="_blank">events.htu.at</a></li>
+                    <li>Integrierung des <a href="https://www.tuwien.at/tu-wien/aktuelles/veranstaltungskalender" target="_blank">Veranstaltungskalenders der TU</a></li>
                 </ul>
             </li>
             <li>
