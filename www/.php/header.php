@@ -94,10 +94,10 @@ if ($STATUS >= 400 && $STATUS < 600) {
     </div>
     <div id="nav-center">
         <div class="link" id="nav-home-explicit"><a href="/" class="<?php echo uri_active('/', true); ?>"><?php echo _('Home'); ?></a></div>
-        <div class="link"><a href="/calendar/tuwien/" class="<?php echo uri_active('/calendar/tuwien')?>"><?php echo _('Veranstaltungen'); ?></a></div>
         <div class="link"><a href="<?php echo $cal_uri; ?>" class="<?php echo uri_active($cal_uri_active); ?>"><?php echo _('My Calendar'); ?></a></div>
         <div class="link"><a href="/friends/" class="<?php echo uri_active('/friends/', true); ?>"><?php echo _('My Friends'); ?></a></div>
         <div class="link"><a href="/courses/" class="<?php echo uri_active('/courses/'); ?>"><?php echo _('My Courses'); ?></a></div>
+        <div class="link"><a href="/calendar/tuwien/" class="<?php echo uri_active('/calendar/tuwien')?>"><?php echo _('Veranstaltungen'); ?></a></div>
     </div>
     <div id="nav-right">
         <div id="nav-live">
