@@ -50,6 +50,11 @@ LI_END = re.compile(r'<span id="registrationForm:end">(.*?)</span>')
 LI_DEREGEND = re.compile(r'<span id="registrationForm:deregEnd">(.*?)</span>')
 LI_APP_BEGIN = re.compile(r'<span id="groupContentForm:.*?:appBeginn">(.*?)</span>')
 LI_APP_END = re.compile(r'<span id="groupContentForm:.*?:appEnd">(.*?)</span>')
+DIV_EXAM = re.compile(r'<div class="groupWrapper">(.*?)groupHeadertrigger"><span class="bold">\s*([^<>]*)\s*'
+                      r'</span>([^<>]*)\n(.*?)<div class="header_element"><span class="bold">\s*([^<>]*?)\s*</span>'
+                      r'(.*?)</fieldset>', re.MULTILINE | re.DOTALL)
+LABEL_EXAM = re.compile(r'<li><label for="examDateListForm:[^"]*">([^<>]*)</label><span[^>]*>(.*?)</li>',
+                        re.MULTILINE | re.DOTALL)
 
 
 class Building:
@@ -628,7 +633,7 @@ class Session:
             data['j_id_4n:eventDetailDateTable_first'] += 20
         return events
 
-    def get_course_due_events(self, course: Course) -> List[Dict[str, Any]]:
+    def get_course_extra_events(self, course: Course) -> List[Dict[str, Any]]:
         events = []
 
         # LVA-An/-Abmeldung
@@ -701,16 +706,121 @@ class Session:
                     'url': TISS_URL + uri,
                 })
 
-        # Prüfungsan/-abmeldungen
-        #uri = f'/education/course/examDateList.xhtml?semester={course.semester}&courseNr={course.nr}'
-        #self.get(uri)
-        #data = {
-        #    'javax.faces.source': 'examDateListForm:j_id_4q',
-        #    'javax.faces.partial.execute': '@all',
-        #    'javax.faces.partial.render': 'examDateListForm',
-        #    'examDateListForm:j_id_4q': 'examDateListForm:j_id_4q',
-        #    'examDateListForm_SUBMIT': '1',
-        #}
-        #r = self.post(uri, data, ajax=True)
+        # Prüfungen + An/-Abmeldungen
+        uri = f'/education/course/examDateList.xhtml?semester={course.semester}&courseNr={course.nr}'
+        self.get(uri)
+        data = {
+            'javax.faces.source': 'examDateListForm:j_id_4q',
+            'javax.faces.partial.execute': '@all',
+            'javax.faces.partial.render': 'examDateListForm',
+            'examDateListForm:j_id_4q': 'examDateListForm:j_id_4q',
+            'examDateListForm_SUBMIT': '1',
+        }
+        r = self.post(uri, data, ajax=True)
+        if r.status_code == 200:
+            exams = {}
+            for exam_match in DIV_EXAM.finditer(r.text):
+                name = exam_match.group(2).replace('.', '. ').replace('  ', ' ')
+                date = datetime.datetime.strptime(exam_match.group(3), '%d.%m.%Y').date()
+                status = exam_match.group(5)
+                table = {
+                    m.group(1).strip(): TAGS.sub('', m.group(2).strip())
+                    for m in LABEL_EXAM.finditer(exam_match.group(6))
+                }
+                if table['Stoffsemester'] != str(course.semester) and status != 'angemeldet':
+                    continue
+
+                name_parsed = name.split('(')[0].strip().split(',')[0].strip()
+                index = f'{date} {name_parsed}'.replace(' ', '-').lower()
+                if index not in exams:
+                    exams[index] = []
+                table['meta'] = {
+                    'status': status,
+                    'date': date,
+                    'name': name,
+                    'name_parsed': name_parsed,
+                }
+                exams[index].append(table)
+
+            for index, data in exams.items():
+                begin, end, online_end = None, None, None
+                begin_l, end_l, online_end_l = None, None, None
+                name_parsed, date, stoffsemester = None, None, None
+                enrolled = False
+                for exam in data:
+                    el = len(exam['meta']['name'])
+                    name_parsed = exam['meta']['name_parsed']
+                    date = exam['meta']['date']
+                    stoffsemester = exam['Stoffsemester']
+
+                    if exam['meta']['status'] == 'angemeldet':
+                        enrolled = True
+
+                    if 'Beginn der Anmeldung' in exam:
+                        b = exam['Beginn der Anmeldung']
+                        if begin is None or (begin != b and el < begin_l):
+                            begin, begin_l = b, el
+
+                    if 'Ende der Anmeldung' in exam:
+                        e = exam['Ende der Anmeldung']
+                        if end is None or (end != e and el < end_l):
+                            end, end_l = e, el
+
+                    if 'Ende der Online-Abmeldung' in exam:
+                        e = exam['Ende der Online-Abmeldung']
+                        if online_end is None or (online_end != e and el < online_end_l):
+                            online_end, online_end_l = e, el
+
+                begin = datetime.datetime.strptime(begin, '%d.%m.%Y, %H:%M') if begin else None
+                end = datetime.datetime.strptime(end, '%d.%m.%Y, %H:%M') if end else None
+                online_end = datetime.datetime.strptime(online_end, '%d.%m.%Y, %H:%M') if online_end else None
+
+                if begin is None:
+                    continue
+
+                events.append({
+                    'id': f'{course.nr}-exam-{date}-{name_parsed}',
+                    'start': date,
+                    'end': date + datetime.timedelta(days=1),
+                    'name': name_parsed,
+                    'url': TISS_URL + uri,
+                    'exam': {
+                        'stoffsemester': stoffsemester,
+                        'reg_start': begin.isoformat(),
+                        'reg_end': end.isoformat(),
+                        'dereg_end': online_end.isoformat(),
+                    }
+                })
+                events.append({
+                    'id': f'{course.nr}-exam-{date}-{name_parsed}-anmeldung',
+                    'start': begin,
+                    'end': begin,
+                    'name': f'Beginn Prüfungsanmeldung {name_parsed} ({date})',
+                    'url': TISS_URL + uri,
+                })
+
+                if end == online_end:
+                    events.append({
+                        'id': f'{course.nr}-exam-{date}-{name_parsed}-an-abmeldung-ende',
+                        'start': end,
+                        'end': end,
+                        'name': f'Ende Prüfungsan/-abmeldung {name_parsed} ({date})',
+                        'url': TISS_URL + uri,
+                    })
+                else:
+                    events.append({
+                        'id': f'{course.nr}-exam-{date}-{name_parsed}-anmeldung-ende',
+                        'start': end,
+                        'end': end,
+                        'name': f'Ende Prüfungsanmeldung {name_parsed} ({date})',
+                        'url': TISS_URL + uri,
+                    })
+                    events.append({
+                        'id': f'{course.nr}-exam-{date}-{name_parsed}-abmeldung-ende',
+                        'start': online_end,
+                        'end': online_end,
+                        'name': f'Ende Prüfungsabmeldung {name_parsed} ({date})',
+                        'url': TISS_URL + uri,
+                    })
 
         return events

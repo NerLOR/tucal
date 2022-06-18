@@ -72,7 +72,7 @@ class SyncUserTiss(tucal.Sync):
     favorites: List[tuwien.tiss.Course] = None
     course_events: Dict[tuwien.tiss.Course, List] = None
     course_groups: Dict[tuwien.tiss.Course, Dict] = None
-    course_due_events: Dict[tuwien.tiss.Course, List] = None
+    course_extra_events: Dict[tuwien.tiss.Course, List] = None
     personal_schedule: Dict[str, Any] = None
 
     def __init__(self, session: tuwien.sso.Session, job: Job, mnr: int):
@@ -98,12 +98,12 @@ class SyncUserTiss(tucal.Sync):
         self.job.begin('sync tiss courses', len(self.favorites))
         self.course_events = {}
         self.course_groups = {}
-        self.course_due_events = {}
+        self.course_extra_events = {}
         for course in self.favorites:
             self.job.begin(f'sync tiss course "{course.name_de[:30]}"')
             self.course_events[course] = tiss.get_course_events(course)
             self.course_groups[course] = tiss.get_groups(course)
-            self.course_due_events[course] = tiss.get_course_due_events(course)
+            self.course_extra_events[course] = tiss.get_course_extra_events(course)
             self.job.end(val)
         self.job.end(FETCH_TISS_COURSES_VAL - len(self.favorites) * val)
 
@@ -192,7 +192,7 @@ class SyncUserTiss(tucal.Sync):
                 tucal.db.tiss.upsert_group_events(group['events'], group, course=course,
                                                   access_time=self.access_time, mnr=self.mnr_int)
 
-        for course, events in self.course_due_events.items():
+        for course, events in self.course_extra_events.items():
             cur.execute("SELECT * FROM tucal.get_group(%s, %s, 'LVA')", (course.nr, str(course.semester)))
             group_nr = cur.fetch_all()[0][0]
             rows = [{
@@ -205,6 +205,7 @@ class SyncUserTiss(tucal.Sync):
                     'tiss_extra': {
                         'name': e['name'],
                         'url': e['url'],
+                        'exam': e['exam'] if 'exam' in e else None,
                     },
                 }),
             } for e in events]

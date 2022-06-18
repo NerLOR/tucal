@@ -152,8 +152,14 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
 
     if tiss_extra:
         data['summary'] = tiss_extra['name']
-        data['type'] = 'deadline'
-        data['url'] = tiss_extra['url']
+        if 'exam' in tiss_extra:
+            exam = tiss_extra['exam']
+            data['type'] = 'exam'
+            data['day_event'] = True
+            data['tiss_url'] = tiss_extra['url']
+        else:
+            data['type'] = 'deadline'
+            data['url'] = tiss_extra['url']
 
     if aurora:
         data['source_url'] = 'https://aurora.iguw.tuwien.ac.at/course/dwi/'
@@ -247,7 +253,9 @@ def merge_external_events():
         # FIXME better equality check
 
         event_rows = None
-        if global_event and end_ts > start_ts:
+        if source == 'tiss_extra':
+            pass
+        elif global_event and end_ts > start_ts:
             cur.execute("""
                 SELECT e.event_nr, array_agg(x.source)
                 FROM tucal.event e
