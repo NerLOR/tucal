@@ -152,7 +152,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
 
     if tiss_extra:
         data['summary'] = tiss_extra['name']
-        if 'exam' in tiss_extra:
+        if 'exam' in tiss_extra and tiss_extra['exam'] is not None:
             exam = tiss_extra['exam']
             data['type'] = 'exam'
             data['day_event'] = True
