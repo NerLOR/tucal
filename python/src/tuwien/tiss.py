@@ -778,6 +778,8 @@ class Session:
                 if begin is None:
                     continue
 
+                date_str = date.strftime('%d.%m.%Y')
+
                 events.append({
                     'id': f'{course.nr}-exam-{date}-{name_parsed}',
                     'start': date,
@@ -795,7 +797,7 @@ class Session:
                     'id': f'{course.nr}-exam-{date}-{name_parsed}-anmeldung',
                     'start': begin,
                     'end': begin,
-                    'name': f'Beginn Prüfungsanmeldung {name_parsed} ({date})',
+                    'name': f'Beginn Prüfungsanmeldung {name_parsed} ({date_str})',
                     'url': TISS_URL + uri,
                 })
 
@@ -804,7 +806,7 @@ class Session:
                         'id': f'{course.nr}-exam-{date}-{name_parsed}-an-abmeldung-ende',
                         'start': end,
                         'end': end,
-                        'name': f'Ende Prüfungsan/-abmeldung {name_parsed} ({date})',
+                        'name': f'Ende Prüfungsan/-abmeldung {name_parsed} ({date_str})',
                         'url': TISS_URL + uri,
                     })
                 else:
@@ -812,14 +814,14 @@ class Session:
                         'id': f'{course.nr}-exam-{date}-{name_parsed}-anmeldung-ende',
                         'start': end,
                         'end': end,
-                        'name': f'Ende Prüfungsanmeldung {name_parsed} ({date})',
+                        'name': f'Ende Prüfungsanmeldung {name_parsed} ({date_str})',
                         'url': TISS_URL + uri,
                     })
                     events.append({
                         'id': f'{course.nr}-exam-{date}-{name_parsed}-abmeldung-ende',
                         'start': online_end,
                         'end': online_end,
-                        'name': f'Ende Prüfungsabmeldung {name_parsed} ({date})',
+                        'name': f'Ende Prüfungsabmeldung {name_parsed} ({date_str})',
                         'url': TISS_URL + uri,
                     })
 

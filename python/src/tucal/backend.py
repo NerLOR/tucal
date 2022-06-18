@@ -253,7 +253,7 @@ def merge_external_events():
         # FIXME better equality check
 
         event_rows = None
-        if source == 'tiss_extra':
+        if source == 'tiss-extra':
             pass
         elif global_event and end_ts > start_ts:
             cur.execute("""
