@@ -113,11 +113,11 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
                     name = name[:-14]
                 name = name\
                     .replace('Anmeldung zum', '')\
-                    .repalce('Anmeldung zu dem', '')\
+                    .replace('Anmeldung zu dem', '')\
                     .replace('Anmeldung fürs', '')\
-                    .repalce('Anmeldung für das', '')\
+                    .replace('Anmeldung für das', '')\
                     .replace('Anmeldung für die', '')\
-                    .repalce('Anmeldung für den', '')\
+                    .replace('Anmeldung für den', '')\
                     .replace('Anmeldung', '').strip(' -')
                 data['summary'] = name
             elif typ == 'Instance':
