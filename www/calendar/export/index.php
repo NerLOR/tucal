@@ -303,7 +303,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $summary .= $courseName;
             if ($isTodo) {
                 $summary .= " - $data[summary]";
-            } elseif ($type === 'exam') {
+            } elseif ($type === 'exam' || $type === 'appointment') {
                 $summary .= " - $data[summary]";
             }
         } else {

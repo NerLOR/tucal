@@ -111,6 +111,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
                 name = tuwel['name'][tuwel['name'].find('/') + 1:].strip()
                 if name.endswith(': Einzeltermin'):
                     name = name[:-14]
+                name = name.replace('Anmeldung', '').strip(' -')
                 data['summary'] = name
             elif typ == 'Instance':
                 data['type'] = 'deadline'
