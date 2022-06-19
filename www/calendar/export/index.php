@@ -281,7 +281,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $slotStart->setTime((int) $parts[0], (int) $parts[1]);
 
             $parts = explode(':', $userData['exam']['slot_end']);
-            $slotEnd = clone $end;
+            $slotEnd = clone $start;
             $slotEnd->setTime((int) $parts[0], (int) $parts[1]);
 
             ical_line("BEGIN", ["VEVENT"]);
