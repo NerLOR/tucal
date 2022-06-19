@@ -485,8 +485,8 @@ class WeekSchedule {
     drawEvents(all_events: TucalEvent[]) {
         if (!this.week) throw new Error();
         all_events.sort((a, b) => {
-            const diff = a.start.valueOf() - b.start.valueOf();
-            return (diff === 0) ? (a.end.valueOf() - b.end.valueOf()) : diff;
+            const diff = a.getStart().valueOf() - b.getStart().valueOf();
+            return (diff === 0) ? (a.getEnd().valueOf() - b.getStart().valueOf()) : diff;
         });
 
         const formatter = new Intl.DateTimeFormat('de-AT', {
@@ -498,14 +498,14 @@ class WeekSchedule {
         const special = [];
         const events: TucalEvent[][] = [[], [], [], [], [], [], []];
         for (const event of all_events) {
-            const weekDay = (event.start.getDay() + 6) % 7;
+            const weekDay = (event.getStart().getDay() + 6) % 7;
             const day = events[weekDay];
             if (!day) throw new Error();
             if (event.deleted || (event.userHidden && !this.showHidden)) continue;
 
-            if (event.start.getTime() === event.end.getTime()) {
+            if (event.getStart().getTime() === event.getEnd().getTime()) {
                 deadlines.push(event);
-            } else if (event.dayEvent || event.end.valueOf() - event.start.valueOf() >= 43_200_000) {
+            } else if (event.isDayEvent() || event.getEnd().valueOf() - event.getStart().valueOf() >= 43_200_000) {
                 special.push(event);
             } else {
                 day.push(event);
@@ -530,13 +530,13 @@ class WeekSchedule {
         const startDate = this.week.startDate();
         const endDate = this.week.endDate();
         for (const event of special) {
-            const start = (event.start < startDate) ? 0 : ((event.start.getDay() + 6) % 7);
+            const start = (event.getStart() < startDate) ? 0 : ((event.getStart().getDay() + 6) % 7);
             const end = (event.end > endDate) ? 6 : ((new Date(event.end.getTime() - 1).getDay() + 6) % 7);
             specialParsed.push({
                 start: start,
                 end: end,
                 len: end - start + 1,
-                overL: (event.start < startDate),
+                overL: (event.getStart() < startDate),
                 overR: (event.end > endDate),
                 pos: null,
                 event: event,
@@ -632,8 +632,8 @@ class WeekSchedule {
         for (const day of events) {
             for (const eventData of placeDayEvents(day)) {
                 const event = eventData.event;
-                const start = event.start;
-                const end = event.end;
+                const start = event.getStart();
+                const end = event.getEnd();
 
                 const day = wrapper.getElementsByClassName("day")[(start.getDay() + 6) % 7];
                 if (!day) throw new Error();
@@ -665,10 +665,10 @@ class WeekSchedule {
                     this.setEventId(event.id);
                 });
 
-                const startFmt = formatter.format(this.planned ? event.plannedStart || start : start);
-                const endFmt = formatter.format(this.planned ? event.plannedEnd || end : end);
+                const startFmt = formatter.format(this.planned && !event.isExamSlot() ? event.plannedStart || start : start);
+                const endFmt = formatter.format(this.planned && !event.isExamSlot() ? event.plannedEnd || end : end);
                 const course = event.getCourse();
-                const room = event.getRoom();
+                const room = event.getExamSlotRoom() || event.getRoom();
                 const ltLink = room && room.getLectureTubeLink() || null;
 
                 let cGroup = event.courseGroup;
@@ -707,7 +707,7 @@ class WeekSchedule {
                 if (!pre || !post || !data) throw new Error();
 
                 let preMin = 0, postMin = 0;
-                if (this.planned) {
+                if (this.planned && !event.isExamSlot()) {
                     if (event.plannedStart) preMin = (event.plannedStart.getTime() - event.start.getTime()) / 60_000;
                     if (event.plannedEnd) postMin = (event.end.getTime() - event.plannedEnd.getTime()) / 60_000;
                 }
@@ -737,7 +737,7 @@ class WeekSchedule {
         const evt = week.events.find((evt) => evt.id === this.eventId);
         if (!evt) throw new Error();
         const course = evt.getCourse();
-        const room = evt.getRoom();
+        const room = evt.getExamSlotRoom() || evt.getRoom();
 
         const courseName = course && (LOCALE_GROUP === 'de' ? course.name_de : course.name_en);
 
@@ -798,7 +798,7 @@ class WeekSchedule {
         });
 
         html += `<h4>`;
-        if (evt.dayEvent) {
+        if (evt.isDayEvent()) {
             const start = formatterDate.format(evt.start);
             const end = formatterDate.format(new Date(Math.max(evt.end.valueOf() - 1, evt.start.valueOf())));
             if (start !== end) {
@@ -806,6 +806,8 @@ class WeekSchedule {
             } else {
                 html += `<span class="time">${start}</span>`;
             }
+        } else if (evt.isExamSlot()) {
+            html += `<span class="time">${formatterDate.format(evt.start)}, Slot ${formatterTime.format(evt.getStart())}-${formatterTime.format(evt.getEnd())}</span>`;
         } else if (evt.end.valueOf() - evt.start.valueOf() >= 86_400_000) {
             html += `<span class="time">${formatterDateTime.format(evt.start)} – ${formatterDateTime.format(evt.end)}</span>`;
         } else {
@@ -863,8 +865,18 @@ class WeekSchedule {
 
         if (this.subject === MNR) {
             html += `<div class="container"><div>${_('Custom (settings)')}:</div><div>` +
-                `<label><input type="checkbox" name="hidden"/> ${_('Hide')}</label>` +
-                `</div></div>`;
+                `<label><input type="checkbox" name="hidden"/> ${_('Hide')}</label>`;
+            if (evt.type === 'exam') {
+                html += `<br/>` +
+                    `<label>${_('Slot times')}: ` +
+                    `<input type="time" name="slot-start" class="line" pattern="[0-9]{2}:[0-9]{2}"/>` +
+                    `<input type="time" name="slot-end" class="line" pattern="[0-9]{2}:[0-9]{2}"/>` +
+                    `</label><br/>` +
+                    `<label>${_('Slot room')}: ` +
+                    `<select name="slot-room"><option value="none">${_('No room')}</option></select>` +
+                    `</label>`;
+            }
+            html += `</div></div>`;
         }
 
         if (MNR !== null) {
@@ -915,12 +927,12 @@ class WeekSchedule {
         html += '</form>';
         div.innerHTML = html;
 
-        if (MNR !== null) this.initEventDetailForm(evt, room, div, formatterTime);
+        if (MNR !== null) this.initEventDetailForm(evt, div, formatterTime);
 
         this.cal.appendChild(wrapper);
     }
 
-    private initEventDetailForm(evt: TucalEvent, room: Room | null, div: HTMLElement, formatterTime: Intl.DateTimeFormat) {
+    private initEventDetailForm(evt: TucalEvent, div: HTMLElement, formatterTime: Intl.DateTimeFormat) {
         const aLive = div.getElementsByClassName("live")[0];
         if (aLive && evt.zoom) aLive.setAttribute('href', evt.zoom.toString());
 
@@ -934,6 +946,11 @@ class WeekSchedule {
         const formPre = div.getElementsByClassName("form-pre");
         if (!button || !submitButton || !form || !formDiv) throw new Error();
 
+        const hidden = (<HTMLInputElement> <unknown> form['hidden']) || null;
+        const slotStart = (<HTMLInputElement> <unknown> form['slot-start']) || null;
+        const slotEnd = (<HTMLInputElement> <unknown> form['slot-end']) || null;
+        const slotRoomSelect = (<HTMLInputElement> <unknown> form['slot-room']) || null;
+
         const useLt = form['lt'];
         const useZoom = form['zoom'];
         const useYt = form['yt'];
@@ -945,19 +962,22 @@ class WeekSchedule {
         const summary = form['summary'];
         const status = form['status'];
         const mode = form['mode'];
-        const hidden = (<HTMLInputElement> <unknown> form['hidden']) || null;
         const plannedStart = form['planned-start'];
         const plannedEnd = form['planned-end'];
         let manual = false;
 
         if (ROOMS) {
+            const selects = [roomSelect];
+            if (slotRoomSelect) selects.push(slotRoomSelect);
             for (const roomNr in ROOMS) {
                 const r = ROOMS[roomNr];
                 if (!r) continue;
-                const opt = document.createElement("option");
-                opt.innerText = `${r.getNameLong()} (${r.getCodeFormat()})`;
-                opt.value = `${r.nr}`;
-                roomSelect.appendChild(opt);
+                for (const select of selects) {
+                    const opt = document.createElement("option");
+                    opt.innerText = `${r.getNameLong()} (${r.getCodeFormat()})`;
+                    opt.value = `${r.nr}`;
+                    select.appendChild(opt);
+                }
             }
         }
 
@@ -974,6 +994,21 @@ class WeekSchedule {
                 manual = false;
             }
         });
+
+        const hasHiddenChanged = (): boolean => {
+            return hidden && !!evt.userHidden !== hidden.checked;
+        }
+
+        const hasSlotTimesChanged = (): boolean => {
+            return slotStart && slotEnd && (
+                !((evt.examSlotStart && slotStart.value && formatterTime.format(evt.examSlotStart) === slotStart.value) || (!evt.examSlotStart && !slotStart.value)) ||
+                !((evt.examSlotEnd && slotEnd.value && formatterTime.format(evt.examSlotEnd) === slotEnd.value) || (!evt.examSlotEnd && !slotEnd.value))
+            );
+        }
+
+        const hasSlotRoomChanged = (): boolean => {
+            return slotRoomSelect && evt.examSlotRoomNr !== (parseInt(slotRoomSelect.value) || null);
+        }
 
         const hasLiveChanged = (): boolean => {
             return (!!evt.zoom !== useZoom.checked) ||
@@ -999,11 +1034,7 @@ class WeekSchedule {
             return evt.summary !== (summary.value !== '' ? summary.value : null);
         }
 
-        const hasHiddenChanged = (): boolean => {
-            return hidden && evt.userHidden !== hidden.checked;
-        }
-
-        const hasPlannedTimesChanges = (): boolean => {
+        const hasPlannedTimesChanged = (): boolean => {
             return (
                 !((evt.plannedStart && plannedStart.value && formatterTime.format(evt.plannedStart) === plannedStart.value) || (!evt.plannedStart && !plannedStart.value)) ||
                 !((evt.plannedEnd && plannedEnd.value && formatterTime.format(evt.plannedEnd) === plannedEnd.value) || (!evt.plannedEnd && !plannedEnd.value))
@@ -1017,7 +1048,9 @@ class WeekSchedule {
                 hasModeChanged() ||
                 hasSummaryChanged() ||
                 hasHiddenChanged() ||
-                hasPlannedTimesChanges();
+                hasPlannedTimesChanged() ||
+                hasSlotRoomChanged() ||
+                hasSlotTimesChanged();
         }
 
         const onChange = () => {
@@ -1053,6 +1086,11 @@ class WeekSchedule {
             submitButton.disabled = !hasChanged();
         }
 
+        if (evt.userHidden && hidden) hidden.checked = true;
+        if (evt.examSlotStart && slotStart) slotStart.value = formatterTime.format(evt.examSlotStart);
+        if (evt.examSlotEnd && slotEnd) slotEnd.value = formatterTime.format(evt.examSlotEnd);
+        if (evt.examSlotRoomNr && slotRoomSelect) slotRoomSelect.value = `${evt.examSlotRoomNr}`;
+
         if (evt.zoom) {
             useZoom.checked = true;
             zoomUrl.value = evt.zoom;
@@ -1064,12 +1102,10 @@ class WeekSchedule {
             useYt.checked = true;
             ytUrl.value = evt.youtube;
         }
-
-        if (room) roomSelect.value = `${room.nr}`;
+        if (evt.roomNr) roomSelect.value = `${evt.roomNr}`;
         if (evt.summary) summary.value = evt.summary;
         if (evt.status) status.value = evt.status;
         if (evt.mode) mode.value = evt.mode.replace(/_/g, '-');
-        if (evt.userHidden && hidden) hidden.checked = true;
         if (evt.plannedStart) plannedStart.value = formatterTime.format(evt.plannedStart);
         if (evt.plannedEnd) plannedEnd.value = formatterTime.format(evt.plannedEnd);
 
@@ -1086,6 +1122,19 @@ class WeekSchedule {
             const data: {[index: string]: any} = {};
             const dataUser: {[index: string]: any} = {};
             const user: {[index: string]: any} = {};
+
+            if (hasHiddenChanged() && hidden) {
+                user['hidden'] = hidden.checked;
+            }
+
+            if ((hasSlotTimesChanged() && slotStart && slotEnd) || (hasSlotRoomChanged() && slotRoomSelect)) {
+                const v = slotRoomSelect && slotRoomSelect.value || null;
+                user['exam'] = {
+                    'slot_start': (slotStart && slotStart.value) || evt.examSlotStart,
+                    'slot_end': (slotEnd && slotEnd.value) || evt.examSlotEnd,
+                    'slot_room_nr': (v !== null) ? ((v !== 'none') ? parseInt(v) : null) : evt.examSlotRoomNr,
+                };
+            }
 
             if (hasLiveChanged()) {
                 dataUser['lt'] = !!useLt.checked;
@@ -1105,11 +1154,7 @@ class WeekSchedule {
                 dataUser['summary'] = (summary.value !== '') ? summary.value.trim() : null;
             }
 
-            if (hasHiddenChanged() && hidden) {
-                user['hidden'] = hidden.checked;
-            }
-
-            if (hasPlannedTimesChanges()) {
+            if (hasPlannedTimesChanged()) {
                 data['planned_start'] = plannedStart.value || null;
                 data['planned_end'] = plannedEnd.value || null;
             }
@@ -1159,14 +1204,14 @@ function placeDayEvents(dayEvents: TucalEvent[]) {
 
     const hour = 60 * 60 * 1000;
     for (const evt1 of parsed) {
-        const start1 = evt1.event.start.getTime();
-        const end1 = evt1.event.end.getTime();
+        const start1 = evt1.event.getStart().getTime();
+        const end1 = evt1.event.getEnd().getTime();
         const len = end1 - start1;
 
         for (const evt2 of parsed) {
             if (evt2 === evt1) continue;
-            const start2 = evt2.event.start.getTime();
-            const end2 = evt2.event.end.getTime();
+            const start2 = evt2.event.getStart().getTime();
+            const end2 = evt2.event.getEnd().getTime();
 
             if (Math.abs(start1 - start2) < Math.min(hour, len, end2 - start2)) {
                 evt1.concurrent.push(evt2);
@@ -1181,12 +1226,12 @@ function placeDayEvents(dayEvents: TucalEvent[]) {
         }
         for (let i = 0; i < cur.length; i++) {
             const p = cur[i];
-            if (p && p.event.end <= evt.event.start) {
+            if (p && p.event.getEnd() <= evt.event.getStart()) {
                 cur.splice(i);
             }
         }
         let p = Math.pow(0.875, cur.length);
-        if (evt.event.end > evt.event.start) {
+        if (evt.event.getEnd() > evt.event.getStart()) {
             cur.push(evt);
         }
         const f = (1 - p);

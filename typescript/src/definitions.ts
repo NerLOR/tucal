@@ -73,6 +73,11 @@ interface TucalEventJSON {
     },
     user: null | {
         hidden: boolean | null | undefined,
+        exam: null | undefined | {
+            slot_start: string | null | undefined,
+            slot_end: string | null | undefined,
+            slot_room_nr: number | null | undefined,
+        },
     },
 }
 
@@ -346,7 +351,10 @@ class TucalEvent {
     organizer: string | null;
     type: string | null;
     mode: string | null;
-    userHidden: boolean = false;
+    userHidden: boolean | null = null;
+    examSlotStart: Date | null = null;
+    examSlotEnd: Date | null = null;
+    examSlotRoomNr: number | null = null;
 
     constructor(event: TucalEventJSON) {
         this.id = event.id;
@@ -389,7 +397,22 @@ class TucalEvent {
         this.mode = event.data.mode || null;
 
         if (event.user) {
-            this.userHidden = event.user.hidden || false;
+            this.userHidden = event.user.hidden || null;
+            if (event.user.exam) {
+                this.examSlotRoomNr = event.user.exam.slot_room_nr || null;
+
+                const start = event.user.exam.slot_start?.split(':');
+                if (start && start[0] && start[1] && start.length === 2) {
+                    this.examSlotStart = new Date(this.start.valueOf());
+                    this.examSlotStart.setHours(parseInt(start[0]), parseInt(start[1]));
+                }
+
+                const end = event.user.exam.slot_end?.split(':');
+                if (end && end[0] && end[1] && end.length === 2) {
+                    this.examSlotEnd = new Date(this.start.valueOf());
+                    this.examSlotEnd.setHours(parseInt(end[0]), parseInt(end[1]));
+                }
+            }
         }
     }
 
@@ -397,6 +420,12 @@ class TucalEvent {
         if (this.roomNr === null) return null;
         if (!ROOMS) return Room.pseudo(this.roomNr);
         return ROOMS[this.roomNr] || null;
+    }
+
+    getExamSlotRoom(): Room | null {
+        if (this.examSlotRoomNr === null) return null;
+        if (!ROOMS) return Room.pseudo(this.examSlotRoomNr);
+        return ROOMS[this.examSlotRoomNr] || null;
     }
 
     getCourse(): CourseDef | null {
@@ -424,5 +453,21 @@ class TucalEvent {
     isNow(): boolean {
         const dt = asTimezone(new Date(), TIMEZONE);
         return dt >= this.start && dt < this.end;
+    }
+
+    isExamSlot(): boolean {
+        return this.type === 'exam' && !!this.examSlotStart && !!this.examSlotEnd;
+    }
+
+    isDayEvent(): boolean {
+        return this.isExamSlot() ? false : this.dayEvent;
+    }
+
+    getStart(): Date {
+        return this.examSlotStart || this.start;
+    }
+
+    getEnd(): Date {
+        return this.examSlotEnd || this.end;
     }
 }

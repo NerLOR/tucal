@@ -391,6 +391,12 @@ msgstr "Persönlich"
 msgid "Hide"
 msgstr "Verbergen"
 
+msgid "Slot times"
+msgstr "Slot-Zeiten"
+
+msgid "Slot room"
+msgstr "Slot-Raum"
+
 msgid "Planned times"
 msgstr "Geplante Zeiten"
 

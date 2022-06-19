@@ -373,6 +373,12 @@ msgstr "Custom"
 msgid "Hide"
 msgstr "Hide"
 
+msgid "Slot times"
+msgstr "Slot times"
+
+msgid "Slot room"
+msgstr "Slot room"
+
 msgid "Planned times"
 msgstr "Planned times"
 

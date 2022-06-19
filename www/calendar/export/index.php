@@ -219,6 +219,9 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     }
 
     $roomNr = $row['room_nr'];
+    if ((isset($userData['exam']) && isset($userData['exam']['slot_room_nr']))) {
+        $roomNr = $userData['exam']['slot_room_nr'];
+    }
     if ($roomNr !== null) {
         $room = $rooms[$roomNr];
         $roomNameAbbr = $room['room_name_short'] ?? "#$roomNr";
@@ -272,6 +275,18 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         } elseif ($isTodo) {
             ical_line("BEGIN", ["VTODO"]);
             ical_line("DUE", [($usePlanned ? ($plannedStart ?? $start) : $start)->format($format)], ["TZID=Europe/Vienna"]);
+        } elseif ($type === 'exam' && isset($userData['exam']) && isset($userData['exam']['slot_start']) && isset($userData['exam']['slot_end'])) {
+            $parts = explode(':', $userData['exam']['slot_start']);
+            $slotStart = clone $start;
+            $slotStart->setTime((int) $parts[0], (int) $parts[1]);
+
+            $parts = explode(':', $userData['exam']['slot_end']);
+            $slotEnd = clone $end;
+            $slotEnd->setTime((int) $parts[0], (int) $parts[1]);
+
+            ical_line("BEGIN", ["VEVENT"]);
+            ical_line("DTSTART", [$slotStart->format($format)], ["TZID=Europe/Vienna"]);
+            ical_line("DTEND", [$slotEnd->format($format)], ["TZID=Europe/Vienna"]);
         } elseif ($data['day_event']) {
             ical_line("BEGIN", ["VEVENT"]);
             ical_line("DTSTART", [($usePlanned ? ($plannedStart ?? $start) : $start)->format($formatDate)], ["VALUE=DATE"]);
@@ -286,13 +301,16 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $desc = "";
         if ($courseName !== null) {
             $summary .= $courseName;
+            if ($isTodo) {
+                $summary .= " - $data[summary]";
+            } elseif ($type === 'exam') {
+                $summary .= " - $data[summary]";
+            }
         } else {
             $summary .= $data['summary'];
         }
 
-        if ($isTodo) {
-            $summary .= " - $data[summary]";
-        } elseif ($courseName !== null) {
+        if (!$isTodo && $courseName !== null) {
             $desc .= $data['summary'];
         }
 
