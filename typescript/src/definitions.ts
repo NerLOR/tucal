@@ -452,7 +452,7 @@ class TucalEvent {
 
     isNow(): boolean {
         const dt = asTimezone(new Date(), TIMEZONE);
-        return dt >= this.start && dt < this.end;
+        return dt >= this.getStart() && dt < this.getEnd();
     }
 
     isExamSlot(): boolean {

@@ -281,7 +281,7 @@ class WeekSchedule {
             if (week) {
                 for (const evt of week.events) {
                     const evtElem = document.getElementById(`event-${evt.id}`);
-                    if (evtElem && dt >= evt.start && dt < evt.end) {
+                    if (evtElem && evt.isNow()) {
                         evtElem.classList.add("now");
                     }
                 }
