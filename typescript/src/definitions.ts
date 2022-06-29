@@ -35,6 +35,15 @@ interface CourseJSON {
     program: string | null,
 }
 
+interface TucalEventUserDataJSON {
+    hidden: boolean | null | undefined,
+    exam: null | undefined | {
+        slot_start: string | null | undefined,
+        slot_end: string | null | undefined,
+        slot_room_nr: number | null | undefined,
+    },
+}
+
 interface TucalEventJSON {
     id: string,
     deleted: boolean | null,
@@ -71,14 +80,7 @@ interface TucalEventJSON {
         source_name: string | null | undefined,
         organizer: string | null | undefined,
     },
-    user: null | {
-        hidden: boolean | null | undefined,
-        exam: null | undefined | {
-            slot_start: string | null | undefined,
-            slot_end: string | null | undefined,
-            slot_room_nr: number | null | undefined,
-        },
-    },
+    user: null | TucalEventUserDataJSON,
 }
 
 interface JobStepJSON {
@@ -396,22 +398,24 @@ class TucalEvent {
         this.type = event.data.type || null;
         this.mode = event.data.mode || null;
 
-        if (event.user) {
-            this.userHidden = event.user.hidden || null;
-            if (event.user.exam) {
-                this.examSlotRoomNr = event.user.exam.slot_room_nr || null;
+        if (event.user) this.updateUserData(event.user);
+    }
 
-                const start = event.user.exam.slot_start?.split(':');
-                if (start && start[0] && start[1] && start.length === 2) {
-                    this.examSlotStart = new Date(this.start.valueOf());
-                    this.examSlotStart.setHours(parseInt(start[0]), parseInt(start[1]));
-                }
+    updateUserData(data: TucalEventUserDataJSON): void {
+        this.userHidden = data.hidden ?? this.userHidden ?? null;
+        if (data.exam) {
+            this.examSlotRoomNr = data.exam.slot_room_nr || null;
 
-                const end = event.user.exam.slot_end?.split(':');
-                if (end && end[0] && end[1] && end.length === 2) {
-                    this.examSlotEnd = new Date(this.start.valueOf());
-                    this.examSlotEnd.setHours(parseInt(end[0]), parseInt(end[1]));
-                }
+            const start = data.exam.slot_start?.split(':');
+            if (start && start[0] && start[1] && start.length === 2) {
+                this.examSlotStart = new Date(this.start.valueOf());
+                this.examSlotStart.setHours(parseInt(start[0]), parseInt(start[1]));
+            }
+
+            const end = data.exam.slot_end?.split(':');
+            if (end && end[0] && end[1] && end.length === 2) {
+                this.examSlotEnd = new Date(this.start.valueOf());
+                this.examSlotEnd.setHours(parseInt(end[0]), parseInt(end[1]));
             }
         }
     }

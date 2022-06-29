@@ -1164,14 +1164,32 @@ class WeekSchedule {
             data['user'] = user
             api('/calendar/update', urlData, data).then(() => {
                 // wait for backend to update events
-                sleep(1000).then(() => {
-                    if (urlData['previous'] || urlData['following'] || evt.getWeeks().length > 1) {
+                if (urlData['previous'] || urlData['following'] || evt.getWeeks().length > 1) {
+                    sleep(1000).then(() => {
                         this.weeks = {};
-                    } else if (this.week) {
-                        delete this.weeks[this.week.toString()];
+                        this.reloadEvents();
+                    });
+                } else {
+                    if (!this.week) throw new Error();
+
+                    const w = this.weeks[this.week.toString()];
+                    if (w) {
+                        const evt = w.events.find(event => (event.id === this.eventId));
+                        if (evt) {
+                            evt.updateUserData(data['user']);
+                            if (data['planned_start'] !== undefined) evt.plannedStart = asTimezone(new Date(Date.parse(data['planned_start'])), TIMEZONE);
+                            if (data['planned_end'] !== undefined) evt.plannedEnd = asTimezone(new Date(Date.parse(data['planned_end'])), TIMEZONE);
+                            if (dataUser['lt'] !== undefined) evt.lectureTube = dataUser['lt'];
+                            if (dataUser['zoom'] !== undefined) evt.zoom = dataUser['zoom'];
+                            if (dataUser['yt'] !== undefined) evt.youtube= dataUser['yt'];
+                            if (dataUser['status'] !== undefined) evt.status = dataUser['status'];
+                            if (dataUser['mode'] !== undefined) evt.mode = dataUser['mode'];
+                            if (dataUser['summary'] !== undefined) evt.summary = dataUser['summary'];
+                        }
                     }
-                    this.reloadEvents();
-                });
+
+                    this.reloadEvents(true);
+                }
             });
         });
     }
