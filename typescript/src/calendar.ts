@@ -1186,6 +1186,7 @@ class WeekSchedule {
                             if (dataUser['mode'] !== undefined) evt.mode = dataUser['mode'];
                             if (dataUser['summary'] !== undefined) evt.summary = dataUser['summary'];
                         }
+                        if (data['user']['hidden'] === true) this.setEventId(null);
                     }
 
                     this.reloadEvents(true);
