@@ -63,15 +63,17 @@ class Job {
         const dataStr = this.elem.dataset['job'];
         if (!id) throw new Error();
 
+        this.data = null;
+        this.status = null;
+        this.errorMsg = null;
+
         if (dataStr) {
-            const data = <JobJSON> JSON.parse(dataStr);
-            this.data = data.data ? new BaseJobStep(data.data) : null;
-            this.status = data.status;
-            this.errorMsg = data.error_msg;
-        } else {
-            this.data = null;
-            this.status = null;
-            this.errorMsg = null;
+            try {
+                const data = <JobJSON> JSON.parse(dataStr);
+                this.data = data.data ? new BaseJobStep(data.data) : null;
+                this.status = data.status;
+                this.errorMsg = data.error_msg;
+            } catch {}
         }
 
         this.id = id;
