@@ -35,8 +35,8 @@ build-www:
 		sed -i 's/{comment}/clean/g' ${FOOTER} ;\
 		sed -i 's/{class}/clean/g' ${FOOTER} ;\
 	else \
-		sed -i 's/{comment}/uncommited changes/g' ${FOOTER} ;\
-		sed -i 's/{class}/uncommited-changes/g' ${FOOTER} ;\
+		sed -i 's/{comment}/uncommitted changes/g' ${FOOTER} ;\
+		sed -i 's/{class}/uncommitted-changes/g' ${FOOTER} ;\
 	fi
 	# create .ico file from svg
 	convert -background none dest/www/res/svgs/tucal.svg -alpha set -define icon:auto-resize=256,128,64,32,24,16 dest/www/favicon.ico
