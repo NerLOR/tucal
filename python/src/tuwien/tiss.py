@@ -57,6 +57,9 @@ LABEL_EXAM = re.compile(r'<li><label for="examDateListForm:[^"]*">([^<>]*)</labe
                         re.MULTILINE | re.DOTALL)
 
 BUTTON_EVENTS = re.compile(r'<a id="(.*?):(.*?)"[^>]*>Einzeltermine anzeigen</a>')
+BUTTON_SEARCH = re.compile(r'<a id="courseList:(.*?)"[^>]*>Erweiterte Suche/a>')
+BUTTON_TOKEN = re.compile(r'<input id="(.*?):(.*?)" value="Erzeuge neuen Token"')
+BUTTON_EXAM = re.compile(r'<a id="examDateListForm:(.*?)"[^>]*>Alle Prüfungen')
 
 
 class Building:
@@ -326,14 +329,14 @@ class Session:
         if r.status_code != 200:
             raise tucal.CourseNotFoundError()
 
-        title_de = html.unescape(COURSE_TITLE.findall(r.text)[0].strip())
-        meta = COURSE_META.findall(r.text)[0]
+        title_de = html.unescape(COURSE_TITLE.search(r.text).group(1).strip())
+        meta = COURSE_META.search(r.text).group(1)
 
         r = self.get(f'/course/courseDetails.xhtml?courseNr={course_nr}&semester={semester}&locale=en')
         if r.status_code != 200:
             raise tucal.CourseNotFoundError()
 
-        title_en = html.unescape(COURSE_TITLE.findall(r.text)[0].strip())
+        title_en = html.unescape(COURSE_TITLE.search(r.text).group(1).strip())
 
         course_type = meta[0]
         ects = float(meta[2])
@@ -343,15 +346,20 @@ class Session:
     def course_generator(self, semester: Semester, semester_to: Semester = None,
                          skip: Set[(str, Semester)] = None) -> Generator[Course or int]:
         skip = skip or set()
+        r = self.get('/course/courseList.xhtml')
 
+        m = BUTTON_SEARCH.search(r.text)
+        if not m:
+            raise tucal.TissError()
+
+        id_1 = m.group(1)
         data1 = {
-            'javax.faces.source': 'courseList:j_id_2g',
+            'javax.faces.source': f'courseList:{id_1}',
             'javax.faces.partial.execute': 'courseList:searchField',
             'javax.faces.partial.render': 'courseList globalMessagesPanel',
             'javax.faces.behavior.event': 'action',
             'javax.faces.partial.event': 'click',
         }
-        self.get('/course/courseList.xhtml')
         r = self.post('/course/courseList.xhtml', data1, ajax=True)
 
         semesters = [Semester(opt.group(1)) for opt in OPTION_SEMESTER.finditer(r.text)]
@@ -471,14 +479,19 @@ class Session:
         for link in LINK_TOKEN.finditer(r.text):
             return link.group(1)
 
+        m = BUTTON_TOKEN.search(r.text)
+        if not m:
+            raise tucal.TissError()
+
+        id_1, id_2 = m.group(1), m.group(2)
         # Fallback. generate new token
         data = {
             'javax.faces.behavior.event': 'action',
             'javax.faces.partial.event': 'click',
-            'javax.faces.source': 'j_id_7m:j_id_7n_8',
-            'javax.faces.partial.execute': 'j_id_7m:j_id_7n_8',
-            'javax.faces.partial.render': 'j_id_7m globalMessagesPanel',
-            'j_id_7m_SUBMIT': '1',
+            'javax.faces.source': f'{id_1}:{id_2}',
+            'javax.faces.partial.execute': f'{id_1}:{id_2}',
+            'javax.faces.partial.render': f'{id_1} globalMessagesPanel',
+            f'{id_1}_SUBMIT': '1',
         }
         r = self.post('/events/personSchedule.xhtml', data, ajax=True)
         for link in LINK_TOKEN.finditer(r.text):
@@ -526,8 +539,8 @@ class Session:
             data = [d.group(1) for d in TABLE_TD.finditer(row.group(1))][1:8]
             if len(data) != 7 or data[0] == 'Summe' or data[6] != '':
                 continue
-            course = LINK_COURSE.findall(data[0])[0]
-            course_type = SPAN_TYPE.findall(data[0])[0]
+            course = LINK_COURSE.search(data[0]).groups()
+            course_type = SPAN_TYPE.search(data[0]).group(1)
             courses.append(Course(course[1], course[0], course[2], None, course_type, float(data[2])))
         return courses
 
@@ -715,12 +728,18 @@ class Session:
 
         # Prüfungen + An/-Abmeldungen
         uri = f'/education/course/examDateList.xhtml?semester={course.semester}&courseNr={course.nr}'
-        self.get(uri)
+        r = self.get(uri)
+
+        m = BUTTON_EXAM.search(r.text)
+        if not m:
+            raise tucal.TissError()
+
+        id_1 = m.group(1)
         data = {
-            'javax.faces.source': 'examDateListForm:j_id_4q',
+            'javax.faces.source': f'examDateListForm:{id_1}',
             'javax.faces.partial.execute': '@all',
             'javax.faces.partial.render': 'examDateListForm',
-            'examDateListForm:j_id_4q': 'examDateListForm:j_id_4q',
+            f'examDateListForm:{id_1}': f'examDateListForm:{id_1}',
             'examDateListForm_SUBMIT': '1',
         }
         r = self.post(uri, data, ajax=True)

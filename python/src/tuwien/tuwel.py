@@ -103,7 +103,7 @@ class Session:
             'sesskey': self._sess_key,
             'generateurl': 'Kalender-URL abfragen',
         })
-        return AUTH_TOKEN.findall(r.text)[0]
+        return AUTH_TOKEN.search(r.text).group(1)
 
     def _get_courses(self) -> Dict[int, Course]:
         data1 = self.ajax('core_course_get_enrolled_courses_by_timeline_classification',
@@ -144,7 +144,7 @@ class Session:
             r = self.get(f'/mod/grouptool/view.php?id={link.group(1)}')
             for member in GROUP_MEMBERS.finditer(r.text):
                 pos = r.text.rfind('<h2 class="panel-title">', 0, member.start())
-                group_name = html.unescape(GROUP_NAME.findall(r.text, pos)[0]).strip()
+                group_name = html.unescape(GROUP_NAME.search(r.text, pos).group(1)).strip()
                 groups.append((all_groups[group_name], group_name))
         return groups
 

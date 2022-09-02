@@ -39,7 +39,7 @@ class Session:
             return True
 
         if '<title>TU Wien Login</title>' in r.text:
-            auth_state = INPUT_AUTH_STATE.findall(r.text)[0]
+            auth_state = INPUT_AUTH_STATE.search(r.text).group(1)
             r = self._session.post(f'{SSO_URL}/simplesaml/module.php/core/loginuserpass.php', {
                 'username': self._username or '',
                 'password': self._password or '',
@@ -53,23 +53,23 @@ class Session:
                 raise tucal.InvalidCredentialsError('invalid credentials')
 
         if '<title>Hohes Passwortalter</title>' in r.text:
-            state_id = INPUT_STATE_ID.findall(r.text)[0]
+            state_id = INPUT_STATE_ID.search(r.text).group(1)
             r = self._session.post(f'{SSO_URL}/simplesaml/module.php/oldPW/confirmOldPW.php', {
                 'yes': '',
                 'StateId': state_id,
             })
 
         if '<title>Zustimmung zur Weitergabe persönlicher Daten</title>' in r.text:
-            state_id = INPUT_STATE_ID.findall(r.text)[0]
+            state_id = INPUT_STATE_ID.search(r.text).group(1)
             r = self._session.post(f'{SSO_URL}/simplesaml/module.php/consent/getconsent.php', {
                 'yes': '',
                 'saveconsent': '1',
                 'StateId': state_id,
             })
 
-        action = FORM_ACTION.findall(r.text)[0]
-        saml_res = INPUT_SAML_RES.findall(r.text)[0]
-        relay_state = INPUT_RELAY_STATE.findall(r.text)[0]
+        action = FORM_ACTION.search(r.text).group(1)
+        saml_res = INPUT_SAML_RES.search(r.text).group(1)
+        relay_state = INPUT_RELAY_STATE.search(r.text).group(1)
 
         r = self._session.post(action, {
             'SAMLResponse': saml_res,
