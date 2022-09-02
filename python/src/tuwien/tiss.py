@@ -26,7 +26,7 @@ COURSE_META = re.compile(r'<div id="subHeader" class="clearfix">'
                          r'[0-9SW]+, ([A-Z]+), ([0-9]+\.[0-9]+)h, ([0-9]+\.[0-9]+)EC')
 
 CDATA = re.compile(r'<!\[CDATA\[(.*?)]]>')
-UPDATE_VIEW_STATE = re.compile(r'<update id="j_id__v_0:javax.faces.ViewState:1"><!\[CDATA\[(.*?)]]></update>')
+UPDATE_VIEW_STATE = re.compile(r'<update id="j_id__v_0:javax\.faces\.ViewState:1"><!\[CDATA\[(.*?)]]></update>')
 INPUT_VIEW_STATE = re.compile(r'<input.*?name="javax\.faces\.ViewState".*?value="([^"]*)".*?/>')
 LINK_TOKEN = re.compile(rf'<a href="{TISS_URL}/events/rest/calendar/personal\?[^"]*?token=([^"]*)">Download</a>')
 LINK_SUBSCRIPTION = re.compile(r'<a href="/education/subscriptionSettings\.xhtml\?sgId=([^"]*)"')
@@ -55,6 +55,8 @@ DIV_EXAM = re.compile(r'<div class="groupWrapper">(.*?)groupHeadertrigger"><span
                       r'(.*?)</fieldset>', re.MULTILINE | re.DOTALL)
 LABEL_EXAM = re.compile(r'<li><label for="examDateListForm:[^"]*">([^<>]*)</label><span[^>]*>(.*?)</li>',
                         re.MULTILINE | re.DOTALL)
+
+BUTTON_EVENTS = re.compile(r'<a id="(.*?):(.*?)"[^>]*>Einzeltermine anzeigen</a>')
 
 
 class Building:
@@ -585,17 +587,22 @@ class Session:
         if r.status_code != 200:
             raise tucal.CourseNotFoundError()
 
+        m = BUTTON_EVENTS.search(r.text)
+        if not m:
+            raise tucal.TissError()
+
+        id_1, id_2 = m.group(1), m.group(2)
         data = {
-            'javax.faces.source': 'j_id_4n:eventDetailDateTable',
-            'javax.faces.partial.execute': 'j_id_4n:eventDetailDateTable',
-            'javax.faces.partial.render': 'j_id_4n:eventDetailDateTable',
-            'j_id_4n:eventDetailDateTable': 'j_id_4n:eventDetailDateTable',
-            'j_id_4n:eventDetailDateTable_pagination': 'true',
-            'j_id_4n:eventDetailDateTable_first': 0,
-            'j_id_4n:eventDetailDateTable_rows': 20,
-            'j_id_4n:eventDetailDateTable_skipChildren': 'true',
-            'j_id_4n:eventDetailDateTable_encodeFeature': 'true',
-            'j_id_4n_SUBMIT': '1',
+            'javax.faces.source': f'{id_1}:{id_2}',
+            'javax.faces.partial.execute': f'{id_1}:eventDetailDateTable',
+            'javax.faces.partial.render': f'{id_1}:eventDetailDateTable',
+            f'{id_1}:eventDetailDateTable': f'{id_1}:eventDetailDateTable',
+            f'{id_1}:eventDetailDateTable_pagination': 'true',
+            f'{id_1}:eventDetailDateTable_first': 0,
+            f'{id_1}:eventDetailDateTable_rows': 20,
+            f'{id_1}:eventDetailDateTable_skipChildren': 'true',
+            f'{id_1}:eventDetailDateTable_encodeFeature': 'true',
+            f'{id_1}_SUBMIT': '1',
         }
         events = []
         stop = False
@@ -630,7 +637,7 @@ class Session:
                         'start': start,
                         'end': end,
                     })
-            data['j_id_4n:eventDetailDateTable_first'] += 20
+            data[f'{id_1}:eventDetailDateTable_first'] += 20
         return events
 
     def get_course_extra_events(self, course: Course) -> List[Dict[str, Any]]:

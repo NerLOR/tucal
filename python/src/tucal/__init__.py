@@ -47,6 +47,10 @@ class RoomNotFoundError(Exception):
     pass
 
 
+class TissError(Exception):
+    pass
+
+
 class Plugin:
     @staticmethod
     def sync() -> Optional[Sync]:
@@ -231,7 +235,7 @@ class Semester:
 
     @property
     def last_day(self) -> datetime.datetime:
-        return (self + 1).next().first_day - datetime.timedelta(seconds=1)
+        return (self + 1).first_day - datetime.timedelta(seconds=1)
 
     @staticmethod
     def from_date(date: datetime.datetime) -> Semester:

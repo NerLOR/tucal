@@ -336,7 +336,7 @@ def upsert_course_events(events: List[Dict[str, Any]], course: Course, access_ti
     rows_update = []
     for evt in events:
         data = {
-            'name': f'{course.nr} {course.type} {course.name_de}',
+            'name': f'{course.nr[:3]}.{course.nr[-3:]} {course.type} {course.name_de}',
             'type': 1,
             'cnr': course.nr,
             'sem': str(course.semester),
@@ -348,10 +348,10 @@ def upsert_course_events(events: List[Dict[str, Any]], course: Course, access_ti
             'acc': access_time,
         }
         cur.execute("""
-                SELECT event_nr FROM tiss.event
-                WHERE (room_code IS NULL OR %(room)s IS NULL OR COALESCE(room_code, '') = COALESCE(%(room)s, '')) AND
-                      (type, name, start_ts, end_ts, course_nr) =
-                      (%(type)s, %(name)s, %(start)s, %(end)s, %(cnr)s)""", data)
+            SELECT event_nr FROM tiss.event
+            WHERE (room_code IS NULL OR %(room)s IS NULL OR COALESCE(room_code, '') = COALESCE(%(room)s, '')) AND
+                  (type, name, start_ts, end_ts, course_nr) =
+                  (%(type)s, %(name)s, %(start)s, %(end)s, %(cnr)s)""", data)
         matching = cur.fetch_all()
         if len(matching) > 0:
             data['nr'] = matching[0][0]
@@ -362,9 +362,9 @@ def upsert_course_events(events: List[Dict[str, Any]], course: Course, access_ti
     if len(rows_update) > 0:
         cur.execute_values("""
             UPDATE tiss.event e
-            SET location = d.location, description = d.description, access_ts = d.acc
-            FROM (VALUES (%(nr)s, %(loc)s, %(desc)s, %(acc)s)) AS
-                d (event_nr, location, description, acc)
+            SET location = d.location, description = d.description, access_ts = d.acc, semester = d.sem
+            FROM (VALUES (%(nr)s, %(loc)s, %(desc)s, %(acc)s, %(sem)s)) AS
+                d (event_nr, location, description, acc, sem)
             WHERE e.event_nr = d.event_nr""", rows_update)
 
     inserted = []
