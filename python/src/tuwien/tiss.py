@@ -602,7 +602,7 @@ class Session:
 
         m = BUTTON_EVENTS.search(r.text)
         if not m:
-            raise tucal.TissError()
+            return []
 
         id_1, id_2 = m.group(1), m.group(2)
         data = {
