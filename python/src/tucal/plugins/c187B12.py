@@ -116,7 +116,7 @@ class SyncAuth(tucal.Sync):
         c = requests.cookies.create_cookie('sessionid', session_id, domain=REVIEW_HOST)
         cookies.set_cookie(c)
 
-        token, pk = m.group(1), m.group(3)
+        token, pk = m.group(2), m.group(4)
         session.post(f'{LITTLE_AURORA}/aurora_login/login/', {
             'token': token,
             'pk': pk,
