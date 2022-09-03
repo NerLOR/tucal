@@ -13,7 +13,7 @@ import tucal.db
 import tucal.icalendar
 import tuwien.sso
 
-RE_TOKEN = re.compile(r'"token": "([^"]*)", "pk": ([0-9]+),')
+RE_TOKEN = re.compile(r'"token": ("([^"]*)"|null), "pk": (([0-9]+)|null),')
 RE_DATES = re.compile(r'<div class="header collapse[^>]*>([^\n]*)|\s*([^<>]*)\s*<i[^>]* data-block="([^"]*)">',
                       re.DOTALL | re.MULTILINE)
 RE_THINKING = re.compile(r'([A-Z][a-z]+) Thinking')
@@ -99,7 +99,7 @@ class SyncAuth(tucal.Sync):
         session = self.session.session
         session.get(AURORA)
         session.get(f'{AURORA}/course/dwi/login/?next=/course/dwi/')
-        r = session.get('https://iu.zid.tuwien.ac.at/AuthServ.authenticate?app=131&param=/course/dwi/')
+        r = session.get('https://login.tuwien.ac.at/AuthServ/AuthServ.authenticate?app=131&param=/course/dwi/')
         if r.status_code != 200:
             raise RuntimeError()
 
@@ -107,8 +107,8 @@ class SyncAuth(tucal.Sync):
         if r.status_code != 200:
             raise RuntimeError()
 
-        m = RE_TOKEN.findall(r.text)
-        if len(m) == 0:
+        m = RE_TOKEN.search(r.text)
+        if not m:
             raise RuntimeError()
 
         cookies = session.cookies
@@ -116,7 +116,7 @@ class SyncAuth(tucal.Sync):
         c = requests.cookies.create_cookie('sessionid', session_id, domain=REVIEW_HOST)
         cookies.set_cookie(c)
 
-        token, pk = m[0]
+        token, pk = m.group(1), m.group(3)
         session.post(f'{LITTLE_AURORA}/aurora_login/login/', {
             'token': token,
             'pk': pk,
