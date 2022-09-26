@@ -57,7 +57,7 @@ LABEL_EXAM = re.compile(r'<li><label for="examDateListForm:[^"]*">([^<>]*)</labe
                         re.MULTILINE | re.DOTALL)
 
 BUTTON_EVENTS = re.compile(r'<a id="(.*?):(.*?)"[^>]*>Einzeltermine anzeigen</a>')
-BUTTON_SEARCH = re.compile(r'<a id="courseList:(.*?)"[^>]*>Erweiterte Suche/a>')
+BUTTON_SEARCH = re.compile(r'<a.*?id="courseList:(.*?)"[^>]*>Erweiterte Suche</a>')
 BUTTON_TOKEN = re.compile(r'<input id="(.*?):(.*?)" value="Erzeuge neuen Token"')
 BUTTON_EXAM = re.compile(r'<a id="examDateListForm:(.*?)"[^>]*>Alle Prüfungen')
 
@@ -330,7 +330,7 @@ class Session:
             raise tucal.CourseNotFoundError()
 
         title_de = html.unescape(COURSE_TITLE.search(r.text).group(1).strip())
-        meta = COURSE_META.search(r.text).group(1)
+        meta = COURSE_META.search(r.text).groups()
 
         r = self.get(f'/course/courseDetails.xhtml?courseNr={course_nr}&semester={semester}&locale=en')
         if r.status_code != 200:
@@ -390,6 +390,7 @@ class Session:
                     if len(row) > 0:
                         course_nrs.add((row[0].replace('.', ''), Semester(row[5])))
 
+        # TODO yield course_nrs at the beginning
         yield len(course_nrs)
         for course in course_nrs - skip:
             yield course[0], course[1], lambda: self.get_course(course[0], course[1])

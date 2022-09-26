@@ -32,10 +32,11 @@ def sync_courses(keep_file: bool = False, job: Job = None):
     with open(TEMP_FILE, 'a') as f:
         skip = {(c.nr, c.semester) for c in courses}
         gen = s.course_generator(Semester.current() - 2, Semester.current() + 1, skip=skip)
-        n = next(gen) - len(skip)
+        n = next(gen)
         job.perc_steps[-1] = TISS_INIT_VAL + n + DB_VAL
         job.end(TISS_INIT_VAL)
         job.begin('get tiss courses', n)
+        job.step(len(skip))
         for c_nr, c_sem, cb in gen:
             job.begin(f'get tiss course {c_nr}-{c_sem}')
             c = cb()
