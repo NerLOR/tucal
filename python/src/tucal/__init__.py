@@ -51,6 +51,10 @@ class TissError(Exception):
     pass
 
 
+class UserConfirmationMissingError(Exception):
+    pass
+
+
 class Plugin:
     @staticmethod
     def sync() -> Optional[Sync]:

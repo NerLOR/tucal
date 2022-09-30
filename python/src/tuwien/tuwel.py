@@ -64,6 +64,9 @@ class Session:
     def get(self, uri: str) -> requests.Response:
         r = self._session.get(f'{TUWEL_URL}{uri}', timeout=self._timeout)
 
+        if '<title>Richtlinien und Bestätigungen</title>' in r.text:
+            raise tucal.UserConfirmationMissingError('Please log in to tuwel.tuwien.ac.at and confirm the guidelines')
+
         for user_id in USER_ID.finditer(r.text):
             self._user_id = int(user_id.group(1))
         for key in SESS_KEY.finditer(r.text):
