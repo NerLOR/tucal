@@ -56,10 +56,10 @@ DIV_EXAM = re.compile(r'<div class="groupWrapper">(.*?)groupHeadertrigger"><span
 LABEL_EXAM = re.compile(r'<li><label for="examDateListForm:[^"]*">([^<>]*)</label><span[^>]*>(.*?)</li>',
                         re.MULTILINE | re.DOTALL)
 
-BUTTON_EVENTS = re.compile(r'<a id="(.*?):(.*?)"[^>]*>Einzeltermine anzeigen</a>')
+BUTTON_EVENTS = re.compile(r'<a.*?id="(.*?):(.*?)"[^>]*>Einzeltermine anzeigen</a>')
 BUTTON_SEARCH = re.compile(r'<a.*?id="courseList:(.*?)"[^>]*>Erweiterte Suche</a>')
-BUTTON_TOKEN = re.compile(r'<input id="(.*?):(.*?)" value="Erzeuge neuen Token"')
-BUTTON_EXAM = re.compile(r'<a id="examDateListForm:(.*?)"[^>]*>Alle Prüfungen')
+BUTTON_TOKEN = re.compile(r'<input.*?id="(.*?):(.*?)".*?value="Erzeuge neuen Token"')
+BUTTON_EXAM = re.compile(r'<a.*?id="examDateListForm:(.*?)"[^>]*>Alle Prüfungen')
 
 
 class Building:
