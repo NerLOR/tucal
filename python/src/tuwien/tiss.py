@@ -42,6 +42,8 @@ TABLE_TR = re.compile(r'<tr[^>]*>\s*(.*?)\s*</tr>', re.MULTILINE | re.DOTALL)
 TABLE_TD = re.compile(r'<td[^>]*>\s*(.*?)\s*</td>', re.MULTILINE | re.DOTALL)
 GROUP_DIV = re.compile(r'<div class="groupWrapper">(.*?)</fieldset>', re.MULTILINE | re.DOTALL)
 
+EVENT_TABLE = re.compile(r'<div.*?id=".*?:eventTable".*?</table>')
+
 TAGS = re.compile(r'<script[^>]*>.*?</script>|<[^>]*>', re.MULTILINE | re.DOTALL)
 SPACES = re.compile(r'\s+')
 
@@ -597,13 +599,45 @@ class Session:
         return groups
 
     def get_course_events(self, course: Course) -> List[Dict[str, Any]]:
+        events = []
         r = self.get(f'/course/educationDetails.xhtml?semester={course.semester}&courseNr={course.nr}')
         if r.status_code != 200:
             raise tucal.CourseNotFoundError()
 
+        def append_events(date, time_from_to, location, comment):
+            room_m = ROOM_CODE.findall(location)
+            room_code = None
+            if len(room_m) > 0:
+                room_code = re.sub(r'%([0-9A-Za-z]{2})', lambda a: chr(int(a[1], 16)), room_m[0].replace('+', ' '))
+
+            start_time, end_time = time_from_to.split(' - ')
+            iso_date = '-'.join(date.split('.')[::-1])
+            start = tucal.parse_iso_timestamp(f'{iso_date}T{start_time}:00', True)
+            end = tucal.parse_iso_timestamp(f'{iso_date}T{end_time}:00', True)
+
+            events.append({
+                'location': html.unescape(location) if not room_code else None,
+                'room_code': room_code,
+                'comment': html.unescape(comment) if comment else None,
+                'start': start,
+                'end': end,
+            })
+
         m = BUTTON_EVENTS.search(r.text)
         if not m:
-            return []
+            table = EVENT_TABLE.search(r.text)
+            if table is None:
+                return[]
+
+            for row in TABLE_TR.finditer(table.group(0)):
+                event = [d.group(1) for d in TABLE_TD.finditer(row.group(1))]
+                if len(event) == 0:
+                    continue
+
+                day, time_from_to, date, location = event[:4]
+                comment = event[-1]
+                append_events(date, time_from_to, location, comment)
+            return events
 
         id_1, id_2 = m.group(1), m.group(2)
         data = {
@@ -618,7 +652,6 @@ class Session:
             f'{id_1}:eventDetailDateTable_encodeFeature': 'true',
             f'{id_1}_SUBMIT': '1',
         }
-        events = []
         stop = False
         while not stop:
             stop = True
@@ -632,25 +665,10 @@ class Session:
                     event = [d.group(1) for d in TABLE_TD.finditer(row.group(1))]
                     if len(event) == 0:
                         continue
+
                     day, date, time_from_to, location = event[:4]
                     comment = event[-1]
-                    m = ROOM_CODE.findall(location)
-                    room_code = None
-                    if len(m) > 0:
-                        room_code = re.sub(r'%([0-9A-Za-z]{2})', lambda a: chr(int(a[1], 16)), m[0].replace('+', ' '))
-
-                    start_time, end_time = time_from_to.split(' - ')
-                    iso_date = '-'.join(date.split('.')[::-1])
-                    start = tucal.parse_iso_timestamp(f'{iso_date}T{start_time}:00', True)
-                    end = tucal.parse_iso_timestamp(f'{iso_date}T{end_time}:00', True)
-
-                    events.append({
-                        'location': html.unescape(location) if not room_code else None,
-                        'room_code': room_code,
-                        'comment': html.unescape(comment) if comment else None,
-                        'start': start,
-                        'end': end,
-                    })
+                    append_events(date, time_from_to, location, comment)
             data[f'{id_1}:eventDetailDateTable_first'] += 20
         return events
 
