@@ -429,16 +429,16 @@ class SyncUser(tucal.Sync):
 
         try:
             if tfa_token is None and tfa_gen is not None:
-                for i in range(3):
+                for i in range(6):
+                    tfa_token = totp_gen_token(tfa_gen)
+                    self.session.credentials(self.mnr, pwd, tfa_token)
                     try:
-                        tfa_token = totp_gen_token(tfa_gen)
-                        self.session.credentials(self.mnr, pwd, tfa_token)
                         self.session.login()
                         break
                     except tucal.InvalidCredentialsError as e:
-                        if i == 2:
+                        if i == 5:
                             raise e
-                        time.sleep(5)
+                    time.sleep(10)
             else:
                 self.session.credentials(self.mnr, pwd, tfa_token)
                 self.session.login()
