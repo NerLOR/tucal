@@ -365,6 +365,9 @@ class SyncUserTuwel(tucal.Sync):
                     VALUES (%(gid)s, %(uid)s)
                     ON CONFLICT DO NOTHING""", data)
 
+        # remove user events (with no course id)
+        self.events = [e for e in self.events if 'course' in e]
+
         events = [e for e in self.events if e['course']['id'] not in removed_courses]
         num_skipped_events = len([e for e in self.events if e['course']['id'] in removed_courses])
         if num_skipped_events > 0:
