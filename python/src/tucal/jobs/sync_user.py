@@ -498,8 +498,11 @@ class SyncUser(tucal.Sync):
                 continue
             plugin_sync = p.sync_auth(self.session)
             if plugin_sync:
-                self.plugins.append(plugin_sync)
-                plugin_sync.fetch()
+                try:
+                    plugin_sync.fetch()
+                    self.plugins.append(plugin_sync)
+                except Exception as e:
+                    print(f'Unable to fetch plugin {course}: {e}')
         self.job.end(1)
 
         self.job.end(0)
