@@ -11,6 +11,7 @@ const TUWEL_URL = "https://tuwel.tuwien.ac.at/";
 
 const ZOOM_PATTERN = "https://(tuwien\\.)?zoom.us/.*";
 const YOUTUBE_PATTERN = "(https://youtu\\.be/.*)|(https://www.youtube.com/.*)";
+const PRESENTR_PATTERN = "https://(.*\\.)?presentr.at/.*";
 
 const EVENT_STATUSES: {[index: string]: string} = {
     "confirmed": "Confirmed",
@@ -683,8 +684,9 @@ class WeekSchedule {
                     '<div class="post"></div>' +
                     '<div class="event-data">' +
                     (event.lectureTube && ltLink ? `<a class="live lt" href="${ltLink}" target="_blank" title="${_('LectureTube livestream')}"><img src="/res/icons/lecturetube-live.png" alt="LectureTube"/></a>` : '') +
-                    (event.zoom !== null ? `<a class="live zoom" target="_blank" title="Zoom"><img src="/res/icons/zoom.png" alt="${_('Zoom')}"/></a>` : '') +
-                    (event.youtube !== null ? `<a class="live yt" target="_blank" title="Zoom"><img src="/res/icons/youtube.png" alt="${_('YouTube')}"/></a>` : '') +
+                    (event.zoom !== null ? `<a class="live zoom" target="_blank" title="${_('Zoom')}"><img src="/res/icons/zoom.png" alt="${_('Zoom')}"/></a>` : '') +
+                    (event.youtube !== null ? `<a class="live yt" target="_blank" title="${_('YouTube')}"><img src="/res/icons/youtube.png" alt="${_('YouTube')}"/></a>` : '') +
+                    (event.presentr !== null ? `<a class="live presentr" target="_blank" title="${_('Presentr')}"><img src="/res/icons/presentr.png" alt="${_('Presentr')}"/></a>` : '') +
                     `<div class="time">${startFmt}-${endFmt}</div>` +
                     `<div class="course"><span class="course">${course?.getName() || event.groupName}</span>` +
                     (room !== null ? ` - <span class="room">${room.getName()}</span>` : '') + '</div><div class="group">' +
@@ -696,6 +698,8 @@ class WeekSchedule {
                 if (aZoom && event.zoom) aZoom.setAttribute('href', event.zoom);
                 const aYt = evt.getElementsByClassName('yt')[0];
                 if (aYt && event.youtube) aYt.setAttribute('href', event.youtube);
+                const aPresentr = evt.getElementsByClassName('presentr')[0];
+                if (aPresentr && event.presentr) aPresentr.setAttribute('href', event.presentr);
 
                 const divSummary = <HTMLElement> evt.getElementsByClassName('summary')[0];
                 if (divSummary && event.summary !== null) divSummary.innerText = event.summary;
@@ -755,10 +759,16 @@ class WeekSchedule {
                 `<img src="/res/icons/lecturetube-live.png" alt="${_('LectureTube livestream')}"/></a>`;
         }
         if (evt.zoom) {
-            html += `<a class="live zoom" href="${evt.zoom}" target="_blank" title="${_('Zoom')}"><img src="/res/icons/zoom.png" alt="${_('Zoom')}"/></a>`;
+            html += `<a class="live zoom" href="${evt.zoom}" target="_blank" title="${_('Zoom')}">` +
+                `<img src="/res/icons/zoom.png" alt="${_('Zoom')}"/></a>`;
         }
         if (evt.youtube) {
-            html += `<a class="live yt" href="${evt.youtube}" target="_blank" title="${_('YouTube')}"><img src="/res/icons/youtube.png" alt="${_('YouTube')}"/></a>`;
+            html += `<a class="live yt" href="${evt.youtube}" target="_blank" title="${_('YouTube')}">` +
+                `<img src="/res/icons/youtube.png" alt="${_('YouTube')}"/></a>`;
+        }
+        if (evt.presentr) {
+            html += `<a class="live presentr" href="${evt.presentr}" target="_blank" title="${_('Presentr')}">` +
+                `<img src="/res/icons/presentr.png" alt="${_('Presentr')}"/></a>`;
         }
 
         if (course) {
@@ -886,8 +896,10 @@ class WeekSchedule {
                 `<label class="radio"><input type="checkbox" name="lt"/> ${_('LectureTube')}</label>` +
                 `<label class="radio"><input type="checkbox" name="zoom"/> ${_('Zoom')}</label>` +
                 `<label class="radio"><input type="checkbox" name="yt"/> ${_('YouTube')}</label>` +
+                `<label class="radio"><input type="checkbox" name="presentr"/> ${_('Presentr')}</label>` +
                 `<div class="url hidden"><input type="url" name="zoom-url" placeholder="${_('Zoom URL')}" class="line block" required pattern="${ZOOM_PATTERN}"/></div>` +
                 `<div class="url hidden"><input type="url" name="yt-url" placeholder="${_('YouTube URL')}" class="line block" required pattern="${YOUTUBE_PATTERN}"/></div>` +
+                `<div class="url hidden"><input type="url" name="presentr-url" placeholder="${_('Presentr URL')}" class="line block" required pattern="${PRESENTR_PATTERN}"/></div>` +
                 `</div></div>`;
 
             html += `<div class="container"><div>${_('Status')}:</div><div>` +
@@ -954,10 +966,13 @@ class WeekSchedule {
         const useLt = form['lt'];
         const useZoom = form['zoom'];
         const useYt = form['yt'];
+        const usePresentr = form['presentr'];
         const zoomUrl = form['zoom-url'];
         const ytUrl = form['yt-url'];
+        const presentrUrl = form['presentr-url'];
         const zoomUrlDiv = zoomUrl.parentElement;
         const ytUrlDiv = ytUrl.parentElement;
+        const presentrUrlDiv = presentrUrl.parentElement;
         const roomSelect = form['room'];
         const summary = form['summary'];
         const status = form['status'];
@@ -996,18 +1011,18 @@ class WeekSchedule {
         });
 
         const hasHiddenChanged = (): boolean => {
-            return hidden && !!evt.userHidden !== hidden.checked;
+            return (hidden && !!evt.userHidden !== hidden.checked) ?? false;
         }
 
         const hasSlotTimesChanged = (): boolean => {
-            return slotStart && slotEnd && (
+            return (slotStart && slotEnd && (
                 !((evt.examSlotStart && slotStart.value && formatterTime.format(evt.examSlotStart) === slotStart.value) || (!evt.examSlotStart && !slotStart.value)) ||
                 !((evt.examSlotEnd && slotEnd.value && formatterTime.format(evt.examSlotEnd) === slotEnd.value) || (!evt.examSlotEnd && !slotEnd.value))
-            );
+            )) ?? false;
         }
 
         const hasSlotRoomChanged = (): boolean => {
-            return slotRoomSelect && evt.examSlotRoomNr !== (parseInt(slotRoomSelect.value) || null);
+            return (slotRoomSelect && evt.examSlotRoomNr !== (parseInt(slotRoomSelect.value) || null)) ?? false;
         }
 
         const hasLiveChanged = (): boolean => {
@@ -1015,7 +1030,9 @@ class WeekSchedule {
                 (useZoom.checked && evt.zoom !== zoomUrl.value) ||
                 (!!evt.lectureTube !== useLt.checked) ||
                 (!!evt.youtube !== useYt.checked) ||
-                (useYt.checked && evt.youtube !== ytUrl.value);
+                (useYt.checked && evt.youtube !== ytUrl.value) ||
+                (!!evt.presentr !== usePresentr.checked) ||
+                (usePresentr.checked && evt.presentr !== presentrUrl.value);
         }
 
         const hasRoomChanged = (): boolean => {
@@ -1076,6 +1093,13 @@ class WeekSchedule {
                 if (!ytUrlDiv.classList.contains('hidden')) ytUrlDiv.classList.add('hidden');
                 ytUrl.required = undefined;
             }
+            if (usePresentr.checked) {
+                if (presentrUrlDiv.classList.contains('hidden')) presentrUrlDiv.classList.remove('hidden');
+                presentrUrl.required = 'required';
+            } else {
+                if (!presentrUrlDiv.classList.contains('hidden')) presentrUrlDiv.classList.add('hidden');
+                presentrUrl.required = undefined;
+            }
 
             if (hasChanged()) {
                 formDiv.classList.remove('hidden');
@@ -1101,6 +1125,10 @@ class WeekSchedule {
         if (evt.youtube) {
             useYt.checked = true;
             ytUrl.value = evt.youtube;
+        }
+        if (evt.presentr) {
+            usePresentr.checked = true;
+            presentrUrl.value = evt.presentr;
         }
         if (evt.roomNr) roomSelect.value = `${evt.roomNr}`;
         if (evt.summary) summary.value = evt.summary;
@@ -1140,6 +1168,7 @@ class WeekSchedule {
                 dataUser['lt'] = !!useLt.checked;
                 dataUser['zoom'] = (useZoom.checked) ? zoomUrl.value.trim() : null;
                 dataUser['yt'] = (useYt.checked) ? ytUrl.value.trim() : null;
+                dataUser['presentr'] = (usePresentr.checked) ? presentrUrl.value.trim() : null;
             }
 
             if (hasStatusChanged()) {
@@ -1181,7 +1210,8 @@ class WeekSchedule {
                             if (data['planned_end'] !== undefined) evt.plannedEnd = asTimezone(new Date(Date.parse(data['planned_end'])), TIMEZONE);
                             if (dataUser['lt'] !== undefined) evt.lectureTube = dataUser['lt'];
                             if (dataUser['zoom'] !== undefined) evt.zoom = dataUser['zoom'];
-                            if (dataUser['yt'] !== undefined) evt.youtube= dataUser['yt'];
+                            if (dataUser['yt'] !== undefined) evt.youtube = dataUser['yt'];
+                            if (dataUser['presentr'] !== undefined) evt.presentr = dataUser['presentr'];
                             if (dataUser['status'] !== undefined) evt.status = dataUser['status'];
                             if (dataUser['mode'] !== undefined) evt.mode = dataUser['mode'];
                             if (dataUser['summary'] !== undefined) evt.summary = dataUser['summary'];

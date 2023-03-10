@@ -307,11 +307,17 @@ msgstr "Zoom"
 msgid "YouTube"
 msgstr "YouTube"
 
+msgid "Presentr"
+msgstr "Presentr"
+
 msgid "Zoom URL"
 msgstr "Zoom-URL"
 
 msgid "YouTube URL"
 msgstr "YouTube-URL"
+
+msgid "Presentr URL"
+msgstr "Presentr-URL"
 
 msgid "LectureTube livestream"
 msgstr "LectureTube-Livestream"

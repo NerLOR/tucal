@@ -82,6 +82,8 @@ if ($STATUS >= 400 && $STATUS < 600) {
     <link rel="preload" as="image" href="/res/icons/lecturetube.png"/>
     <link rel="preload" as="image" href="/res/icons/lecturetube-live.png"/>
     <link rel="preload" as="image" href="/res/icons/zoom.png"/>
+    <link rel="preload" as="image" href="/res/icons/youtube.png"/>
+    <link rel="preload" as="image" href="/res/icons/presentr.png"/>
 </head>
 <body>
 <nav>
