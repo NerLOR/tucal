@@ -64,7 +64,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
     if 'user' not in data:
         data['user'] = {}
 
-    tuwel, tiss, tiss_extra, aurora, htu, holidays, tuwien = None, None, None, None, None, None, None
+    tuwel, tiss, tiss_extra, aurora, ctforge, htu, holidays, tuwien = None, None, None, None, None, None, None, None
 
     # FIXME better event merge
     cur = tucal.db.cursor()
@@ -79,6 +79,8 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             tiss_extra = xdata['tiss_extra']
         if 'aurora' in xdata:
             aurora = xdata['aurora']
+        if 'ctforge' in xdata:
+            ctforge = xdata['ctforge']
         if 'htu' in xdata:
             htu = xdata['htu']
         if 'holidays' in xdata:
@@ -186,6 +188,13 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
 
         if start_ts == end_ts:
             data['type'] = 'assignment'
+
+    if ctforge:
+        data['source_url'] = 'https://is.hackthe.space/'
+        data['source_name'] = 'ctforge'
+        data['url'] = ctforge['url']
+        data['summary'] = f'{ctforge["challenge"]} - {ctforge["type"]}'
+        data['type'] = 'assignment' if ctforge['type'] == 'end' else None
 
     if htu:
         data['source_url'] = htu['url']

@@ -472,21 +472,15 @@ class SyncUser(tucal.Sync):
 
         tucal.db.commit()
 
-    def fetch(self, keep_tiss_cal_settings: bool = True):
-        self.job.init('fetch user calendars', 4, 24)
-
-        self.job.exec(11, self.tiss.fetch, False, keep_tiss_cal_settings=keep_tiss_cal_settings)
-        self.job.exec(11, self.tuwel.fetch, False)
-        self.job.exec(1, self.cal.fetch, False)
-
+    def fetch_plugins(self):
         self.job.begin('fetch plugin calendars')
         cur = tucal.db.cursor()
         cur.execute("""
-            SELECT course_nr, semester
-            FROM tucal.group_member m
-                JOIN tucal.group_link g ON g.group_nr = m.group_nr
-                JOIN tucal.account a ON a.account_nr = m.account_nr
-            WHERE a.mnr = %s""", (self.mnr_int,))
+                    SELECT course_nr, semester
+                    FROM tucal.group_member m
+                        JOIN tucal.group_link g ON g.group_nr = m.group_nr
+                        JOIN tucal.account a ON a.account_nr = m.account_nr
+                    WHERE a.mnr = %s""", (self.mnr_int,))
         rows = cur.fetch_all()
         cur.close()
         tucal.db.rollback()
@@ -504,6 +498,15 @@ class SyncUser(tucal.Sync):
                 except Exception as e:
                     print(f'Unable to fetch plugin {course}: {e}')
         self.job.end(1)
+
+    def fetch(self, keep_tiss_cal_settings: bool = True):
+        self.job.init('fetch user calendars', 4, 24)
+
+        self.job.exec(11, self.tiss.fetch, False, keep_tiss_cal_settings=keep_tiss_cal_settings)
+        self.job.exec(11, self.tuwel.fetch, False)
+        self.job.exec(1, self.cal.fetch, False)
+
+        self.fetch_plugins()
 
         self.job.end(0)
 
@@ -546,6 +549,12 @@ class SyncUser(tucal.Sync):
                         WHERE l.semester = %s
                   )""", (self.mnr_int, sem))
 
+    def store_plugins(self, cur: tucal.db.Cursor):
+        self.job.begin('store plugin calendars')
+        for plugin in self.plugins:
+            plugin.store(cur)
+        self.job.end(2)
+
     def store(self, cur: tucal.db.Cursor, reset_semester: bool = False):
         self.job.init('store user calendars', 4 + (1 if reset_semester else 0), 12 + (2 if reset_semester else 0))
 
@@ -565,10 +574,7 @@ class SyncUser(tucal.Sync):
         self.job.exec(3, self.tuwel.store, False, cur=cur)
         self.job.exec(3, self.cal.store, False, cur=cur)  # TUWEL courses need to be created first
 
-        self.job.begin('store plugin calendars')
-        for plugin in self.plugins:
-            plugin.store(cur)
-        self.job.end(2)
+        self.store_plugins(cur)
 
         cur.execute("UPDATE tucal.account SET sync_ts = now() WHERE mnr = %s", (self.mnr_int,))
         self.job.end(1)
@@ -583,6 +589,13 @@ class SyncUser(tucal.Sync):
         cur.close()
         self.job.end(0)
 
+    def sync_plugins(self):
+        cur = tucal.db.cursor()
+        sync_user.fetch_plugins()
+        sync_user.store_plugins(cur)
+        cur.close()
+        self.job.end(0)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -592,6 +605,8 @@ if __name__ == '__main__':
                         help='Do not alter any TISS calendar settings')
     parser.add_argument('--reset-semester', '-r', action='store_true', default=False,
                         help='Reset user groups and courses for the current semester')
+    parser.add_argument('--plugins-only', '-p', action='store_true', default=False,
+                        help='Do only sync plugins, nothing else. For debug purposes only!')
     mx_group = parser.add_mutually_exclusive_group()
     mx_group.add_argument('--store', '-s', action='store_true', default=False,
                           help='Store provided password (and 2fa generator) in database')
@@ -602,5 +617,8 @@ if __name__ == '__main__':
     sync_user = SyncUser(tuwien.sso.Session(), args.mnr)
     sync_user.pre_sync()
     sync_user.login(pwd_from_db=args.database, pwd_store_db=args.store)
-    sync_user.sync(keep_tiss_cal_settings=args.keep_calendar_settings, reset_semester=args.reset_semester)
+    if args.plugins_only:
+        sync_user.sync_plugins()
+    else:
+        sync_user.sync(keep_tiss_cal_settings=args.keep_calendar_settings, reset_semester=args.reset_semester)
     tucal.db.commit()
