@@ -62,10 +62,14 @@ class Sync(tucal.Sync):
             if r.status_code != 200:
                 raise RuntimeError()
 
+            # FIXME changed endpoint
             ical = tucal.icalendar.parse_ical(repair_ics(r.text))
             self.events += ical.events
 
     def store(self, cur: tucal.db.Cursor):
+        if len(self.events) == 0:
+            return
+
         group_nr = tucal.get_group_nr(cur, 'TU Events', True)
 
         rows = [{
