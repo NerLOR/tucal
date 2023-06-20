@@ -422,7 +422,7 @@ def sync_users():
     if len(rows) == 0:
         return
 
-    time_usable = (rows[0][1] or 0) - (rows[-1][1] or 0) + (SYNC_MAX_MINUTES - SYNC_MINUTES) * 60
+    time_usable = float((rows[0][1] or 0) - (rows[-1][1] or 0) + (SYNC_MAX_MINUTES - SYNC_MINUTES) * 60)
     sync_interval_usable = time_usable / len(rows)
 
     cur_sync_interval = min(sync_interval, sync_interval_usable)
