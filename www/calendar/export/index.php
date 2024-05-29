@@ -132,10 +132,10 @@ $stmt = db_exec("
             LEFT JOIN tucal.group g ON g.group_nr = e.group_nr
             LEFT JOIN tucal.group_link l ON l.group_nr = g.group_nr
             LEFT JOIN tucal.event_user_data d ON (d.event_nr, d.account_nr) = (e.event_nr, a.account_nr)
+            LEFT JOIN tuwel.event_user teu ON teu.event_id::text = x.event_id
+            LEFT JOIN tuwel.user tu ON tu.user_id = teu.user_id AND tu.mnr = :mnr
         WHERE a.mnr = :mnr AND NOT e.deleted AND
-              (e.global OR (:mnr = ANY(SELECT u.mnr FROM tuwel.event_user eu
-                                       JOIN tuwel.user u ON u.user_id = eu.user_id
-                                       WHERE eu.event_id::text = x.event_id))) AND
+              (e.global OR :mnr = tu.mnr) AND
               (m.ignore_from IS NULL OR e.start_ts < m.ignore_from) AND
               (m.ignore_until IS NULL OR e.start_ts >= m.ignore_until)
         GROUP BY e.event_nr, e.event_id, e.start_ts, e.end_ts, e.room_nr, e.group_nr, e.data, d.data,
@@ -375,8 +375,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $create->setTimezone($utcTz);
         $update->setTimezone($utcTz);
         ical_line("UID", ["$row[event_id]@$TUCAL[hostname]"]);
-        ical_line("CREATE", [$create->format($formatZ)]);
-        ical_line("DTSTAMP", [$create->format($formatZ)]);
+        ical_line("DTSTAMP", [$update->format($formatZ)]);
+        ical_line("CREATED", [$create->format($formatZ)]);
         ical_line("LAST-MODIFIED", [$update->format($formatZ)]);
         ical_line("SEQUENCE", ["$row[update_seq]"]);
 
@@ -435,10 +435,8 @@ function ical_line(string $param, array $value, array $opts = []) {
     while ($pos < $len) {
         $part = substr($line, $pos, ($pos === 0) ? 75 : 74);
         $partLen = strlen($part);
-        if ($pos > 0) {
-            $part = " $part";
-        }
-        $pos += $partLen;
+        if ($pos > 0) echo " ";
         echo "$part\r\n";
+        $pos += $partLen;
     }
 }
