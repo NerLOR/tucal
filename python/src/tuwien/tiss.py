@@ -26,8 +26,8 @@ COURSE_META = re.compile(r'<div id="subHeader" class="clearfix">'
                          r'[0-9SW]+, ([A-Z]+), ([0-9]+\.[0-9]+)h, ([0-9]+\.[0-9]+)EC')
 
 CDATA = re.compile(r'<!\[CDATA\[(.*?)]]>')
-UPDATE_VIEW_STATE = re.compile(r'<update id="j_id__v_0:javax\.faces\.ViewState:1"><!\[CDATA\[(.*?)]]></update>')
-INPUT_VIEW_STATE = re.compile(r'<input.*?name="javax\.faces\.ViewState".*?value="([^"]*)".*?/>')
+UPDATE_VIEW_STATE = re.compile(r'<update id="j_id__v_0:jakarta\.faces\.ViewState:1"><!\[CDATA\[(.*?)]]></update>')
+INPUT_VIEW_STATE = re.compile(r'<input.*?name="jakarta\.faces\.ViewState".*?value="([^"]*)".*?/>')
 LINK_TOKEN = re.compile(rf'<a href="{TISS_URL}/events/rest/calendar/personal\?[^"]*?token=([^"]*)">Download</a>')
 LINK_SUBSCRIPTION = re.compile(r'<a href="/education/subscriptionSettings\.xhtml\?sgId=([^"]*)"')
 INPUT_CHECKBOX = re.compile(r'<input id="([^"]*)" type="checkbox" name="([^"]*)"( checked="([^"]*)")?')
@@ -238,18 +238,18 @@ class Session:
         headers = headers or {}
         headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
 
-        data['javax.faces.ClientWindow'] = self._win_id
+        data['jakarta.faces.ClientWindow'] = self._win_id
         data['dspwid'] = self._win_id
 
         if ajax:
             headers['X-Requested-With'] = 'XMLHttpRequest'
             headers['Faces-Request'] = 'partial/ajax'
-            data['javax.faces.partial.ajax'] = 'true'
+            data['jakarta.faces.partial.ajax'] = 'true'
 
         if self._view_state is not None:
-            data['javax.faces.ViewState'] = self._view_state
-        elif 'javax.faces.ViewState' in data:
-            del data['javax.faces.ViewState']
+            data['jakarta.faces.ViewState'] = self._view_state
+        elif 'jakarta.faces.ViewState' in data:
+            del data['jakarta.faces.ViewState']
 
         r = self._session.post(f'{TISS_URL}{endpoint}', data=data, headers=headers,
                                timeout=self._timeout, allow_redirects=allow_redirects)
@@ -276,11 +276,11 @@ class Session:
     def _get_rooms_for_building(self, building: Building) -> [Room]:
         data = {
             'filterForm:roomFilter:selectBuildingLb': building.id,
-            'javax.faces.behavior.event': 'valueChange',
-            'javax.faces.partial.event': 'change',
-            'javax.faces.source': 'filterForm:roomFilter:selectBuildingLb',
-            'javax.faces.partial.execute': 'filterForm:roomFilter',
-            'javax.faces.partial.render': 'filterForm:roomFilter',
+            'jakarta.faces.behavior.event': 'valueChange',
+            'jakarta.faces.partial.event': 'change',
+            'jakarta.faces.source': 'filterForm:roomFilter:selectBuildingLb',
+            'jakarta.faces.partial.execute': 'filterForm:roomFilter',
+            'jakarta.faces.partial.render': 'filterForm:roomFilter',
         }
 
         # Retrieve view_state
@@ -302,11 +302,11 @@ class Session:
         data = {
             'filterForm:roomFilter:selectBuildingLb': room.building.id,
             'filterForm:roomFilter:selectRoomLb': room.id,
-            'javax.faces.behavior.event': 'action',
-            'javax.faces.partial.event': 'click',
-            'javax.faces.source': 'filterForm:roomFilter:searchButton',
-            'javax.faces.partial.execute': 'filterForm:roomFilter filterForm:roomFilter:searchButton',
-            'javax.faces.partial.render': 'filterForm tableForm',
+            'jakarta.faces.behavior.event': 'action',
+            'jakarta.faces.partial.event': 'click',
+            'jakarta.faces.source': 'filterForm:roomFilter:searchButton',
+            'jakarta.faces.partial.execute': 'filterForm:roomFilter filterForm:roomFilter:searchButton',
+            'jakarta.faces.partial.render': 'filterForm tableForm',
         }
 
         # Retrieve view_state
@@ -356,11 +356,11 @@ class Session:
 
         id_1 = m.group(1)
         data1 = {
-            'javax.faces.source': f'courseList:{id_1}',
-            'javax.faces.partial.execute': 'courseList:searchField',
-            'javax.faces.partial.render': 'courseList globalMessagesPanel',
-            'javax.faces.behavior.event': 'action',
-            'javax.faces.partial.event': 'click',
+            'jakarta.faces.source': f'courseList:{id_1}',
+            'jakarta.faces.partial.execute': 'courseList:searchField',
+            'jakarta.faces.partial.render': 'courseList globalMessagesPanel',
+            'jakarta.faces.behavior.event': 'action',
+            'jakarta.faces.partial.event': 'click',
         }
         r = self.post('/course/courseList.xhtml', data1, ajax=True)
 
@@ -438,8 +438,8 @@ class Session:
 
     def get_room_schedule(self, room_code: str) -> Dict[str, Any]:
         data = {
-            'javax.faces.partial.execute': 'calendarForm:schedule',
-            'javax.faces.partial.render': 'calendarForm:schedule',
+            'jakarta.faces.partial.execute': 'calendarForm:schedule',
+            'jakarta.faces.partial.render': 'calendarForm:schedule',
             'calendarForm:schedule': 'calendarForm:schedule',
             'calendarForm:schedule_start': int(time.mktime(tucal.Semester.last().first_day.timetuple()) * 1000),
             'calendarForm:schedule_end': int(time.mktime(tucal.Semester.next().last_day.timetuple()) * 1000),
@@ -464,8 +464,8 @@ class Session:
 
     def get_personal_schedule(self) -> Dict[str, Any]:
         data = {
-            'javax.faces.partial.execute': 'calendarForm:schedule',
-            'javax.faces.partial.render': 'calendarForm:schedule',
+            'jakarta.faces.partial.execute': 'calendarForm:schedule',
+            'jakarta.faces.partial.render': 'calendarForm:schedule',
             'calendarForm:schedule': 'calendarForm:schedule',
             'calendarForm:schedule_start': int(time.mktime(tucal.Semester.last().first_day.timetuple()) * 1000),
             'calendarForm:schedule_end': int(time.mktime(tucal.Semester.next().last_day.timetuple()) * 1000),
@@ -489,11 +489,11 @@ class Session:
         id_1, id_2 = m.group(1), m.group(2)
         # Fallback. generate new token
         data = {
-            'javax.faces.behavior.event': 'action',
-            'javax.faces.partial.event': 'click',
-            'javax.faces.source': f'{id_1}:{id_2}',
-            'javax.faces.partial.execute': f'{id_1}:{id_2}',
-            'javax.faces.partial.render': f'{id_1} globalMessagesPanel',
+            'jakarta.faces.behavior.event': 'action',
+            'jakarta.faces.partial.event': 'click',
+            'jakarta.faces.source': f'{id_1}:{id_2}',
+            'jakarta.faces.partial.execute': f'{id_1}:{id_2}',
+            'jakarta.faces.partial.render': f'{id_1} globalMessagesPanel',
             f'{id_1}_SUBMIT': '1',
         }
         r = self.post('/events/personSchedule.xhtml', data, ajax=True)
@@ -641,9 +641,9 @@ class Session:
 
         id_1, id_2 = m.group(1), m.group(2)
         data = {
-            'javax.faces.source': f'{id_1}:{id_2}',
-            'javax.faces.partial.execute': f'{id_1}:eventDetailDateTable',
-            'javax.faces.partial.render': f'{id_1}:eventDetailDateTable',
+            'jakarta.faces.source': f'{id_1}:{id_2}',
+            'jakarta.faces.partial.execute': f'{id_1}:eventDetailDateTable',
+            'jakarta.faces.partial.render': f'{id_1}:eventDetailDateTable',
             f'{id_1}:eventDetailDateTable': f'{id_1}:eventDetailDateTable',
             f'{id_1}:eventDetailDateTable_pagination': 'true',
             f'{id_1}:eventDetailDateTable_first': 0,
@@ -755,9 +755,9 @@ class Session:
 
         id_1 = m.group(1)
         data = {
-            'javax.faces.source': f'examDateListForm:{id_1}',
-            'javax.faces.partial.execute': '@all',
-            'javax.faces.partial.render': 'examDateListForm',
+            'jakarta.faces.source': f'examDateListForm:{id_1}',
+            'jakarta.faces.partial.execute': '@all',
+            'jakarta.faces.partial.render': 'examDateListForm',
             f'examDateListForm:{id_1}': f'examDateListForm:{id_1}',
             'examDateListForm_SUBMIT': '1',
         }
