@@ -170,7 +170,7 @@ class Event:
     def from_json_obj(obj: Dict[str], room: Room) -> Event:
         start = tucal.parse_iso_timestamp(obj['start'], True)
         end = tucal.parse_iso_timestamp(obj['end'], True)
-        return Event(obj['id'], start, end, obj['title'], obj['className'], room, obj['allDay'])
+        return Event(obj['id'], start, end, obj['title'], obj['classNames'], room, obj['allDay'])
 
 
 class Session:
@@ -466,9 +466,11 @@ class Session:
         data = {
             'jakarta.faces.partial.execute': 'calendarForm:schedule',
             'jakarta.faces.partial.render': 'calendarForm:schedule',
+            'jakarta.faces.source': 'calendarForm:schedule',
             'calendarForm:schedule': 'calendarForm:schedule',
-            'calendarForm:schedule_start': int(time.mktime(tucal.Semester.last().first_day.timetuple()) * 1000),
-            'calendarForm:schedule_end': int(time.mktime(tucal.Semester.next().last_day.timetuple()) * 1000),
+            'calendarForm:schedule_event': 'true',
+            'calendarForm:schedule_start': tucal.Semester.last().first_day.astimezone(datetime.UTC).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'calendarForm:schedule_end': tucal.Semester.next().last_day.astimezone(datetime.UTC).strftime('%Y-%m-%dT%H:%M:%SZ'),
         }
         self.get('/events/personSchedule.xhtml')
         r = self.post('/events/personSchedule.xhtml', data, ajax=True)

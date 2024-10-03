@@ -198,7 +198,7 @@ def upsert_events(events: List[Dict[str, Any]], access_time: datetime.datetime, 
     rows_update = []
     holidays = []
     for evt in events:
-        classes = evt['className'].split(' ')
+        classes = evt['classNames'].split(' ')
         if classes[0] == 'holiday':
             holidays.append({
                 'name': evt['title'],
