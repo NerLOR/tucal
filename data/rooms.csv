@@ -272,6 +272,7 @@ Seminarraum 107-1,,SemR 107-1,,AP0107,1071,seminar_room,,42,25,colab tiss rdb
 Seminarraum 212-232,,SemR 212-232,,AA0318,,seminar_room,,75,,colab rdb
 Seminarraum AA 03-1,,SemR AA 03-1,,AA0352,AA0352,seminar_room,,,30,tiss
 Seminarraum AA 02 41,,SemR AA 02 41,,AA0241,ZS15,seminar_room,,,35,colab tiss
+Seminarraum AC 02-1,,SemR AC 02-1,,AC0246,AC0246,seminar_room,,,36,tiss
 Seminarraum AC 04 40,,SemR AC 04 40,,AC0440,AC0440,seminar_room,,,50,colab tiss
 Seminarraum AD 03-1,,SemR AD 03-1,,AD0309,222,seminar_room,,,46,tiss
 Seminarraum AD EG-1,,SemR AD EG-1,,ADEG19,,seminar_room,,,,colab
@@ -282,6 +283,8 @@ Seminarraum AE U1-4,,SemR AE U1-4,,AEU119,AEU119,seminar_room,,79,37,colab tiss 
 Seminarraum AE U1-5,,SemR AE U1-5,,AEU125,AEU125,seminar_room,,74,37,colab tiss rdb
 Seminarraum AE U1-6,,SemR AE U1-6,,AEU131,AEU131,seminar_room,,48,25,colab tiss rdb
 Seminarraum AE U1-7,,SemR AE U1-7,,AEU140,AEU140,seminar_room,,117,54,colab tiss rdb
+Seminarraum AF 02-2 CEE,,SemR AF 02-2,,AF0228,AF0228,seminar_room,,,24,tiss
+Seminarraum AF 03-1,,SemR AF 03-1,,AF0312,AF0312,seminar_room,,,24,tiss
 Seminarraum BA 02 A,,SemR BA 02 A,,BA02G02,SEM BA 02A,seminar_room,,42,40,colab tiss rdb
 Seminarraum BA 02 B,,SemR BA 02 B,,BA02A17,SEM BA 02B,seminar_room,,62,70,colab tiss rdb
 Seminarraum BA 02 C,,SemR BA 02 C,,BA02G08,SEM BA 02C,seminar_room,,42,20,colab tiss rdb
@@ -332,6 +335,8 @@ Seminarraum DB gelb 10,,SemR DB gelb 10,,DB10E11,136,seminar_room,,72,33,colab t
 Seminarraum DC rot 07,,SemR DC rot 07,,DC07A15,138B,seminar_room,,66,23,colab tiss rdb
 Seminarraum DE 01 10,,SemR DE 01 10,,DE0110,DE0110,seminar_room,,,30,tiss
 Seminarraum Technische Informatik,,SemR Techn. Inf.,,DEEG39,SETI,seminar_room,,,30,tiss
+Seminarraum ZE 01-1,,SemR ZE 01-1,,ZE0105,ZE0105,seminar_room,,,30,tiss
+Seminarraum ZE 03-1,,SemR ZE 03-1,,ZE0305,ZE0305,seminar_room,,,10,tiss
 Besprechungsraum Galerie,,,,EAZE04,BRG,seminar_room,,28,14,tiss rdb
 Besprechungsraum Kuppel,,,,EAEG05A,BRK,seminar_room,,20,8,tiss rdb
 Seminarraum Argentinierstraße,,SemR Argent.str.,,EAEG06,ARG,seminar_room,,182,50,colab tiss rdb
