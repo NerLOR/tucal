@@ -148,7 +148,7 @@ def merge_event_data(event_nr: int, data: Dict[str, Any], parent_nr: int, room_n
             data['summary'] = desc
             for link in ZOOM_LINK.finditer(desc):
                 data['zoom'] = 'https://' + link.group(1)
-            if 'VO' in desc.split(' ') or 'vorlesung' in desc.lower():
+            if 'VO' in desc.split(' ') or 'vorlesung' in desc.lower() or 'lecture' in desc.lower() or desc.lower().startswith('lesson') or desc.lower().startswith('session'):
                 data['type'] = 'lecture'
 
         if type_nr == 2 and data['summary'] and COURSE_NR.match(data['summary']):
