@@ -4,6 +4,7 @@ global $TUCAL;
 
 require "../../.php/default.php";
 
+header("Access-Control-Allow-Origin: *");
 
 $info = explode('/', $_SERVER['PATH_INFO'] ?? '');
 
