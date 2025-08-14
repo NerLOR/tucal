@@ -354,9 +354,13 @@ def send_emails():
     server.starttls()
     server.login(SMTP_USER, SMTP_PASSWORD)
     for msg_nr, msg, to_addresses in msgs:
-        server.send_message(msg, to_addrs=to_addresses)
-        cur.execute("UPDATE tucal.message SET send_ts = now() WHERE message_nr = %s", (msg_nr,))
-        print(f'Sent Msg#{msg_nr}', flush=True)
+        try:
+            print(f'Sending Msg#{msg_nr}...', flush=True)
+            server.send_message(msg, to_addrs=to_addresses)
+            cur.execute("UPDATE tucal.message SET send_ts = now() WHERE message_nr = %s", (msg_nr,))
+            print(f'Sent Msg#{msg_nr}', flush=True)
+        except Exception as e:
+            print(e)
 
     server.quit()
     cur.close()
