@@ -40,7 +40,7 @@ class Session:
 
         if '<title>TU Wien Login</title>' in r.text:
             auth_state = INPUT_AUTH_STATE.search(r.text).group(1)
-            r = self._session.post(f'{SSO_URL}/simplesaml/module.php/core/loginuserpass.php', {
+            r = self._session.post(f'{SSO_URL}/simplesaml/module.php/core/loginuserpass?AuthState={auth_state}', {
                 'username': self._username or '',
                 'password': self._password or '',
                 'totp': self._totp or '',
@@ -69,11 +69,12 @@ class Session:
 
         action = FORM_ACTION.search(r.text).group(1)
         saml_res = INPUT_SAML_RES.search(r.text).group(1)
-        relay_state = INPUT_RELAY_STATE.search(r.text).group(1)
+        relay_state_m = INPUT_RELAY_STATE.search(r.text)
+        relay_state = relay_state_m.group(1) if relay_state_m else None
 
         r = self._session.post(action, {
             'SAMLResponse': saml_res,
-            'RelayState': relay_state,
+            'RelayState': relay_state or '',
         })
 
         if r.status_code != 200:
