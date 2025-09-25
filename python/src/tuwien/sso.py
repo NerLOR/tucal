@@ -67,6 +67,11 @@ class Session:
                 'StateId': state_id,
             })
 
+        if '<title>Sicherheitshinweis</title>' in r.text:
+            r = self._session.post(r.url, {
+                'stage': '1',
+            })
+
         action = FORM_ACTION.search(r.text).group(1)
         saml_res = INPUT_SAML_RES.search(r.text).group(1)
         relay_state_m = INPUT_RELAY_STATE.search(r.text)
