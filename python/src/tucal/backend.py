@@ -378,6 +378,8 @@ def schedule_job(job_args: List[str], delay: int = 0) -> Tuple[int, str, Optiona
         client.connect('/var/tucal/scheduler.sock')
     except FileNotFoundError:
         raise RuntimeError('unable to contact scheduler')
+    except ConnectionError:
+        raise RuntimeError('unable to contact scheduler')
     client.send((' '.join([str(delay)] + job_args) + '\n').encode('utf8'))
 
     res = client.recv(256).decode('utf8')
