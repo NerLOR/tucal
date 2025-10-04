@@ -72,6 +72,9 @@ class Session:
                 'stage': '1',
             })
 
+        if '<title>Bestätigung der Kenntnisnahme</title>' in r.text:
+            raise tucal.LoginError('Manual confirmation of acknowledgement required')
+
         action = FORM_ACTION.search(r.text).group(1)
         saml_res = INPUT_SAML_RES.search(r.text).group(1)
         relay_state_m = INPUT_RELAY_STATE.search(r.text)
