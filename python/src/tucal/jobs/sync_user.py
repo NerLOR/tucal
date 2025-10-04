@@ -405,6 +405,7 @@ class SyncUser(tucal.Sync):
         tucal.db.rollback()
         cur = tucal.db.cursor()
         cur.execute("UPDATE tucal.account SET sync_try_ts = now() WHERE mnr = %s", (self.mnr_int,))
+        tucal.db.commit()
 
         tfa_token, tfa_gen = None, None
         if not pwd_from_db:

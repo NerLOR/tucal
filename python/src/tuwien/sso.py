@@ -8,6 +8,7 @@ import tucal
 SSO_DOMAIN = 'idp.zid.tuwien.ac.at'
 SSO_URL = f'https://{SSO_DOMAIN}'
 
+TITLE = re.compile(r'<title>(.*?)</title>')
 INPUT_AUTH_STATE = re.compile(r'<input type="hidden" name="AuthState" value="([^"]*)" */?>')
 INPUT_STATE_ID = re.compile(r'<input type="hidden" name="StateId" value="([^"]*)" */?>')
 FORM_ACTION = re.compile(r'action="([^"]*)"')
@@ -75,10 +76,17 @@ class Session:
         if '<title>Bestätigung der Kenntnisnahme</title>' in r.text:
             raise tucal.LoginError('Manual confirmation of acknowledgement required')
 
-        action = FORM_ACTION.search(r.text).group(1)
-        saml_res = INPUT_SAML_RES.search(r.text).group(1)
+        title_m = TITLE.search(r.text)
+        action_m = FORM_ACTION.search(r.text)
+        saml_res_m = INPUT_SAML_RES.search(r.text)
         relay_state_m = INPUT_RELAY_STATE.search(r.text)
+        title = title_m.group(1) if title_m else None
+        action = action_m.group(1) if action_m else None
+        saml_res = saml_res_m.group(1) if saml_res_m else None
         relay_state = relay_state_m.group(1) if relay_state_m else None
+
+        if action is None or saml_res is None:
+            raise tucal.LoginError(f'Invalid SAML response with title: {title or "-"}')
 
         r = self._session.post(action, {
             'SAMLResponse': saml_res,
