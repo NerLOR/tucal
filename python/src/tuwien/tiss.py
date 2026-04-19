@@ -61,7 +61,7 @@ LABEL_EXAM = re.compile(r'<li><label for="examDateListForm:[^"]*">([^<>]*)</labe
 BUTTON_EVENTS = re.compile(r'<a.*?id="(.*?):(.*?)"[^>]*>Einzeltermine anzeigen</a>')
 BUTTON_SEARCH = re.compile(r'<a.*?id="courseList:(.*?)"[^>]*>Erweiterte Suche</a>')
 BUTTON_TOKEN = re.compile(r'<input.*?id="(.*?):(.*?)".*?value="Erzeuge neuen Token"')
-BUTTON_EXAM = re.compile(r'<a.*?id="examDateListForm:(.*?)"[^>]*>Alle Prüfungen')
+BUTTON_EXAM = re.compile(r'<a.*?id="examDateListForm:(.*?)"[^>]*>Alle vergangenen Prüfungstermine')
 
 
 class Building:
